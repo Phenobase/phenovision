@@ -1,6 +1,7 @@
 
 library(torch)
 library(torchvision)
+library(torchopt)
 library(GPUmatrix)
 
 library(tidyverse)
@@ -43,13 +44,145 @@ rownames(phylo_sparse) <- meta$photo_id
 
 device <- if (cuda_is_available()) "cuda" else "cpu"
 
+# train_transforms <- function(file_names, loader, device = "cuda") {
+#   with_no_grad({
+#     map(file_names,
+#         ~ ((loader(.x) |>
+#              transform_to_tensor())$to(device = device) |>
+#              transform_random_resized_crop(size = c(320, 320), scale = c(0.6, 1)))$
+#           unsqueeze(1L)) |>
+#       torch_cat(dim = 1L) |>
+#       # data augmentation
+#       transform_color_jitter() %>%
+#       # data augmentation
+#       transform_random_horizontal_flip() %>%
+#       # normalize according to what is expected by resnet
+#       transform_normalize(mean = c(0.485, 0.456, 0.406), std = c(0.229, 0.224, 0.225)) #%>%
+#   })
+#     #(function(x) x$to(device = "cpu"))
+# }
+#
+# #test <- train_transforms(meta$file_name[1:32], magick_loader)
+#
+# val_transforms <- function(img) {
+#   with_no_grad({
+#     map(file_names,
+#         ~ ((loader(.x) |>
+#              transform_to_tensor())$to(device = device) |>
+#              transform_resize(364) |>
+#              transform_center_crop(320))$
+#           unsqueeze(1L)) |>
+#       torch_cat(dim = 1L) |>
+#       # normalize according to what is expected by resnet
+#       transform_normalize(mean = c(0.485, 0.456, 0.406), std = c(0.229, 0.224, 0.225))
+#   })
+# }
+#
+# val_transforms <- train_transforms
+#
+# test_transforms <- val_transforms
+#
+# pheno_image_dataset <- dataset(name = "pheno_image_ds",
+#                                initialize = function(file_names, flowering, fruiting, phylo, transform = NULL,
+#                                                      loader = magick_loader,
+#                                                      device = "cuda"
+#                                                      ) {
+#                                  self$file_names <- file_names
+#                                  self$pheno <- cbind(flowering, fruiting)
+#                                  self$phylo <- phylo
+#                                  self$device <- device
+#
+#                                  self$transform <- transform
+#                                  self$loader <- loader
+#
+#                                  },
+#   .getbatch = function(i) {
+#
+#     sample <- self$transform(self$file_names[i], self$loader, device = device)
+#
+#     #phylo <- gpu.matrix(self$phylo[i, , drop = FALSE], dtype = "float32", device = "cpu")@gm
+#     p <- as.matrix(self$phylo[i, , drop = FALSE])
+#     phylo <- torch_tensor(p, device = device)
+#     phylo_mask <- torch_tensor(which(colMaxs(gpu.matrix(p)) == 1), device = device)#$unsqueeze(-1)
+#     pheno <- torch_tensor(self$pheno[i, , drop = FALSE], dtype = torch_float32(),
+#                           device = device)#$to(device = self$device)
+#
+#     list(pheno = pheno, sample = sample, phylo = phylo, phylo_mask = phylo_mask)
+#   },
+#   .length = function() {
+#     length(self$file_names)
+#   }
+# )
+#
+# train_meta <- meta |>
+#   filter(split == "train")
+#
+# val_meta <- meta |>
+#   filter(split == "val")
+#
+# test_meta <- meta |>
+#   filter(split == "test")
+#
+# batch_size <- 32
+# grad_accum_steps <- 32
+#
+# train_ds <- pheno_image_dataset(train_meta$file_name,
+#                                 train_meta$flowering,
+#                                 train_meta$fruiting,
+#                                 phylo = phylo_sparse[as.character(train_meta$photo_id), ],
+#                                 transform = train_transforms)
+#
+# train_dl <- dataloader(train_ds, batch_size = batch_size, shuffle = TRUE,
+#                        drop_last = TRUE)
+#
+# # train_dl <- dataloader(train_ds, batch_size = batch_size, shuffle = TRUE,
+# #                        num_workers = 4, worker_packages = c("purrr", "torchvision", "GPUmatrix",
+# #                                                             "Matrix"),
+# #                        worker_init_fn = function(w) options(torch.serialization_version = 2),
+# #                        drop_last = TRUE)
+#
+# ### test dataloader
+#
+# #batch <- train_dl$.iter()$.next()
+# #itr <- train_dl$.iter()
+# #batch <- itr$.next()
+# #
+# # images <- as_array(batch[[2]]$cpu()) %>% aperm(perm = c(1, 3, 4, 2))
+# # mean <- c(0.485, 0.456, 0.406)
+# # std <- c(0.229, 0.224, 0.225)
+# # images <- std * images + mean
+# # images <- images * 255
+# # images[images > 255] <- 255
+# # images[images < 0] <- 0
+# #
+# # plot(as.raster(images[10, , ,], max = 255))
+#
+# val_ds <- pheno_image_dataset(val_meta$file_name,
+#                               val_meta$flowering,
+#                               val_meta$fruiting,
+#                               phylo = phylo_sparse[as.character(val_meta$photo_id), ],
+#                               transform = val_transforms)
+#
+# val_dl <- dataloader(val_ds, batch_size = batch_size, shuffle = TRUE,
+#                      drop_last = TRUE)
+#
+# test_ds <- pheno_image_dataset(test_meta$file_name,
+#                               test_meta$flowering,
+#                               test_meta$fruiting,
+#                               phylo = phylo_sparse[as.character(test_meta$photo_id), ],
+#                               transform = test_transforms)
+#
+# test_dl <- dataloader(test_ds, batch_size = batch_size,
+#                       drop_last = TRUE)
+
 train_transforms <- function(img) {
+  with_no_grad({
   img %>%
     # first convert image to tensor
     transform_to_tensor() %>%
     #(function(x) x$to(device = "cuda")) %>%
     # data augmentation
-    transform_random_resized_crop(size = c(299, 299), scale = c(0.7, 1)) %>%
+    transform_random_resized_crop(size = c(320, 320), scale = c(0.7, 1)) %>%
     # data augmentation
     transform_color_jitter() %>%
     # data augmentation
@@ -57,18 +190,21 @@ train_transforms <- function(img) {
     # normalize according to what is expected by resnet
     transform_normalize(mean = c(0.485, 0.456, 0.406), std = c(0.229, 0.224, 0.225)) #%>%
     #(function(x) x$to(device = "cpu"))
+  })
 }
 
 
 
 val_transforms <- function(img) {
+  with_no_grad({
   img %>%
     transform_to_tensor() %>%
     #(function(x) x$to(device = "cuda")) %>%
-    transform_resize(340) %>%
-    transform_center_crop(299) %>%
+    transform_resize(364) %>%
+    transform_center_crop(320) %>%
     transform_normalize(mean = c(0.485, 0.456, 0.406), std = c(0.229, 0.224, 0.225))# %>%
     #(function(x) x$to(device = "cpu"))
+  })
 }
 
 val_transforms <- train_transforms
@@ -91,12 +227,15 @@ pheno_image_dataset <- dataset(name = "pheno_image_ds",
   .getbatch = function(i) {
     path <- self$file_names[i]
     samples <- map(path, ~ (self$loader(.x) |> self$transform())$unsqueeze(1))
-    sample <- torch_cat(samples, dim = 1)#$to(device = self$device)
+    sample <- torch_cat(samples, dim = 1)
 
-    phylo <- gpu.matrix(self$phylo[i, ], dtype = "float32", device = "cpu")@gm
-    pheno <- torch_tensor(self$pheno[i, ], dtype = torch_float32())#$to(device = self$device)
+    #phylo <- gpu.matrix(self$phylo[i, , drop = FALSE], dtype = "float32", device = "cpu")@gm
+    p <- as.matrix(self$phylo[i, , drop = FALSE])
+    phylo <- torch_tensor(p)
+    phylo_mask <- torch_tensor(which(colMaxs(gpu.matrix(p)) == 1))#$unsqueeze(-1)
+    pheno <- torch_tensor(self$pheno[i, , drop = FALSE], dtype = torch_float32())#$to(device = self$device)
 
-    list(pheno = pheno, sample = sample, phylo = phylo)
+    list(pheno = pheno, sample = sample, phylo = phylo, phylo_mask = phylo_mask)
   },
   .length = function() {
     length(self$file_names)
@@ -112,7 +251,8 @@ val_meta <- meta |>
 test_meta <- meta |>
   filter(split == "test")
 
-batch_size <- 128
+batch_size <- 32
+grad_accum_steps <- 32
 
 train_ds <- pheno_image_dataset(train_meta$file_name,
                                 train_meta$flowering,
@@ -121,9 +261,11 @@ train_ds <- pheno_image_dataset(train_meta$file_name,
                                 transform = train_transforms)
 
 train_dl <- dataloader(train_ds, batch_size = batch_size, shuffle = TRUE,
-                       num_workers = 6, worker_packages = c("purrr", "torchvision", "GPUmatrix",
+                       num_workers = 4, worker_packages = c("purrr", "torchvision", "GPUmatrix",
                                                             "Matrix"),
-                       worker_init_fn = function(w) options(torch.serialization_version = 2))
+                       worker_init_fn = function(w) options(torch.serialization_version = 2),
+                       drop_last = TRUE,
+                       pin_memory = TRUE)
 
 ### test dataloader
 
@@ -149,9 +291,11 @@ val_ds <- pheno_image_dataset(val_meta$file_name,
                               infinite = TRUE)
 
 val_dl <- dataloader(val_ds, batch_size = batch_size, shuffle = TRUE,
-                       num_workers = 6, worker_packages = c("purrr", "torchvision", "GPUmatrix",
-                                                            "Matrix"),
-                       worker_init_fn = function(w) options(torch.serialization_version = 2))
+                     num_workers = 4, worker_packages = c("purrr", "torchvision", "GPUmatrix",
+                                                          "Matrix"),
+                     worker_init_fn = function(w) options(torch.serialization_version = 2),
+                     drop_last = TRUE,
+                     pin_memory = TRUE)
 
 test_ds <- pheno_image_dataset(test_meta$file_name,
                               test_meta$flowering,
@@ -160,9 +304,11 @@ test_ds <- pheno_image_dataset(test_meta$file_name,
                               transform = test_transforms)
 
 test_dl <- dataloader(test_ds, batch_size = batch_size,
-                       num_workers = 6, worker_packages = c("purrr", "torchvision", "GPUmatrix",
-                                                            "Matrix"),
-                       worker_init_fn = function(w) options(torch.serialization_version = 2))
+                      num_workers = 4, worker_packages = c("purrr", "torchvision", "GPUmatrix",
+                                                           "Matrix"),
+                      worker_init_fn = function(w) options(torch.serialization_version = 2),
+                      drop_last = TRUE,
+                      pin_memory = TRUE)
 
 # batch <- test_dl$.iter()$.next()
 # images <- as_array(batch[[2]]$cpu()) %>% aperm(perm = c(1, 3, 4, 2))
@@ -177,7 +323,7 @@ test_dl <- dataloader(test_ds, batch_size = batch_size,
 
 #### setup model:: we will start by trying resnet18
 
-im_model <- model_inception_v3(pretrained = TRUE)
+im_model <- model_resnext50_32x4d(pretrained = TRUE)
 
 ## freeze model weights
 im_model$parameters %>% purrr::walk(function(param) param$requires_grad_(FALSE))
@@ -188,7 +334,6 @@ im_model$parameters %>% purrr::walk(function(param) param$requires_grad_(FALSE))
 #im_model$aux_logits <- FALSE
 
 im_model$fc <- nn_identity()
-im_model$AuxLogits$fc <- nn_identity()
 im_model <- im_model$to(device = device)
 
 #batch <- train_dl$.iter()$.next()
@@ -202,10 +347,10 @@ get_conv_dims <- function(mod) {
 }
 
 ic_block <- function(in_features, out_features = ceiling(in_features / 2), p = 0.5) {
-  nn_sequential(#nn_batch_norm1d(in_features),
-                #nn_dropout(p),
-                #nn_linear(in_features, in_features),
-                #nn_gelu(),
+  nn_sequential(nn_batch_norm1d(in_features),
+                nn_dropout(p),
+                nn_linear(in_features, in_features),
+                nn_gelu(),
                 nn_batch_norm1d(in_features),
                 nn_dropout(p),
                 nn_linear(in_features, out_features),
@@ -259,10 +404,11 @@ phylo_finetuner <- nn_module("phylo_finetuner",
                              },
                              forward = function(x, phylo) {
 
-                               phylo_layer <- call_torch_function("torch__sparse_mm", phylo, self$phylo_embedding, quiet = TRUE)
+                               #phylo_layer <- call_torch_function("torch__sparse_mm", phylo, self$phylo_embedding, quiet = TRUE)
+                               phylo_layer <- torch_mm(phylo, self$phylo_embedding)
                                x <- self$im_model(x)
 
-                               e1 <- self$class_encode_layers$enc_1(torch_cat(x, dim = 2L))
+                               e1 <- self$class_encode_layers$enc_1(x)
                                pe1 <- self$phylo_encode_layers$enc_1(phylo_layer)
 
                                e2 <- self$class_encode_layers$enc_2(e1 * pe1)
@@ -286,7 +432,7 @@ phylo_finetuner <- nn_module("phylo_finetuner",
 
                              })
 
-mod <- phylo_finetuner(ncol(phylo_sparse), 128, im_model, 2048 + 768)
+mod <- phylo_finetuner(ncol(phylo_sparse), 64, im_model, 2048)
 mod <- mod$to(device = device)
 
 # test <- mod(batch[[2]]$cpu(), batch[[3]]$cpu())
@@ -298,26 +444,23 @@ mod <- mod$to(device = device)
 
 loss_fun <- nn_bce_with_logits_loss()
 
-n_epoch <- 10
-lr <- 0.005
+n_epoch <- 9
+lr <- 0.001
 #save_every <- 50
 
-optim1 <- optim_adam(mod$parameters, lr = lr)
+#optim1 <- optim_adam(mod$parameters, lr = lr)
+optim1 <- optim_adamw(mod$parameters, lr = lr)
 scheduler <- lr_one_cycle(optim1, max_lr = lr,
-                          epochs = n_epoch, steps_per_epoch = length(train_dl),
-                          cycle_momentum = FALSE)
+                          epochs = n_epoch, steps_per_epoch = ceiling(length(train_dl) / grad_accum_steps),
+                          cycle_momentum = TRUE)
 
-phylo_w <- 0.001
-unfreeze_epoch <- 3
+phylo_w <- 0.01
+#unfreeze_epoch <- 3
 
 val_iter <- val_dl$.iter()
 
 for(epoch in 1:n_epoch) {
 
-  if(epoch == unfreeze_epoch) {
-    mod$im_model$parameters[grep("Mixed_7", names(mod$im_model$parameters), fixed = TRUE)] %>%
-      purrr::walk(function(param) param$requires_grad_(TRUE))
-  }
   batch_num <- 0
   binary_losses <- c()
   phylo_losses <- c()
@@ -328,39 +471,43 @@ for(epoch in 1:n_epoch) {
   coro::loop(for (b in train_dl) {
     batch_num <- batch_num + 1
 
-    optim1$zero_grad()
-    b_phylo <- b[[3]]$to(device = device)
-    res <- mod(b[[2]]$to(device = device), b_phylo)
+    #b_phylo <- b[[3]]$to(device = device)
+    res <- mod(b[[2]]$to(device = device), b[[3]]$to(device = device))
 
     binary_loss <- loss_fun(res, b[[1]]$to(device = device))
 
-    phylo_mask <- torch_max(b_phylo$to_dense(), dim = 1)[[1]]
-    new_embed <- mod$phylo_embedding * phylo_mask$unsqueeze(-1)
-    phylo_loss <- torch_sum(new_embed^2) / batch_size
+    #phylo_mask <- torch_max(b_phylo$to_dense(), dim = 1)[[1]]
+    #new_embed <- mod$phylo_embedding * phylo_mask$unsqueeze(-1)
+    phylo_loss <- torch_sum(mod$phylo_embedding[b[[4]]$cuda(), ]^2) #/ batch_size
 
     loss <- binary_loss + phylo_w * phylo_loss
-
+    loss <- loss / grad_accum_steps
 
     loss$backward()
-    optim1$step()
-    scheduler$step()
+
+    ## Accumulate gradients over multiple batches
+    if(batch_num %% grad_accum_steps == 0) {
+      optim1$step()
+      scheduler$step()
+      optim1$zero_grad()
+    }
+
 
     binary_losses <- c(binary_losses, as.numeric(binary_loss$cpu()))
     phylo_losses <- c(phylo_losses, as.numeric(phylo_loss$cpu()))
 
-    if(batch_num %% 10 == 0) {
+    if(batch_num %% (grad_accum_steps * 2) == 0) {
       mod$eval()
-      mod$im_model$training <- TRUE
       v <- val_iter$.next()
       if(rlang::is_symbol(v)) {
         val_iter <- val_dl$.iter()
         v <- val_iter$.next()
       }
       with_no_grad({
-        v1 <- v[[1]]$to(device = device)
+        #v1 <- v[[1]]$to(device = device)
         res2 <- mod(v[[2]]$to(device = device), v[[3]]$to(device = device))
-        valid_loss <- loss_fun(res2, v1)
-        valid_acc <- (1 - torch_mean(torch_abs(torch_round(nnf_sigmoid(res2)) - v1), dim = 1))
+        valid_loss <- loss_fun(res2, v[[1]]$to(device = device))
+        valid_acc <- (1 - torch_mean(torch_abs(torch_round(nnf_sigmoid(res2)) - v[[1]]$to(device = device)), dim = 1))
         valid_losses <- c(valid_losses, as.numeric(valid_loss$cpu()))
         valid_accs_fl <- c(valid_accs_fl, as.numeric(valid_acc[1]$cpu()))
         valid_accs_fr <- c(valid_accs_fr, as.numeric(valid_acc[2]$cpu()))
@@ -382,7 +529,99 @@ for(epoch in 1:n_epoch) {
 
 }
 
-torch_save(mod, "data/models/first_model_inceptionv3_10_epochs_with-finetune.to")
+torch_save(mod, "data/models/second_model_resnext50_10_epochs_without-finetune.to")
+mod$phylo_embedding$detach_()
+torch_save(mod, "data/models/second_model_resnext50_10_epochs_without-finetune_fixed.to")
+mod$phylo_embedding$requires_grad <- TRUE
+
+cuda_empty_cache()
+
+## Unfreeze layers
+
+mod$im_model$parameters[grep("layer4", names(mod$im_model$parameters), fixed = TRUE)] %>%
+  purrr::walk(function(param) param$requires_grad_(TRUE))
+
+n_epoch <- 20
+lr <- 0.0001
+#save_every <- 50
+
+optim1 <- optim_adamw(mod$parameters, lr = lr)
+scheduler <- lr_one_cycle(optim1, max_lr = lr,
+                          epochs = n_epoch, steps_per_epoch = ceiling(length(train_dl) / grad_accum_steps),
+                          cycle_momentum = TRUE)
+
+val_iter <- val_dl$.iter()
+
+for(epoch in 1:n_epoch) {
+
+  batch_num <- 0
+  binary_losses <- c()
+  phylo_losses <- c()
+  valid_losses <- c()
+  valid_losses <- c()
+  valid_accs_fl <- c()
+  valid_accs_fr <- c()
+  coro::loop(for (b in train_dl) {
+    batch_num <- batch_num + 1
+
+    #b_phylo <- b[[3]]$to(device = device)
+    res <- mod(b[[2]]$to(device = device), b[[3]]$to(device = device))
+
+    binary_loss <- loss_fun(res, b[[1]]$to(device = device))
+
+    #phylo_mask <- torch_max(b_phylo$to_dense(), dim = 1)[[1]]
+    #new_embed <- mod$phylo_embedding * phylo_mask$unsqueeze(-1)
+    phylo_loss <- torch_sum(mod$phylo_embedding[b[[4]]$cuda(), ]^2) #/ batch_size
+
+    loss <- binary_loss + phylo_w * phylo_loss
+    loss <- loss / grad_accum_steps
+
+    loss$backward()
+
+    ## Accumulate gradients over multiple batches
+    if(batch_num %% grad_accum_steps == 0) {
+      optim1$step()
+      scheduler$step()
+      optim1$zero_grad()
+    }
 
 
+    binary_losses <- c(binary_losses, as.numeric(binary_loss$cpu()))
+    phylo_losses <- c(phylo_losses, as.numeric(phylo_loss$cpu()))
+
+    if(batch_num %% (grad_accum_steps * 2) == 0) {
+      mod$eval()
+      v <- val_iter$.next()
+      if(rlang::is_symbol(v)) {
+        val_iter <- val_dl$.iter()
+        v <- val_iter$.next()
+      }
+      with_no_grad({
+        #v1 <- v[[1]]$to(device = device)
+        res2 <- mod(v[[2]]$to(device = device), v[[3]]$to(device = device))
+        valid_loss <- loss_fun(res2, v[[1]]$to(device = device))
+        valid_acc <- (1 - torch_mean(torch_abs(torch_round(nnf_sigmoid(res2)) - v[[1]]$to(device = device)), dim = 1))
+        valid_losses <- c(valid_losses, as.numeric(valid_loss$cpu()))
+        valid_accs_fl <- c(valid_accs_fl, as.numeric(valid_acc[1]$cpu()))
+        valid_accs_fr <- c(valid_accs_fr, as.numeric(valid_acc[2]$cpu()))
+        cuda_empty_cache()
+
+      })
+      cat("Epoch: ", epoch,
+          "Batch: ", batch_num,
+          "    mean binary loss: ", mean(binary_losses),
+          "    mean phylo loss: ", mean(phylo_losses),
+          "    validation loss: ", mean(valid_losses),
+          "    flowering validation accuracy: ", mean(valid_accs_fl),
+          "    fruiting validation accuracy: ", mean(valid_accs_fr),
+          "\n")
+      mod$train()
+    }
+
+  })
+
+
+}
+
+torch_save(mod, "data/models/first_model_resnext50_10_epochs_with_last_layer_finetune.to")
 
