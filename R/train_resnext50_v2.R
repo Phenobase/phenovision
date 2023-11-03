@@ -346,6 +346,7 @@ get_conv_dims <- function(mod) {
 
 }
 
+## This architecture block is from: https://arxiv.org/abs/1905.05928
 ic_block <- function(in_features, out_features = ceiling(in_features / 2), p = 0.5) {
   nn_sequential(nn_batch_norm1d(in_features),
                 nn_dropout(p),
