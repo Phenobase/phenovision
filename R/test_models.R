@@ -242,7 +242,6 @@ sensitivity(test_dat, fruiting, .pred_fr)
 specificity(test_dat, flowering, .pred_fl)
 specificity(test_dat, fruiting, .pred_fr)
 
-
 threshold_data_fl <- test_dat %>%
   threshold_perf(flowering, flowering_pred, thresholds = seq(0, 1, by = 0.005))
 
@@ -417,6 +416,8 @@ p <- ggplot(family_summ, aes(count, acc_fl)) +
   theme_minimal()
 
 p
+
+plotly::ggplotly(p, tooltip = c("text", "order", "count"))
 
 p_tss <- ggplot(family_summ, aes(count, tss_fl)) +
   geom_point(aes(colour = order, text = family)) +
