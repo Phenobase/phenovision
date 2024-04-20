@@ -6,6 +6,7 @@ from typing import Optional
 import torch
 import torch.utils.data as data
 from PIL import Image
+import numpy as np
 
 _logger = logging.getLogger(__name__)
 
@@ -70,3 +71,4 @@ class PhenoDataset(data.Dataset):
 
     def filenames(self, basename=False, absolute=False):
         return self.img
+      
