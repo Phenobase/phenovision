@@ -39,7 +39,37 @@ def evaluate(data_loader, model, device):
         with torch.cuda.amp.autocast():
             output = model(images)
         
-        outputs.append(output)
-        targets.append(target)
+        outputs.append(output.cpu())
+        targets.append(target.cpu())
+
+    return outputs, targets
+
+@torch.no_grad()
+def infer(data_loader, model, device):
+    
+    # switch to evaluation mode
+    model.eval()
+
+    outputs = []
+    targets = []
+    
+    dat_len = len(data_loader)
+
+    for i, batch in enumerate(data_loader):
+        images = batch[0]
+        
+        target = batch[-1]
+        
+        #images = images.to(device, non_blocking=True)
+        target = target.to(device, non_blocking=True)
+
+        # compute output
+        with torch.cuda.amp.autocast():
+            output = model(images)
+        
+        outputs.append(output.cpu())
+        targets.append(target.cpu())
+        
+        print(f'* Done iteration {i} of {dat_len}')
 
     return outputs, targets

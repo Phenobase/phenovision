@@ -16,7 +16,7 @@ eval <- import_from_path("evaluate", "py")
 NativeScaler <- misc$NativeScalerWithGradNormCount
 types <- import("types")
 
-model_folder <- "output/model_04_13_2024"
+model_folder <- "output/model_05_13_2024"
 if(!dir.exists(model_folder)) dir.create(model_folder)
 if(!dir.exists(file.path(model_folder, "checkpoints"))) dir.create(file.path(model_folder, "checkpoints"))
 
