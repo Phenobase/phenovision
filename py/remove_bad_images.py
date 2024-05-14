@@ -44,6 +44,20 @@ class PhenoDatasetDeleter(data.Dataset):
             _logger.warning(f'Skipped sample (index {index}, file {self.img[index]}). {str(e)}')
             bad = 1
             
+        if self.input_img_mode and not self.load_bytes:
+            try:
+                img = img.convert(self.input_img_mode)
+            except Exception as e:
+                _logger.warning(f'Skipped sample (index {index}, file {self.img[index]}). {str(e)}')
+                bad = 1
+        
+        if self.transform is not None:
+            try:
+                img = self.transform(img)
+            except Exception as e:
+                _logger.warning(f'Skipped sample (index {index}, file {self.img[index]}). {str(e)}')
+                bad = 1
+            
         
         return self.img[index], bad
 

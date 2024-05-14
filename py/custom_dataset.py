@@ -33,6 +33,7 @@ class PhenoDataset(data.Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self._consecutive_errors = 0
+        self.skipped = []
 
     def __getitem__(self, index):
       
@@ -43,6 +44,7 @@ class PhenoDataset(data.Dataset):
         except Exception as e:
             _logger.warning(f'Skipped sample (index {index}, file {self.img[index]}). {str(e)}')
             self._consecutive_errors += 1
+            self.skipped.append(self.img[index])
             if self._consecutive_errors < _ERROR_RETRY:
                 return self.__getitem__((index + 1) % len(self.img))
             else:
