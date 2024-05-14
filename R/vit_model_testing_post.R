@@ -1,6 +1,7 @@
 library(tidyverse)
 library(tidymodels)
 library(probably)
+library(ggforce)
 
 test_dat <- read_rds("output/epoch_4_testing_data.rds")
 
@@ -227,3 +228,162 @@ ggplot(family_fl_jind, aes(.estimate)) +
 
 sum(family_fl_jind$.estimate > 0.6, na.rm = TRUE)/nrow(family_fl_jind)
 
+############## Find new threshold ##############
+
+thresholds_flower <- threshold_perf(val_dat,
+                                    flower,
+                                    .pred_flower,
+                                    thresholds = seq(0, 1, by = 0.005),
+                                    metrics = metric_set(sens, spec, accuracy,
+                                                         precision, j_index))
+
+thresholds_fruit <- threshold_perf(val_dat,
+                                    fruit,
+                                    .pred_fruit,
+                                    thresholds = seq(0, 1, by = 0.005),
+                                    metrics = metric_set(sens, spec, accuracy,
+                                                         precision, j_index))
+
+## we want to maximize specificity, which minimizes commission errors
+## that is error where the model predicts a flower when there was not one
+
+threshold_flower_spec <- thresholds_flower |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  filter(sens > 0.90) |>
+  arrange(desc(spec))
+
+max_j_fl <- threshold_flower_spec |>
+  slice_max(j_index, n = 1)
+
+max_spec_fl <- threshold_flower_spec |>
+  slice_head(n = 1)
+
+threshold_flower_spec <- threshold_flower_spec |>
+  mutate(sens_dist = sens - max_j$sens[1],
+         spec_dist = spec - max_j$spec[1],
+         dist_dist = (sens_dist + spec_dist))
+
+max_dist <- threshold_flower_spec |>
+  slice_max(dist_dist)
+
+min_dist <- threshold_flower_spec |>
+  slice_min(distance, n = 1)
+
+threshold_fruit_spec <- thresholds_fruit |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  filter(sens > 0.90) |>
+  arrange(desc(spec))
+
+threshold_fruit_spec_85 <- thresholds_fruit |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  filter(sens > 0.85) |>
+  arrange(desc(spec))
+
+max_j_fr <- threshold_fruit_spec_85 |>
+  slice_max(j_index, n = 1)
+
+max_spec_fr <- threshold_fruit_spec |>
+  slice_head(n = 1)
+
+max_j_90_fl <- threshold_flower_spec |>
+  filter(j_index >= 0.9) |>
+  slice_max(spec, n = 1)
+
+max_j_80_fr <- threshold_fruit_spec_85 |>
+  filter(j_index >= 0.8) |>
+  slice_max(spec, n = 1)
+
+thresholds_flower <- thresholds_flower |>
+  mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
+                           .metric == "spec" ~ "True Negative Rate (specificity)",
+                           .metric == "precision" ~ "Positive Prediction Correctness (precision)",
+                           .metric == "accuracy" ~ "Accuracy",
+                           .metric == "j_index" ~ "True Skill Statistic (TSS)"))
+
+thresholds_fruit <- thresholds_fruit |>
+  mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
+                           .metric == "spec" ~ "True Negative Rate (specificity)",
+                           .metric == "precision" ~ "Positive Prediction Correctness (precision)",
+                           .metric == "accuracy" ~ "Accuracy",
+                           .metric == "j_index" ~ "True Skill Statistic (TSS)"))
+
+ggplot(thresholds_flower |>
+         filter(.metric %in% c("sens", "spec", "precision", "j_index")),
+       aes(.threshold, .estimate)) +
+  geom_path(aes(colour = label), size = 1.25, alpha = 0.75) +
+  geom_vline(xintercept = max_j_fl$.threshold[1]) +
+  geom_vline(xintercept = max_spec_fl$.threshold[1],
+             linetype = 2) +
+  geom_vline(xintercept = max_j_90_fl$.threshold[1],
+             linetype = 3) +
+  facet_zoom(x = .threshold > 0.5,
+             y = .estimate > 0.75,
+             zoom.size = 1) +
+  xlab("Threshold Value") +
+  ylab("Metric Estimate") +
+  scale_color_discrete(name = "Metric") +
+  #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.direction = "vertical")
+
+ggplot(thresholds_fruit |>
+         filter(.metric %in% c("sens", "spec", "precision", "j_index")),
+       aes(.threshold, .estimate)) +
+  geom_path(aes(colour = label), size = 1.25, alpha = 0.75) +
+  geom_vline(xintercept = max_j_fr$.threshold[1]) +
+  geom_vline(xintercept = max_spec_fr$.threshold[1],
+             linetype = 2) +
+  geom_vline(xintercept = max_j_80_fr$.threshold[1],
+             linetype = 3) +
+  facet_zoom(x = .threshold < 0.25,
+             y = .estimate > 0.60,
+             zoom.size = 1) +
+  xlab("Threshold Value") +
+  ylab("Metric Estimate") +
+  scale_color_discrete(name = "Metric") +
+  #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        legend.direction = "vertical")
+
+
+
+ggplot(thresholds_fruit,
+       aes(.threshold, .estimate)) +
+  geom_path(aes(colour = .metric)) +
+  geom_vline(xintercept = threshold_fruit_spec$.threshold[1]) +
+  theme_minimal()
+
+test_dat <- test_dat |>
+  mutate(
+    .pred_fl_max = make_two_class_pred(
+      estimate = .pred_flower,
+      levels = levels(flower),
+      threshold = threshold_flower_spec$.threshold[1],
+      buffer = 0.025
+    ),
+    .pred_fr_max = make_two_class_pred(
+      estimate = .pred_fruit,
+      levels = levels(fruit),
+      threshold = threshold_fruit_spec$.threshold[1],
+      buffer = 0.025
+    )
+  )
+
+test_acc_fl <- accuracy(test_dat, flower, .pred_fl_max)
+test_acc_fr <- accuracy(test_dat, fruit, .pred_fr_max)
+
+spec(test_dat, flower, .pred_fl_max)
+sens(test_dat, flower, .pred_fl_max)
+
+spec(test_dat, fruit, .pred_fr_max)
+sens(test_dat, fruit, .pred_fr_max)
+
+conf_mat_fl <- conf_mat(test_dat,
+                        flower,
+                        .pred_fl_max)
+
+conf_mat_fr <- conf_mat(test_dat,
+                        fruit,
+                        .pred_fr_max)
