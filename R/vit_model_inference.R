@@ -73,6 +73,21 @@ inf_res <- tibble(file_name = basename(inf_images)) |>
 
 write_csv(inf_res, "output/model_04_13_2024/inference_results.csv")
 
+inf_res <- inf_res |>
+  mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
+                                             threshold = 0.84,
+                                             buffer = 0.025),
+         .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
+                                            threshold = 0.175,
+                                            buffer = 0.025),
+         .equivocal_flower = ifelse(is_equivocal(.class_flower), "Equivocal", "Unequivocal"),
+         .equivocal_fruit = ifelse(is_equivocal(.class_fruit), "Equivocal", "Unequivocal")) |>
+  mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
+                                             threshold = 0.84),
+         .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
+                                            threshold = 0.175))
+
+write_csv(inf_res, "output/model_04_13_2024/inference_results.csv")
 
 ## flower threshold = 0.84
 ## fruit threshold = 0.175
