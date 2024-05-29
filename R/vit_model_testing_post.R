@@ -327,6 +327,8 @@ ggplot(thresholds_flower |>
   theme(legend.position = "bottom",
         legend.direction = "vertical")
 
+## choice dotted line 0.84: max_j_90_fl$.threshold[1]
+
 ggplot(thresholds_fruit |>
          filter(.metric %in% c("sens", "spec", "precision", "j_index")),
        aes(.threshold, .estimate)) +
@@ -347,7 +349,7 @@ ggplot(thresholds_fruit |>
   theme(legend.position = "bottom",
         legend.direction = "vertical")
 
-
+## choice fruit: 0.175, max_j_80_fr$.threshold[1]
 
 ggplot(thresholds_fruit,
        aes(.threshold, .estimate)) +
