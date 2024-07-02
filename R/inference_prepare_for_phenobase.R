@@ -1,3 +1,6 @@
+## this script takes raw output from phenovision model, creates prediction by thresholding,
+## adds metadata,
+
 library(tidyverse)
 library(arrow)
 library(tidymodels)
@@ -6,7 +9,7 @@ library(probably)
 image_dir <- "/blue/guralnick/share/phenobase_inat_data/images/medium"
 test_dir <- "/blue/guralnick/share/phenobase_inat_data/inference_test"
 
-inf_dat <- read_csv("output/model_04_13_2024/inference_results.csv")
+inf_dat <- read_csv("output/model_04_13_2024/inference_results_raw.csv")
 train_dat <- read_csv("data/inat/train.csv")
 
 inf_ids <- fs::path_ext_remove(inf_dat$file_name)
@@ -31,43 +34,12 @@ inf_dat <- inf_dat |>
          .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
                                             threshold = 0.53))
 
-write_csv(inf_dat |>
-            select(-.class_flower, -.class_fruit, -.equivocal_flower, -.equivocal_fruit),
-          "output/model_04_13_2024/inference_results_raw.csv")
-
-sum(inf_dat$.equivocal_flower == "Equivocal") / nrow(inf_dat)
-sum(inf_dat$.equivocal_flower_new == "Equivocal") / nrow(inf_dat)
-
-sum(inf_dat$.equivocal_fruit == "Equivocal") / nrow(inf_dat)
-sum(inf_dat$.equivocal_fruit_new == "Equivocal") / nrow(inf_dat)
-
-#metadat_csvs <- list.files("/blue/guralnick/share/phenobase_inat_data/metadata/angio_photos_csv", full.names = TRUE)
-
-#photo_meta <- open_dataset("/blue/guralnick/share/phenobase_inat_data/metadata/photos/part-0.parquet")
-
 set.seed(45897)
 
-inf_fl <- inf_dat |>
-  group_by(.class_flower, .equivocal_flower) |>
-  slice_sample(n = 500) |>
-  mutate(full_file = file.path(image_dir, file_name),
-         save_file = str_remove_all(file.path(test_dir, "flower", .class_flower, .equivocal_flower, file_name), "[:space:]"))
+inf_dat_samp <- inf_dat |>
+  slice_sample(n = 1e+6)
 
-inf_fr <- inf_dat |>
-  group_by(.class_fruit, .equivocal_fruit) |>
-  slice_sample(n = 500) |>
-  mutate(full_file = file.path(image_dir, file_name),
-         save_file = str_remove_all(file.path(test_dir, "fruit", .class_fruit, .equivocal_fruit, file_name), "[:space:]"))
-
-map2(inf_fl$full_file, inf_fl$save_file,
-     ~ file.copy(.x, .y),
-     .progress = TRUE)
-
-map2(inf_fr$full_file, inf_fr$save_file,
-     ~ file.copy(.x, .y),
-     .progress = TRUE)
-
-sample_dataset <- bind_rows(inf_fl, inf_fr) |>
+sample_dataset <- inf_dat_samp |>
   distinct(file_name, .keep_all = TRUE) |>
   mutate(photo_id = as.integer(fs::path_ext_remove(file_name)))
 
@@ -99,29 +71,50 @@ sample_dataset <- sample_dataset |>
             by = "taxon_id",
             copy = TRUE)
 
-## create subsample 500 fruit detected unequivocal
-new_erin_dataset <- sample_dataset |>
-  ungroup() |>
-  filter(.class_fruit == "Detected" & .equivocal_fruit == "Unequivocal") |>
-  slice_sample(n = 500)
+families <- taxa_meta |>
+  filter(rank == "family") |>
+  collect()
 
-write_csv(new_erin_dataset, file.path(test_dir, "sample_inference_dataset_fruitdetected_unequivocal_500.csv"))
+## looks like family is (always?) position 7
+sample_dataset <- sample_dataset |>
+  mutate(family_id = as.integer(str_split_i(ancestry, "/", 7)))
 
-write_csv(sample_dataset, file.path(test_dir, "sample_inference_dataset.csv"))
+sample_dataset <- sample_dataset |>
+  left_join(families |> select(family_id = taxon_id, family = name))
 
-sample_dataset |>
-  group_by(observation_uuid) |>
-  summarise(count = n()) |>
-  filter(count > 1)
+### add family level stats
+fam_stats <- read_csv("output/model_04_13_2024/family_stats.csv")
 
-sample_dataset |>
-  group_by(photo_id) |>
-  summarise(count = n()) |>
-  filter(count > 1)
+sample_dataset <- sample_dataset |>
+  left_join(fam_stats |>
+              filter(test == "test") |>
+              select(family, .equivpropfamily_flower = equiv_prop_fl,
+                     .equivpropfamily_fruit = equiv_prop_fr, .count_family = count,
+                     .accuracyfamily_flower = .accuracy_family_flower,
+                     .accuracyfamily_fruit = .accuracy_family_fruit,
+                     .accuracyfamilyinclequiv_flower = .accuracy_family_flower_incl_equiv,
+                     .accuracyfamilyinclequiv_fruit = .accuracy_family_fruit_incl_equiv))
 
-sample_dataset |>
-  filter(observation_uuid == "2346d329-d97e-4469-8b69-cbfc14071ab0")
+sample_dataset2 <- sample_dataset |>
+  select(-.logit_flower, -.logit_fruit) |>
+  pivot_longer(cols = c(.pred_flower, .pred_fruit,
+                        .class_flower, .class_fruit,
+                        .equivocal_flower, .equivocal_fruit,
+                        .equivpropfamily_flower, .equivpropfamily_fruit,
+                        .accuracyfamily_flower, .accuracyfamily_fruit,
+                        .accuracyfamilyinclequiv_flower, .accuracyfamilyinclequiv_fruit),
+               names_to = c(".value", ".trait"),
+               names_sep = "_"
+               )
 
-tt <- sample_dataset |>
-  filter(photo_id == 2315170)
+sample_dataset2 <- sample_dataset2 |>
+  rename(count_family = .count_family,
+         trait = .trait,
+         prediction_prob = .pred,
+         prediction_class = .class,
+         equivocal = .equivocal,
+         proportion_equivocal_family = .equivpropfamily,
+         accuracy_excluding_equivocal_family = .accuracyfamily,
+         accuracy_family = .accuracyfamilyinclequiv)
 
+write_csv(sample_dataset2, file.path(test_dir, "sample_inference_dataset_1million.csv"))
