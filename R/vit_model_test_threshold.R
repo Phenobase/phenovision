@@ -34,6 +34,34 @@ fruit_acc <- test_dat |>
   mutate(type = "fruit", value = as.numeric(as.character(.cut_fruit))) |>
   ungroup()
 
+flower_sens <- test_dat |>
+  group_by(.cut_flower) |>
+  sens(flower, .class_flower) |>
+  mutate(type = "flower", value = as.numeric(as.character(.cut_flower)),
+         metric = "Sensitivity") |>
+  ungroup()
+
+fruit_sens <- test_dat |>
+  group_by(.cut_fruit) |>
+  sens(fruit, .class_fruit) |>
+  mutate(type = "fruit", value = as.numeric(as.character(.cut_fruit)),
+         metric = "Sensitivity") |>
+  ungroup()
+
+flower_spec <- test_dat |>
+  group_by(.cut_flower) |>
+  spec(flower, .class_flower) |>
+  mutate(type = "flower", value = as.numeric(as.character(.cut_flower)),
+         metric = "Specificity") |>
+  ungroup()
+
+fruit_spec <- test_dat |>
+  group_by(.cut_fruit) |>
+  spec(fruit, .class_fruit) |>
+  mutate(type = "fruit", value = as.numeric(as.character(.cut_fruit)),
+         metric = "Specificity") |>
+  ungroup()
+
 flower_cut_count <- test_dat |>
   group_by(.cut_flower) |>
   summarise(count = n()) |>
@@ -48,6 +76,14 @@ fruit_cut_count <- test_dat |>
 
 accs <- bind_rows(flower_acc,
                   fruit_acc) |>
+  left_join(bind_rows(flower_cut_count, fruit_cut_count)) |>
+  group_by(type) |>
+  mutate(prop = count / sum(count))
+
+spec_sens <- bind_rows(flower_sens,
+                       flower_spec,
+                       fruit_sens,
+                       fruit_spec) |>
   left_join(bind_rows(flower_cut_count, fruit_cut_count)) |>
   group_by(type) |>
   mutate(prop = count / sum(count))
