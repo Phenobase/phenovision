@@ -235,14 +235,36 @@ thresholds_flower <- threshold_perf(val_dat,
                                     .pred_flower,
                                     thresholds = seq(0, 1, by = 0.005),
                                     metrics = metric_set(sens, spec, accuracy,
-                                                         precision, j_index))
+                                                         precision, j_index, npv))
 
 thresholds_fruit <- threshold_perf(val_dat,
                                     fruit,
                                     .pred_fruit,
                                     thresholds = seq(0, 1, by = 0.005),
                                     metrics = metric_set(sens, spec, accuracy,
-                                                         precision, j_index))
+                                                         precision, j_index, npv))
+
+ppv_npv_fl <- thresholds_flower |>
+  filter(.metric %in% c("precision", "npv")) |>
+  group_by(.threshold) |>
+  summarise(.estimate = sum(.estimate) / 2) |>
+  ungroup() |>
+  mutate(.metric = "ppv+npv", .estimator = "binary")
+
+thresholds_flower <- thresholds_flower |>
+  bind_rows(ppv_npv_fl)
+
+ppv_npv_fr <- thresholds_fruit |>
+  filter(.metric %in% c("precision", "npv")) |>
+  group_by(.threshold) |>
+  summarise(.estimate = sum(.estimate) / 2) |>
+  ungroup() |>
+  mutate(.metric = "ppv+npv", .estimator = "binary")
+
+thresholds_fruit <- thresholds_fruit |>
+  bind_rows(ppv_npv_fr)
+
+
 
 ## we want to maximize specificity, which minimizes commission errors
 ## that is error where the model predicts a flower when there was not one
@@ -297,18 +319,22 @@ thresholds_flower <- thresholds_flower |>
   mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
                            .metric == "spec" ~ "True Negative Rate (specificity)",
                            .metric == "precision" ~ "Positive Prediction Correctness (precision)",
+                           .metric == "npv" ~ "Negative Prediction Correctness",
                            .metric == "accuracy" ~ "Accuracy",
-                           .metric == "j_index" ~ "True Skill Statistic (TSS)"))
+                           .metric == "j_index" ~ "True Skill Statistic (TSS)",
+                           .metric == "ppv+npv" ~ "PPV + NPV"))
 
 thresholds_fruit <- thresholds_fruit |>
   mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
                            .metric == "spec" ~ "True Negative Rate (specificity)",
                            .metric == "precision" ~ "Positive Prediction Correctness (precision)",
+                           .metric == "npv" ~ "Negative Prediction Correctness",
                            .metric == "accuracy" ~ "Accuracy",
-                           .metric == "j_index" ~ "True Skill Statistic (TSS)"))
+                           .metric == "j_index" ~ "True Skill Statistic (TSS)",
+                           .metric == "ppv+npv" ~ "PPV + NPV"))
 
 ggplot(thresholds_flower |>
-         filter(.metric %in% c("sens", "spec", "precision", "j_index")),
+         filter(.metric %in% c("sens", "spec", "precision", "j_index", "npv", "ppv+npv")),
        aes(.threshold, .estimate)) +
   geom_path(aes(colour = label), size = 1.25, alpha = 0.75) +
   geom_vline(xintercept = max_j_fl$.threshold[1]) +
@@ -329,16 +355,27 @@ ggplot(thresholds_flower |>
 
 ## choice dotted line 0.84: max_j_90_fl$.threshold[1]
 
+thresholds_prec_bal_fr <- thresholds_fruit |>
+  filter(.metric %in% c("precision", "sens")) |>
+  select(.threshold, .metric, .estimate) |>
+  pivot_wider(names_from = .metric,
+              values_from = .estimate) |>
+  mutate(sum = precision + sens, diff = precision - sens)
+
+theshold_ppv_90 <- thresholds_fruit |>
+  filter(.metric == "precision") |>
+  filter(.estimate >= 0.9)
+
 ggplot(thresholds_fruit |>
-         filter(.metric %in% c("sens", "spec", "precision", "j_index")),
+         filter(.metric %in% c("sens", "spec", "precision", "j_index", "npv", "ppv+npv")),
        aes(.threshold, .estimate)) +
   geom_path(aes(colour = label), size = 1.25, alpha = 0.75) +
-  geom_vline(xintercept = max_j_fr$.threshold[1]) +
-  geom_vline(xintercept = max_spec_fr$.threshold[1],
-             linetype = 2) +
-  geom_vline(xintercept = max_j_80_fr$.threshold[1],
-             linetype = 3) +
-  facet_zoom(x = .threshold < 0.25,
+#  geom_vline(xintercept = max_j_fr$.threshold[1]) +
+#  geom_vline(xintercept = max_spec_fr$.threshold[1],
+#             linetype = 2) +
+#  geom_vline(xintercept = max_j_80_fr$.threshold[1],
+#             linetype = 3) +
+  facet_zoom(x = .threshold < 0.4,
              y = .estimate > 0.60,
              zoom.size = 1) +
   xlab("Threshold Value") +
@@ -350,6 +387,7 @@ ggplot(thresholds_fruit |>
         legend.direction = "vertical")
 
 ## choice fruit: 0.175, max_j_80_fr$.threshold[1]
+## new choice fruit: 0.53, goes for PPV of 0.9
 
 ggplot(thresholds_fruit,
        aes(.threshold, .estimate)) +
