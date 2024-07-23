@@ -23,7 +23,7 @@ model_file <- "output/model_04_13_2024/checkpoints/vit_finetuned_epoch4.pt"
 
 ## rocksdb
 rdb_options = rocksdb$Options(create_if_missing = TRUE)
-db <- "/blue/guralnick/share/phenobase_inat_data/images_rocksdb/test_batch.db"
+db <- "/blue/guralnick/share/phenobase_inat_data/all_images_rocksdb/phenobase_medium_all.db"
 
 image_db <- rocksdb$DB(db, rdb_options)
 keys <- image_db$iterkeys()
@@ -80,21 +80,21 @@ inf_res <- tibble(file_name = basename(inf_images)) |>
   bind_cols(as.data.frame(inf_logits$cpu()$numpy()) |>
               rename(.logit_fruit = V1, .logit_flower = V2))
 
-write_csv(inf_res, "output/model_04_13_2024/inference_results.csv")
+write_csv(inf_res, "output/model_04_13_2024/phenobase_medium_all_inference_results.csv")
 
 inf_res <- inf_res |>
   mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
                                              threshold = 0.84,
-                                             buffer = 0.025),
+                                             buffer = c(0.56, 0.01)),
          .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
-                                            threshold = 0.175,
-                                            buffer = 0.025),
+                                            threshold = 0.53,
+                                            buffer = c(0.3, 0.22)),
          .equivocal_flower = ifelse(is_equivocal(.class_flower), "Equivocal", "Unequivocal"),
          .equivocal_fruit = ifelse(is_equivocal(.class_fruit), "Equivocal", "Unequivocal")) |>
   mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
                                              threshold = 0.84),
          .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
-                                            threshold = 0.175))
+                                            threshold = 0.53))
 
 write_csv(inf_res, "output/model_04_13_2024/inference_results.csv")
 
