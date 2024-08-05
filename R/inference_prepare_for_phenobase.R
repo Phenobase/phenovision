@@ -1,10 +1,13 @@
 ## this script takes raw output from phenovision model, creates prediction by thresholding,
 ## adds metadata. Metadata columns are described here: https://github.com/Phenobase/phenobase_data/blob/main/data/columns.csv
 
+set.seed(4578835)
+
 library(tidyverse)
 library(arrow)
 library(tidymodels)
 library(probably)
+library(uuid)
 
 image_dir <- "/blue/guralnick/share/phenobase_inat_data/images/medium"
 test_dir <- "/blue/guralnick/share/phenobase_inat_data/inference_test"
@@ -78,12 +81,34 @@ families <- taxa_meta |>
   filter(rank == "family") |>
   collect()
 
+genera <- taxa_meta |>
+  filter(rank == "genus") |>
+  collect()
+
+taxonomy <- sample_dataset |>
+  select(file_name, ancestry) |>
+  mutate(taxa_ids = str_split(ancestry, "/")) |>
+  select(-ancestry) |>
+  unnest_longer(taxa_ids, transform = as.integer)
+
+fams <- taxonomy |>
+  left_join(families |> select(taxon_id, family = name), by = c(taxa_ids = "taxon_id")) |>
+  drop_na()
+
+gens <- taxonomy |>
+  left_join(genera |> select(taxon_id, genus = name), by = c(taxa_ids = "taxon_id")) |>
+  drop_na()
+
 ## looks like family is (always?) position 7
-sample_dataset <- sample_dataset |>
-  mutate(family_id = as.integer(str_split_i(ancestry, "/", 7)))
+# sample_dataset <- sample_dataset |>
+#   mutate(family_id = as.integer(str_split_i(ancestry, "/", 7)))
+#
+# sample_dataset <- sample_dataset |>
+#   left_join(families |> select(family_id = taxon_id, family = name))
 
 sample_dataset <- sample_dataset |>
-  left_join(families |> select(family_id = taxon_id, family = name))
+  left_join(fams |> select(file_name, family)) |>
+  left_join(gens |> select(file_name, genus))
 
 ### add family level stats
 fam_stats <- read_csv("output/model_04_13_2024/family_stats.csv")
@@ -111,13 +136,14 @@ sample_dataset2 <- sample_dataset |>
                )
 
 sample_dataset2 <- sample_dataset2 |>
-  mutate(datasource = "iNaturalist",
+  mutate(annotation_id = UUIDgenerate(n = n()),
+         datasource = "iNaturalist",
          day_of_year = yday(observed_on),
          year = year(observed_on),
-         genus = NA,
          certainty = ifelse(.equivocal == "Equivocal", "low", "high"),
          model_uri = "10.57967/hf/2763") |>
-  select(datasource,
+  select(annotation_id,
+         datasource,
          verbatim_date = observed_on,
          day_of_year,
          year,
@@ -142,3 +168,5 @@ sample_dataset2 <- sample_dataset2 |>
          accuracy_family = .accuracyfamilyinclequiv)
 
 write_csv(sample_dataset2, file.path(test_dir, "sample_inference_dataset_1000.csv"))
+write_csv(sample_dataset |> slice_head(n = 500),
+          file.path(test_dir, "sample_inference_dataset_500_for_Erin.csv"))

@@ -2,6 +2,7 @@ library(ape)
 library(tidyverse)
 library(arrow)
 library(reticulate)
+library(megatrees)
 
 tree <- read.nexus("data/phylogeny/oo_330891.tre")
 bad_images <- read_rds("data/inat/bad_images.rds")
