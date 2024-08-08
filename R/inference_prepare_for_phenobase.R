@@ -42,7 +42,7 @@ inf_dat <- inf_dat |>
 set.seed(45897)
 
 inf_dat_samp <- inf_dat |>
-  slice_sample(n = 1000)
+  slice_sample(n = 20000)
 
 sample_dataset <- inf_dat_samp |>
   distinct(file_name, .keep_all = TRUE) |>
@@ -135,14 +135,23 @@ sample_dataset2 <- sample_dataset |>
                names_sep = "_"
                )
 
+## filter out low certainty and 'not detected' records
 sample_dataset2 <- sample_dataset2 |>
-  mutate(annotation_id = UUIDgenerate(n = n()),
+  filter(as.character(.class) == "Detected" & .equivocal == "Unequivocal")
+
+## sample again if necessary
+sample_dataset2 <- sample_dataset2 |>
+  slice_sample(n = 10000)
+
+sample_dataset2 <- sample_dataset2 |>
+  mutate(machine_learning_annotation_id = UUIDgenerate(n = n()),
          datasource = "iNaturalist",
          day_of_year = yday(observed_on),
          year = year(observed_on),
-         certainty = ifelse(.equivocal == "Equivocal", "low", "high"),
-         model_uri = "10.57967/hf/2763") |>
-  select(annotation_id,
+         certainty = ifelse(.equivocal == "Equivocal", "Low", "High"),
+         model_uri = "10.57967/hf/2763",
+         basis_of_record = "MachineObservation") |>
+  select(machine_learning_annotation_id,
          datasource,
          verbatim_date = observed_on,
          day_of_year,
@@ -155,6 +164,7 @@ sample_dataset2 <- sample_dataset2 |>
          genus,
          scientific_name = name,
          taxon_rank = rank,
+         basis_of_record,
          trait = .trait,
          observed_image_guid = photo_id,
          observed_image_url,
@@ -167,6 +177,6 @@ sample_dataset2 <- sample_dataset2 |>
          accuracy_excluding_low_certainty_family = .accuracyfamily,
          accuracy_family = .accuracyfamilyinclequiv)
 
-write_csv(sample_dataset2, file.path(test_dir, "sample_inference_dataset_1000.csv"))
-write_csv(sample_dataset |> slice_head(n = 500),
-          file.path(test_dir, "sample_inference_dataset_500_for_Erin.csv"))
+write_csv(sample_dataset2, file.path(test_dir, "sample_inference_dataset_10000.csv"))
+# write_csv(sample_dataset |> slice_head(n = 500),
+#           file.path(test_dir, "sample_inference_dataset_500_for_Erin.csv"))
