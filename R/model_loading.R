@@ -15,3 +15,10 @@ load_phenovision <- function(doi = "10.57967/hf/2763", type = c("classifier", "l
   }
 
 }
+
+model_version <- function(doi = "10.57967/hf/2763") {
+  tr <- reticulate::import("transformers")
+  mod_dat <- rdatacite::dc_dois(doi)
+  ver <- mod_dat$data$attributes$version
+  ver
+}
