@@ -105,15 +105,17 @@ write_csv(fam_acc, "output/erin_annotations_fam_accuracy.csv")
 
 ######## do rethresholding ############
 
+erin_dat <- read_csv("output/erin_annotations_w_meta.csv")
+
 erin_fl <- erin_dat |>
   filter(type == "fl") |>
   mutate(.truth = factor(detected_erin, levels = c("1", "0")),
-         .class_fl_eq = make_two_class_pred(pred, levels(.truth),
+         .class_eq = make_two_class_pred(pred, levels(.truth),
                                              threshold = 0.84,
                                              buffer = c(0.56, 0.025)),
-         .class_fl = make_two_class_pred(pred, levels(.truth),
+         .class = make_two_class_pred(pred, levels(.truth),
                                              threshold = 0.84),
-         .equivocal_fl = is.na(as.character(.class_fl_eq)))
+         .equivocal = is.na(as.character(.class_eq)))
 
 fl_accs <- erin_fl |>
   group_by(.class_fl, .equivocal_fl, detected_erin) |>
@@ -131,12 +133,12 @@ fl_accs_orig <- erin_fl |>
 erin_fr <- erin_dat |>
   filter(type == "fr") |>
   mutate(.truth = factor(detected_erin, levels = c("1", "0")),
-         .class_fr_eq = make_two_class_pred(pred, levels(.truth),
+         .class_eq = make_two_class_pred(pred, levels(.truth),
                                             threshold = 0.84,
                                             buffer = c(0.56, 0.025)),
-         .class_fr = make_two_class_pred(pred, levels(.truth),
+         .class = make_two_class_pred(pred, levels(.truth),
                                          threshold = 0.84),
-         .equivocal_fr = is.na(as.character(.class_fr_eq)))
+         .equivocal = is.na(as.character(.class_eq)))
 
 fr_accs <- erin_fr |>
   group_by(.class_fr, .equivocal_fr, detected_erin) |>
@@ -150,3 +152,14 @@ fr_accs_orig <- erin_fr |>
   group_by(detected_orig, equivocal) |>
   mutate(prop = count / sum(count))
 
+erin_dat_updated <- bind_rows(
+  erin_fl, erin_fr
+) |>
+  select(file, detected_erin,
+         detected_model = .class,
+         equivocal = .equivocal,
+         repro, focal_plant,
+         time, type, pred,
+         taxon_id, family_id, family = name)
+
+write_csv(erin_dat_updated, "output/erin_annotations_with_updated_model_predictions_07-08-2024.csv")
