@@ -2,6 +2,7 @@ library(tidyverse)
 library(tidymodels)
 library(probably)
 library(ggforce)
+library(patchwork)
 
 test_dat <- read_rds("output/epoch_4_testing_data.rds")
 
@@ -281,8 +282,8 @@ max_spec_fl <- threshold_flower_spec |>
   slice_head(n = 1)
 
 threshold_flower_spec <- threshold_flower_spec |>
-  mutate(sens_dist = sens - max_j$sens[1],
-         spec_dist = spec - max_j$spec[1],
+  mutate(sens_dist = sens - max_j_fl$sens[1],
+         spec_dist = spec - max_j_fl$spec[1],
          dist_dist = (sens_dist + spec_dist))
 
 max_dist <- threshold_flower_spec |>
@@ -301,7 +302,11 @@ threshold_fruit_spec_85 <- thresholds_fruit |>
   filter(sens > 0.85) |>
   arrange(desc(spec))
 
-max_j_fr <- threshold_fruit_spec_85 |>
+threshold_fruit_spec_none <- thresholds_fruit |>
+  pivot_wider(names_from = .metric, values_from = .estimate) |>
+  arrange(desc(spec))
+
+max_j_fr <- threshold_fruit_spec_none |>
   slice_max(j_index, n = 1)
 
 max_spec_fr <- threshold_fruit_spec |>
@@ -318,8 +323,8 @@ max_j_80_fr <- threshold_fruit_spec_85 |>
 thresholds_flower <- thresholds_flower |>
   mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
                            .metric == "spec" ~ "True Negative Rate (specificity)",
-                           .metric == "precision" ~ "Positive Prediction Correctness (precision)",
-                           .metric == "npv" ~ "Negative Prediction Correctness",
+                           .metric == "precision" ~ "Positive Predictive Value (precision)",
+                           .metric == "npv" ~ "Negative Predictive Value",
                            .metric == "accuracy" ~ "Accuracy",
                            .metric == "j_index" ~ "True Skill Statistic (TSS)",
                            .metric == "ppv+npv" ~ "PPV + NPV"))
@@ -327,8 +332,8 @@ thresholds_flower <- thresholds_flower |>
 thresholds_fruit <- thresholds_fruit |>
   mutate(label = case_when(.metric == "sens" ~ "True Positive Rate (sensitivity)",
                            .metric == "spec" ~ "True Negative Rate (specificity)",
-                           .metric == "precision" ~ "Positive Prediction Correctness (precision)",
-                           .metric == "npv" ~ "Negative Prediction Correctness",
+                           .metric == "precision" ~ "Positive Predictive Value (precision)",
+                           .metric == "npv" ~ "Negative Predictive Value",
                            .metric == "accuracy" ~ "Accuracy",
                            .metric == "j_index" ~ "True Skill Statistic (TSS)",
                            .metric == "ppv+npv" ~ "PPV + NPV"))
@@ -352,6 +357,80 @@ ggplot(thresholds_flower |>
   theme_bw() +
   theme(legend.position = "bottom",
         legend.direction = "vertical")
+
+###### Pub version ############
+
+flower_pic <- svgparser::read_svg("data/icons/noun-flowers-6819381.svg")
+
+pal <- c("Negative Predictive Value" = "#008080",
+         "True Positive Rate (sensitivity)" = "#DAA520",
+         "Positive Predictive Value (precision)" = "#FF7F50",
+         "True Negative Rate (specificity)" = "#4682B4")
+
+threshold_ppv_90 <- thresholds_fruit |>
+  filter(.metric == "precision") |>
+  filter(.estimate >= 0.9)
+
+
+p1 <- ggplot(thresholds_flower |>
+         filter(!is.na(label)) |>
+         filter(.metric %in% c("sens", "spec", "precision", "npv")),
+       aes(.threshold, .estimate)) +
+  geom_path(aes(colour = label), linewidth = 1.5, alpha = 0.85) +
+  geom_vline(xintercept = max_j_fl$.threshold[1],
+             linetype = 1) +
+  geom_vline(xintercept = max_spec_fl$.threshold[1],
+             linetype = 2) +
+  geom_vline(xintercept = max_j_90_fl$.threshold[1],
+             linetype = 3) +
+  annotation_custom(flower_pic, xmin = 0, xmax = 0.1,
+                    ymin = 0, ymax = 0.1) +
+  facet_zoom(x = .threshold > 0.63,
+             y = .estimate > 0.75,
+             zoom.size = 1, horizontal = FALSE) +
+  xlab("Threshold Value") +
+  ylab("Metric Estimate") +
+  scale_color_manual(name = "Metric", values = pal) +
+  #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
+  theme_light() +
+  theme(legend.position = c(0.36, 0.70),
+        legend.direction = "vertical",
+        legend.box.background = element_rect(colour = "black",
+                                             linewidth = 1.25),
+        legend.text = element_text(size = 6),
+        legend.title = element_text(size = 8))
+
+p1
+
+p2 <- ggplot(thresholds_fruit |>
+         filter(!is.na(label)) |>
+         filter(.metric %in% c("sens", "spec", "precision", "npv")),
+       aes(.threshold, .estimate)) +
+  geom_path(aes(colour = label), linewidth = 1.5, alpha = 0.85) +
+  geom_vline(xintercept = max_j_fr$.threshold[1],
+             linetype = 2) +
+  geom_vline(xintercept = max_spec_fr$.threshold[1],
+             linetype = 1) +
+  geom_vline(xintercept = threshold_ppv_90$.threshold[1],
+             linetype = 3) +
+  facet_zoom(x = .threshold < 0.65,
+             y = .estimate > 0.55,
+             zoom.size = 1, horizontal = FALSE) +
+  xlab("Threshold Value") +
+  ylab("") +
+  scale_color_manual(name = "Metric", values = pal) +
+  #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
+  theme_light() +
+  theme(legend.position = 'none')
+
+
+ragg::agg_png("output/Metrics_plot.png", width = 2560, height = 1600,
+              scaling = 4)
+
+plot(p1 + p2)
+
+dev.off()
+
 
 ## choice dotted line 0.84: max_j_90_fl$.threshold[1]
 
