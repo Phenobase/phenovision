@@ -1,0 +1,18 @@
+## library() calls go here
+library(conflicted)
+library(dotenv)
+library(targets)
+library(tarchetypes)
+
+library(reticulate)
+library(tidyverse)
+library(tidymodels)
+library(probably)
+library(phyf)
+library(arrow)
+library(fs)
+library(rdatacite)
+library(data.table)
+library(uuid)
+library(cli)
+library(santoku)

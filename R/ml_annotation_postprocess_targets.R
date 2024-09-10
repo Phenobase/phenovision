@@ -3,6 +3,7 @@ require(tidymodels)
 require(probably)
 require(arrow)
 require(uuid)
+require(cli)
 
 threshold_model_output <- function(results, flower_thresholds = c(0.28, 0.84, 0.85), 
                                    fruit_thresholds = c(0.23, 0.53, 0.75)) { 
@@ -32,9 +33,12 @@ threshold_model_output <- function(results, flower_thresholds = c(0.28, 0.84, 0.
 
 convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stats, filter_detected = TRUE, filter_low_certainty = TRUE, sample = NULL, datasource = "iNaturalist") {
 
+    cli_alert_info("Preparing model output: ")
+    cli_progress_step("Adding observation metadata..")
     sample_dataset <- dat |>
         distinct(file_name, .keep_all = TRUE) |>
-        mutate(photo_id = fs::path_ext_remove(file_name))
+        mutate(photo_id = fs::path_ext_remove(file_name),
+               extension = fs::path_ext(file_name))
 
     sample_dataset <- sample_dataset |>
         left_join(meta_images |>
@@ -48,11 +52,14 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
                observed_image_url = paste0("https://www.inaturalist.org/photos/", photo_id))
 
     sample_dataset <- sample_dataset |>
-        left_join(metadat_obs |>
+        left_join(meta_obs |>
                     select(observation_uuid, latitude, longitude, positional_accuracy, taxon_id, quality_grade, observed_on) |>
                     filter(observation_uuid %in% sample_dataset$observation_uuid),
                     by = "observation_uuid",
-                    copy = TRUE)
+                    copy = TRUE) |>
+        mutate(observed_image_guid = file.path("https://inaturalist-open-data.s3.amazonaws.com/photos", photo_id, paste0("small.", extension)))
+
+    cli_progress_step("Adding taxa metadata..")
 
     sample_dataset <- sample_dataset |>
         left_join(meta_taxa |>
@@ -87,6 +94,7 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
         left_join(fams |> select(file_name, family)) |>
         left_join(gens |> select(file_name, genus))
 
+    cli_progress_step("Adding family-level statistics..")
     ### add family level stats
     sample_dataset <- sample_dataset |>
         left_join(fam_stats |>
@@ -97,6 +105,8 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
                             .accuracyfamily_fruit = .accuracy_family_fruit,
                             .accuracyfamilyinclequiv_flower = .accuracy_family_flower_incl_equiv,
                             .accuracyfamilyinclequiv_fruit = .accuracy_family_fruit_incl_equiv))
+
+    cli_progress_step("Reformating to ingestion-style format..")
 
     sample_dataset2 <- sample_dataset |>
         select(-.logit_flower, -.logit_fruit) |>
@@ -112,10 +122,12 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
 
     ## filter out low certainty and 'not detected' records
     if(filter_detected) {
+        cli_progress_step("Filtering out 'Not Detected' results..")
         sample_dataset2 <- sample_dataset2 |>
             filter(as.character(.class) == "Detected")
     }
     if(filter_low_certainty) {
+        cli_progress_step("Filtering out low certainty results..")
         sample_dataset2 <- sample_dataset2 |>
             filter(.equivocal == "Unequivocal")
     }
@@ -123,6 +135,7 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
 
     ## sample again if necessary
     if(!is.null(sample)) {
+        cli_progress_step("Sampling results..")
         sample_dataset2 <- sample_dataset2 |>
             slice_sample(n = sample)
     }
@@ -150,7 +163,7 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
                 taxon_rank = rank,
                 basis_of_record,
                 trait = .trait,
-                observed_image_guid = photo_id,
+                observed_image_guid,
                 observed_image_url,
                 observed_metadata_url = inat_URL,
                 certainty,
