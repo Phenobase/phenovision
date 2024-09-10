@@ -46,7 +46,8 @@ inf_dat_samp <- inf_dat |>
 
 sample_dataset <- inf_dat_samp |>
   distinct(file_name, .keep_all = TRUE) |>
-  mutate(photo_id = fs::path_ext_remove(file_name))
+  mutate(photo_id = fs::path_ext_remove(file_name),
+  extension = fs::path_ext(file_name))
 
 sample_dataset <- sample_dataset |>
   left_join(angio_meta |>

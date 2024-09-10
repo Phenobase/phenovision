@@ -86,13 +86,20 @@ inf_dat <- eval$infer_hfhub(inf_dl, phenovision, "cuda:0")
 ## (2056*2009) / (6085/60) = 40,728 images per minute
 
 inf_logits <- torch$cat(inf_dat[[1]])
+inf_indexes <- torch$cat(inf_dat[[2]])$cpu()$numpy()
 inf_preds <- torch$nn$functional$sigmoid(inf_logits)
 
+corrupt <- inf_fruit_flower[ , 1] != inf_indexes[ , 1]
+sum(corrupt)
+#corrupt_images <- basename(inf_images)[corrupt]
+
 inf_res <- tibble(file_name = basename(inf_images)) |>
-  bind_cols(as.data.frame(inf_preds$cpu()$numpy()) |>
+    bind_cols(as.data.frame(inf_preds$cpu()$numpy()) |>
               rename(.pred_fruit = V1, .pred_flower = V2)) |>
-  bind_cols(as.data.frame(inf_logits$cpu()$numpy()) |>
-              rename(.logit_fruit = V1, .logit_flower = V2))
+    bind_cols(as.data.frame(inf_logits$cpu()$numpy()) |>
+              rename(.logit_fruit = V1, .logit_flower = V2)) |>
+    mutate(corrupt = corrupt,
+           model_version = current_model)
 
 vers_path <- file.path("output", vers)
 if(!dir.exists(vers_path)) {
