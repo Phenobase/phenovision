@@ -377,28 +377,31 @@ p1 <- ggplot(thresholds_flower |>
          filter(.metric %in% c("sens", "spec", "precision", "npv")),
        aes(.threshold, .estimate)) +
   geom_path(aes(colour = label), linewidth = 1.5, alpha = 0.85) +
-  geom_vline(xintercept = max_j_fl$.threshold[1],
-             linetype = 1) +
-  geom_vline(xintercept = max_spec_fl$.threshold[1],
-             linetype = 2) +
+  # geom_vline(xintercept = max_j_fl$.threshold[1],
+  #            linetype = 1) +
+  # geom_vline(xintercept = max_spec_fl$.threshold[1],
+  #            linetype = 2) +
   geom_vline(xintercept = max_j_90_fl$.threshold[1],
              linetype = 3) +
-  annotation_custom(flower_pic, xmin = 0, xmax = 0.1,
-                    ymin = 0, ymax = 0.1) +
+  # annotation_custom(flower_pic, xmin = 0, xmax = 0.1,
+  #                   ymin = 0, ymax = 0.1) +
   facet_zoom(x = .threshold > 0.63,
              y = .estimate > 0.75,
              zoom.size = 1, horizontal = FALSE) +
   xlab("Threshold Value") +
   ylab("Metric Estimate") +
+  scale_color_discrete(name = element_blank()) +
   scale_color_manual(name = "Metric", values = pal) +
   #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
   theme_light() +
-  theme(legend.position = c(0.36, 0.70),
+  theme(legend.position = c(0.43, 0.72),
         legend.direction = "vertical",
         legend.box.background = element_rect(colour = "black",
                                              linewidth = 1.25),
-        legend.text = element_text(size = 6),
-        legend.title = element_text(size = 8))
+        legend.text = element_text(size = 8),
+        legend.title = element_blank(),
+        plot.title = element_text(colour = "#8A6B9E")) +
+  ggtitle("Flowers")
 
 p1
 
@@ -407,10 +410,10 @@ p2 <- ggplot(thresholds_fruit |>
          filter(.metric %in% c("sens", "spec", "precision", "npv")),
        aes(.threshold, .estimate)) +
   geom_path(aes(colour = label), linewidth = 1.5, alpha = 0.85) +
-  geom_vline(xintercept = max_j_fr$.threshold[1],
-             linetype = 2) +
-  geom_vline(xintercept = max_spec_fr$.threshold[1],
-             linetype = 1) +
+  # geom_vline(xintercept = max_j_fr$.threshold[1],
+  #            linetype = 2) +
+  # geom_vline(xintercept = max_spec_fr$.threshold[1],
+  #            linetype = 1) +
   geom_vline(xintercept = threshold_ppv_90$.threshold[1],
              linetype = 3) +
   facet_zoom(x = .threshold < 0.65,
@@ -421,13 +424,17 @@ p2 <- ggplot(thresholds_fruit |>
   scale_color_manual(name = "Metric", values = pal) +
   #geom_vline(xintercept = threshold_flower_spec$.threshold[1]) +
   theme_light() +
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        plot.title = element_text(colour = "#CD5C5C")) +
+  ggtitle("Fruits")
+
+p2
 
 
 ragg::agg_png("output/Metrics_plot.png", width = 2560, height = 1600,
               scaling = 4)
 
-plot(p1 + p2)
+plot(p1 + p2 + plot_annotation(tag_levels = "a", tag_suffix = ")"))
 
 dev.off()
 
