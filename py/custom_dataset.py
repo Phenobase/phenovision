@@ -12,7 +12,7 @@ import numpy as np
 _logger = logging.getLogger(__name__)
 
 
-_ERROR_RETRY = 50
+_ERROR_RETRY = 1000
 
 
 class PhenoDataset(data.Dataset):
