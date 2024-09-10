@@ -134,10 +134,10 @@ erin_fr <- erin_dat |>
   filter(type == "fr") |>
   mutate(.truth = factor(detected_erin, levels = c("1", "0")),
          .class_eq = make_two_class_pred(pred, levels(.truth),
-                                            threshold = 0.84,
-                                            buffer = c(0.56, 0.025)),
+                                            threshold = 0.53,
+                                            buffer = c(0.3, 0.22)),
          .class = make_two_class_pred(pred, levels(.truth),
-                                         threshold = 0.84),
+                                         threshold = 0.53),
          .equivocal = is.na(as.character(.class_eq)))
 
 fr_accs <- erin_fr |>
