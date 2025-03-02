@@ -23,6 +23,7 @@ class PhenoDatasetDeleter(data.Dataset):
             input_img_mode='RGB',
             transform=None,
             target_transform=None,
+            debug=False,
     ):
         
         self.target = target
@@ -32,10 +33,13 @@ class PhenoDatasetDeleter(data.Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self._consecutive_errors = 0
+        self.debug = debug
 
     def __getitem__(self, index):
       
         img = self.img[index]
+        if self.debug: 
+            print(img)
         bad = 0
         
         try:

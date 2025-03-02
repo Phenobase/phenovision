@@ -118,9 +118,9 @@ erin_fl <- erin_dat |>
          .equivocal = is.na(as.character(.class_eq)))
 
 fl_accs <- erin_fl |>
-  group_by(.class_fl, .equivocal_fl, detected_erin) |>
+  group_by(.class, .equivocal, detected_erin) |>
   summarise(count = n()) |>
-  group_by(.class_fl, .equivocal_fl) |>
+  group_by(.class, .equivocal) |>
   mutate(prop = count / sum(count))
 
 fl_accs_orig <- erin_fl |>
@@ -141,9 +141,9 @@ erin_fr <- erin_dat |>
          .equivocal = is.na(as.character(.class_eq)))
 
 fr_accs <- erin_fr |>
-  group_by(.class_fr, .equivocal_fr, detected_erin) |>
+  group_by(.class, .equivocal, detected_erin) |>
   summarise(count = n()) |>
-  group_by(.class_fr, .equivocal_fr) |>
+  group_by(.class, .equivocal) |>
   mutate(prop = count / sum(count))
 
 fr_accs_orig <- erin_fr |>
@@ -162,4 +162,4 @@ erin_dat_updated <- bind_rows(
          time, type, pred,
          taxon_id, family_id, family = name)
 
-write_csv(erin_dat_updated, "output/erin_annotations_with_updated_model_predictions_07-08-2024.csv")
+write_csv(erin_dat_updated, "output/erin_annotations_with_updated_model_predictions_09-10-2024.csv")

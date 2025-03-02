@@ -9,21 +9,73 @@ test_dat <- read_rds("output/epoch_4_testing_data.rds")
 val_dat <- test_dat |> filter(partition == "validation")
 test_dat <- test_dat |> filter(partition == "testing")
 
+test_dat <- test_dat |>
+  mutate(new_pred_fl = make_two_class_pred(.pred_flower, 0.84,
+                                        levels = c("1", "0"),
+                                        buffer = c(0.56, 0.01)),
+         new_pred_fl_noeq = make_two_class_pred(.pred_flower, 0.84,
+                                             levels = c("1", "0"))) |>
+  mutate(new_pred_fr = make_two_class_pred(.pred_fruit, 0.53,
+                                        levels = c("1", "0"),
+                                        buffer = c(0.3, 0.22)),
+         new_pred_fr_noeq = make_two_class_pred(.pred_fruit, 0.53,
+                                             levels = c("1", "0"))) |>
+  mutate(.equivocal_flower = ifelse(is_equivocal(new_pred_fl), "Equivocal", "Unequivocal"),
+         .equivocal_fruit = ifelse(is_equivocal(new_pred_fr), "Equivocal", "Unequivocal"))
+
 acc_fl <- accuracy(test_dat |>
-                     group_by(partition),
-                   flower, .pred_fl_max)
+                     group_by(.equivocal_flower, new_pred_fl_noeq),
+                   flower, new_pred_fl_noeq) |>
+  bind_rows(accuracy(test_dat, flower, new_pred_fl_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_flower, new_pred_fl_noeq) |> summarise(count = n())) |>
+  mutate(.equivocal_flower = ifelse(is.na(.equivocal_flower), "Total", .equivocal_flower),
+         prop = count / sum(count, na.rm = TRUE),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count))
 
 acc_fr <- accuracy(test_dat |>
-                     group_by(partition),
-                   fruit, .pred_fr_max)
+                     group_by(.equivocal_fruit, new_pred_fr_noeq),
+                   fruit, new_pred_fr_noeq) |>
+  bind_rows(accuracy(test_dat, fruit, new_pred_fr_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_fruit, new_pred_fr_noeq) |> summarise(count = n())) |>
+  mutate(.equivocal_fruit = ifelse(is.na(.equivocal_fruit), "Total", .equivocal_fruit),
+         prop = count / sum(count, na.rm = TRUE),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count))
 
 jind_fl <- j_index(test_dat |>
-                     group_by(partition),
-                   flower, .pred_fl_max)
+                     group_by(.equivocal_flower),
+                   flower, new_pred_fl_noeq) |>
+  bind_rows(j_index(test_dat, flower, new_pred_fl_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_flower) |> summarise(count = n())) |>
+  mutate(.equivocal_flower = ifelse(is.na(.equivocal_flower), "Total", .equivocal_flower),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count),
+         prop = count / count[3])
 
 jind_fr <- j_index(test_dat |>
-                     group_by(partition),
-                   fruit, .pred_fr_max)
+                     group_by(.equivocal_fruit),
+                   fruit, new_pred_fr_noeq) |>
+  bind_rows(j_index(test_dat, fruit, new_pred_fr_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_fruit) |> summarise(count = n())) |>
+  mutate(.equivocal_fruit = ifelse(is.na(.equivocal_fruit), "Total", .equivocal_fruit),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count),
+         prop = count / count[3])
+
+f1_fl <- f_meas(test_dat |>
+                  group_by(.equivocal_flower),
+                flower, new_pred_fl_noeq) |>
+  bind_rows(f_meas(test_dat, flower, new_pred_fl_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_flower) |> summarise(count = n())) |>
+  mutate(.equivocal_flower = ifelse(is.na(.equivocal_flower), "Total", .equivocal_flower),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count),
+         prop = count / count[3])
+
+f1_fr <- f_meas(test_dat |>
+                  group_by(.equivocal_fruit),
+                fruit, new_pred_fr_noeq) |>
+  bind_rows(f_meas(test_dat, fruit, new_pred_fr_noeq)) |>
+  left_join(test_dat |> group_by(.equivocal_fruit) |> summarise(count = n())) |>
+  mutate(.equivocal_fruit = ifelse(is.na(.equivocal_fruit), "Total", .equivocal_fruit),
+         count = ifelse(is.na(count), sum(count, na.rm = TRUE), count),
+         prop = count / count[3])
 
 
 genus_summ <- test_dat |>
