@@ -196,7 +196,7 @@ vit_self_attention <- nn_module("ViTSelfAttention",
                                        return(x$permute(c(1, 3, 2, 4)))
                                      },
                                      forward = function(hidden_states, head_mask = NULL, output_attentions = FALSE) {
-                                       browser()
+                                       #browser()
                                        mixed_query_layer <- self$query(hidden_states)
                                        key_layer <- self$transpose_for_scores(self$key(hidden_states))
                                        value_layer <- self$transpose_for_scores(self$value(hidden_states))
@@ -234,6 +234,7 @@ vit_self_attention <- nn_module("ViTSelfAttention",
 
                                      })
 
+
 vit_sdpa_self_attention <- nn_module("ViTSdpaSelfAttention",
                                      inherit = vit_self_attention,
                                      initialize = function(config) {
@@ -243,10 +244,10 @@ vit_sdpa_self_attention <- nn_module("ViTSdpaSelfAttention",
                                      forward = function(hidden_states, head_mask = NULL, output_attentions = FALSE) {
                                        #browser()
                                        if(output_attentions | !is.null(head_mask)) {
-                                         rlang::warn("`ViTSdpaAttention` is used but `torch.nn.functional.scaled_dot_product_attention` does not support ",
+                                         rlang::warn(c("`ViTSdpaAttention` is used but `torch.nn.functional.scaled_dot_product_attention` does not support ",
                                                      "`output_attentions=True` or `head_mask`. Falling back to the manual attention implementation, but ",
                                                      "specifying the manual implementation will be required from Transformers version v5.0.0 onwards. ",
-                                                     'This warning can be removed using the argument `attn_implementation="eager"` when loading the model.')
+                                                     'This warning can be removed using the argument `attn_implementation="eager"` when loading the model.'))
                                          return(super$forward(hidden_states = hidden_states, head_mask = head_mask, output_attentions = output_attentions))
                                        }
 
@@ -382,7 +383,7 @@ vit_attention <- nn_module("ViTAttention",
                              self_outputs <- self$attention(hidden_states, head_mask, output_attentions)
                              attention_output <- self$output(self_outputs[[1]], hidden_states)
 
-                             outputs <- c(list(attention_output), self_outputs[-1]) # add attentions if we output them
+                             outputs <- c(list(attention_output), self_outputs[2]) # add attentions if we output them
                              return(outputs)
 
                            })
@@ -440,7 +441,7 @@ vit_layer <- nn_module("ViTLayer",
                          self$chunk_size_feed_forward <- config$chunk_size_feed_forward
                          self$seq_len_dim <- 1
                          if(hasName(config, "_attn_implementation")) {
-                          self$attention <- VIT_ATTENTION_CLASSES[config$`_attn_implementation`](config)
+                          self$attention <- VIT_ATTENTION_CLASSES[[config$`_attn_implementation`]](config)
                          } else {
                            self$attention <- vit_sdpa_attention(config)
                          }
@@ -456,7 +457,7 @@ vit_layer <- nn_module("ViTLayer",
                            output_attentions = output_attentions
                          )
                          attention_output <- self_attention_outputs[[1]]
-                         outputs <- self_attention_outputs[-1]  # add self attentions if we output attention weights
+                         outputs <- self_attention_outputs[[2]]  # add self attentions if we output attention weights
 
                          # first residual connection
                          hidden_states = attention_output + hidden_states
@@ -485,9 +486,10 @@ vit_encoder <- nn_module("ViTEncoder",
                          },
                          forward = function(hidden_states, head_mask = NULL, output_attentions = FALSE,
                                             output_hidden_states = FALSE) {
+                           #browser()
                            all_hidden_states <- if(output_hidden_states) list() else NULL
                            all_self_attentions <- if(output_attentions) list() else NULL
-                           for(i in length(self$layer)) {
+                           for(i in 1:length(self$layer)) {
                              if(output_hidden_states) {
                                all_hidden_states <- c(all_hidden_states, list(hidden_states))
                              }
@@ -515,7 +517,7 @@ vit_encoder <- nn_module("ViTEncoder",
                              all_hidden_states <- c(all_hidden_states, list(hidden_states))
                            }
 
-                           return(c(list(hidden_states), all_hidden_states, all_self_attentions))
+                           return(list(hidden_states, all_hidden_states, all_self_attentions))
 
 
                          })
@@ -525,6 +527,7 @@ vit_pretrained_model <- nn_module("ViTPretrainedModel",
                                 self$config <- config
                               },
                               .init_weights = function(module) {
+                                if(is.null(self$config$initializer_range)) {
                                 with_no_grad({
                                 if(inherits(module, c("nn_linear", "nn_conv2d"))) {
                                   module$weight <- nn_init_trunc_normal_(module$weight$to(torch_float32()),
@@ -551,6 +554,7 @@ vit_pretrained_model <- nn_module("ViTPretrainedModel",
                                   )$to(module$cls_token$dtype)
                                 }
                                 })
+                                }
 
                               },
                               #' @description
@@ -677,108 +681,60 @@ vit_model <- nn_module("ViTModel",
 
 vit_for_image_classification <- nn_module("ViTForImageClassification",
                                           inherit = vit_pretrained_model,
-                                          initialize = function() {
-
+                                          initialize = function(config) {
+                                            super$initialize(config)
+                                            self$num_labels <- config$num_labels
+                                            self$vit <- vit_model(config, add_pooling_layer = FALSE)
+                                            if(config$num_labels > 0) {
+                                              self$classifier <- nn_linear(config$hidden_size, config$num_labels)
+                                            } else {
+                                              self$classifier <- nn_identity()
+                                            }
+                                            self$init_weights()
                                           },
-                                          forward = function() {
+                                          forward = function(pixel_values,
+                                                             head_mask = NULL,
+                                                             labels = NULL,
+                                                             output_attentions = FALSE,
+                                                             output_hidden_states = FALSE,
+                                                             interpolate_pos_encoding = FALSE) {
+
+                                            outputs <- self$vit(
+                                              pixel_values,
+                                              head_mask = head_mask,
+                                              output_attentions = output_attentions,
+                                              output_hidden_states = output_hidden_states,
+                                              interpolate_pos_encoding = interpolate_pos_encoding
+                                            )
+
+                                            sequence_output <- outputs[[1]]
+                                            logits <- self$classifier(sequence_output[ , 1, ])
+
+                                            if(!is.null(labels)) {
+                                              rlang::abort("Loss calculation not implemented")
+                                            }
+
+                                            output <- list(logits, outputs[-1])
+                                            return(output)
 
                                           })
 
-
-class ViTForImageClassification(ViTPreTrainedModel):
-  def __init__(self, config: ViTConfig) -> None:
-  super().__init__(config)
-
-self.num_labels = config.num_labels
-self.vit = ViTModel(config, add_pooling_layer=False)
-
-# Classifier head
-self.classifier = nn.Linear(config.hidden_size, config.num_labels) if config.num_labels > 0 else nn.Identity()
-
-# Initialize weights and apply final processing
-self.post_init()
-
-@add_start_docstrings_to_model_forward(VIT_INPUTS_DOCSTRING)
-@add_code_sample_docstrings(
-  checkpoint=_IMAGE_CLASS_CHECKPOINT,
-  output_type=ImageClassifierOutput,
-  config_class=_CONFIG_FOR_DOC,
-  expected_output=_IMAGE_CLASS_EXPECTED_OUTPUT,
-)
-def forward(
-  self,
-  pixel_values: Optional[torch.Tensor] = None,
-  head_mask: Optional[torch.Tensor] = None,
-  labels: Optional[torch.Tensor] = None,
-  output_attentions: Optional[bool] = None,
-  output_hidden_states: Optional[bool] = None,
-  interpolate_pos_encoding: Optional[bool] = None,
-  return_dict: Optional[bool] = None,
-) -> Union[tuple, ImageClassifierOutput]:
-  r"""
-        labels (`torch.LongTensor` of shape `(batch_size,)`, *optional*):
-            Labels for computing the image classification/regression loss. Indices should be in `[0, ...,
-            config.num_labels - 1]`. If `config.num_labels == 1` a regression loss is computed (Mean-Square loss), If
-            `config.num_labels > 1` a classification loss is computed (Cross-Entropy).
-        """
-return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-
-outputs = self.vit(
-  pixel_values,
-  head_mask=head_mask,
-  output_attentions=output_attentions,
-  output_hidden_states=output_hidden_states,
-  interpolate_pos_encoding=interpolate_pos_encoding,
-  return_dict=return_dict,
-)
-
-sequence_output = outputs[0]
-
-logits = self.classifier(sequence_output[:, 0, :])
-
-loss = None
-if labels is not None:
-  # move labels to correct device to enable model parallelism
-  labels = labels.to(logits.device)
-if self.config.problem_type is None:
-  if self.num_labels == 1:
-  self.config.problem_type = "regression"
-elif self.num_labels > 1 and (labels.dtype == torch.long or labels.dtype == torch.int):
-  self.config.problem_type = "single_label_classification"
-else:
-  self.config.problem_type = "multi_label_classification"
-
-if self.config.problem_type == "regression":
-  loss_fct = MSELoss()
-if self.num_labels == 1:
-  loss = loss_fct(logits.squeeze(), labels.squeeze())
-else:
-  loss = loss_fct(logits, labels)
-elif self.config.problem_type == "single_label_classification":
-  loss_fct = CrossEntropyLoss()
-loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-elif self.config.problem_type == "multi_label_classification":
-  loss_fct = BCEWithLogitsLoss()
-loss = loss_fct(logits, labels)
-
-if not return_dict:
-  output = (logits,) + outputs[1:]
-return ((loss,) + output) if loss is not None else output
-
-return ImageClassifierOutput(
-  loss=loss,
-  logits=logits,
-  hidden_states=outputs.hidden_states,
-  attentions=outputs.attentions,
-)
-
-
-vit_mod2 <- vit_model(vit_mod$config)
+config <- vit_mod$config
+config$num_labels <- 2L
+config$`_attn_implementation` <- "eager"
+vit_mod2 <- vit_for_image_classification(config)
 
 im <- test_images_load$.iter()$.next()
-tt <- vit_mod2(im[[1]])
+tt <- vit_mod2(im[[1]], output_attentions = TRUE, output_hidden_states = TRUE)
 
 
 
 phenovision <- hfhub::hub_download("phenobase/phenovision", "model.safetensors")
-mod <- torch_load(phenovision)
+mod <- safetensors::safe_load_file(phenovision)
+
+setdiff(names(mod), names(vit_mod2$parameters))
+
+vit_mod2$load_state_dict(mod[names(vit_mod2$parameters)])
+
+torch_save(vit_mod2, "output/model_04_13_2024/R/vit_finetuned_epoch4_model.to")
+

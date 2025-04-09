@@ -75,6 +75,9 @@ tar_plan(
 
   tar_target(images_train, read_csv(file_train)),
 
-  tar_target(anno_train, annotate_batch(images_batch_split$path, model_doi = model_doi))
+  tar_target(anno_train, annotate_batch(images_batch_split$path, model_doi = model_doi)),
+
+  ####### leaf model #############
+  tar_target(leaf_inference_meta, read_csv("data/leaves/inference_metadata_03-06-2025.csv"))
 
 )

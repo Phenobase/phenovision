@@ -30,8 +30,9 @@
 #SBATCH --time=36:00:00
 
 ## activate conda
-source /home/${USER}/.bashrc
-source activate rstudio-gpu
+module load conda
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate reticulate-gpu
 
 # Save some useful information to the "output" file
 date;hostname;pwd
