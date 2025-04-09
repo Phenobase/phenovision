@@ -1,7 +1,6 @@
 library(tidyverse)
 library(tidymodels)
 library(arrow)
-library(phyf)
 library(jsonlite)
 library(data.table)
 
@@ -18,7 +17,11 @@ rob_annot <- read_csv("data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_b
 rob_annot <- rob_annot |>
   mutate(genus = word(taxon.name))
 
-keep_genera <- unique(rob_annot$genus)
+rob_annot2 <- read_csv("data/leaves/rob_new_annotations_bb.csv")
+
+keep_genera <- c(unique(rob_annot$genus))
+## remove problematic genus Logfia
+keep_genera <- setdiff(keep_genera, "Logfia")
 
 meta <- leaf_annot |>
   mutate(leaves = map(leaf_json, "leaves"),
@@ -44,6 +47,26 @@ meta <- meta |>
 
 meta <- meta |>
   drop_na(batch_j)
+
+any(meta |>
+      group_by(observation_uuid) |>
+      mutate(count = n()) |>
+      ungroup() |>
+      filter(count == 1) |>
+      pull(photo_id) %in% rob_annot2$photo_id)
+rob_annot2 <- rob_annot2 |>
+  mutate(leaves_breaking_buds = bb, photo_id = as.character(photo_id)) |>
+  left_join(meta |>
+              group_by(observation_uuid) |>
+              mutate(count = n()) |>
+              ungroup() |>
+              filter(count == 1) |>
+              select(photo_id, leaves_green, leaves_colored, leaves_no_live)) |>
+  mutate(leaves_green = ifelse(is.na(leaves_green), 0, leaves_green),
+         leaves_colored = ifelse(is.na(leaves_colored), 0, leaves_colored),
+         leaves_no_live = ifelse(is.na(leaves_no_live), 0, leaves_no_live)) |>
+  filter(leaves_breaking_buds != "U") |>
+  mutate(leaves_breaking_buds = as.numeric(leaves_breaking_buds))
 
 meta <- meta |>
   mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".", extension)))

@@ -22,6 +22,7 @@ angio_meta <- open_dataset("/blue/guralnick/share/phenobase_inat_data/metadata/a
 taxa_meta <- open_dataset("/blue/guralnick/share/phenobase_inat_data/metadata/taxa/part-0.parquet")
 
 inat_all <- inat_all |>
+  mutate(photo_id = as.character(photo_id)) |>
   left_join(angio_meta |>
               select(photo_id, taxon_id) |>
               filter(photo_id %in% inat_all$photo_id),
@@ -78,13 +79,15 @@ config <- timm$data$resolve_data_config(model = vit2)
 transform <- timm$data$create_transform(!!!config)
 
 batch_size <- 2056L
+batch_size <- 56L
 
 vit <- vit$cuda()
+vit$eval()
 
-inf_ds <- ds$PhenoDataset(inf_img, inf_fruit_flower, transform = transform)
+inf_ds <- ds$PhenoDataset(inf_img[1:56], inf_fruit_flower[1:56, ], transform = transform)
 inf_dl <- timm$data$create_loader(inf_ds, c(3L, 224L, 224L), batch_size, num_workers = 5L)
 
-codes <- eval$get_codes(inf_dl, vit, "cuda:0")
+codes <- eval$get_codes(inf_dl, vit, "cuda:0", intermediates = TRUE)
 
 codes_tens <- torch$cat(codes)
 

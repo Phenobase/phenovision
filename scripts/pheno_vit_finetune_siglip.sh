@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=pheno_vit_mae
+#SBATCH --job-name=pheno_vit_clip
 #SBATCH --mail-user=r.dinnage@gmail.com
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
@@ -30,11 +30,15 @@
 #SBATCH --time=36:00:00
 
 ## activate conda
-source /home/${USER}/.bashrc
-source activate rstudio-gpu
+module load conda
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate reticulate-gpu
+## activate conda
+# source /home/${USER}/.bashrc
+# source activate reticulate-gpu
 
 # Save some useful information to the "output" file
 date;hostname;pwd
 
 # Load R and run a script named my_R_script.R
-Rscript R/vit_model_train_mae.R
+Rscript R/vit_model_train_siglip.R

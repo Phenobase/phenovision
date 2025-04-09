@@ -116,6 +116,12 @@ max_ji_bb <- threshold_data_bb |>
   filter(.metric == "j_index") |>
   slice_max(.estimate, n = 5)
 
+thresholds <- bind_rows(max_ji_gr[1, ] |> mutate(var = "gr"),
+                        max_ji_cl[1, ] |> mutate(var = "cl"),
+                        max_ji_bb[1, ] |> mutate(var = "bb"))
+
+write_csv(thresholds, "output/leaves/phenovision-init_model_02_12_2025/epoch_4_test_thresholds.csv")
+
 val_df <- val_df |>
   mutate(
     .pred_gr_max = make_two_class_pred(
