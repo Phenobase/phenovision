@@ -21,7 +21,7 @@ test_dat <- test_dat |>
          .truth_fruit = factor(ifelse(fruit == "1", "Detected", "Not Detected"), levels = c("Detected", "Not Detected")))
 
 test_dat <- test_dat |>
-  mutate(test = ifelse(split == "train", "test", "train"))
+  mutate(test = ifelse(partition == "training", "train", "test"))
 
 acc_by_fam_fl <- test_dat |>
   group_by(test, family) |>

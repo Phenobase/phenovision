@@ -15,6 +15,7 @@ rob_annot <- rob_annot |>
   mutate(genus = word(taxon.name))
 
 keep_genera <- unique(rob_annot$genus)
+keep_genera <- setdiff(keep_genera, "Logfia")
 
 genus_taxon_ids <- taxa_meta |>
   filter(rank == "genus") |>
@@ -62,5 +63,5 @@ meta_filtered <- meta_filtered |>
 meta_filtered <- meta_filtered |>
   mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".", extension)))
 
-write_csv(meta_filtered, "data/leaves/inference_metadata_03-06-2025.csv")
+write_csv(meta_filtered, "data/leaves/inference_metadata_04-11-2025.csv")
 

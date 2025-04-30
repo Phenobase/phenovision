@@ -5,12 +5,12 @@ library(ggforce)
 library(santoku)
 library(wesanderson)
 
-leaves_test_df <- read_rds("output/leaves/phenovision-init_model_02_12_2025/epoch_4_test_results.rds")
+leaves_test_df <- read_rds("output/leaves/phenovision-init_model2_04_11_2025/epoch_1_test_results.rds")
 
 val_dat <- leaves_test_df |> filter(partition == "validation")
 test_dat <- leaves_test_df |> filter(partition == "testing")
 
-thresholds <- read_csv("output/leaves/phenovision-init_model_02_12_2025/epoch_4_test_thresholds.csv")
+thresholds <- read_csv("output/leaves/phenovision-init_model2_04_11_2025/epoch_1_test_thresholds.csv")
 
 test_dat <- bind_rows(val_dat, test_dat) |>
   mutate(.class_leaves_green = make_two_class_pred(.pred_leaves_green,
@@ -38,8 +38,18 @@ leaves_green_acc <- test_dat |>
               group_by(.cut_leaves_green) |>
               summarise(count = n()))
 
-### lower threshold = 0.16
-leaves_green_buffer <- c(thresholds |> filter(var == "gr") |> pull(.threshold), thresholds |> filter(var == "gr") |> pull(.threshold) - 0.16, 0.001)
+leaves_green_acc <- leaves_green_acc |>
+  mutate(cummean = cummean(.estimate))
+
+ggplot(leaves_green_acc, aes(value, .estimate)) +
+  geom_point() +
+  geom_smooth() +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.05)) +
+  scale_x_continuous(breaks = seq(0, 1, by = 0.05)) +
+  theme_minimal()
+
+### lower threshold = 0.115
+leaves_green_buffer <- c(thresholds |> filter(var == "gr") |> pull(.threshold), thresholds |> filter(var == "gr") |> pull(.threshold) - 0.115, 0.001)
 
 leaves_colored_acc <- test_dat |>
   group_by(.cut_leaves_colored) |>
@@ -48,9 +58,11 @@ leaves_colored_acc <- test_dat |>
   ungroup() |>
   left_join(test_dat |>
               group_by(.cut_leaves_colored) |>
-              summarise(count = n()))
+              summarise(count = n())) |>
+  mutate(cummean = cummean(.estimate),
+         cummean_rev = rev(cummean(rev(.estimate))))
 
-### lower threshold = 0.16
+### upper threshold = 0.995
 leaves_colored_buffer <- c(thresholds |> filter(var == "cl") |> pull(.threshold), 0.001, 0.995 - thresholds |> filter(var == "cl") |> pull(.threshold))
 
 leaves_breaking_buds_acc <- test_dat |>
@@ -60,10 +72,12 @@ leaves_breaking_buds_acc <- test_dat |>
   ungroup() |>
   left_join(test_dat |>
               group_by(.cut_leaves_breaking_buds) |>
-              summarise(count = n()))
+              summarise(count = n())) |>
+  mutate(cummean = cummean(.estimate),
+         cummean_rev = rev(cummean(rev(.estimate))))
 
-### lower threshold = 0.16
-leaves_breaking_buds_buffer <- c(thresholds |> filter(var == "bb") |> pull(.threshold), 0.001, 0.92 - thresholds |> filter(var == "bb") |> pull(.threshold))
+### upper threshold = 0.835
+leaves_breaking_buds_buffer <- c(thresholds |> filter(var == "bb") |> pull(.threshold), 0.001, 0.835 - thresholds |> filter(var == "bb") |> pull(.threshold))
 
 buffers <- list(gr = leaves_green_buffer, cl = leaves_colored_buffer, bb = leaves_breaking_buds_buffer)
-write_rds(buffers, "output/leaves/phenovision-init_model_02_12_2025/epoch_4_threshold_buffers.csv")
+write_rds(buffers, "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv")

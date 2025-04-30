@@ -5,15 +5,15 @@ require(arrow)
 require(uuid)
 require(cli)
 
-threshold_model_output <- function(results, flower_thresholds = c(0.28, 0.84, 0.85), 
-                                   fruit_thresholds = c(0.23, 0.53, 0.75)) { 
+threshold_model_output <- function(results, flower_thresholds = c(0.28, 0.84, 0.85),
+                                   fruit_thresholds = c(0.23, 0.53, 0.75)) {
 
     fruit_range <- c(fruit_thresholds[2] - fruit_thresholds[1],
                     fruit_thresholds[3] - fruit_thresholds[2])
 
     flower_range <- c(flower_thresholds[2] - flower_thresholds[1],
                     flower_thresholds[3] - flower_thresholds[2])
-    
+
     results <- results |>
       mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
                                                  threshold = flower_thresholds[2],
@@ -61,38 +61,7 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
 
     cli_progress_step("Adding taxa metadata..")
 
-    sample_dataset <- sample_dataset |>
-        left_join(meta_taxa |>
-                    select(taxon_id, name, ancestry, rank_level, rank) |>
-                    filter(taxon_id %in% sample_dataset$taxon_id),
-                    by = "taxon_id",
-                    copy = TRUE)
-
-    families <- meta_taxa |>
-        filter(rank == "family") |>
-        collect()
-
-    genera <- meta_taxa |>
-        filter(rank == "genus") |>
-        collect()
-
-    taxonomy <- sample_dataset |>
-        select(file_name, ancestry) |>
-        mutate(taxa_ids = str_split(ancestry, "/")) |>
-        select(-ancestry) |>
-        unnest_longer(taxa_ids, transform = as.integer)
-
-    fams <- taxonomy |>
-        left_join(families |> select(taxon_id, family = name), by = c(taxa_ids = "taxon_id")) |>
-        drop_na()
-
-    gens <- taxonomy |>
-        left_join(genera |> select(taxon_id, genus = name), by = c(taxa_ids = "taxon_id")) |>
-        drop_na()
-
-    sample_dataset <- sample_dataset |>
-        left_join(fams |> select(file_name, family)) |>
-        left_join(gens |> select(file_name, genus))
+    sample_dataset <- add_taxonomy(sample_dataset, taxa_meta)
 
     cli_progress_step("Adding family-level statistics..")
     ### add family level stats
@@ -131,7 +100,7 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
         sample_dataset2 <- sample_dataset2 |>
             filter(.equivocal == "Unequivocal")
     }
-    
+
 
     ## sample again if necessary
     if(!is.null(sample)) {
@@ -175,4 +144,41 @@ convert_to_ingestion <- function(dat, meta_images, meta_obs, meta_taxa, fam_stat
                 accuracy_family = .accuracyfamilyinclequiv)
 
     sample_dataset2
+}
+
+add_taxonomy <- function(sample_dataset, meta_taxa) {
+  sample_dataset <- sample_dataset |>
+    left_join(meta_taxa |>
+                select(taxon_id, name, ancestry, rank_level, rank) |>
+                filter(taxon_id %in% sample_dataset$taxon_id),
+              by = "taxon_id",
+              copy = TRUE)
+
+  families <- meta_taxa |>
+    filter(rank == "family") |>
+    collect()
+
+  genera <- meta_taxa |>
+    filter(rank == "genus") |>
+    collect()
+
+  taxonomy <- sample_dataset |>
+    select(photo_id, ancestry) |>
+    mutate(taxa_ids = str_split(ancestry, "/")) |>
+    select(-ancestry) |>
+    unnest_longer(taxa_ids, transform = as.integer)
+
+  fams <- taxonomy |>
+    left_join(families |> select(taxon_id, family = name), by = c(taxa_ids = "taxon_id")) |>
+    drop_na()
+
+  gens <- taxonomy |>
+    left_join(genera |> select(taxon_id, genus = name), by = c(taxa_ids = "taxon_id")) |>
+    drop_na()
+
+  sample_dataset <- sample_dataset |>
+    left_join(fams |> select(photo_id, family)) |>
+    left_join(gens |> select(photo_id, genus))
+
+  sample_dataset
 }

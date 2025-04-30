@@ -2,7 +2,7 @@ library(reticulate)
 library(tidyverse)
 library(tidymodels)
 library(probably)
-library(phyf)
+#library(phyf)
 
 torch <- import("torch")
 timm <- import("timm")
@@ -16,7 +16,7 @@ eval <- import_from_path("evaluate", "py")
 NativeScaler <- misc$NativeScalerWithGradNormCount
 types <- import("types")
 
-model_folder <- "output/leaves/phenovision-init_model_02_12_2025"
+model_folder <- "output/leaves/phenovision-init_model2_04_11_2025"
 if(!dir.exists(model_folder)) dir.create(model_folder)
 if(!dir.exists(file.path(model_folder, "checkpoints"))) dir.create(file.path(model_folder, "checkpoints"))
 
@@ -150,7 +150,8 @@ criterion <- function(outputs, targets) {
   loss(outputs, targets$type(torch$float32))
 }
 
-log_writer <- torch$utils$tensorboard$SummaryWriter(log_dir = model_folder)
+#log_writer <- torch$utils$tensorboard$SummaryWriter(log_dir = model_folder)
+log_writer <- NULL
 
 clip_grad <- py_none()
 
@@ -261,18 +262,18 @@ for(i in 1:num_epochs) {
       "\nloss: ", val_loss$cpu()$numpy(),
       "\n")
 
-  log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_no', val_acc_no$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_bb', val_acc_bb$.estimate[1], i)
-  log_writer$add_scalar('perf/val_loss', val_loss, i)
+  # log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_no', val_acc_no$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_bb', val_acc_bb$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_loss', val_loss, i)
 
   train_stats <- engine$train_one_epoch(
     vit, criterion, train_dl,
     optimizer, "cuda", i, loss_scaler,
     clip_grad, mixup_fn = py_none(),
     log_writer = log_writer,
-    args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 5L, lr = lr, min_lr = min_lr,
+    args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 2L, lr = lr, min_lr = min_lr,
                                  epochs = num_epochs)
   )
 
@@ -407,9 +408,9 @@ val_ds <- ds$PhenoDataset(val_img, val_leaves, transform = val_transform)
 val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
                                   is_training = FALSE)
 
-model_folder <- "output/leaves/phenovision-init_model_02_12_2025/second"
-if(!dir.exists(model_folder)) dir.create(model_folder)
-if(!dir.exists(file.path(model_folder, "checkpoints"))) dir.create(file.path(model_folder, "checkpoints"))
+#model_folder <- "output/leaves/phenovision-init_model_02_12_2025/second"
+#if(!dir.exists(model_folder)) dir.create(model_folder)
+#if(!dir.exists(file.path(model_folder, "checkpoints"))) dir.create(file.path(model_folder, "checkpoints"))
 
 weight_decay <- 0.05
 layer_decay <- 0.65
@@ -433,7 +434,8 @@ criterion <- function(outputs, targets) {
   loss(outputs, targets$type(torch$float32))
 }
 
-log_writer <- torch$utils$tensorboard$SummaryWriter(log_dir = model_folder)
+#log_writer <- torch$utils$tensorboard$SummaryWriter(log_dir = model_folder)
+log_writer <- NULL
 
 clip_grad <- py_none()
 
@@ -544,22 +546,44 @@ for(i in 1:num_epochs) {
       "\nloss: ", val_loss$cpu()$numpy(),
       "\n")
 
-  log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_no', val_acc_no$.estimate[1], i)
-  log_writer$add_scalar('perf/val_acc_bb', val_acc_bb$.estimate[1], i)
-  log_writer$add_scalar('perf/val_loss', val_loss, i)
+  # log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_no', val_acc_no$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_acc_bb', val_acc_bb$.estimate[1], i)
+  # log_writer$add_scalar('perf/val_loss', val_loss, i)
 
   train_stats <- engine$train_one_epoch(
     vit, criterion, train_dl,
     optimizer, "cuda", i, loss_scaler,
     clip_grad, mixup_fn = py_none(),
     log_writer = log_writer,
-    args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 5L, lr = lr, min_lr = min_lr,
+    args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 2L, lr = lr, min_lr = min_lr,
                                  epochs = num_epochs)
   )
 
-  torch$save(vit, file.path(model_folder, "checkpoints", paste0("vit_finetuned_epoch", i, ".pt")))
+  torch$save(vit, file.path(model_folder, "checkpoints", paste0("vit_finetuned_round2_epoch", i, ".pt")))
 
 }
 
+
+## This is the one!
+# Epoch 1 (round 2)
+# green leaves j-index:  0.9203717
+# colored leaves j-index:  0.8911916
+# no live leaves j-index:  0.9012072
+# breaking leaf buds j-index:  0.9815574
+mean(c(0.9203717, 0.8911916, 0.9012072, 0.9815574))
+# green leaves acc:  0.962261
+# colored leaves acc:  0.9473975
+# no live leaves acc:  0.987844
+# breaking leaf bud acc:  0.9920433
+# Epoch 2 (round 2)
+# green leaves j-index:  0.9124636
+# colored leaves j-index:  0.8481586
+# no live leaves j-index:  0.8892018
+# breaking leaf buds j-index:  0.9646507
+# Epoch 3 (round 2)
+# green leaves j-index:  0.9221385
+# colored leaves j-index:  0.8534621
+# no live leaves j-index:  0.9242712
+# breaking leaf buds j-index:  0.9645432
