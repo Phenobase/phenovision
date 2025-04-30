@@ -1,3 +1,4 @@
-# phenovision
-Code for classifying phenology from plant images using deep learning computer vision models.
-More details will be added later.
+# PhenoVision
+[![DOI](https://zenodo.org/badge/660198130.svg)](https://doi.org/10.5281/zenodo.15182888)
+
+Code for PhenoVision, a model for classifying phenology from plant images using computer vision models.
