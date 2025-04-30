@@ -4,6 +4,8 @@ library(tidymodels)
 library(probably)
 library(unglue)
 library(wesanderson)
+library(colorspace)
+library(directlabels)
 
 mae_log <- read_lines("output/mae_2025_03_09/pheno_vit_mae-60645826.out")
 plantclef_log <- read_lines("output/plantclef_2025_03_09/pheno_vit_plantclef-60645825.out")
@@ -56,15 +58,34 @@ ggplot(jind_df, aes(epoch, `j-index`)) +
   theme_minimal()
 
 pal <- wes_palette("FantasticFox1")[c(3, 5)]
-names(pal) <- c("fruit", "flower")
+pal <- c(pal, "grey40", darken(pal, 0.4), "grey20")
+names(pal) <- c("PlantCLEF (fruit)", "PlantCLEF (flower)", "PlantCLEF (mean)",
+                "Imagenet (fruit)", "Imagenet (flower)", "Imagenet (mean)")
 
-ggplot(jind_df |> filter(type != "jind_mean") |>
-         mutate(`j-index` = ifelse(is.nan(`j-index`), 0.5, `j-index`)),
+ragg::agg_png("figures/pretraining_comparison.png", width = 1024, height = 800, scaling = 3)
+p <- ggplot(jind_df |> #filter(type != "jind_mean") |>
+         mutate(`j-index` = ifelse(is.nan(`j-index`), 0.5, `j-index`)) |>
+         mutate(combo = case_when(model == "Imagenet" & type == "jind_fruit" ~ "Imagenet (fruit)",
+                                  model == "Imagenet" & type == "jind_flower" ~ "Imagenet (flower)",
+                                  model == "Imagenet" & type == "jind_mean" ~ "Imagenet (mean)",
+                                  model == "PlantCLEF" & type == "jind_fruit" ~ "PlantCLEF (fruit)",
+                                  model == "PlantCLEF" & type == "jind_flower" ~ "PlantCLEF (flower)",
+                                  model == "PlantCLEF" & type == "jind_mean" ~ "PlantCLEF (mean)")),
        aes(epoch, `j-index`)) +
-  geom_path(aes(colour = model)) +
-  facet_grid(cols = vars(type)) +
+  geom_path(aes(colour = combo)) +
+  geom_vline(xintercept = 4, colour = "grey40", linetype = 2) +
+  geom_vline(xintercept = 11, colour = "grey20", linetype = 2) +
+  annotate("text", x = 4.5, y = 0.97, label = "PlantCLEF Max TSS", colour = "grey40", hjust = 0) +
+  annotate("text", x = 11.5, y = 0.94, label = "Imagenet Max TSS", colour = "grey20", hjust = 0) +
+  #facet_grid(cols = vars(type)) +
   coord_cartesian(ylim = c(0.70, 1.0)) +
+  scale_colour_manual(values = pal) +
+  scale_x_continuous(expand = expansion(c(0.02, 0.65)), name = "Training Epoch", breaks = c(0, 10, 20, 30, 40, 50)) +
+  ylab("True Skill Statistic (TSS)") +
   theme_minimal()
+plot(direct.label(p, list("last.qp", cex = 0.9,
+                     fontface="bold")))
+dev.off()
 
 model_bests <- jind_df |>
   left_join(acc_df |> mutate(type = str_replace_all(type, "acc_", "jind_"))) |>

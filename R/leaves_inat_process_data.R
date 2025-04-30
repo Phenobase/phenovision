@@ -54,6 +54,7 @@ any(meta |>
       ungroup() |>
       filter(count == 1) |>
       pull(photo_id) %in% rob_annot2$photo_id)
+
 rob_annot2 <- rob_annot2 |>
   mutate(leaves_breaking_buds = bb, photo_id = as.character(photo_id)) |>
   left_join(meta |>
@@ -62,9 +63,9 @@ rob_annot2 <- rob_annot2 |>
               ungroup() |>
               filter(count == 1) |>
               select(photo_id, leaves_green, leaves_colored, leaves_no_live)) |>
-  mutate(leaves_green = ifelse(is.na(leaves_green), 0, leaves_green),
+  mutate(leaves_green = ifelse(is.na(leaves_green), as.numeric(`Green leaves (0/1)`), leaves_green),
          leaves_colored = ifelse(is.na(leaves_colored), 0, leaves_colored),
-         leaves_no_live = ifelse(is.na(leaves_no_live), 0, leaves_no_live)) |>
+         leaves_no_live = ifelse(leaves_green == 0 & leaves_colored == 0 & leaves_breaking_buds == "0", 1, 0)) |>
   filter(leaves_breaking_buds != "U") |>
   mutate(leaves_breaking_buds = as.numeric(leaves_breaking_buds))
 
@@ -95,6 +96,22 @@ rob_annot <- rob_annot |>
          leaves_no_live = as.numeric(map_lgl(leaves, ~ grepl("No live leaves", .x, fixed = TRUE), .progress = TRUE)),
          leaves_breaking_buds = as.numeric(map_lgl(leaves, ~ grepl("Breaking leaf buds", .x, fixed = TRUE), .progress = TRUE)))
 
+rob_annot_final <- rob_annot |>
+  select(observation_uuid, scientificName = taxon.name, genus, family, file_name,
+         leaves_green, leaves_colored, leaves_no_live,
+         leaves_breaking_buds)
+
+# meta2 <- open_dataset("data/phenobase_inat_data/metadata/photos/part-0.parquet")
+# ids <- as.integer(rob_annot2$photo_id)
+# meta2 <- meta2 |>
+#   select(photo_id, observation_uuid) |>
+#   filter(photo_id %in% ids) |>
+#   collect()
+rob_annot_final <- bind_rows(rob_annot_final, rob_annot2 |>
+                           select(observation_uuid, scientificName = name, genus, family, file_name,
+                                  leaves_green, leaves_colored, leaves_no_live,
+                                  leaves_breaking_buds))
+
 all_meta <- meta |>
   select(observation_uuid, scientificName, genus, family, file_name,
          leaves_green, leaves_colored, leaves_no_live, leaves_breaking_buds) |>
@@ -102,10 +119,7 @@ all_meta <- meta |>
                         leaves_no_live, leaves_breaking_buds, sep = "|"))
 
 all_meta <- all_meta |>
-  bind_rows(rob_annot |>
-              select(observation_uuid, scientificName = taxon.name, genus, family, file_name,
-                     leaves_green, leaves_colored, leaves_no_live,
-                     leaves_breaking_buds) |>
+  bind_rows(rob_annot_final |>
               mutate(strata = paste(family, leaves_green, leaves_colored,
                                     leaves_no_live, leaves_breaking_buds, sep = "|")))
 

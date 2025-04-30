@@ -17,7 +17,7 @@ eval <- import_from_path("evaluate", "py")
 NativeScaler <- misc$NativeScalerWithGradNormCount
 types <- import("types")
 
-model_file <- file.path("output/leaves/phenovision-init_model_02_12_2025", "checkpoints", paste0("vit_finetuned_epoch", 4, ".pt"))
+model_file <- file.path("output/leaves/phenovision-init_model2_04_11_2025/", "checkpoints", paste0("vit_finetuned_round2_epoch", 1, ".pt"))
 
 leaves_train <- read_csv("data/leaves/train.csv")
 leaves_val <- read_csv("data/leaves/validation.csv")
@@ -120,7 +120,7 @@ thresholds <- bind_rows(max_ji_gr[1, ] |> mutate(var = "gr"),
                         max_ji_cl[1, ] |> mutate(var = "cl"),
                         max_ji_bb[1, ] |> mutate(var = "bb"))
 
-write_csv(thresholds, "output/leaves/phenovision-init_model_02_12_2025/epoch_4_test_thresholds.csv")
+write_csv(thresholds, "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_test_thresholds.csv")
 
 val_df <- val_df |>
   mutate(
@@ -264,7 +264,7 @@ testing_df <- val_df |>
   bind_rows(test_df |>
               mutate(partition = "testing"))
 
-write_rds(testing_df, "output/leaves/phenovision-init_model_02_12_2025/epoch_4_test_results.rds")
+write_rds(testing_df, "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_test_results.rds")
 
 
 

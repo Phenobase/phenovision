@@ -18,7 +18,7 @@ eval <- import_from_path("evaluate", "py")
 NativeScaler <- misc$NativeScalerWithGradNormCount
 types <- import("types")
 
-model_file <- file.path("output/leaves/phenovision-init_model_02_12_2025", "checkpoints", paste0("vit_finetuned_epoch", 4, ".pt"))
+model_file <- file.path("output/leaves/phenovision-init_model2_04_11_2025/", "checkpoints", paste0("vit_finetuned_round2_epoch", 1, ".pt"))
 
 meta <- read_csv("data/leaves/inference_metadata_03-06-2025.csv")
 
@@ -30,14 +30,16 @@ genus_props <- rob_annot |>
   group_by(genus) |>
   summarise(count = n()) |>
   ungroup() |>
-  mutate(prop = ((count / sum(count)) + 1/150) / 2)
+  mutate(prop = ((count / sum(count)) + 1/150) / 2) |>
+  filter(genus != "Logfia")
 
 ## sample images for validation
 meta <- meta |>
   select(file_name, genus) |>
+  filter(genus != "Logfia") |>
   slice_sample(n = ceiling(1e6/150), by = genus) |>
   left_join(genus_props) |>
-  slice_sample(n = 20000, weight_by = prop)
+  slice_sample(n = 30000, weight_by = prop)
 
 inf_img <- r_to_py(meta$file_name)
 inf_leaves <- tibble(leaves_green = rep(0.5, nrow(meta)),
@@ -72,7 +74,7 @@ noskip <- inf_truth[ , 0] != -999999999
 inf_preds <- as.matrix(inf_preds[noskip, ]$numpy())
 noskip <- as.vector(noskip$numpy())
 
-leaf_buffers <- read_rds("output/leaves/phenovision-init_model_02_12_2025/epoch_4_threshold_buffers.csv")
+leaf_buffers <- read_rds("output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv")
 
 inf_df <- as.data.frame(inf_preds) |>
   rename(.pred_leaves_green = V1, .pred_leaves_colored = V2,
@@ -181,7 +183,7 @@ inf_no_files <- inf_no |>
 inf_files <- bind_rows(inf_gr_files, inf_cl_files, inf_bb_files, inf_no_files)
 
 pwalk(list(inf_files$file_samp, inf_files$type, inf_files$class),
-      ~ file.copy(..1, file.path("output/leaves/phenovision-init_model_02_12_2025/image_annotation_test", ..2, ..3, basename(..1)),
+      ~ file.copy(..1, file.path("output/leaves/phenovision-init_model2_04_11_2025/image_annotation_test", ..2, ..3, basename(..1)),
                   copy.mode = FALSE, copy.date = TRUE))
 
 
