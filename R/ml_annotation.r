@@ -2,7 +2,7 @@ require(reticulate)
 require(tidyverse)
 require(data.table)
 
-use_condaenv("rstudio-gpu")
+use_condaenv("reticulate-gpu2")
 
 torch <- import("torch")
 timm <- import("timm")
@@ -19,9 +19,9 @@ types <- import("types")
 source("R/model_loading.R")
 
 annotate_batch <- function(inf_images, model_doi = "10.57967/hf/2763", done = NULL) {
-    
+
     phenovision <- load_phenovision(model_doi)
-    
+
     if(!is.null(done)) {
         inf_images <- inf_images(which(inf_images %chin% done))
     }
@@ -64,7 +64,7 @@ annotate_batch <- function(inf_images, model_doi = "10.57967/hf/2763", done = NU
                model_version = model_doi)
 
     attr(inf_res, "timing") <- timing
-    
+
     inf_res
 
 }

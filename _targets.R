@@ -78,6 +78,15 @@ tar_plan(
   tar_target(anno_train, annotate_batch(images_batch_split$path, model_doi = model_doi)),
 
   ####### leaf model #############
-  tar_target(leaf_inference_meta, read_csv("data/leaves/inference_metadata_03-06-2025.csv"))
+  tar_target(leaf_inference_meta, read_csv("data/leaves/inference_metadata_03-06-2025.csv") |>
+               mutate(run_name = santoku::chop_n(1:n(), 1e6, labels = lbl_seq(start = "1")))),
+
+  tar_target(leaves_meta_batches, leaf_inference_meta |>
+               group_by(run_name) |>
+               group_split() |>
+               as.list(),
+             iteration = "list"),
+
+  tar_target(annotations_leaves, annotate_batch_leaves(leaves_meta_batches))
 
 )
