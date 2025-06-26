@@ -6,7 +6,7 @@ library(phyf)
 library(arrow)
 library(fs)
 
-use_condaenv("rstudio-gpu")
+use_condaenv("reticulate-gpu2")
 
 torch <- import("torch")
 timm <- import("timm")
