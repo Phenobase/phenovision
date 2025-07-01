@@ -59,7 +59,7 @@ tar_plan(
              pattern = map(images_batch_split), iteration = "list",
              format = "file",
              cue = tar_cue(command = FALSE,
-                           depend = FALSE)), ## targets style
+                           depend = FALSE)),
 
   tar_target(annotations_big_file, concatenate_annotations(annotation_outputs),
              file.path(inat_folder, model_vers, "all_annotations.csv"),
