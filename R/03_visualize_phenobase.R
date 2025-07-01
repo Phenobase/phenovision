@@ -2,17 +2,31 @@ if(!require("xfun")) install.packages("xfun")
 xfun::pkg_attach2(c("tidyverse", "googlesheets4", "googledrive", "ape", "rtrees",
                     "ggtree", "ggtreeExtra", "treeio", "ggnewscale")) 
 
+<<<<<<< HEAD
 # drive_download("https://drive.google.com/file/d/11H_56UO08-SBr0n1LmWD4PMtNVKJheiI/view?usp=sharing", 
 #                path = "data/annotations_all_9cf8ad8.csv")
 # 
 # drive_download("https://drive.google.com/file/d/1YcHaEFhdc0q3N_mUn2YzC5smiuDI8TDs/view?usp=drive_link", 
 #                path = "data/data_for_coverage_analysis_9cf8ad8.csv")
+=======
+drive_download("https://drive.google.com/file/d/11H_56UO08-SBr0n1LmWD4PMtNVKJheiI/view?usp=sharing", 
+               path = "data/annotations_all_9cf8ad8.csv")
+
+drive_download("https://drive.google.com/file/d/1YcHaEFhdc0q3N_mUn2YzC5smiuDI8TDs/view?usp=drive_link", 
+               path = "data/data_for_coverage_analysis_9cf8ad8.csv")
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 coverage_inat = read_csv("data/data_for_coverage_analysis_9cf8ad8.csv")
 
 coverage_inat = mutate(coverage_inat, trait2 = ifelse(trait %in% c("flower", "flowering"), "Flower", "Fruit"))
 count(coverage_inat, trait2)
 
+<<<<<<< HEAD
+=======
+dd = filter(coverage_inat, trait2 == "Flower")
+length(intersect(filter(dd, post_ml_only)$photo_id, filter(dd, !post_ml_only)$photo_id))
+
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 if(!file.exists("data/genus_tree_inat2.tre")){
   annotation_inat = read_csv("data/annotations_all_9cf8ad8.csv", col_names = FALSE)
   
@@ -84,6 +98,7 @@ summary(filter(coverage_inat2, post_ml_only, trait == "flower", n >= 10)$n)
 count(coverage_inat, trait)
 count(coverage_inat, trait, post_ml_only)
 
+<<<<<<< HEAD
 if(!file.exists("data/coverage_inat3.rds")){
   coverage_inat3 = coverage_inat2 |> 
     mutate(post_ml_only = as.character(post_ml_only),
@@ -99,6 +114,22 @@ if(!file.exists("data/coverage_inat3.rds")){
   coverage_inat3 = readRDS("data/coverage_inat3.rds")
 }
 
+=======
+coverage_inat3 = coverage_inat2 |> 
+  mutate(post_ml_only = as.character(post_ml_only),
+         post_ml_only = paste0("ml_", post_ml_only)) |> 
+  pivot_wider(names_from = "post_ml_only", values_from = "n", values_fill = 0) |> 
+  mutate(n_total = ml_TRUE + ml_FALSE,
+         ml_prop = ml_TRUE / n_total,
+         human_prop = ml_FALSE / n_total)
+
+saveRDS(coverage_inat3, "data/coverage_inat3.rds")
+
+
+# read saved data ====
+# genus_tree_inat2 = read.tree("data/genus_tree_inat2.tre")
+coverage_inat3 = readRDS("data/coverage_inat3.rds")
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 summary(filter(coverage_inat3, trait == "flower", n_total >= 10)$ml_prop)
 filter(coverage_inat3, trait == "flower", n_total >= 10) |> arrange(ml_prop)
@@ -146,7 +177,11 @@ t1_tbl_tree = as.treedata(t1.tbl)
 #   facet_widths(widths = c(2, 1)) 
 
 p1 = ggtree(t1_tbl_tree, layout = "fan", size = 0.2, aes(color = n_total_log)) +
+<<<<<<< HEAD
   scale_color_viridis_c() + labs(color = "Number of total \nrecords (log10)")
+=======
+  scale_color_viridis_c() + labs(color = "Number of total \nflower records (log10)")
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 p1
 
@@ -155,9 +190,17 @@ p2 = p1 + new_scale_color() +
              aes(x = Proportion, y = id, color = `Data source (%)`, 
                  fill = `Data source (%)`), 
              width = 0.2, inherit.aes = F)  +
+<<<<<<< HEAD
   theme(legend.position = "none")
 p2 = p2 + scale_fill_manual(values = c("darkred", "lightblue")) +
   scale_color_manual(values = c("darkred", "lightblue"))
+=======
+  theme(legend.position = c(0.23, 0.9), legend.box = "horizontal",
+        legend.title = element_text(size = 14), 
+        legend.text = element_text(size = 13))
+p2 = p2 + scale_fill_manual(values = c("lightblue", "darkred")) +
+  scale_color_manual(values = c("lightblue", "darkred"))
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 p2
 
 
@@ -184,13 +227,18 @@ t2.tbl = as_tibble(t2) |> full_join(
 t2_tbl_tree = as.treedata(t2.tbl)
 
 p1_fruit = ggtree(t2_tbl_tree, layout = "fan", size = 0.2, aes(color = n_total_log)) +
+<<<<<<< HEAD
   scale_color_viridis_c() + labs(color = "Number of total \nrecords (log10)")
+=======
+  scale_color_viridis_c() + labs(color = "Number of total \nfruit records (log10)")
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 p2_fruit = p1_fruit + new_scale_color() +
   geom_fruit(data = d_fruit, geom = geom_col,
              aes(x = Proportion, y = id, color = `Data source (%)`, 
                  fill = `Data source (%)`), 
              width = 0.2, inherit.aes = F)  +
+<<<<<<< HEAD
   theme(legend.position = c(0, 0), legend.box = "horizontal",
         legend.direction = "horizontal",
         legend.title = element_text(size = 11), 
@@ -202,6 +250,17 @@ p2_fruit
 p12_genus_flower_fruit = cowplot::plot_grid(p2, p2_fruit, nrow = 1, labels = c("(A) Flower", "(B) Fruit"))
 
 ggsave("figures/inat_genus_coverage2.pdf", plot = p12_genus_flower_fruit, width = 10, height = 5.2)
+=======
+  theme(legend.position = c(0.23, 0.9), legend.box = "horizontal",
+        legend.title = element_text(size = 14), 
+        legend.text = element_text(size = 13))
+p2_fruit = p2_fruit + scale_fill_manual(values = c("lightblue", "darkred")) +
+  scale_color_manual(values = c("lightblue", "darkred"))
+p2_fruit
+
+
+ggsave("figures/inat_fruit_coverage.pdf", plot = p2_fruit, height = 9, width = 9)
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 # family level stats ====
 fam = read_csv("data/family_stats.csv")
@@ -359,6 +418,7 @@ wld = st_transform(wld, crs = "ESRI:54009") # MollWeide
 
 plot(wld)
 
+<<<<<<< HEAD
 p1 = ggplot() + geom_sf(data = wld, fill = "gray", color = "gray") + theme_void()
 
 
@@ -389,6 +449,23 @@ if(!file.exist("data/dat_inat_coverage_grids.rds")){
 grids2 = grids[sort(unique(c(dat1$id_cells, g2[[1]]))),]
 
 dat2 = st_drop_geometry(dat1) 
+=======
+grids = st_make_grid(wld, cellsize = c(100000, 100000), crs = st_crs(wld))
+grids = mutate(st_sf(geometry = grids), id_cells = 1:n())
+
+
+g2 = st_intersects(wld, grids)
+
+coverage_inat = drop_na(coverage_inat, latitude, longitude)
+dat = st_transform(st_as_sf(coverage_inat, coords = c("longitude", "latitude"), crs = 4326, remove = F), 
+                   crs = "ESRI:54009")
+
+dat2 = st_join(dat, grids)
+
+grids2 = grids[sort(unique(c(dat2$id_cells, g2[[1]]))),]
+
+dat2 = st_drop_geometry(dat2) 
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 dat2_summary = group_by(dat2, id_cells, trait2, post_ml_only) |> 
   tally() 
@@ -440,11 +517,14 @@ st_drop_geometry(grids2_dat) |>
 #                             ifelse(ml_annotated > 10, "New grid cells with phenoVision data (n > 10)", 
 #                                    "Grid cells with < 10 human or machine annotated data"))) 
 
+<<<<<<< HEAD
 grids2_dat |> 
   drop_na(trait2) |> 
   write_sf("data/fig_5_spatial_records_data.geojson")
 
 
+=======
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 d3 = grids2_dat |> 
   drop_na(trait2) |> 
   mutate(`(A): Cell types` = ifelse(human_annotated > 0, "Human annotated data available",
@@ -462,11 +542,20 @@ p1_flower_cells = base_map +
         legend.title = element_text(size = 12))
 
 d5 = drop_na(grids2_dat, trait2) |> 
+<<<<<<< HEAD
   mutate(log10_total_records = log10(total_records))
 
 p1_flower_counts = base_map +
   geom_sf(data = d5, aes(fill = log10_total_records), color = NA) +
   scale_fill_viridis_c(name = "(B): Total number of records (log10)") +
+=======
+  mutate(log10_total_records = log10(total_records),
+         log10_ml_records = log10(ml_annotated))
+
+p1_flower_counts = base_map +
+  geom_sf(data = d5, aes(fill = log10_ml_records), color = NA) +
+  scale_fill_viridis_c(name = "(B): Total number of machine annotated records (log10)") +
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
   facet_wrap(~trait2) +
   # scale_fill_viridis_d(option = "D", direction = -1) +
   guides(fill = guide_legend(nrow = 1, byrow = TRUE)) +
@@ -492,7 +581,11 @@ d4 = drop_na(grids2_dat, trait2) |>
 
 p2_flower_prop = base_map +
   geom_sf(data = d4, aes(fill = ml_prop_catg), color = NA, linesize = 0.1) +
+<<<<<<< HEAD
   colorspace::scale_fill_discrete_sequential(name = "(C): Proportion of machine annotated data", palette = "Viridis", rev = F) +
+=======
+  colorspace::scale_fill_discrete_sequential(name = "(C): Proportion of machine annotated data", palette = "Viridis") +
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
   facet_wrap(~trait2) +
   # scale_color_viridis_d(option = "D", direction = -1) +
   theme(legend.position = "top", legend.text = element_text(size = 12), 
@@ -503,7 +596,12 @@ library(patchwork)
 p12_flower_cells = p1_flower_cells + p1_flower_counts +
   p2_flower_prop + plot_layout(nrow = 3)
 
+<<<<<<< HEAD
 ggsave("figures/flower_spatial_cells2.pdf", plot = p12_flower_cells, width = 10, height = 7.5)
 ggsave("figures/flower_spatial_cells.png", plot = p12_flower_cells, width = 9, height = 9)
+=======
+ggsave("figures/flower_spatial_cells.pdf", plot = p12_flower_cells, width = 10, height = 7.5)
+# ggsave("figures/flower_spatial_cells.png", plot = p12_flower_cells, width = 9, height = 9)
+>>>>>>> 6d3c5a1822064b2f4f1ff2bef748bc09157e551b
 
 
