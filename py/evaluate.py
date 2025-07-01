@@ -12,8 +12,8 @@ import torch
 from timm.data import Mixup
 from timm.utils import accuracy
 
-import util.misc as misc
-import util.lr_sched as lr_sched
+import PlantCLEF2022.util.misc as misc
+import PlantCLEF2022.util.lr_sched as lr_sched
 from PIL import ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
