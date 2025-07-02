@@ -3,6 +3,7 @@ library(tidymodels)
 library(probably)
 
 test_dat <- read_rds("output/model_04_13_2024/epoch_4_testing_data.rds")
+#test_dat <- read_rds("output/epoch_4_testing_data.rds")
 
 test_dat <- test_dat |>
   mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
@@ -22,6 +23,16 @@ test_dat <- test_dat |>
 
 test_dat <- test_dat |>
   mutate(test = ifelse(partition == "training", "train", "test"))
+
+imb_fl <- test_dat |>
+  filter(test == "train") |>
+  group_by(family) |>
+  summarise(imbalance = (mean(as.numeric(as.character(flowering)), na.rm = TRUE) - 0.5) * 2)
+
+imb_fr <- test_dat |>
+  filter(test == "train") |>
+  group_by(family) |>
+  summarise(imbalance = (mean(as.numeric(as.character(fruiting)), na.rm = TRUE) - 0.5) * 2)
 
 acc_by_fam_fl <- test_dat |>
   group_by(test, family) |>
@@ -58,9 +69,14 @@ fam_dat <- equiv_by_fam |>
   left_join(acc_by_fam_fl_total |>
               select(test, family, .accuracy_family_flower_incl_equiv = .estimate)) |>
   left_join(acc_by_fam_fr_total |>
-              select(test, family, .accuracy_family_fruit_incl_equiv = .estimate))
+              select(test, family, .accuracy_family_fruit_incl_equiv = .estimate)) |>
+  left_join(imb_fl |>
+              select(family, imbalance_fl = imbalance)) |>
+  left_join(imb_fr |>
+              select(family, imbalance_fr = imbalance))
 
 write_csv(fam_dat, "output/model_04_13_2024/family_stats.csv")
+#write_csv(fam_dat, "output/family_stats_w_imbalance.csv")
 
 test_dat <- test_dat |>
   left_join(equiv_by_fam |>

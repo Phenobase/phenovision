@@ -11,16 +11,24 @@ val_dat <- test_dat |> filter(partition == "validation")
 test_dat <- test_dat |> filter(partition == "testing")
 
 test_dat <- bind_rows(val_dat, test_dat) |>
-  mutate(.class_flower = make_two_class_pred(.pred_flower,
-                                             levels(flower),
+  mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
+                                             threshold = 0.84,
+                                             buffer = c(0.56, 0.01)),
+         .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
+                                            threshold = 0.53,
+                                            buffer = c(0.3, 0.22)),
+         .equivocal_flower = ifelse(is_equivocal(.class_flower), "Equivocal", "Unequivocal"),
+         .equivocal_fruit = ifelse(is_equivocal(.class_fruit), "Equivocal", "Unequivocal")) |>
+  mutate(.class_flower = make_two_class_pred(.pred_flower, c("Detected", "Not Detected"),
                                              threshold = 0.84),
-         .class_fruit = make_two_class_pred(.pred_fruit,
-                                             levels(fruit),
-                                             threshold = 0.53)) |>
-  mutate(.cut_flower = chop_evenly(.pred_flower, 100,
+         .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
+                                            threshold = 0.53)) |>
+  mutate(.cut_flower = chop_evenly(.pred_flower, 50,
                                    labels = lbl_midpoints()),
-         .cut_fruit = chop_evenly(.pred_fruit, 100,
+         .cut_fruit = chop_evenly(.pred_fruit, 50,
                                    labels = lbl_midpoints()))
+
+write_csv(test_dat, "output/testing_data_latest_eval_with_equivocal.csv")
 
 flower_acc <- test_dat |>
   group_by(.cut_flower) |>
@@ -56,27 +64,45 @@ sums <- accs |>
   group_by(type) |>
   summarise(max = max(count))
 
-pal <- wes_palette("FantasticFox1")[c(3, 5)]
+pal <- c("#CD5C5C", "#8A6B9E")
 names(pal) <- c("fruit", "flower")
 
+accs <- accs |>
+  mutate(counts_st = count / max(count),
+         sqrt_counts = sqrt(count),
+         sqrt_counts_st = sqrt_counts / max(sqrt_counts))
+
+max_sqrt_count <- max(accs$sqrt_counts)
+
 ragg::agg_png("output/equivocal_zone_plot_new.png",
-              width = 800, height = 640,
-              scaling = 2)
+              width = 1280, height = 1280,
+              scaling = 4)
+
+lines <- tibble(type = c("fruit", "flower"),
+                thresh = c(0.53, 0.84),
+                lower = c(0.23, 0.28),
+                upper = c(0.75, 0.85))
 
 ggplot(accs, aes(value, .estimate)) +
-  geom_area(aes(value, count / max(sums$max), fill = type)) +
+  geom_rect(aes(xmin = lower, xmax = upper, fill = type), ymin = 0, ymax = 1, alpha = 0.5, data = lines, inherit.aes = FALSE) +
+  geom_area(aes(value, sqrt_counts_st, fill = type)) +
+  geom_vline(aes(xintercept = thresh), data = lines, linewidth = 1.4, alpha = 0.3, colour = "white") +
+  geom_vline(aes(colour = type, xintercept = thresh), data = lines, linewidth = 1.2, linetype = 2) +
+  geom_path(linewidth = 1.2, colour = "white") +
   geom_path(aes(colour = type), linewidth = 0.75) +
-  geom_vline(xintercept = 0.53, linewidth = 1, linetype = 2) +
-  geom_vline(xintercept = 0.84, linewidth = 1, linetype = 2) +
+  #geom_vline(xintercept = 0.53, linewidth = 1, linetype = 2, colour = colorspace::darken(pal["fruit"])) +
+  #geom_vline(xintercept = 0.84, linewidth = 1, linetype = 2, colour = colorspace::darken(pal["flower"])) +
   xlab("Model Output") +
   ylab("Accuracy") +
-  scale_y_continuous(sec.axis = sec_axis(trans = ~.*max(sums$max),
+  scale_y_continuous(sec.axis = sec_axis(trans = ~(.*max_sqrt_count)^2,
                                          name = "Image Count",
-                                         labels = scales::label_comma())) +
+                                         labels = scales::label_comma(),
+                                         breaks = c(1000, 10000, 25000, 100000, 200000, 300000))) +
   scale_colour_manual(values = pal) +
   scale_fill_manual(values = pal) +
+  facet_grid(rows = vars(type)) +
   theme_minimal() +
-  theme(legend.position = c(0.5, 0.9))
+  theme(legend.position = 'none')#c(0.5, 0.9))
 
 dev.off()
 
