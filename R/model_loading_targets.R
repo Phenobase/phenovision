@@ -6,8 +6,9 @@ load_phenovision <- function(doi = "10.57967/hf/2763", type = c("classifier", "l
   tr <- reticulate::import("transformers")
   mod_dat <- rdatacite::dc_dois(doi)
   ver <- mod_dat$data$attributes$version
+  repo <- gsub("https://huggingface.co/", "", mod_dat$data$attributes$url)
   if(type == "classifier") {
-    model <- tr$AutoModelForImageClassification$from_pretrained("phenobase/phenovision", revision = ver)
+    model <- tr$AutoModelForImageClassification$from_pretrained(repo, revision = ver)
     return(model)
   }
   if(type == "latent_code") {

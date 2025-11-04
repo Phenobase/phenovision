@@ -35,14 +35,14 @@ taxa_dataset <- meta |>
               select(taxon_id, ancestry),
             by = "taxon_id",
             copy = TRUE) |>
-  collect()
-
-taxonomy <- taxa_dataset |>
+  collect() |>
   select(taxon_id, ancestry) |>
   mutate(taxa_ids = str_split(ancestry, "/")) |>
   select(-ancestry) |>
   unnest_longer(taxa_ids, transform = as.integer) |>
   filter(taxa_ids %in% genus_taxon_ids$taxon_id)
+
+taxonomy <- taxa_dataset
 
 meta_filtered <- meta |>
   filter(taxon_id %in% taxonomy$taxon_id) |>
