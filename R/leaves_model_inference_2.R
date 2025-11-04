@@ -26,9 +26,20 @@ rob_annot <- read_csv("data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_b
 rob_annot <- rob_annot |>
   mutate(genus = word(taxon.name))
 
+genus_props <- rob_annot |>
+  group_by(genus) |>
+  summarise(count = n()) |>
+  ungroup() |>
+  mutate(prop = ((count / sum(count)) + 1/150) / 2) |>
+  filter(genus != "Logfia")
+
+## sample images for validation
 meta <- meta |>
   select(file_name, genus) |>
-  filter(!genus %in% c("Logfia", "Oxalis", "Viola"))
+  filter(genus != "Logfia") |>
+  slice_sample(n = ceiling(1e6/150), by = genus) |>
+  left_join(genus_props) |>
+  slice_sample(n = 50000, weight_by = prop)
 
 inf_img <- r_to_py(meta$file_name)
 inf_leaves <- tibble(leaves_green = rep(0.5, nrow(meta)),
@@ -46,11 +57,11 @@ vit2 <- models_vit$vit_large_patch16(num_classes = 3L)
 config <- timm$data$resolve_data_config(model = vit2)
 transform <- timm$data$create_transform(!!!config)
 
-batch_size <- 2560L
+batch_size <- 1280L
 
 #c(train_ds, train_ind) %<-% ds$prepare_inference_dataset(train_img, train_leaves, transform = transform)
 inf_ds <- ds$PhenoDatasetInf(inf_img, inf_leaves, transform = transform, inference_mode = TRUE)
-inf_dl <- timm$data$create_loader(inf_ds, c(3L, 224L, 224L), batch_size, num_workers = 6L,
+inf_dl <- timm$data$create_loader(inf_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
                                   is_training = FALSE)
 
 inf_dat <- eval$evaluate(inf_dl, vit, "cuda:0")
@@ -111,6 +122,23 @@ inf_df <- inf_df |>
       threshold = leaf_buffers$bb[1]
     ))
 
+inf_gr <- inf_df |>
+  group_by(.equivocal_gr) |>
+  summarise(count = n(), file_list = list(file_name)) |>
+  ungroup() |>
+  mutate(prop = count / sum(count))
+
+inf_cl <- inf_df |>
+  group_by(.equivocal_cl) |>
+  summarise(count = n(), file_list = list(file_name)) |>
+  ungroup() |>
+  mutate(prop = count / sum(count))
+
+inf_bb <- inf_df |>
+  group_by(.equivocal_bb) |>
+  summarise(count = n(), file_list = list(file_name)) |>
+  ungroup() |>
+  mutate(prop = count / sum(count))
 
 inf_df <- inf_df |>
   mutate(.class_no = ifelse(.class_gr == "Not Detected" & .class_cl == "Not Detected" & .class_bb == "Not Detected",
@@ -118,41 +146,34 @@ inf_df <- inf_df |>
          .equivocal_no = ifelse(.equivocal_gr == "Unequivocal" & .equivocal_cl == "Unequivocal" & .equivocal_bb == "Unequivocal",
                                 "Unequivocal", "Equivocal"))
 
-write_rds(inf_df, "output/leaves/phenovision-init_model2_04_11_2025/all_inference_results_round2_epoch_1.rds")
+inf_no <- inf_df |>
+  group_by(.equivocal_no) |>
+  summarise(count = n(), file_list = list(file_name)) |>
+  ungroup() |>
+  mutate(prop = count / sum(count))
 
-###### add metadata back in ###########
+inf_gr_files <- inf_gr |>
+  filter(.equivocal_gr == "Equivocal") |>
+  rowwise() |>
+  mutate(file_samp = list(sample(file_list, min(250, length(file_list)))),
+         type = "gr")
 
-meta <- read_csv("data/leaves/inference_metadata_03-06-2025.csv")
-inf_df <- read_rds("output/leaves/phenovision-init_model2_04_11_2025/all_inference_results_round2_epoch_1.rds")
-meta_taxa <- open_dataset("data/phenobase_inat_data/metadata/taxa")
+inf_cl_files <- inf_cl |>
+  filter(.equivocal_cl == "Equivocal") |>
+  rowwise() |>
+  mutate(file_samp = list(sample(file_list, min(250, length(file_list)))),
+         type = "cl")
 
-inf_df <- inf_df |>
-  left_join(meta)
+inf_bb_files <- inf_bb |>
+  filter(.equivocal_bb == "Equivocal") |>
+  rowwise() |>
+  mutate(file_samp = list(sample(file_list, min(250, length(file_list)))),
+         type = "bb")
 
-families <- meta_taxa |>
-  filter(rank == "family") |>
-  collect()
+inf_files <- bind_rows(inf_gr_files, inf_cl_files, inf_bb_files)
 
-genera <- meta_taxa |>
-  filter(rank == "genus") |>
-  collect()
+pwalk(list(inf_files$file_samp, inf_files$type),
+      ~ file.copy(..1, file.path("output/leaves/phenovision-init_model2_04_11_2025/image_annotation_test_equiv_only2", ..2, basename(..1)),
+                  copy.mode = FALSE, copy.date = TRUE))
 
-taxonomy <- inf_df |>
-  select(photo_id, ancestry) |>
-  mutate(taxa_ids = str_split(ancestry, "/")) |>
-  select(-ancestry) |>
-  unnest_longer(taxa_ids, transform = as.integer)
 
-fams <- taxonomy |>
-  left_join(families |> select(taxon_id, family = name), by = c(taxa_ids = "taxon_id")) |>
-  drop_na()
-
-# gens <- taxonomy |>
-#   left_join(genera |> select(taxon_id, genus = name), by = c(taxa_ids = "taxon_id")) |>
-#   drop_na()
-
-inf_df <- inf_df |>
-  left_join(fams |> select(photo_id, family)) #|>
-#  left_join(gens |> select(photo_id, genus))
-
-write_rds(inf_df, "output/leaves/phenovision-init_model2_04_11_2025/all_inference_results_round2_epoch_1.rds")

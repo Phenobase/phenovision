@@ -115,18 +115,19 @@ obs_dat <- obs_meta |>
   select(observation_uuid, observer_id) |>
   filter(observation_uuid %in% inf_samp$observation_uuid) |>
   collect()
-obs_dat <- obs_dat |>
-  left_join(observers |>
-              select(observer_id, name) |>
-              filter(observer_id %in% obs_dat$observer_id),
-            copy = TRUE)
+# obs_dat <- obs_dat |>
+#   left_join(observers |>
+#               select(observer_id, name) |>
+#               filter(observer_id %in% obs_dat$observer_id),
+#             copy = TRUE)
 
 inf_samp <- inf_samp |>
   left_join(obs_dat) |>
-  rename(recorded_by = name)
+  rename(recorded_by = observer_id)
 
 
-inf_samp <- inf_samp[ , columns$field[columns$field %in% colnames(inf_samp)]]
+inf_samp <- inf_samp[ , c(columns$field[columns$field %in% colnames(inf_samp)],
+                          "observation_uuid")]
 
 write_csv(inf_samp, "output/leaves/phenovision-init_model2_04_11_2025/leaves_sample_inferences_ingest_format.csv")
 

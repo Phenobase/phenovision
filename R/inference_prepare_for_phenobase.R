@@ -39,22 +39,63 @@ inf_dat <- inf_dat |>
          .class_fruit = make_two_class_pred(.pred_fruit, c("Detected", "Not Detected"),
                                             threshold = 0.53))
 
+inf_class <- inf_dat |>
+  select(file_name, starts_with(".class_")) |>
+  mutate(.class_flower = as.character(as.factor(.class_flower)),
+         .class_fruit = as.character(as.factor(.class_fruit))) |>
+  pivot_longer(-file_name, names_to = "trait", names_prefix = ".class_", values_to = "detected")
+
+inf_equiv <- inf_dat |>
+  select(file_name, starts_with(".equivocal_")) |>
+  pivot_longer(-file_name, names_to = "trait", names_prefix = ".equivocal_", values_to = "equivocal")
+
+inf_pred <- inf_dat |>
+  select(file_name, starts_with(".pred_")) |>
+  pivot_longer(-file_name, names_to = "trait", names_prefix = ".pred_", values_to = "preds")
+
+## filter data
+inf_all <- inf_class |>
+  left_join(inf_equiv) |>
+  filter(detected == "Detected" & equivocal == "Unequivocal")
+
+inf_all <- inf_all |>
+  mutate(photo_id = fs::path_ext_remove(file_name),
+         extension = fs::path_ext(file_name))
+
+obs_samp <- angio_meta |>
+  distinct(observation_uuid) |>
+  collect()
+obs_samp <- obs_samp |>
+  slice_sample(n = 50000)
+
+inf_samp <- inf_all |>
+  s
+
+inf_all <- inf_all |>
+  left_join(angio_meta |>
+            select(photo_id, observation_uuid) |>
+            filter(photo_id %in% inf_all$photo_id),
+          by = "photo_id",
+          copy = TRUE)
+
+inf_all <- inf_all |>
+  distinct(observation_uuid, .keep_all = TRUE) |>
+  left_join(inf_pred)
+
 set.seed(45897)
 
-inf_dat_samp <- inf_dat |>
-  slice_sample(n = 20000)
+inf_dat_samp <- inf_all |>
+  slice_sample(n = 10000)
 
 sample_dataset <- inf_dat_samp |>
-  distinct(file_name, .keep_all = TRUE) |>
-  mutate(photo_id = fs::path_ext_remove(file_name),
-  extension = fs::path_ext(file_name))
+  distinct(file_name, .keep_all = TRUE)
 
-sample_dataset <- sample_dataset |>
-  left_join(angio_meta |>
-              select(photo_id, observation_uuid) |>
-              filter(photo_id %in% sample_dataset$photo_id),
-            by = "photo_id",
-            copy = TRUE)
+# sample_dataset <- sample_dataset |>
+#   left_join(angio_meta |>
+#               select(photo_id, observation_uuid) |>
+#               filter(photo_id %in% sample_dataset$photo_id),
+#             by = "photo_id",
+#             copy = TRUE)
 
 sample_dataset <- sample_dataset |>
   mutate(inat_URL = paste0("https://www.inaturalist.org/observations/", observation_uuid),
