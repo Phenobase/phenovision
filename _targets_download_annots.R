@@ -4,9 +4,17 @@
 # annotations from iNaturalist:
 # 1. Download DwC archive of annotated observations
 # 2. Download iNaturalist open data metadata (photos.csv)
-# 3. Extract and merge annotations
-# 4. Split data into train/validation/test sets
-# 5. Export to CSV files for training pipelines
+# 3. Extract and process reproductive annotations
+# 4. Extract and process leaf annotations
+# 5. Split data into train/validation/test sets using tidymodels
+# 6. Export to CSV files for training pipelines
+#
+# Key features:
+# - Uses tar_plan() for modern targets syntax
+# - Separate config targets for granular dependency tracking
+# - Pure R implementation (no Python dependencies)
+# - Includes both reproductive and leaf annotations
+# - Stratified splits using rsample
 #
 # Usage:
 #   targets::tar_make(script = "_targets_download_annots.R")
@@ -16,323 +24,253 @@
 # Setup
 # =============================================================================
 
+library(targets)
+library(tarchetypes)
+
 # Load common configuration
 source("_targets_common.R")
 
 # Load functions
 source_common()     # Common functions
-source_download()   # Download-specific functions (if any)
+source_download()   # Download-specific functions
 
 # Additional packages
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 
-# Configure targets for sequential execution (downloads are sequential)
-setup_targets_parallel(workers = 1)
+# Set targets options
+tar_option_set(
+  packages = c("tidyverse", "arrow", "jsonlite", "data.table", "rsample"),
+  format = "qs"  # Faster than rds for large data
+)
 
 # =============================================================================
 # Pipeline
 # =============================================================================
 
-list(
+tar_plan(
 
   # ===========================================================================
-  # Download Configuration
+  # Configuration (Separate Targets for Granular Dependencies)
   # ===========================================================================
 
-  # Download parameters
-  tar_target(
-    download_config,
-    list(
-      # URLs
-      dwc_url = "https://www.inaturalist.org/observations/phenobase-observations-dwca.zip",
-      metadata_url = "https://inaturalist-open-data.s3.amazonaws.com/metadata/inaturalist-open-data-latest.tar.gz",
+  # URLs
+  dwc_url = "https://www.inaturalist.org/observations/phenobase-observations-dwca.zip",
+  metadata_url = "https://inaturalist-open-data.s3.amazonaws.com/metadata/inaturalist-open-data-latest.tar.gz",
 
-      # Output paths
-      output_dir = "data/inat",
-      dwc_file = "data/inat/phenobase-observations-dwca.zip",
-      metadata_file = "data/inat/inaturalist-open-data-latest.tar.gz",
-      merged_parquet = "data/inat/inaturalist-phenobase-data.parquet",
+  # Output directories
+  output_dir_repro = "data/inat",
+  output_dir_leaves = "data/leaves",
 
-      # Split parameters
-      train_split = 0.6,
-      val_split = 0.2,
-      test_split = 0.2,
-      seed = 234987,
+  # Split parameters (separate targets so changing one doesn't invalidate all)
+  train_prop = 0.6,
+  val_prop = 0.2,
+  test_prop = 0.2,
+  split_seed = 234987,
+  split_pool = 0.025,  # Min 2.5% of data per stratum
 
-      # Date stamping
-      append_date = FALSE  # Set TRUE to append date to downloaded files
-    )
-  ),
+  # Leaf annotation paths
+  leaf_parquet_path = "data/leaves/phenobase_dwca_annotation/inat_annotation/part-0.parquet",
+  rob_annot_csv = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
+  rob_annot2_csv = "data/leaves/rob_new_annotations_bb.csv",
+  photo_metadata_path = "data/phenobase_inat_data/metadata/angio_photos",
 
-  # Create output directory
-  tar_target(
-    output_dir,
-    {
-      dir.create(download_config$output_dir, recursive = TRUE, showWarnings = FALSE)
-      download_config$output_dir
-    },
-    format = "file"
-  ),
+  # Image root for file paths
+  images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium",
 
   # ===========================================================================
-  # Step 1: Download Raw Data
+  # Step 1: Download Raw Data (R Functions, No Python!)
   # ===========================================================================
 
   # Download DwC archive with annotated observations
   tar_target(
     dwc_archive,
-    {
-      output_dir  # Dependency
-
-      # Run Python download script
-      cmd <- sprintf(
-        "python phenobase/download_inat_data.py --output-dir %s --dwc-url %s%s",
-        download_config$output_dir,
-        download_config$dwc_url,
-        if (download_config$append_date) " --today" else ""
-      )
-
-      system(cmd, intern = FALSE)
-
-      # Return path to downloaded file
-      download_config$dwc_file
-    },
+    download_file(dwc_url, file.path(output_dir_repro, basename(dwc_url))),
     format = "file"
   ),
 
-  # Download iNaturalist metadata (contains photo URLs)
+  # Download iNaturalist metadata (contains photo URLs and metadata)
   tar_target(
     metadata_archive,
-    {
-      output_dir  # Dependency
-
-      # Run Python download script
-      cmd <- sprintf(
-        "python phenobase/download_inat_data.py --output-dir %s --metadata-url %s%s",
-        download_config$output_dir,
-        download_config$metadata_url,
-        if (download_config$append_date) " --today" else ""
-      )
-
-      system(cmd, intern = FALSE)
-
-      # Return path to downloaded file
-      download_config$metadata_file
-    },
+    download_file(metadata_url, file.path(output_dir_repro, basename(metadata_url))),
     format = "file"
   ),
 
   # ===========================================================================
-  # Step 2: Extract and Merge Annotations
+  # Step 2: Extract Reproductive Annotations
   # ===========================================================================
 
-  tar_target(
-    merged_data,
-    {
-      # Dependencies
-      dwc_archive
-      metadata_archive
+  repro_annotations = extract_reproductive_annotations(dwc_archive, metadata_archive),
 
-      # Run Python extraction script
-      cmd <- sprintf(
-        "python phenobase/extract_inat_data.py --dwc-file %s --metadata-file %s --out-parquet %s",
-        download_config$dwc_file,
-        download_config$metadata_file,
-        download_config$merged_parquet
-      )
-
-      system(cmd, intern = FALSE)
-
-      # Return path to merged parquet
-      download_config$merged_parquet
-    },
-    format = "file"
+  # Split reproductive data using tidymodels
+  repro_splits = split_repro_data(
+    repro_annotations,
+    train_prop = train_prop,
+    val_prop = val_prop,
+    test_prop = test_prop,
+    seed = split_seed
   ),
 
-  # ===========================================================================
-  # Step 3: Split Data into Train/Val/Test
-  # ===========================================================================
-
+  # Write reproductive splits to CSV
   tar_target(
-    split_data,
-    {
-      # Dependency
-      merged_data
-
-      # Run Python split script
-      cmd <- sprintf(
-        paste0(
-          "python phenobase/split_data.py ",
-          "--observations %s ",
-          "--train-split %.2f ",
-          "--val-split %.2f ",
-          "--test-split %.2f ",
-          "--seed %d"
-        ),
-        download_config$merged_parquet,
-        download_config$train_split,
-        download_config$val_split,
-        download_config$test_split,
-        download_config$seed
-      )
-
-      system(cmd, intern = FALSE)
-
-      # Return path to parquet (modified in place)
-      download_config$merged_parquet
-    },
-    format = "file",
-    # Force re-run if split parameters change
-    cue = tar_cue(mode = "always")
-  ),
-
-  # ===========================================================================
-  # Step 4: Export to CSV Files for Training
-  # ===========================================================================
-
-  # Load the split parquet data
-  tar_target(
-    annotations_df,
-    {
-      split_data  # Dependency
-      arrow::read_parquet(download_config$merged_parquet)
-    }
-  ),
-
-  # Export reproductive structures data
-  tar_target(
-    train_csv,
-    {
-      path <- file.path(download_config$output_dir, "train.csv")
-
-      annotations_df |>
-        dplyr::filter(split == "train") |>
-        dplyr::select(photo_id, extension, flowering, fruiting, reproductiveCondition,
-                      scientificName, order, family, genus) |>
-        dplyr::mutate(
-          file_name = file.path(
-            "/blue/guralnick/share/phenobase_inat_data/images/medium",
-            paste0(photo_id, ".", extension)
-          )
-        ) |>
-        readr::write_csv(path)
-
-      path
-    },
+    repro_train_csv,
+    write_csv_split(repro_splits, "train", output_dir_repro, images_root),
     format = "file"
   ),
 
   tar_target(
-    validation_csv,
-    {
-      path <- file.path(download_config$output_dir, "validation.csv")
-
-      annotations_df |>
-        dplyr::filter(split == "val") |>
-        dplyr::select(photo_id, extension, flowering, fruiting, reproductiveCondition,
-                      scientificName, order, family, genus) |>
-        dplyr::mutate(
-          file_name = file.path(
-            "/blue/guralnick/share/phenobase_inat_data/images/medium",
-            paste0(photo_id, ".", extension)
-          )
-        ) |>
-        readr::write_csv(path)
-
-      path
-    },
+    repro_val_csv,
+    write_csv_split(repro_splits, "val", output_dir_repro, images_root),
     format = "file"
   ),
 
   tar_target(
-    test_csv,
-    {
-      path <- file.path(download_config$output_dir, "test.csv")
-
-      annotations_df |>
-        dplyr::filter(split == "test") |>
-        dplyr::select(photo_id, extension, flowering, fruiting, reproductiveCondition,
-                      scientificName, order, family, genus) |>
-        dplyr::mutate(
-          file_name = file.path(
-            "/blue/guralnick/share/phenobase_inat_data/images/medium",
-            paste0(photo_id, ".", extension)
-          )
-        ) |>
-        readr::write_csv(path)
-
-      path
-    },
+    repro_test_csv,
+    write_csv_split(repro_splits, "test", output_dir_repro, images_root),
     format = "file"
   ),
+
+  # ===========================================================================
+  # Step 3: Extract Leaf Annotations
+  # ===========================================================================
+
+  # Track leaf annotation files
+  tar_target(leaf_parquet_file, leaf_parquet_path, format = "file"),
+  tar_target(rob_annot_file, rob_annot_csv, format = "file"),
+  tar_target(rob_annot2_file, rob_annot2_csv, format = "file"),
+
+  # Extract leaf annotations
+  leaf_annotations = extract_leaf_annotations(
+    leaf_parquet_file,
+    rob_annot_file,
+    rob_annot2_file,
+    photo_metadata_path
+  ),
+
+  # Split leaf data using tidymodels
+  leaf_splits = split_leaf_data(
+    leaf_annotations,
+    train_prop = train_prop,
+    val_prop = val_prop,
+    test_prop = test_prop,
+    seed = split_seed,
+    pool = split_pool
+  ),
+
+  # Write leaf splits to CSV
+  tar_target(
+    leaf_train_csv,
+    write_csv_split(leaf_splits, "train", output_dir_leaves, images_root),
+    format = "file"
+  ),
+
+  tar_target(
+    leaf_val_csv,
+    write_csv_split(leaf_splits, "val", output_dir_leaves, images_root),
+    format = "file"
+  ),
+
+  tar_target(
+    leaf_test_csv,
+    write_csv_split(leaf_splits, "test", output_dir_leaves, images_root),
+    format = "file"
+  ),
+
+  tar_target(
+    leaf_seconds_csv,
+    write_csv_split(leaf_splits, "seconds", output_dir_leaves, images_root),
+    format = "file"
+  ),
+
+  # ===========================================================================
+  # Step 4: Image Downloads (Placeholder - Waiting for Collaborator Script)
+  # ===========================================================================
+
+  # TODO: Collaborator is providing script for downloading images from parquet
+  # This will download actual image files to local storage
+  # For now, we assume images are already downloaded to /blue/guralnick/share/phenobase_inat_data/
+  image_download_status = {
+    message("Image downloads: Using existing images in /blue/guralnick/share/phenobase_inat_data/")
+    message("TODO: Integrate collaborator's image download script when available")
+    "pending_collaborator_script"
+  },
 
   # ===========================================================================
   # Step 5: Summary Statistics
   # ===========================================================================
 
-  tar_target(
-    download_summary,
-    {
-      # Dependencies
-      train_csv
-      validation_csv
-      test_csv
+  download_summary = {
+    # Dependencies
+    repro_train_csv
+    repro_val_csv
+    repro_test_csv
+    leaf_train_csv
+    leaf_val_csv
+    leaf_test_csv
+    leaf_seconds_csv
 
-      # Compute summary statistics
-      list(
-        total_observations = nrow(annotations_df),
-        train_n = sum(annotations_df$split == "train"),
-        val_n = sum(annotations_df$split == "val"),
-        test_n = sum(annotations_df$split == "test"),
-
-        flowering_n = sum(annotations_df$flowering == 1),
-        fruiting_n = sum(annotations_df$fruiting == 1),
-        both_n = sum(annotations_df$flowering == 1 & annotations_df$fruiting == 1),
-
-        n_orders = length(unique(annotations_df$order)),
-        n_families = length(unique(annotations_df$family)),
-        n_genera = length(unique(annotations_df$genus)),
-        n_species = length(unique(annotations_df$scientificName)),
-
-        output_files = list(
-          train = train_csv,
-          validation = validation_csv,
-          test = test_csv
-        ),
-
-        message = paste0(
-          "\n",
-          paste(rep("=", 70), collapse = ""), "\n",
-          "DOWNLOAD AND SPLIT COMPLETE\n",
-          paste(rep("=", 70), collapse = ""), "\n",
-          sprintf("Total observations: %d\n", nrow(annotations_df)),
-          sprintf("  Train: %d (%.1f%%)\n", sum(annotations_df$split == "train"),
-                  100 * mean(annotations_df$split == "train")),
-          sprintf("  Val:   %d (%.1f%%)\n", sum(annotations_df$split == "val"),
-                  100 * mean(annotations_df$split == "val")),
-          sprintf("  Test:  %d (%.1f%%)\n\n", sum(annotations_df$split == "test"),
-                  100 * mean(annotations_df$split == "test")),
-          sprintf("Phenology annotations:\n"),
-          sprintf("  Flowering: %d (%.1f%%)\n", sum(annotations_df$flowering == 1),
-                  100 * mean(annotations_df$flowering == 1)),
-          sprintf("  Fruiting:  %d (%.1f%%)\n", sum(annotations_df$fruiting == 1),
-                  100 * mean(annotations_df$fruiting == 1)),
-          sprintf("  Both:      %d (%.1f%%)\n\n",
-                  sum(annotations_df$flowering == 1 & annotations_df$fruiting == 1),
-                  100 * mean(annotations_df$flowering == 1 & annotations_df$fruiting == 1)),
-          sprintf("Taxonomic coverage:\n"),
-          sprintf("  Orders:  %d\n", length(unique(annotations_df$order))),
-          sprintf("  Families: %d\n", length(unique(annotations_df$family))),
-          sprintf("  Genera:   %d\n", length(unique(annotations_df$genus))),
-          sprintf("  Species:  %d\n\n", length(unique(annotations_df$scientificName))),
-          sprintf("Output files:\n"),
-          sprintf("  Train:      %s\n", train_csv),
-          sprintf("  Validation: %s\n", validation_csv),
-          sprintf("  Test:       %s\n", test_csv),
-          paste(rep("=", 70), collapse = "")
+    # Compute summary
+    list(
+      reproductive = list(
+        train = nrow(repro_splits$train),
+        val = nrow(repro_splits$val),
+        test = nrow(repro_splits$test),
+        total = nrow(repro_annotations),
+        files = list(
+          train = repro_train_csv,
+          val = repro_val_csv,
+          test = repro_test_csv
         )
+      ),
+      leaves = list(
+        train = nrow(leaf_splits$train),
+        val = nrow(leaf_splits$val),
+        test = nrow(leaf_splits$test),
+        seconds = nrow(leaf_splits$seconds),
+        total = nrow(leaf_annotations),
+        files = list(
+          train = leaf_train_csv,
+          val = leaf_val_csv,
+          test = leaf_test_csv,
+          seconds = leaf_seconds_csv
+        )
+      ),
+      image_downloads = image_download_status,
+      message = paste0(
+        "\n",
+        paste(rep("=", 70), collapse = ""), "\n",
+        "DOWNLOAD AND SPLIT COMPLETE\n",
+        paste(rep("=", 70), collapse = ""), "\n",
+        "Reproductive Annotations:\n",
+        sprintf("  Train:      %d (%.1f%%)\n", nrow(repro_splits$train),
+                100 * nrow(repro_splits$train) / nrow(repro_annotations)),
+        sprintf("  Validation: %d (%.1f%%)\n", nrow(repro_splits$val),
+                100 * nrow(repro_splits$val) / nrow(repro_annotations)),
+        sprintf("  Test:       %d (%.1f%%)\n", nrow(repro_splits$test),
+                100 * nrow(repro_splits$test) / nrow(repro_annotations)),
+        sprintf("  Total:      %d\n\n", nrow(repro_annotations)),
+        "Leaf Annotations:\n",
+        sprintf("  Train:      %d (%.1f%%)\n", nrow(leaf_splits$train),
+                100 * nrow(leaf_splits$train) / nrow(leaf_annotations)),
+        sprintf("  Validation: %d (%.1f%%)\n", nrow(leaf_splits$val),
+                100 * nrow(leaf_splits$val) / nrow(leaf_annotations)),
+        sprintf("  Test:       %d (%.1f%%)\n", nrow(leaf_splits$test),
+                100 * nrow(leaf_splits$test) / nrow(leaf_annotations)),
+        sprintf("  Seconds:    %d (for round 2 training)\n", nrow(leaf_splits$seconds)),
+        sprintf("  Total:      %d\n\n", nrow(leaf_annotations)),
+        "Output Files:\n",
+        "  Reproductive:\n",
+        sprintf("    Train:      %s\n", repro_train_csv),
+        sprintf("    Validation: %s\n", repro_val_csv),
+        sprintf("    Test:       %s\n", repro_test_csv),
+        "\n  Leaves:\n",
+        sprintf("    Train:      %s\n", leaf_train_csv),
+        sprintf("    Validation: %s\n", leaf_val_csv),
+        sprintf("    Test:       %s\n", leaf_test_csv),
+        sprintf("    Seconds:    %s\n", leaf_seconds_csv),
+        "\n",
+        paste(rep("=", 70), collapse = "")
       )
-    }
-  )
+    )
+  }
 )
