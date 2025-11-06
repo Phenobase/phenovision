@@ -40,18 +40,41 @@ setup_targets_parallel(workers = config$num_targets_workers)
 tar_plan(
 
   # =========================================================================
-  # Model Configuration
+  # Configuration (Separate Targets for Granular Dependencies)
   # =========================================================================
 
   # Model DOIs (changing these triggers re-inference)
-  tar_target(model_doi_repro, config$model_doi_repro),
-  tar_target(model_doi_leaves, config$model_doi_leaves),
+  model_doi_repro = config$model_doi_repro,
+  model_doi_leaves = config$model_doi_leaves,
+
+  # Worker configuration
+  num_targets_workers = config$num_targets_workers,
+  num_workers_data = config$num_workers_data,
+
+  # Paths from common config
+  metadata_photos = paths$metadata_photos,
+  metadata_root = paths$metadata_root,
+  images_root = paths$images_root,
+  output_repro = paths$output_repro,
+  output_leaves = paths$output_leaves,
+
+  # Leaf-specific configuration
+  rob_annot_path = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
+  genera_exclude_leaves = c("Logfia", "Oxalis", "Viola"),
+
+  # Threshold and family stats paths (TODO: link these to model DOI automatically)
+  thresholds_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv",
+  fam_dat_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/family_stats.csv",
+
+  # =========================================================================
+  # Model Configuration
+  # =========================================================================
 
   # Create output directories
   tar_target(model_doi_path_repro, gsub("\\/", "_", model_doi_repro)),
   tar_target(model_doi_path_leaves, gsub("\\/", "_", model_doi_leaves)),
-  tar_target(results_dir_repro, file.path(paths$output_repro, model_doi_path_repro)),
-  tar_target(results_dir_leaves, file.path(paths$output_leaves, model_doi_path_leaves)),
+  tar_target(results_dir_repro, file.path(output_repro, model_doi_path_repro)),
+  tar_target(results_dir_leaves, file.path(output_leaves, model_doi_path_leaves)),
 
   # Load models
   tar_target(model_repro, load_phenovision(model_doi_repro, type = "classifier")),
@@ -65,10 +88,10 @@ tar_plan(
   # Metadata and Paths
   # =========================================================================
 
-  tar_target(meta_images_path, paths$metadata_photos),
-  tar_target(meta_obs_path, file.path(paths$metadata_root, "observations/part-0.parquet")),
-  tar_target(meta_taxa_path, file.path(paths$metadata_root, "taxa/part-0.parquet")),
-  tar_target(meta_observer_path, file.path(paths$metadata_root, "observers/part-0.parquet")),
+  tar_target(meta_images_path, metadata_photos),
+  tar_target(meta_obs_path, file.path(metadata_root, "observations/part-0.parquet")),
+  tar_target(meta_taxa_path, file.path(metadata_root, "taxa/part-0.parquet")),
+  tar_target(meta_observer_path, file.path(metadata_root, "observers/part-0.parquet")),
 
   # =========================================================================
   # Image Loading and Batching
@@ -84,7 +107,7 @@ tar_plan(
         tidyr::drop_na(batch_j) |>
         dplyr::mutate(
           path = file.path(
-            paths$images_root,
+            images_root,
             paste0("batch_", batch_j),
             paste0(photo_id, ".", extension)
           )
@@ -207,11 +230,9 @@ tar_plan(
 
   tar_target(
     rob_annot,
-    readr::read_csv("data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv") |>
+    readr::read_csv(rob_annot_path) |>
       dplyr::mutate(genus = stringr::word(taxon.name))
   ),
-
-  tar_target(genera_exclude_leaves, c("Logfia", "Oxalis", "Viola")),
 
   tar_target(genera_include_leaves, setdiff(unique(rob_annot$genus), genera_exclude_leaves)),
 
@@ -254,7 +275,7 @@ tar_plan(
       images_batch_leaves,
       model_doi_leaves,
       trait = "leaves",
-      num_workers = config$num_workers_data
+      num_workers = num_workers_data
     ),
     iteration = "list",
     pattern = map(images_batch_leaves)
@@ -262,11 +283,9 @@ tar_plan(
 
   # --- Threshold Loading ---
 
-  # TODO: Link thresholds to model DOI automatically
-  # For now, hardcoded path
   tar_target(
     thresholds_leaves,
-    readr::read_csv("output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv")
+    readr::read_csv(thresholds_leaves_path)
   ),
 
   # --- Threshold Application ---
@@ -296,7 +315,7 @@ tar_plan(
 
   tar_target(
     fam_dat_leaves,
-    readr::read_csv("output/leaves/phenovision-init_model2_04_11_2025/family_stats.csv")
+    readr::read_csv(fam_dat_leaves_path)
   ),
 
   tar_target(

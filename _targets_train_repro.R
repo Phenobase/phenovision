@@ -34,57 +34,47 @@ setup_targets_parallel(workers = 1)
 # =============================================================================
 # Pipeline (Modern tar_plan() Syntax)
 # =============================================================================
-#
-# Note: train_config could be further optimized by separating parameters into
-# individual targets for granular dependency tracking (see _targets_download_annots.R)
-#
 tar_plan(
 
   # ===========================================================================
-  # Training Configuration
+  # Training Configuration (Separate Targets for Granular Dependencies)
   # ===========================================================================
 
-  # Training parameters - modify these to configure the training run
-  tar_target(
-    train_config,
-    list(
-      # Model initialization
-      pretrained_model = "mae",  # Options: "plantclef", "imagenet", "imagenet21k", "dino", "mae", "clip"
-      resume_from = NULL,  # Path to checkpoint to resume from (NULL for fresh start)
+  # Model initialization
+  pretrained_model = "mae",  # Options: "plantclef", "imagenet", "imagenet21k", "dino", "mae", "clip"
+  resume_from = NULL,  # Path to checkpoint to resume from (NULL for fresh start)
 
-      # Training hyperparameters
-      batch_size = 384L,
-      blr = 5e-4,  # Base learning rate
-      num_epochs = 100L,
-      weight_decay = 0.05,
-      layer_decay = 0.65,
+  # Training hyperparameters (separate targets so changing one doesn't invalidate all)
+  batch_size = 384L,
+  blr = 5e-4,  # Base learning rate
+  num_epochs = 100L,
+  weight_decay = 0.05,
+  layer_decay = 0.65,
 
-      # Data
-      train_csv = "data/inat/train.csv",
-      val_csv = "data/inat/validation.csv",
-      test_csv = "data/inat/test.csv",
-      bad_images_rds = "data/inat/bad_images.rds",
+  # Data paths
+  train_csv = "data/inat/train.csv",
+  val_csv = "data/inat/validation.csv",
+  test_csv = "data/inat/test.csv",
+  bad_images_rds = "data/inat/bad_images.rds",
 
-      # Output
-      output_dir = file.path(
-        "output/reproductive",
-        paste0(pretrained_model, "_", format(Sys.Date(), "%Y_%m_%d"))
-      ),
-
-      # Guild AI
-      guild_label = paste0("repro_", pretrained_model, "_", format(Sys.Date(), "%Y%m%d")),
-      guild_tag = "reproductive"
-    )
+  # Output directory (computed from pretrained_model)
+  output_dir = file.path(
+    "output/reproductive",
+    paste0(pretrained_model, "_", format(Sys.Date(), "%Y_%m_%d"))
   ),
+
+  # Guild AI configuration
+  guild_label = paste0("repro_", pretrained_model, "_", format(Sys.Date(), "%Y%m%d")),
+  guild_tag = "reproductive",
 
   # Create output directories
   tar_target(
     output_dirs,
     {
-      dir.create(train_config$output_dir, recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(train_config$output_dir, "checkpoints"),
+      dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(output_dir, "checkpoints"),
                  recursive = TRUE, showWarnings = FALSE)
-      train_config$output_dir
+      output_dir
     },
     format = "file"
   ),
@@ -103,38 +93,37 @@ tar_plan(
       run_info <- run_training_guild(
         script_path = "R/vit_model_train.R",
         flags = list(
-          pretrained_model = train_config$pretrained_model,
-          batch_size = train_config$batch_size,
-          blr = train_config$blr,
-          num_epochs = train_config$num_epochs
+          pretrained_model = pretrained_model,
+          batch_size = batch_size,
+          blr = blr,
+          num_epochs = num_epochs
         ),
-        label = train_config$guild_label,
-        tag = train_config$guild_tag,
+        label = guild_label,
+        tag = guild_tag,
         comment = paste0(
           "Reproductive model training: ",
-          train_config$pretrained_model, " pretrained, ",
-          train_config$num_epochs, " epochs"
+          pretrained_model, " pretrained, ",
+          num_epochs, " epochs"
         ),
         guild_home = paths$guild_home
       )
 
       # Return path to final checkpoint
       checkpoint_path <- file.path(
-        train_config$output_dir,
+        output_dir,
         "checkpoints",
         paste0(
           "vit_finetuned_",
-          train_config$pretrained_model,
+          pretrained_model,
           "_epoch",
-          train_config$num_epochs,
+          num_epochs,
           ".pt"
         )
       )
 
       list(
         run_info = run_info,
-        checkpoint_path = checkpoint_path,
-        config = train_config
+        checkpoint_path = checkpoint_path
       )
     }
   ),
@@ -159,8 +148,8 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
-        paste0("epoch_", train_config$num_epochs, "_testing_data.rds")
+        output_dir,
+        paste0("epoch_", num_epochs, "_testing_data.rds")
       )
     }
   ),
@@ -175,8 +164,8 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
-        paste0("epoch_", train_config$num_epochs, "_threshold_buffers.csv")
+        output_dir,
+        paste0("epoch_", num_epochs, "_threshold_buffers.csv")
       )
     }
   ),
@@ -195,7 +184,7 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
+        output_dir,
         "family_stats.csv"
       )
     }
@@ -279,7 +268,22 @@ tar_plan(
 
       # Compile summary
       list(
-        config = train_config,
+        config = list(
+          pretrained_model = pretrained_model,
+          resume_from = resume_from,
+          batch_size = batch_size,
+          blr = blr,
+          num_epochs = num_epochs,
+          weight_decay = weight_decay,
+          layer_decay = layer_decay,
+          train_csv = train_csv,
+          val_csv = val_csv,
+          test_csv = test_csv,
+          bad_images_rds = bad_images_rds,
+          output_dir = output_dir,
+          guild_label = guild_label,
+          guild_tag = guild_tag
+        ),
         guild_run = training_run$run_info,
         checkpoint = training_run$checkpoint_path,
         test_results = test_results_path,

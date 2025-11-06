@@ -36,66 +36,56 @@ setup_targets_parallel(workers = 1)
 # =============================================================================
 # Pipeline (Modern tar_plan() Syntax)
 # =============================================================================
-#
-# Note: train_config could be further optimized by separating parameters into
-# individual targets for granular dependency tracking (see _targets_download_annots.R)
-#
 tar_plan(
 
   # ===========================================================================
-  # Training Configuration
+  # Training Configuration (Separate Targets for Granular Dependencies)
   # ===========================================================================
 
-  # Training parameters - modify these to configure the training run
-  tar_target(
-    train_config,
-    list(
-      # Model initialization
-      checkpoint_init = "models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth",
-      resume_round1_from = NULL,  # Path to checkpoint to resume round 1 (NULL for fresh)
-      resume_round2_from = NULL,  # Path to checkpoint to resume round 2 (NULL uses round 1 output)
+  # Model initialization
+  checkpoint_init = "models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth",
+  resume_round1_from = NULL,  # Path to checkpoint to resume round 1 (NULL for fresh)
+  resume_round2_from = NULL,  # Path to checkpoint to resume round 2 (NULL uses round 1 output)
 
-      # Training hyperparameters
-      batch_size = 384L,
-      blr = 5e-4,  # Base learning rate
-      num_epochs_round1 = 4L,
-      num_epochs_round2 = 4L,
-      weight_decay = 0.05,
-      layer_decay = 0.65,
+  # Training hyperparameters (separate targets so changing one doesn't invalidate all)
+  batch_size = 384L,
+  blr = 5e-4,  # Base learning rate
+  num_epochs_round1 = 4L,
+  num_epochs_round2 = 4L,
+  weight_decay = 0.05,
+  layer_decay = 0.65,
 
-      # Data filtering parameters (round 2)
-      confidence_threshold = 0.95,  # Minimum prediction confidence for second round data
+  # Data filtering parameters (round 2)
+  confidence_threshold = 0.95,  # Minimum prediction confidence for second round data
 
-      # Data
-      train_csv = "data/leaves/train.csv",
-      val_csv = "data/leaves/validation.csv",
-      seconds_csv = "data/leaves/seconds.csv",
+  # Data paths
+  train_csv = "data/leaves/train.csv",
+  val_csv = "data/leaves/validation.csv",
+  seconds_csv = "data/leaves/seconds.csv",
 
-      # Output
-      output_dir = file.path(
-        "output/leaves",
-        paste0("model_", format(Sys.Date(), "%m_%d_%Y"))
-      ),
-
-      # Guild AI
-      guild_label_r1 = paste0("leaf_round1_", format(Sys.Date(), "%Y%m%d")),
-      guild_label_r2 = paste0("leaf_round2_", format(Sys.Date(), "%Y%m%d")),
-      guild_tag = "leaf"
-    )
+  # Output directory
+  output_dir = file.path(
+    "output/leaves",
+    paste0("model_", format(Sys.Date(), "%m_%d_%Y"))
   ),
+
+  # Guild AI configuration
+  guild_label_r1 = paste0("leaf_round1_", format(Sys.Date(), "%Y%m%d")),
+  guild_label_r2 = paste0("leaf_round2_", format(Sys.Date(), "%Y%m%d")),
+  guild_tag = "leaf",
 
   # Create output directories
   tar_target(
     output_dirs,
     {
-      dir.create(train_config$output_dir, recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(train_config$output_dir, "checkpoints"),
+      dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+      dir.create(file.path(output_dir, "checkpoints"),
                  recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(train_config$output_dir, "second"),
+      dir.create(file.path(output_dir, "second"),
                  recursive = TRUE, showWarnings = FALSE)
-      dir.create(file.path(train_config$output_dir, "second", "checkpoints"),
+      dir.create(file.path(output_dir, "second", "checkpoints"),
                  recursive = TRUE, showWarnings = FALSE)
-      train_config$output_dir
+      output_dir
     },
     format = "file"
   ),
@@ -128,14 +118,13 @@ tar_plan(
 
       # Expected checkpoint path
       checkpoint_path <- file.path(
-        train_config$output_dir,
+        output_dir,
         "checkpoints",
-        paste0("vit_finetuned_epoch", train_config$num_epochs_round1, ".pt")
+        paste0("vit_finetuned_epoch", num_epochs_round1, ".pt")
       )
 
       list(
         checkpoint_path = checkpoint_path,
-        config = train_config,
         round = 1
       )
     }
@@ -161,7 +150,7 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
+        output_dir,
         "seconds_filtered.csv"
       )
     }
@@ -188,15 +177,14 @@ tar_plan(
 
       # Expected checkpoint path
       checkpoint_path <- file.path(
-        train_config$output_dir,
+        output_dir,
         "second",
         "checkpoints",
-        paste0("vit_finetuned_epoch", train_config$num_epochs_round2, ".pt")
+        paste0("vit_finetuned_epoch", num_epochs_round2, ".pt")
       )
 
       list(
         checkpoint_path = checkpoint_path,
-        config = train_config,
         round = 2
       )
     }
@@ -216,9 +204,9 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
+        output_dir,
         "second",
-        paste0("epoch_", train_config$num_epochs_round2, "_testing_data.rds")
+        paste0("epoch_", num_epochs_round2, "_testing_data.rds")
       )
     }
   ),
@@ -232,9 +220,9 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
+        output_dir,
         "second",
-        paste0("epoch_", train_config$num_epochs_round2, "_threshold_buffers.csv")
+        paste0("epoch_", num_epochs_round2, "_threshold_buffers.csv")
       )
     }
   ),
@@ -252,7 +240,7 @@ tar_plan(
 
       # Expected output path
       file.path(
-        train_config$output_dir,
+        output_dir,
         "second",
         "family_stats.csv"
       )
@@ -336,7 +324,25 @@ tar_plan(
 
       # Compile summary
       list(
-        config = train_config,
+        config = list(
+          checkpoint_init = checkpoint_init,
+          resume_round1_from = resume_round1_from,
+          resume_round2_from = resume_round2_from,
+          batch_size = batch_size,
+          blr = blr,
+          num_epochs_round1 = num_epochs_round1,
+          num_epochs_round2 = num_epochs_round2,
+          weight_decay = weight_decay,
+          layer_decay = layer_decay,
+          confidence_threshold = confidence_threshold,
+          train_csv = train_csv,
+          val_csv = val_csv,
+          seconds_csv = seconds_csv,
+          output_dir = output_dir,
+          guild_label_r1 = guild_label_r1,
+          guild_label_r2 = guild_label_r2,
+          guild_tag = guild_tag
+        ),
         round1_checkpoint = training_run_round1$checkpoint_path,
         round2_checkpoint = training_run_round2$checkpoint_path,
         filtered_data = round2_filtered_data,
