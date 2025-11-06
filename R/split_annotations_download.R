@@ -170,7 +170,7 @@ split_leaf_data <- function(df, train_prop = 0.6, val_prop = 0.2, test_prop = 0.
 #' @param split_list List with train/val/test splits
 #' @param split_name Character. Which split to write ("train", "val", "test", "seconds")
 #' @param output_dir Character. Output directory
-#' @param images_root Character. Root path for images (default: "/blue/guralnick/share/phenobase_inat_data/images/medium")
+#' @param images_root Character. Root path for images (default: "data/phenobase_inat_data/images/medium")
 #'
 #' @return Character. Path to written CSV file (for targets format = "file")
 #'
@@ -185,7 +185,7 @@ split_leaf_data <- function(df, train_prop = 0.6, val_prop = 0.2, test_prop = 0.
 #'
 #' @export
 write_csv_split <- function(split_list, split_name, output_dir,
-                             images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium") {
+                             images_root = "data/phenobase_inat_data/images/medium") {
 
   library(readr)
   library(dplyr)

@@ -33,7 +33,7 @@
 #' @export
 extract_reproductive_from_parquet <- function(annotation_parquet,
                                                photos_parquet,
-                                               images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium") {
+                                               images_root = "data/phenobase_inat_data/images/medium") {
 
   library(tidyverse)
   library(arrow)
@@ -192,7 +192,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
                                        photos_parquet,
                                        rob_annot_csv,
                                        rob_annot2_csv,
-                                       images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium",
+                                       images_root = "data/phenobase_inat_data/images/medium",
                                        target_genera = NULL) {
 
   library(tidyverse)

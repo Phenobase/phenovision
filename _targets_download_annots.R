@@ -94,7 +94,7 @@ tar_plan(
   },
 
   # Image root for file paths
-  images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium",
+  images_root = "data/phenobase_inat_data/images/medium",
 
   # Image download settings
   image_batch_size = 100000,  # Images per batch
