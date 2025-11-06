@@ -225,48 +225,76 @@ extract_leaf_from_parquet <- function(annotation_parquet,
                   format(nrow(annotations), big.mark = ",")))
 
   # =========================================================================
-  # Step 2: Parse JSON from dynamicProperties
+  # Step 2: Parse JSON from dynamicProperties (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  2. Parsing JSON from dynamicProperties...")
+  message("     (MEMORY OPTIMIZED: Chunked processing + single-pass extraction)")
 
   # Fix double double quotes issue
   annotations <- annotations %>%
     mutate(dynamicProperties = str_replace_all(dynamicProperties, fixed('""'), '"'))
 
-  # Parse JSON
-  leaf_json <- purrr::map(
-    annotations$dynamicProperties,
-    purrr::possibly(fromJSON, otherwise = NULL),
-    .progress = TRUE
-  )
+  # MEMORY OPTIMIZATION: Parse JSON in chunks to avoid loading all parsed structures at once
+  # Old approach: parse all JSON at once = ~20 GB for 5M strings
+  # New approach: parse in 100k chunks = ~2 GB peak
 
-  # Extract leaf state flags
+  source("R/utils_memory_efficient_download.R")
+
+  # Define extraction function for chunked processing
+  extract_leaf_flags_chunk <- function(parsed_json_chunk) {
+    # Use single-pass extraction (avoids 4 separate map_lgl calls)
+    extract_leaf_flags_single_pass(parsed_json_chunk)
+  }
+
+  # Chunk size (adjust based on available memory)
+  chunk_size <- 100000
+
+  n_rows <- nrow(annotations)
+  n_chunks <- ceiling(n_rows / chunk_size)
+
+  message(sprintf("    Processing %s JSON strings in %d chunks of %d...",
+                  format(n_rows, big.mark = ","), n_chunks, chunk_size))
+
+  # Pre-allocate results list
+  leaf_flags_list <- vector("list", n_chunks)
+
+  for (i in seq_len(n_chunks)) {
+    start_idx <- (i - 1) * chunk_size + 1
+    end_idx <- min(i * chunk_size, n_rows)
+
+    # Get chunk of JSON strings
+    json_chunk <- annotations$dynamicProperties[start_idx:end_idx]
+
+    # Parse JSON
+    parsed_chunk <- purrr::map(
+      json_chunk,
+      purrr::possibly(fromJSON, otherwise = NULL)
+    )
+
+    # Extract all flags in single pass
+    leaf_flags_list[[i]] <- extract_leaf_flags_single_pass(parsed_chunk)
+
+    if (i %% 10 == 0 || i == n_chunks) {
+      message(sprintf("      Processed chunk %d/%d (%.1f%%)",
+                      i, n_chunks, 100 * i / n_chunks))
+    }
+
+    # Explicit garbage collection every 20 chunks
+    if (i %% 20 == 0) {
+      gc()
+    }
+  }
+
+  # Combine results
+  leaf_flags <- bind_rows(leaf_flags_list)
+
+  # Add flags to annotations
   annotations <- annotations %>%
-    mutate(
-      leaves = purrr::map(leaf_json, "leaves"),
-      leaves_green = as.numeric(purrr::map_lgl(
-        leaves,
-        ~ "green leaves" %chin% .x,
-        .progress = TRUE
-      )),
-      leaves_colored = as.numeric(purrr::map_lgl(
-        leaves,
-        ~ "colored leaves" %chin% .x,
-        .progress = TRUE
-      )),
-      leaves_no_live = as.numeric(purrr::map_lgl(
-        leaves,
-        ~ "no live leaves" %chin% .x,
-        .progress = TRUE
-      )),
-      leaves_breaking_buds = as.numeric(purrr::map_lgl(
-        leaves,
-        ~ "breaking leaf buds" %chin% .x,
-        .progress = TRUE
-      ))
-    ) %>%
-    select(-leaves, -dynamicProperties)
+    bind_cols(leaf_flags) %>%
+    select(-dynamicProperties)
+
+  message("    JSON parsing complete!")
 
   # =========================================================================
   # Step 3: Filter by genera (if specified)

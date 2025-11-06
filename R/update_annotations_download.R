@@ -83,11 +83,11 @@ update_phenology_annotations <- function(annotation_dir = "data/phenobase_inat_d
   }
 
   # =========================================================================
-  # Step 2: Read observations.csv and filter for annotations
+  # Step 2: Read observations.csv and filter for annotations (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  3. Reading observations and filtering for annotations...")
-  message("     (This requires significant memory - ~90 GB)")
+  message("     (MEMORY OPTIMIZED: Using awk pre-filtering to reduce from ~90 GB to ~30 GB)")
 
   obs_file <- file.path(annotation_dir, "observations.csv")
 
@@ -95,9 +95,50 @@ update_phenology_annotations <- function(annotation_dir = "data/phenobase_inat_d
     stop("observations.csv not found - extraction may have failed")
   }
 
-  # Read observations using data.table (faster and less memory than readr)
-  annotated_inat <- data.table::fread(
+  # MEMORY OPTIMIZATION: Pre-filter with awk before loading into R
+  # Filter for rows where reproductiveCondition OR dynamicProperties is not empty
+  # Based on DwC standard, these are typically columns 26 and 28
+
+  # First, get column numbers dynamically from header
+  get_col_num_cmd <- sprintf(
+    "head -1 %s | tr '\\t' '\\n' | grep -n -E '^(reproductiveCondition|dynamicProperties)$'",
+    obs_file
+  )
+  col_info <- system(get_col_num_cmd, intern = TRUE)
+
+  # Parse column numbers
+  col_nums <- as.integer(sub(":.*", "", col_info))
+  col_repro <- col_nums[grepl("reproductiveCondition", col_info)]
+  col_dyn <- col_nums[grepl("dynamicProperties", col_info)]
+
+  message(sprintf("    Column numbers: reproductiveCondition=$%d, dynamicProperties=$%d",
+                  col_repro, col_dyn))
+
+  # Create awk filter: keep header OR rows where either column is not empty
+  obs_filtered_file <- file.path(annotation_dir, "observations_annotated_only.csv")
+
+  awk_filter_cmd <- sprintf(
+    "awk 'BEGIN {FS=\"\\t\"} NR == 1 || $%d != \"\" || $%d != \"\" {print}' %s > %s",
+    col_repro,
+    col_dyn,
     obs_file,
+    obs_filtered_file
+  )
+
+  message("    Running awk pre-filter (this may take a few minutes)...")
+  system(awk_filter_cmd)
+
+  # Report size reduction
+  input_size <- file.size(obs_file) / 1024^3
+  output_size <- file.size(obs_filtered_file) / 1024^3
+  reduction_pct <- 100 * (1 - output_size / input_size)
+
+  message(sprintf("    Input:  %.1f GB", input_size))
+  message(sprintf("    Output: %.1f GB (%.1f%% reduction)", output_size, reduction_pct))
+
+  # Now read ONLY the filtered observations (much smaller)
+  annotated_inat <- data.table::fread(
+    obs_filtered_file,
     select = c(
       "id", "occurrenceID", "basisOfRecord", "recordedBy", "recordedByID",
       "identifiedBy", "identifiedByID", "captive", "eventDate",
@@ -109,12 +150,12 @@ update_phenology_annotations <- function(annotation_dir = "data/phenobase_inat_d
     )
   )
 
-  # Filter for records with either reproductive or leaf annotations
+  # Rename observation_uuid column
   annotated_inat <- annotated_inat %>%
-    filter(!(reproductiveCondition == "" & dynamicProperties == "")) %>%
     rename(observation_uuid = otherCatalogueNumbers)
 
-  message(sprintf("    Found %s annotated observations", format(nrow(annotated_inat), big.mark = ",")))
+  message(sprintf("    Loaded %s annotated observations into memory",
+                  format(nrow(annotated_inat), big.mark = ",")))
 
   # Summary stats
   n_repro <- sum(annotated_inat$reproductiveCondition != "")

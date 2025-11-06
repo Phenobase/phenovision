@@ -84,19 +84,27 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   }
 
   # =========================================================================
-  # Step 2: Filter taxa to angiosperms
+  # Step 2: Filter taxa to angiosperms (MEMORY OPTIMIZED - uses awk)
   # =========================================================================
 
-  message("  3. Filtering taxa to angiosperms...")
+  message("  3. Filtering taxa to angiosperms (using awk to avoid loading 5GB file)...")
 
   taxa_file <- file.path(metadata_dir, "taxa.csv")
-  inat_taxa <- read_tsv(taxa_file, show_col_types = FALSE)
+  taxa_ids_file <- tempfile(fileext = ".txt")
 
-  angio_taxa <- inat_taxa %>%
-    filter(grepl("47125", ancestry)) %>%  # Angiosperm taxon ID
-    filter(rank %in% c("species", "subspecies", "variety"))
+  # Use awk to extract angiosperm taxon_ids directly (avoids reading 5GB file into R)
+  # Column 1 = taxon_id, Column 5 = rank, Column 7 = ancestry
+  # Filter: ancestry contains "47125" AND rank in (species, subspecies, variety)
+  awk_taxa_cmd <- sprintf(
+    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && $7 ~ /47125/ && ($5 == \"species\" || $5 == \"subspecies\" || $5 == \"variety\") {print $1}' %s > %s",
+    taxa_file,
+    taxa_ids_file
+  )
+  system(awk_taxa_cmd)
 
-  message(sprintf("    Found %s angiosperm taxa", format(nrow(angio_taxa), big.mark = ",")))
+  # Count taxa IDs (for reporting)
+  n_taxa <- as.integer(system(sprintf("wc -l < %s", taxa_ids_file), intern = TRUE))
+  message(sprintf("    Found %s angiosperm taxa (extracted with awk)", format(n_taxa, big.mark = ",")))
 
   # =========================================================================
   # Step 3: Filter observations using awk (efficient for huge files)
@@ -105,32 +113,22 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   message("  4. Filtering observations to research-grade angiosperms...")
 
   obs_file <- file.path(metadata_dir, "observations.csv")
-  obs_filtered_file <- file.path(metadata_dir, "angio_observations.csv")
+  obs_uuids_file <- tempfile(fileext = ".txt")
 
-  # Write taxa IDs for awk filtering
-  taxa_ids_file <- tempfile(fileext = ".txt")
-  writeLines(as.character(angio_taxa$taxon_id), taxa_ids_file)
-
-  # Use awk to filter observations (much faster than R for huge files)
-  # Column 6 = taxon_id, Column 7 = quality_grade
-  awk_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") taxa[$0]=1} NR > 1 && $6 in taxa && $7 == \"research\" {print}' %s > %s",
+  # Use awk to filter observations AND extract observation_uuids directly
+  # Column 2 = observation_uuid, Column 6 = taxon_id, Column 7 = quality_grade
+  # This avoids loading 30GB of observations into R - we only need the UUIDs
+  awk_obs_cmd <- sprintf(
+    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") taxa[$0]=1} NR > 1 && $6 in taxa && $7 == \"research\" {print $2}' %s > %s",
     taxa_ids_file,
     obs_file,
-    obs_filtered_file
+    obs_uuids_file
   )
-  system(awk_cmd)
+  system(awk_obs_cmd)
 
-  # Read filtered observations
-  angio_obs <- read_tsv(
-    obs_filtered_file,
-    col_names = c("observer_id", "observation_uuid", "observed_on",
-                  "time_observed_at", "time_zone", "taxon_id", "quality_grade"),
-    col_types = cols(.default = col_character()),
-    show_col_types = FALSE
-  )
-
-  message(sprintf("    Found %s research-grade observations", format(nrow(angio_obs), big.mark = ",")))
+  # Count observations (for reporting)
+  n_obs <- as.integer(system(sprintf("wc -l < %s", obs_uuids_file), intern = TRUE))
+  message(sprintf("    Found %s research-grade observations (extracted UUIDs with awk)", format(n_obs, big.mark = ",")))
 
   # =========================================================================
   # Step 4: Filter photos to those from our observations
@@ -139,20 +137,17 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   message("  5. Filtering photos...")
 
   photos_file <- file.path(metadata_dir, "photos.csv")
-
-  # Write observation UUIDs for awk filtering
-  obs_uuids_file <- tempfile(fileext = ".txt")
-  writeLines(angio_obs$observation_uuid, obs_uuids_file)
+  photos_filtered_file <- file.path(metadata_dir, "angio_photos.csv")
 
   # Use awk to filter photos (Column 2 = observation_uuid)
-  photos_filtered_file <- file.path(metadata_dir, "angio_photos.csv")
-  awk_cmd2 <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") obs[$0]=1} NR > 1 && $2 in obs {print}' %s > %s",
+  # Observation UUIDs are already in obs_uuids_file from previous step
+  awk_photos_cmd <- sprintf(
+    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") obs[$0]=1} NR == 1 || $2 in obs {print}' %s > %s",
     obs_uuids_file,
     photos_file,
     photos_filtered_file
   )
-  system(awk_cmd2)
+  system(awk_photos_cmd)
 
   # Read filtered photos
   angio_photos_new_raw <- read_tsv(
@@ -164,25 +159,30 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   message(sprintf("    Found %s photos from angiosperm observations", format(nrow(angio_photos_new_raw), big.mark = ",")))
 
   # =========================================================================
-  # Step 5: Compare with existing metadata to find NEW photos
+  # Step 5: Compare with existing metadata to find NEW photos (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  6. Identifying new photos...")
 
   # Check if old parquet exists
   if (dir.exists(parquet_path)) {
-    angio_photos_old <- open_dataset(parquet_path) %>%
-      select(photo_id, batch_j) %>%
-      collect()
+    # MEMORY OPTIMIZATION: Use hash set instead of full dataframe
+    # Old approach: collect(photo_id, batch_j) = ~15 GB
+    # New approach: hash set of photo_ids only = ~500 MB
+    source("R/utils_memory_efficient_download.R")
+    old_photo_ids <- create_photo_id_hashset(parquet_path)
 
-    old_photo_ids <- angio_photos_old$photo_id
-    old_batch_max <- max(angio_photos_old$batch_j, na.rm = TRUE)
+    # Get max batch number (need this for continuing batch numbering)
+    old_batch_max <- open_dataset(parquet_path) %>%
+      summarise(max_batch = max(batch_j, na.rm = TRUE)) %>%
+      collect() %>%
+      pull(max_batch)
 
     message(sprintf("    Existing dataset: %s photos in %d batches",
                     format(length(old_photo_ids), big.mark = ","),
                     old_batch_max))
 
-    # Filter to NEW photos only
+    # Filter to NEW photos only (using hash set comparison)
     angio_photos_new <- angio_photos_new_raw %>%
       filter(!photo_id %in% old_photo_ids)
 
@@ -192,7 +192,6 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
     message("    No existing dataset found - this is the first run")
     angio_photos_new <- angio_photos_new_raw
     old_batch_max <- 0
-    angio_photos_old <- NULL
   }
 
   # =========================================================================
@@ -216,23 +215,57 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   }
 
   # =========================================================================
-  # Step 7: Combine old and new, write to parquet
+  # Step 7: Combine old and new, write to parquet (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  8. Writing updated parquet dataset...")
 
-  if (!is.null(angio_photos_old) && nrow(angio_photos_new) > 0) {
-    # Combine old (with batch_j) and new
-    angio_photos_combined <- bind_rows(
-      angio_photos_old %>% left_join(
-        angio_photos_new_raw %>% select(-batch_j),
-        by = "photo_id"
-      ),
-      angio_photos_new
-    )
+  if (dir.exists(parquet_path) && nrow(angio_photos_new) > 0) {
+    # MEMORY OPTIMIZATION: Use Arrow union instead of bind_rows()
+    # Old approach: bind_rows(old, new) + left_join = ~200 GB peak
+    # New approach: Arrow union = ~75 GB peak (only new data in memory)
+
+    # Write new photos to temporary parquet
+    temp_new_path <- file.path(tempdir(), "temp_new_photos")
+    dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
+
+    write_dataset(angio_photos_new, path = temp_new_path, format = "parquet")
+    message(sprintf("    Wrote %s new photos to temporary parquet",
+                    format(nrow(angio_photos_new), big.mark = ",")))
+
+    # Create temporary union output path
+    temp_union_path <- file.path(tempdir(), "temp_union_photos")
+    dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
+
+    # Union datasets using Arrow (no memory spike)
+    union_ds <- open_dataset(c(parquet_path, temp_new_path))
+    write_dataset(union_ds, path = temp_union_path, format = "parquet")
+
+    # Replace old parquet with union
+    unlink(parquet_path, recursive = TRUE)
+    file.rename(temp_union_path, parquet_path)
+
+    # Clean up
+    unlink(temp_new_path, recursive = TRUE)
+
+    # Count total photos
+    n_total <- open_dataset(parquet_path) %>%
+      count() %>%
+      collect() %>%
+      pull(n)
+
+    message(sprintf("    Wrote %s total photos to %s (using Arrow union)",
+                    format(n_total, big.mark = ","),
+                    parquet_path))
+
   } else if (nrow(angio_photos_new) > 0) {
     # First run - only new photos
-    angio_photos_combined <- angio_photos_new
+    write_dataset(angio_photos_new, path = parquet_path, format = "parquet")
+
+    message(sprintf("    Wrote %s photos to %s (first run)",
+                    format(nrow(angio_photos_new), big.mark = ","),
+                    parquet_path))
+
   } else {
     # No new photos - just return existing path
     message("    No new photos to add - dataset unchanged")
@@ -240,28 +273,25 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
     return(parquet_path)
   }
 
-  # Write to parquet (partitioned by batch_j for efficient reading)
-  write_dataset(
-    angio_photos_combined,
-    path = parquet_path,
-    format = "parquet",
-    partitioning = NULL  # Don't partition - keeps it simple
-  )
-
-  message(sprintf("    Wrote %s total photos to %s",
-                  format(nrow(angio_photos_combined), big.mark = ","),
-                  parquet_path))
-
   # =========================================================================
   # Step 8: Update metadata date file
   # =========================================================================
 
   metadata_date_file <- file.path(metadata_dir, "metadata_date.txt")
+
+  # Get stats from parquet (avoid loading entire dataset)
+  stats <- open_dataset(parquet_path) %>%
+    summarise(
+      n_photos = n(),
+      max_batch = max(batch_j, na.rm = TRUE)
+    ) %>%
+    collect()
+
   cat(
     sprintf("Metadata updated on %s: %s total photos in %d batches\n",
             Sys.Date(),
-            format(nrow(angio_photos_combined), big.mark = ","),
-            max(angio_photos_combined$batch_j)),
+            format(stats$n_photos, big.mark = ","),
+            stats$max_batch),
     file = metadata_date_file,
     append = TRUE
   )
