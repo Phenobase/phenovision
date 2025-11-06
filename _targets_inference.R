@@ -23,6 +23,8 @@ source_common()     # Common functions (model loading, etc.)
 source_inference()  # Inference-specific functions
 
 # Additional packages
+library(targets)
+library(tarchetypes)  # Modern targets syntax
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 conflicts_prefer(lubridate::yday)
@@ -32,10 +34,10 @@ conflicts_prefer(lubridate::year)
 setup_targets_parallel(workers = config$num_targets_workers)
 
 # =============================================================================
-# Pipeline
+# Pipeline (Modern tar_plan() Syntax)
 # =============================================================================
 
-list(
+tar_plan(
 
   # =========================================================================
   # Model Configuration

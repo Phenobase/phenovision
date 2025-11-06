@@ -23,6 +23,8 @@ source_common()     # Common functions (model loading, etc.)
 source_training()   # Training-specific functions
 
 # Additional packages
+library(targets)
+library(tarchetypes)  # Modern targets syntax
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 
@@ -30,10 +32,13 @@ conflicts_prefer(dplyr::filter)
 setup_targets_parallel(workers = 1)
 
 # =============================================================================
-# Pipeline
+# Pipeline (Modern tar_plan() Syntax)
 # =============================================================================
-
-list(
+#
+# Note: train_config could be further optimized by separating parameters into
+# individual targets for granular dependency tracking (see _targets_download_annots.R)
+#
+tar_plan(
 
   # ===========================================================================
   # Training Configuration
