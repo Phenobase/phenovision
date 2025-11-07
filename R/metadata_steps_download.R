@@ -410,7 +410,7 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     temp_new_path <- file.path(tempdir(), "temp_new_photos")
     dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
 
-    write_dataset(new_photos_table, path = temp_new_path, format = "parquet", schema = old_schema)
+    write_dataset(new_photos_table, path = temp_new_path, format = "parquet")
     message(sprintf("  Wrote %s new photos to temporary parquet with matching schema",
                     format(nrow(angio_photos_batched), big.mark = ",")))
 
@@ -421,7 +421,7 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     # Union datasets using Arrow
     new_ds <- open_dataset(temp_new_path)
     union_ds <- dplyr::union_all(old_ds, new_ds)
-    write_dataset(union_ds, path = temp_union_path, format = "parquet", schema = old_schema)
+    write_dataset(union_ds, path = temp_union_path, format = "parquet")
 
     # Replace old parquet with union
     unlink(parquet_full_path, recursive = TRUE)
