@@ -106,9 +106,9 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
   system(header_cmd)
 
   # Then filter data rows
-  # Based on DwC standard, these are typically columns 26 and 28
+  # Column 46 = reproductiveCondition, Column 48 = dynamicProperties
   awk_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && ($26 != \"\" || $28 != \"\") {print}' %s >> %s",
+    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print}' %s >> %s",
     obs_file,
     filtered_file
   )
@@ -127,7 +127,7 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
   # Select key columns (adjust as needed)
   annots_clean <- annots %>%
     select(
-      observation_uuid = otherCatalogNumbers,
+      observation_uuid = otherCatalogueNumbers,
       reproductive_condition = reproductiveCondition,
       dynamic_properties = dynamicProperties,
       taxon_id = taxonID,
