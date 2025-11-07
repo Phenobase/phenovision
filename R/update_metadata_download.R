@@ -248,7 +248,10 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
     # Union datasets using Arrow (no memory spike)
-    union_ds <- open_dataset(c(parquet_path, temp_new_path))
+    # Open each dataset separately then union
+    old_ds <- open_dataset(parquet_path)
+    new_ds <- open_dataset(temp_new_path)
+    union_ds <- dplyr::union_all(old_ds, new_ds)
     write_dataset(union_ds, path = temp_union_path, format = "parquet")
 
     # Replace old parquet with union
