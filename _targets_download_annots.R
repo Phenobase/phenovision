@@ -49,7 +49,7 @@ conflicts_prefer(dplyr::filter)
 # Set targets options
 tar_option_set(
   packages = c("tidyverse", "arrow", "jsonlite", "data.table", "rsample"),
-  format = "qs"  # Faster than rds for large data
+  format = "rds"  # Standard R format (qs would be faster but requires qs2 package)
 )
 
 # =============================================================================
@@ -105,32 +105,115 @@ tar_plan(
   force_annotation_update = FALSE,  # Set to TRUE to force re-download of DwC archive
 
   # ===========================================================================
-  # Step 1: Update iNaturalist Metadata (Parquet-Based)
+  # Step 1: Update iNaturalist Metadata (Granular Targets)
   # ===========================================================================
 
-  # Update angio_photos parquet with latest iNaturalist data
-  # This downloads metadata tar.gz, filters to angiosperms, assigns batches
+  # 1a. Download metadata tar.gz (26+ GB, ~30 min)
   tar_target(
-    photos_parquet_updated,
-    update_inat_metadata(
+    metadata_tarfile,
+    download_inat_metadata(
       metadata_dir = metadata_dir,
-      batch_size = image_batch_size,
       force_download = force_metadata_update
     ),
     format = "file"
   ),
 
+  # 1b. Extract metadata (70+ GB extracted, ~10 min)
+  tar_target(
+    metadata_extracted,
+    extract_inat_metadata(
+      tarfile = metadata_tarfile,
+      metadata_dir = metadata_dir
+    ),
+    format = "file"
+  ),
+
+  # 1c. Filter taxa to angiosperms (uses awk, ~30 sec)
+  tar_target(
+    angio_taxa_ids,
+    filter_angio_taxa(metadata_extracted)
+  ),
+
+  # 1d. Filter observations to research-grade angiosperms (uses awk, ~15 min)
+  tar_target(
+    angio_obs_uuids,
+    filter_angio_observations(metadata_extracted, angio_taxa_ids)
+  ),
+
+  # 1e. Filter photos from angiosperm observations (uses awk, ~20 min)
+  tar_target(
+    angio_photos_raw,
+    filter_angio_photos(metadata_extracted, angio_obs_uuids)
+  ),
+
+  # 1f. Identify NEW photos compared to existing parquet (~5 min)
+  tar_target(
+    angio_photos_new,
+    identify_new_photos(
+      angio_photos_raw,
+      parquet_path = photos_parquet,
+      metadata_dir = metadata_dir
+    )
+  ),
+
+  # 1g. Assign batch numbers to new photos (~1 min)
+  tar_target(
+    angio_photos_batched,
+    assign_batch_numbers(
+      angio_photos_new,
+      batch_size = image_batch_size,
+      parquet_path = photos_parquet
+    )
+  ),
+
+  # 1h. Write updated parquet dataset (~10-30 min depending on size)
+  tar_target(
+    photos_parquet_updated,
+    write_photos_parquet(
+      angio_photos_batched,
+      parquet_path = photos_parquet,
+      metadata_dir = metadata_dir
+    ),
+    format = "file"
+  ),
+
   # ===========================================================================
-  # Step 2: Update Phenology Annotations (Parquet-Based)
+  # Step 2: Update Phenology Annotations (Granular Targets)
   # ===========================================================================
 
-  # Update inat_annotation parquet with latest DwC archive
-  # This downloads DwC zip, extracts observations, filters for annotations
+  # 2a. Download DwC archive (10+ GB, ~2 hours)
   tar_target(
-    annotations_parquet_updated,
-    update_phenology_annotations(
+    dwc_zipfile,
+    download_dwc_archive(
       annotation_dir = annotation_dir,
       force_download = force_annotation_update
+    ),
+    format = "file"
+  ),
+
+  # 2b. Extract DwC archive (~30 min)
+  tar_target(
+    dwc_extracted,
+    extract_dwc_archive(
+      zipfile = dwc_zipfile,
+      annotation_dir = annotation_dir
+    ),
+    format = "file"
+  ),
+
+  # 2c. Parse phenology annotations from DwC (~10 min)
+  tar_target(
+    phenology_annots_raw,
+    parse_phenology_dwc(dwc_extracted, annotation_dir)
+  ),
+
+  # 2d. Write updated annotations parquet (~5 min)
+  tar_target(
+    annotations_parquet_updated,
+    write_annotations_parquet(
+      phenology_annots_raw,
+      parquet_path = annotations_parquet,
+      annotation_dir = annotation_dir
     ),
     format = "file"
   ),
