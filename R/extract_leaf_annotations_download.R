@@ -64,7 +64,7 @@ extract_leaf_annotations <- function(leaf_parquet_path,
   message("  1. Loading iNaturalist leaf annotations from parquet...")
 
   leaf_annot <- read_parquet(leaf_parquet_path) %>%
-    filter(dynamicProperties != "")
+    filter(dynamic_properties != "")
 
   message(sprintf("    Loaded %d observations with leaf annotations", nrow(leaf_annot)))
 
@@ -72,15 +72,15 @@ extract_leaf_annotations <- function(leaf_parquet_path,
   # Step 2: Fix double quotes and parse JSON
   # =========================================================================
 
-  message("  2. Parsing JSON from dynamicProperties...")
+  message("  2. Parsing JSON from dynamic_properties...")
 
   # Fix weird double double quotes issue
   leaf_annot <- leaf_annot %>%
-    mutate(dynamicProperties = str_replace_all(dynamicProperties, fixed('""'), '"'))
+    mutate(dynamic_properties = str_replace_all(dynamic_properties, fixed('""'), '"'))
 
   # Parse JSON (use possibly() to handle errors gracefully)
   leaf_json <- purrr::map(
-    leaf_annot$dynamicProperties,
+    leaf_annot$dynamic_properties,
     purrr::possibly(fromJSON, otherwise = NULL),
     .progress = TRUE
   )
