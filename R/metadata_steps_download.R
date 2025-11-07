@@ -418,10 +418,10 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     temp_union_path <- file.path(tempdir(), "temp_union_photos")
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
-    # Union datasets using Arrow
+    # Bind datasets using Arrow (no duplicate checking needed - already filtered for new photos)
     new_ds <- open_dataset(temp_new_path)
-    union_ds <- dplyr::union_all(old_ds, new_ds)
-    write_dataset(union_ds, path = temp_union_path, format = "parquet")
+    combined_ds <- bind_rows(old_ds, new_ds)
+    write_dataset(combined_ds, path = temp_union_path, format = "parquet")
 
     # Replace old parquet with union
     unlink(parquet_full_path, recursive = TRUE)
