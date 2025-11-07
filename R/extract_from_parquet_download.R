@@ -202,15 +202,11 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   message("  1. Loading leaf annotations...")
 
   annotations <- open_dataset(annotation_parquet) %>%
-    filter(dynamicProperties != "") %>%
+    filter(dynamic_properties != "") %>%
     select(
       observation_uuid,
-      dynamicProperties,
-      scientificName,
-      taxonRank,
-      family,
-      genus,
-      datasetName
+      dynamic_properties,
+      scientific_name
     ) %>%
     collect()
 
@@ -226,7 +222,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
 
   # Fix double double quotes issue
   annotations <- annotations %>%
-    mutate(dynamicProperties = str_replace_all(dynamicProperties, fixed('""'), '"'))
+    mutate(dynamic_properties = str_replace_all(dynamic_properties, fixed('""'), '"'))
 
   # MEMORY OPTIMIZATION: Parse JSON in chunks to avoid loading all parsed structures at once
   # Old approach: parse all JSON at once = ~20 GB for 5M strings
@@ -257,7 +253,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
     end_idx <- min(i * chunk_size, n_rows)
 
     # Get chunk of JSON strings
-    json_chunk <- annotations$dynamicProperties[start_idx:end_idx]
+    json_chunk <- annotations$dynamic_properties[start_idx:end_idx]
 
     # Parse JSON
     parsed_chunk <- purrr::map(
@@ -285,9 +281,13 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   # Add flags to annotations
   annotations <- annotations %>%
     bind_cols(leaf_flags) %>%
-    select(-dynamicProperties)
+    select(-dynamic_properties)
 
   message("    JSON parsing complete!")
+
+  # Extract genus from scientific_name (first word)
+  annotations <- annotations %>%
+    mutate(genus = word(scientific_name, 1))
 
   # =========================================================================
   # Step 3: Filter by genera (if specified)
@@ -316,7 +316,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   message("  4. Joining with photo metadata...")
 
   photos <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j) %>%
+    select(observation_uuid, photo_id, extension, batch_j, family) %>%
     filter(observation_uuid %in% !!annotations$observation_uuid) %>%
     collect()
 
@@ -454,7 +454,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   all_meta <- merged %>%
     select(
       observation_uuid,
-      scientificName,
+      scientificName = scientific_name,
       genus,
       family,
       file_name,
