@@ -70,6 +70,13 @@ parser$add_argument(
   help = "Show what would be run without actually running it"
 )
 
+parser$add_argument(
+  "--no-log",
+  action = "store_true",
+  default = FALSE,
+  help = "Disable automatic logging to logs/ directory"
+)
+
 args <- parser$parse_args()
 
 # =============================================================================
@@ -152,6 +159,25 @@ if (script_dir != "") {
 
 cat("Working directory: ", getwd(), "\n\n")
 
+# Set up logging if enabled
+log_file <- NULL
+if (!args$no_log) {
+  # Create logs directory if needed
+  dir.create("logs", showWarnings = FALSE, recursive = TRUE)
+
+  # Create timestamped log file
+  timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  log_file <- file.path("logs", sprintf("%s_run_%s.log", args$pipeline, timestamp))
+
+  cat("Logging to: ", log_file, "\n\n")
+
+  # Redirect output to both console and log file using sink
+  # Note: This captures output from R but not from system() calls
+  log_con <- file(log_file, open = "wt")
+  sink(log_con, type = "output", split = TRUE)  # split=TRUE keeps console output
+  sink(log_con, type = "message")
+}
+
 # Run the pipeline
 start_time <- Sys.time()
 
@@ -179,7 +205,17 @@ tryCatch({
   cat("========================================\n")
   cat("Duration: ", round(duration, 2), " minutes\n")
   cat("Completed at: ", format(end_time), "\n")
+  if (!is.null(log_file)) {
+    cat("Log file: ", log_file, "\n")
+  }
   cat("========================================\n")
+
+  # Close log connections
+  if (!is.null(log_file)) {
+    sink(type = "message")
+    sink(type = "output")
+    close(log_con)
+  }
 
 }, error = function(e) {
   end_time <- Sys.time()
@@ -190,6 +226,9 @@ tryCatch({
   cat("========================================\n")
   cat("Error: ", e$message, "\n")
   cat("Duration before error: ", round(duration, 2), " minutes\n")
+  if (!is.null(log_file)) {
+    cat("Log file: ", log_file, "\n")
+  }
   cat("========================================\n\n")
 
   if (args$debug) {
@@ -197,6 +236,13 @@ tryCatch({
     cat("Check targets metadata with:\n")
     cat("  targets::tar_meta(script = '", targets_file, "')\n", sep = "")
     cat("  targets::tar_workspace(name_of_failed_target)\n")
+  }
+
+  # Close log connections
+  if (!is.null(log_file)) {
+    sink(type = "message")
+    sink(type = "output")
+    close(log_con)
   }
 
   quit(status = 1)
