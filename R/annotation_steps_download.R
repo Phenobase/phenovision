@@ -97,33 +97,27 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
 
   obs_file <- dwc_extracted
 
-  # MEMORY OPTIMIZATION: Pre-filter with awk AND extract only needed columns
-  # Filter for rows where reproductiveCondition OR dynamicProperties is not empty
-  # Extract only: eventDate(17), taxonID(30), scientificName(31), reproductiveCondition(46), dynamicProperties(48), otherCatalogueNumbers(49)
-  filtered_file <- tempfile(fileext = ".csv")
+  # Use readr for proper CSV parsing (handles quoted fields with commas)
+  # awk doesn't handle CSV quoting correctly, leading to wrong column extraction
+  message("  Reading and filtering annotations with proper CSV parsing...")
 
-  # First, write custom header with only the columns we need
-  header_cmd <- sprintf(
-    "echo 'eventDate,taxonID,scientificName,reproductiveCondition,dynamicProperties,otherCatalogueNumbers' > %s",
-    filtered_file
-  )
-  system(header_cmd)
-
-  # Then filter rows AND extract only needed columns in one pass
-  # Column 46 = reproductiveCondition, Column 48 = dynamicProperties
-  awk_cmd <- sprintf(
-    "awk 'BEGIN {FS=\",\"; OFS=\",\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print $17,$30,$31,$46,$48,$49}' %s >> %s",
-    obs_file,
-    filtered_file
-  )
-  system(awk_cmd)
-
-  message("  Reading filtered annotations into R...")
   annots_clean <- read_csv(
-    filtered_file,
+    obs_file,
     col_types = cols(.default = col_character()),
     show_col_types = FALSE
   ) %>%
+    # Filter for rows where reproductiveCondition OR dynamicProperties is not empty
+    filter(!is.na(reproductiveCondition) | !is.na(dynamicProperties)) %>%
+    filter(reproductiveCondition != "" | dynamicProperties != "") %>%
+    # Select only needed columns
+    select(
+      eventDate,
+      taxonID,
+      scientificName,
+      reproductiveCondition,
+      dynamicProperties,
+      otherCatalogueNumbers
+    ) %>%
     rename(
       observation_uuid = otherCatalogueNumbers,
       reproductive_condition = reproductiveCondition,
