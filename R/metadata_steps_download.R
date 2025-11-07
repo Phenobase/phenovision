@@ -396,11 +396,21 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
   }
 
   if (dir.exists(parquet_full_path)) {
-    # Write new photos to temporary parquet
+    # Get old schema to ensure new data matches
+    old_ds <- open_dataset(parquet_full_path)
+    old_schema <- schema(old_ds)
+
+    message("  Casting new data to match existing schema...")
+
+    # Convert new photos to Arrow Table and cast to old schema
+    new_photos_table <- arrow_table(angio_photos_batched)
+    new_photos_table <- new_photos_table$cast(old_schema)
+
+    # Write new photos to temporary parquet with matching schema
     temp_new_path <- file.path(tempdir(), "temp_new_photos")
     dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
 
-    write_dataset(angio_photos_batched, path = temp_new_path, format = "parquet")
+    write_dataset(new_photos_table, path = temp_new_path, format = "parquet")
     message(sprintf("  Wrote %s new photos to temporary parquet",
                     format(nrow(angio_photos_batched), big.mark = ",")))
 
@@ -409,7 +419,6 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
     # Union datasets using Arrow
-    old_ds <- open_dataset(parquet_full_path)
     new_ds <- open_dataset(temp_new_path)
     union_ds <- dplyr::union_all(old_ds, new_ds)
     write_dataset(union_ds, path = temp_union_path, format = "parquet")
