@@ -222,8 +222,7 @@ filter_angio_photos <- function(metadata_extracted, angio_obs_uuids) {
 #' @return Tibble of photos enriched with observation data
 #' @export
 enrich_photos_with_observations <- function(angio_photos, metadata_extracted) {
-  library(readr)
-  library(dplyr)
+  library(data.table)
   library(lubridate)
 
   message("Enriching photos with observation data...")
@@ -249,28 +248,43 @@ enrich_photos_with_observations <- function(angio_photos, metadata_extracted) {
   )
   system(awk_cmd)
 
-  # Read observation data
-  obs_data <- read_csv(
+  message("  Reading observation data with data.table (memory-efficient)...")
+
+  # Read observation data with data.table (much more memory-efficient)
+  obs_data <- fread(
     obs_filtered_file,
-    col_types = cols(
-      observation_uuid = col_character(),
-      latitude = col_double(),
-      longitude = col_double(),
-      positional_accuracy = col_integer(),
-      taxon_id = col_integer(),
-      observed_on = col_date(),
-      anomaly_score = col_double()
-    ),
-    show_col_types = FALSE
+    colClasses = c(
+      observation_uuid = "character",
+      latitude = "numeric",
+      longitude = "numeric",
+      positional_accuracy = "integer",
+      taxon_id = "integer",
+      observed_on = "character",  # Read as character, convert to date after
+      anomaly_score = "numeric"
+    )
   )
 
-  # Join photos with observations
-  photos_enriched <- angio_photos %>%
-    left_join(obs_data, by = "observation_uuid") %>%
-    mutate(
-      yr = year(observed_on),
-      mth = month(observed_on)
-    )
+  # Convert observed_on to date
+  obs_data[, observed_on := as.Date(observed_on)]
+
+  # Convert photos to data.table for efficient join
+  photos_dt <- as.data.table(angio_photos)
+  setkey(photos_dt, observation_uuid)
+  setkey(obs_data, observation_uuid)
+
+  message("  Performing memory-efficient join...")
+
+  # Join using data.table (much more memory-efficient than dplyr)
+  photos_enriched <- obs_data[photos_dt, on = "observation_uuid"]
+
+  # Add yr and mth
+  photos_enriched[, `:=`(
+    yr = year(observed_on),
+    mth = month(observed_on)
+  )]
+
+  # Convert back to tibble
+  photos_enriched <- as_tibble(photos_enriched)
 
   message(sprintf("  Enriched %s photos with observation data", format(nrow(photos_enriched), big.mark = ",")))
 
