@@ -189,10 +189,20 @@ filter_angio_photos <- function(metadata_extracted, angio_obs_uuids) {
   )
   system(awk_cmd)
 
-  # Read filtered photos
+  # Read filtered photos with proper column types to match existing parquet schema
   angio_photos <- read_tsv(
     photos_filtered_file,
-    col_types = cols(.default = col_character()),
+    col_types = cols(
+      photo_uuid = col_character(),
+      photo_id = col_character(),
+      observation_uuid = col_character(),
+      observer_id = col_integer(),
+      extension = col_character(),
+      license = col_character(),
+      width = col_integer(),
+      height = col_integer(),
+      position = col_integer()
+    ),
     show_col_types = FALSE
   )
 
