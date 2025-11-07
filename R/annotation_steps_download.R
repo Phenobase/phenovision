@@ -107,6 +107,10 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
       "eventDate",
       "taxonID",
       "scientificName",
+      "class",
+      "order",
+      "family",
+      "genus",
       "reproductiveCondition",
       "dynamicProperties",
       "otherCatalogueNumbers"
@@ -124,6 +128,7 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
       taxon_id = taxonID,
       scientific_name = scientificName,
       observed_on = eventDate
+      # Keep class, order, family, genus as-is (already lowercase in DwC)
     )
 
   message(sprintf("  Found %s observations with phenology annotations",

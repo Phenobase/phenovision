@@ -206,7 +206,9 @@ extract_leaf_from_parquet <- function(annotation_parquet,
     select(
       observation_uuid,
       dynamic_properties,
-      scientific_name
+      scientific_name,
+      genus,
+      family
     ) %>%
     collect()
 
@@ -285,10 +287,6 @@ extract_leaf_from_parquet <- function(annotation_parquet,
 
   message("    JSON parsing complete!")
 
-  # Extract genus from scientific_name (first word)
-  annotations <- annotations %>%
-    mutate(genus = word(scientific_name, 1))
-
   # =========================================================================
   # Step 3: Filter by genera (if specified)
   # =========================================================================
@@ -316,7 +314,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   message("  4. Joining with photo metadata...")
 
   photos <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j, family) %>%
+    select(observation_uuid, photo_id, extension, batch_j) %>%
     filter(observation_uuid %in% !!annotations$observation_uuid) %>%
     collect()
 
