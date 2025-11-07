@@ -422,7 +422,8 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
     # Bind datasets using Arrow (no duplicate checking needed - already filtered for new photos)
-    new_ds <- open_dataset(temp_new_path)
+    # Force the schema when opening the new dataset to ensure compatibility
+    new_ds <- open_dataset(temp_new_path, schema = old_schema)
     combined_ds <- bind_rows(old_ds, new_ds) %>%
       group_by(batch_j)  # Group by batch_j to enable partitioned writing
     write_dataset(combined_ds, path = temp_union_path, format = "parquet")
