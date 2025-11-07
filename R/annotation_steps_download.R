@@ -97,36 +97,34 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
 
   obs_file <- dwc_extracted
 
-  # MEMORY OPTIMIZATION: Pre-filter with awk
+  # MEMORY OPTIMIZATION: Pre-filter with awk AND extract only needed columns
   # Filter for rows where reproductiveCondition OR dynamicProperties is not empty
+  # Extract only: eventDate(17), taxonID(30), scientificName(31), reproductiveCondition(46), dynamicProperties(48), otherCatalogueNumbers(49)
   filtered_file <- tempfile(fileext = ".csv")
 
-  # First, get header
-  header_cmd <- sprintf("head -n 1 %s > %s", obs_file, filtered_file)
+  # First, write custom header with only the columns we need
+  header_cmd <- sprintf(
+    "echo 'eventDate,taxonID,scientificName,reproductiveCondition,dynamicProperties,otherCatalogueNumbers' > %s",
+    filtered_file
+  )
   system(header_cmd)
 
-  # Then filter data rows
+  # Then filter rows AND extract only needed columns in one pass
   # Column 46 = reproductiveCondition, Column 48 = dynamicProperties
   awk_cmd <- sprintf(
-    "awk 'BEGIN {FS=\",\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print}' %s >> %s",
+    "awk 'BEGIN {FS=\",\"; OFS=\",\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print $17,$30,$31,$46,$48,$49}' %s >> %s",
     obs_file,
     filtered_file
   )
   system(awk_cmd)
 
   message("  Reading filtered annotations into R...")
-  annots <- read_csv(
+  annots_clean <- read_csv(
     filtered_file,
     col_types = cols(.default = col_character()),
     show_col_types = FALSE
-  )
-
-  message(sprintf("  Found %s observations with phenology annotations",
-                  format(nrow(annots), big.mark = ",")))
-
-  # Select key columns (adjust as needed)
-  annots_clean <- annots %>%
-    select(
+  ) %>%
+    rename(
       observation_uuid = otherCatalogueNumbers,
       reproductive_condition = reproductiveCondition,
       dynamic_properties = dynamicProperties,
@@ -134,6 +132,9 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
       scientific_name = scientificName,
       observed_on = eventDate
     )
+
+  message(sprintf("  Found %s observations with phenology annotations",
+                  format(nrow(annots_clean), big.mark = ",")))
 
   return(annots_clean)
 }
