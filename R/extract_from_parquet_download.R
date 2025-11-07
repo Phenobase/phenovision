@@ -47,27 +47,20 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
   message("  1. Loading reproductive annotations...")
 
   annotations <- open_dataset(annotation_parquet) %>%
-    filter(reproductiveCondition != "") %>%
+    filter(reproductive_condition != "") %>%
     select(
       observation_uuid,
-      reproductiveCondition,
-      scientificName,
-      taxonRank,
-      family,
-      genus,
-      datasetName
+      reproductive_condition,
+      scientific_name,
+      taxon_id
     ) %>%
     collect()
 
   message(sprintf("    Found %s observations with reproductive annotations",
                   format(nrow(annotations), big.mark = ",")))
 
-  # Filter for research-grade only
-  annotations <- annotations %>%
-    filter(grepl("research-grade", datasetName, fixed = TRUE)) %>%
-    select(-datasetName)
-
-  message(sprintf("    Filtered to %s research-grade observations",
+  # Note: Annotations from DwC are already filtered to research-grade in parse_phenology_dwc()
+  message(sprintf("    All %s observations are research-grade",
                   format(nrow(annotations), big.mark = ",")))
 
   # =========================================================================
@@ -106,14 +99,14 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
   merged <- single_photo_obs %>%
     inner_join(annotations, by = "observation_uuid") %>%
     mutate(
-      # Parse reproductiveCondition (pipe-separated)
-      flowering = as.integer(grepl("flowering", reproductiveCondition, fixed = TRUE)),
-      fruiting = as.integer(grepl("fruits or seeds", reproductiveCondition, fixed = TRUE))
+      # Parse reproductive_condition (pipe-separated)
+      flowering = as.integer(grepl("flowering", reproductive_condition, fixed = TRUE)),
+      fruiting = as.integer(grepl("fruits or seeds", reproductive_condition, fixed = TRUE))
     )
 
   # Exclude ambiguous annotations
   merged <- merged %>%
-    filter(reproductiveCondition != "flowering|no evidence of flowering")
+    filter(reproductive_condition != "flowering|no evidence of flowering")
 
   # Summary
   n_flowering <- sum(merged$flowering == 1)
