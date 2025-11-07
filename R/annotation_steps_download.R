@@ -108,14 +108,14 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
   # Then filter data rows
   # Column 46 = reproductiveCondition, Column 48 = dynamicProperties
   awk_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print}' %s >> %s",
+    "awk 'BEGIN {FS=\",\"} NR > 1 && ($46 != \"\" || $48 != \"\") {print}' %s >> %s",
     obs_file,
     filtered_file
   )
   system(awk_cmd)
 
   message("  Reading filtered annotations into R...")
-  annots <- read_tsv(
+  annots <- read_csv(
     filtered_file,
     col_types = cols(.default = col_character()),
     show_col_types = FALSE
