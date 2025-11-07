@@ -406,11 +406,14 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     new_photos_table <- arrow_table(angio_photos_batched)
     new_photos_table <- new_photos_table$cast(old_schema)
 
-    # Write new photos to temporary parquet WITH explicit schema
+    # Write new photos to temporary parquet with partitioning
     temp_new_path <- file.path(tempdir(), "temp_new_photos")
     dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
 
-    write_dataset(new_photos_table, path = temp_new_path, format = "parquet")
+    # Group by batch_j before writing to preserve schema through partitioning
+    new_photos_grouped <- new_photos_table %>%
+      group_by(batch_j)
+    write_dataset(new_photos_grouped, path = temp_new_path, format = "parquet")
     message(sprintf("  Wrote %s new photos to temporary parquet with matching schema",
                     format(nrow(angio_photos_batched), big.mark = ",")))
 
