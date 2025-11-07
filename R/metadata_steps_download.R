@@ -273,8 +273,8 @@ enrich_photos_with_observations <- function(angio_photos, metadata_extracted) {
   photos_enriched <- angio_photos %>%
     left_join(obs_data, by = "observation_uuid") %>%
     mutate(
-      yr = year(observed_on),
-      mth = month(observed_on)
+      yr = lubridate::year(observed_on),
+      mth = lubridate::month(observed_on)
     )
 
   message(sprintf("  Enriched %s photos with observation data", format(nrow(photos_enriched), big.mark = ",")))
