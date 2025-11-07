@@ -15,6 +15,24 @@ library(future)
 library(future.callr)
 
 # =============================================================================
+# Package Conflict Resolution
+# =============================================================================
+
+# Prefer lubridate versions over data.table for date functions
+library(conflicted)
+conflicts_prefer(
+  lubridate::year,
+  lubridate::month,
+  lubridate::week,
+  lubridate::mday,
+  lubridate::wday,
+  lubridate::hour,
+  lubridate::minute,
+  lubridate::second,
+  .quiet = TRUE
+)
+
+# =============================================================================
 # Project Paths
 # =============================================================================
 
