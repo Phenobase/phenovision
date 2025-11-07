@@ -212,6 +212,72 @@ filter_angio_photos <- function(metadata_extracted, angio_obs_uuids) {
 }
 
 
+#' Enrich Photos with Observation Data
+#'
+#' Joins photos with observations to add latitude, longitude, taxon_id, etc.
+#' Uses awk for memory-efficient extraction and join.
+#'
+#' @param angio_photos Tibble of angiosperm photos
+#' @param metadata_extracted Vector of metadata file paths
+#' @return Tibble of photos enriched with observation data
+#' @export
+enrich_photos_with_observations <- function(angio_photos, metadata_extracted) {
+  library(readr)
+  library(dplyr)
+  library(lubridate)
+
+  message("Enriching photos with observation data...")
+
+  obs_file <- metadata_extracted[grep("observations.csv", metadata_extracted)]
+
+  # Extract needed columns from observations using awk
+  # Columns: 1=observation_uuid, 3=latitude, 4=longitude, 5=positional_accuracy, 6=taxon_id, 8=observed_on, 9=anomaly_score
+  obs_filtered_file <- tempfile(fileext = ".csv")
+
+  # Write header
+  header_cmd <- sprintf(
+    "echo 'observation_uuid,latitude,longitude,positional_accuracy,taxon_id,observed_on,anomaly_score' > %s",
+    obs_filtered_file
+  )
+  system(header_cmd)
+
+  # Extract columns with awk
+  awk_cmd <- sprintf(
+    "awk 'BEGIN {FS=\"\\t\"; OFS=\",\"} NR > 1 {print $1,$3,$4,$5,$6,$8,$9}' %s >> %s",
+    obs_file,
+    obs_filtered_file
+  )
+  system(awk_cmd)
+
+  # Read observation data
+  obs_data <- read_csv(
+    obs_filtered_file,
+    col_types = cols(
+      observation_uuid = col_character(),
+      latitude = col_double(),
+      longitude = col_double(),
+      positional_accuracy = col_integer(),
+      taxon_id = col_integer(),
+      observed_on = col_date(),
+      anomaly_score = col_double()
+    ),
+    show_col_types = FALSE
+  )
+
+  # Join photos with observations
+  photos_enriched <- angio_photos %>%
+    left_join(obs_data, by = "observation_uuid") %>%
+    mutate(
+      yr = year(observed_on),
+      mth = month(observed_on)
+    )
+
+  message(sprintf("  Enriched %s photos with observation data", format(nrow(photos_enriched), big.mark = ",")))
+
+  return(photos_enriched)
+}
+
+
 #' Identify New Photos Compared to Existing Parquet
 #'
 #' Compares new photos against existing parquet dataset to find only NEW photos.
@@ -325,25 +391,11 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
   }
 
   if (dir.exists(parquet_full_path)) {
-    # Get existing schema to match
-    old_ds <- open_dataset(parquet_full_path)
-    old_schema <- schema(old_ds)
-
-    # Add missing columns to new photos with NA values
-    for (field_name in names(old_schema)) {
-      if (!field_name %in% names(angio_photos_batched)) {
-        angio_photos_batched[[field_name]] <- NA
-      }
-    }
-
-    # Reorder columns to match old schema
-    angio_photos_batched <- angio_photos_batched[names(old_schema)]
-
-    # Write new photos to temporary parquet with old schema
+    # Write new photos to temporary parquet
     temp_new_path <- file.path(tempdir(), "temp_new_photos")
     dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
 
-    write_dataset(angio_photos_batched, path = temp_new_path, format = "parquet", schema = old_schema)
+    write_dataset(angio_photos_batched, path = temp_new_path, format = "parquet")
     message(sprintf("  Wrote %s new photos to temporary parquet",
                     format(nrow(angio_photos_batched), big.mark = ",")))
 
@@ -352,6 +404,7 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
     # Union datasets using Arrow
+    old_ds <- open_dataset(parquet_full_path)
     new_ds <- open_dataset(temp_new_path)
     union_ds <- dplyr::union_all(old_ds, new_ds)
     write_dataset(union_ds, path = temp_union_path, format = "parquet")

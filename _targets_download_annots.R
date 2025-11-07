@@ -146,11 +146,17 @@ tar_plan(
     filter_angio_photos(metadata_extracted, angio_obs_uuids)
   ),
 
+  # 1e2. Enrich photos with observation data (latitude, taxon_id, etc.) (~10 min)
+  tar_target(
+    angio_photos_enriched,
+    enrich_photos_with_observations(angio_photos_raw, metadata_extracted)
+  ),
+
   # 1f. Identify NEW photos compared to existing parquet (~5 min)
   tar_target(
     angio_photos_new,
     identify_new_photos(
-      angio_photos_raw,
+      angio_photos_enriched,
       parquet_path = photos_parquet,
       metadata_dir = metadata_dir
     )
