@@ -406,34 +406,14 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     new_photos_table <- arrow_table(angio_photos_batched)
     new_photos_table <- new_photos_table$cast(old_schema)
 
-    # Write new photos to temporary parquet with partitioning
-    temp_new_path <- file.path(tempdir(), "temp_new_photos")
-    dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
-
-    # Group by batch_j before writing to preserve schema through partitioning
+    # APPEND APPROACH: Write new photos DIRECTLY into existing parquet directory
+    # Arrow will automatically include them when opening the dataset
+    # Group by batch_j to maintain partitioning structure
     new_photos_grouped <- new_photos_table %>%
       group_by(batch_j)
-    write_dataset(new_photos_grouped, path = temp_new_path, format = "parquet")
-    message(sprintf("  Wrote %s new photos to temporary parquet with matching schema",
+    write_dataset(new_photos_grouped, path = parquet_full_path, format = "parquet")
+    message(sprintf("  Appended %s new photos to existing dataset",
                     format(nrow(angio_photos_batched), big.mark = ",")))
-
-    # Create temporary union output path
-    temp_union_path <- file.path(tempdir(), "temp_union_photos")
-    dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
-
-    # Bind datasets using Arrow (no duplicate checking needed - already filtered for new photos)
-    # Force the schema when opening the new dataset to ensure compatibility
-    new_ds <- open_dataset(temp_new_path, schema = old_schema)
-    combined_ds <- bind_rows(old_ds, new_ds) %>%
-      group_by(batch_j)  # Group by batch_j to enable partitioned writing
-    write_dataset(combined_ds, path = temp_union_path, format = "parquet")
-
-    # Replace old parquet with union
-    unlink(parquet_full_path, recursive = TRUE)
-    file.rename(temp_union_path, parquet_full_path)
-
-    # Clean up
-    unlink(temp_new_path, recursive = TRUE)
 
     # Count total photos
     n_total <- open_dataset(parquet_full_path) %>%
