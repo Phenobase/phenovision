@@ -76,13 +76,21 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   if (download_needed) {
     message("  1. Downloading latest iNaturalist metadata (this requires 120+ GB memory)...")
     xfun::download_file(metadata_url, meta_file)
+  } else {
+    message("  Skipping download, using existing metadata")
+  }
 
+  # Check if extraction is needed (even if download was skipped)
+  taxa_file <- file.path(metadata_dir, "taxa.csv")
+  extraction_needed <- download_needed || !file.exists(taxa_file)
+
+  if (extraction_needed) {
     message("  2. Extracting metadata archive...")
     # Use --strip-components=1 to remove the dated top-level directory
     # This ensures files are extracted directly to metadata_dir regardless of archive structure
     system(paste0("tar -xvzf ", meta_file, " -C ", metadata_dir, " --strip-components=1"))
   } else {
-    message("  Skipping download, using existing metadata")
+    message("  Using existing extracted files")
   }
 
   # =========================================================================
@@ -91,7 +99,7 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
 
   message("  3. Filtering taxa to angiosperms (using awk to avoid loading 5GB file)...")
 
-  taxa_file <- file.path(metadata_dir, "taxa.csv")
+  # taxa_file already defined above for extraction check
   taxa_ids_file <- tempfile(fileext = ".txt")
 
   # Use awk to extract angiosperm taxon_ids directly (avoids reading 5GB file into R)
