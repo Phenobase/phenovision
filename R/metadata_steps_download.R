@@ -400,11 +400,15 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     old_ds <- open_dataset(parquet_full_path)
     old_schema <- schema(old_ds)
 
-    message("  Casting new data to match existing schema...")
+    message("  Creating Arrow table with matching schema...")
 
-    # Convert new photos to Arrow Table and cast to old schema
-    new_photos_table <- arrow_table(angio_photos_batched)
-    new_photos_table <- new_photos_table$cast(old_schema)
+    # Reorder columns to match old schema (column order matters!)
+    old_col_names <- names(old_schema)
+    angio_photos_batched <- angio_photos_batched[, old_col_names]
+
+    # Convert new photos to Arrow Table with the OLD schema directly
+    # This avoids casting issues - just specify the correct schema from the start
+    new_photos_table <- arrow_table(angio_photos_batched, schema = old_schema)
 
     # APPEND APPROACH: Write new photos DIRECTLY into existing parquet directory
     # Arrow will automatically include them when opening the dataset
