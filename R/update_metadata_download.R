@@ -103,10 +103,10 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   taxa_ids_file <- tempfile(fileext = ".txt")
 
   # Use awk to extract angiosperm taxon_ids directly (avoids reading 5GB file into R)
-  # Column 1 = taxon_id, Column 5 = rank, Column 7 = ancestry
+  # Column 1 = taxon_id, Column 2 = ancestry, Column 4 = rank
   # Filter: ancestry contains "47125" AND rank in (species, subspecies, variety)
   awk_taxa_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && $7 ~ /47125/ && ($5 == \"species\" || $5 == \"subspecies\" || $5 == \"variety\") {print $1}' %s > %s",
+    "awk 'BEGIN {FS=\"\\t\"} NR > 1 && $2 ~ /47125/ && ($4 == \"species\" || $4 == \"subspecies\" || $4 == \"variety\") {print $1}' %s > %s",
     taxa_file,
     taxa_ids_file
   )
@@ -126,10 +126,10 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   obs_uuids_file <- tempfile(fileext = ".txt")
 
   # Use awk to filter observations AND extract observation_uuids directly
-  # Column 2 = observation_uuid, Column 6 = taxon_id, Column 7 = quality_grade
+  # Column 1 = observation_uuid, Column 6 = taxon_id, Column 7 = quality_grade
   # This avoids loading 30GB of observations into R - we only need the UUIDs
   awk_obs_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") taxa[$0]=1} NR > 1 && $6 in taxa && $7 == \"research\" {print $2}' %s > %s",
+    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") taxa[$0]=1} NR > 1 && $6 in taxa && $7 == \"research\" {print $1}' %s > %s",
     taxa_ids_file,
     obs_file,
     obs_uuids_file
@@ -149,10 +149,10 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
   photos_file <- file.path(metadata_dir, "photos.csv")
   photos_filtered_file <- file.path(metadata_dir, "angio_photos.csv")
 
-  # Use awk to filter photos (Column 2 = observation_uuid)
+  # Use awk to filter photos (Column 3 = observation_uuid)
   # Observation UUIDs are already in obs_uuids_file from previous step
   awk_photos_cmd <- sprintf(
-    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") obs[$0]=1} NR == 1 || $2 in obs {print}' %s > %s",
+    "awk 'BEGIN {FS=\"\\t\"; while(getline < \"%s\") obs[$0]=1} NR == 1 || $3 in obs {print}' %s > %s",
     obs_uuids_file,
     photos_file,
     photos_filtered_file
