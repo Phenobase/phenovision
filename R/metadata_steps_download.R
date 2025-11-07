@@ -325,11 +325,25 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
   }
 
   if (dir.exists(parquet_full_path)) {
-    # Write new photos to temporary parquet
+    # Get existing schema to match
+    old_ds <- open_dataset(parquet_full_path)
+    old_schema <- schema(old_ds)
+
+    # Add missing columns to new photos with NA values
+    for (field_name in names(old_schema)) {
+      if (!field_name %in% names(angio_photos_batched)) {
+        angio_photos_batched[[field_name]] <- NA
+      }
+    }
+
+    # Reorder columns to match old schema
+    angio_photos_batched <- angio_photos_batched[names(old_schema)]
+
+    # Write new photos to temporary parquet with old schema
     temp_new_path <- file.path(tempdir(), "temp_new_photos")
     dir.create(temp_new_path, recursive = TRUE, showWarnings = FALSE)
 
-    write_dataset(angio_photos_batched, path = temp_new_path, format = "parquet")
+    write_dataset(angio_photos_batched, path = temp_new_path, format = "parquet", schema = old_schema)
     message(sprintf("  Wrote %s new photos to temporary parquet",
                     format(nrow(angio_photos_batched), big.mark = ",")))
 
@@ -338,7 +352,6 @@ write_photos_parquet <- function(angio_photos_batched, parquet_path, metadata_di
     dir.create(temp_union_path, recursive = TRUE, showWarnings = FALSE)
 
     # Union datasets using Arrow
-    old_ds <- open_dataset(parquet_full_path)
     new_ds <- open_dataset(temp_new_path)
     union_ds <- dplyr::union_all(old_ds, new_ds)
     write_dataset(union_ds, path = temp_union_path, format = "parquet")
