@@ -78,7 +78,9 @@ update_inat_metadata <- function(metadata_dir = "data/phenobase_inat_data/metada
     xfun::download_file(metadata_url, meta_file)
 
     message("  2. Extracting metadata archive...")
-    system(paste0("tar -xvzf ", meta_file, " -C ", metadata_dir))
+    # Use --strip-components=1 to remove the dated top-level directory
+    # This ensures files are extracted directly to metadata_dir regardless of archive structure
+    system(paste0("tar -xvzf ", meta_file, " -C ", metadata_dir, " --strip-components=1"))
   } else {
     message("  Skipping download, using existing metadata")
   }
