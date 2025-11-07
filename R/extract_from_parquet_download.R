@@ -100,13 +100,13 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
     inner_join(annotations, by = "observation_uuid") %>%
     mutate(
       # Parse reproductive_condition (pipe-separated)
-      flowering = as.integer(grepl("flowering", reproductive_condition, fixed = TRUE)),
+      flowering = as.integer(grepl("flowers", reproductive_condition, fixed = TRUE)),
       fruiting = as.integer(grepl("fruits or seeds", reproductive_condition, fixed = TRUE))
     )
 
-  # Exclude ambiguous annotations
+  # Exclude ambiguous/contradictory annotations (e.g., "flowers|no flowers or fruits")
   merged <- merged %>%
-    filter(reproductive_condition != "flowering|no evidence of flowering")
+    filter(!grepl("|no flowers or fruits", reproductive_condition, fixed = TRUE))
 
   # Summary
   n_flowering <- sum(merged$flowering == 1)

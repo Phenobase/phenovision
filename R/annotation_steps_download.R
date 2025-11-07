@@ -97,27 +97,26 @@ parse_phenology_dwc <- function(dwc_extracted, annotation_dir) {
 
   obs_file <- dwc_extracted
 
-  # Use readr for proper CSV parsing (handles quoted fields with commas)
-  # awk doesn't handle CSV quoting correctly, leading to wrong column extraction
-  message("  Reading and filtering annotations with proper CSV parsing...")
+  # Use data.table::fread() for fast CSV reading (5-10x faster than read_csv)
+  # The 'select' parameter only reads needed columns from disk
+  message("  Reading and filtering annotations with data.table::fread()...")
 
-  annots_clean <- read_csv(
+  annots_clean <- data.table::fread(
     obs_file,
-    col_types = cols(.default = col_character()),
-    show_col_types = FALSE
+    select = c(
+      "eventDate",
+      "taxonID",
+      "scientificName",
+      "reproductiveCondition",
+      "dynamicProperties",
+      "otherCatalogueNumbers"
+    ),
+    colClasses = "character"  # Read all as character for consistency
   ) %>%
+    as_tibble() %>%
     # Filter for rows where reproductiveCondition OR dynamicProperties is not empty
     filter(!is.na(reproductiveCondition) | !is.na(dynamicProperties)) %>%
     filter(reproductiveCondition != "" | dynamicProperties != "") %>%
-    # Select only needed columns
-    select(
-      eventDate,
-      taxonID,
-      scientificName,
-      reproductiveCondition,
-      dynamicProperties,
-      otherCatalogueNumbers
-    ) %>%
     rename(
       observation_uuid = otherCatalogueNumbers,
       reproductive_condition = reproductiveCondition,
