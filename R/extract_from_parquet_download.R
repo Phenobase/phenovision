@@ -75,9 +75,15 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
     select(observation_uuid, photo_id, extension, batch_j)
 
   # Create annotations Arrow table for join
-  # Cast observation_uuid to string type to match photos parquet schema
-  annotations_tbl <- arrow_table(annotations) %>%
-    mutate(observation_uuid = cast(observation_uuid, string()))
+  # Ensure observation_uuid is string type (not large_string) to match photos parquet
+  annotations_tbl <- annotations %>%
+    mutate(observation_uuid = as.character(observation_uuid)) %>%
+    arrow_table(schema = schema(
+      observation_uuid = string(),
+      reproductive_condition = string(),
+      scientific_name = string(),
+      taxon_id = string()
+    ))
 
   # Do the join in Arrow (memory efficient)
   photos_joined <- photos_ds %>%
@@ -330,9 +336,19 @@ extract_leaf_from_parquet <- function(annotation_parquet,
     select(observation_uuid, photo_id, extension, batch_j)
 
   # Create annotations Arrow table for join
-  # Cast observation_uuid to string type to match photos parquet schema
-  annotations_tbl <- arrow_table(annotations) %>%
-    mutate(observation_uuid = cast(observation_uuid, string()))
+  # Ensure observation_uuid is string type (not large_string) to match photos parquet
+  annotations_tbl <- annotations %>%
+    mutate(observation_uuid = as.character(observation_uuid)) %>%
+    arrow_table(schema = schema(
+      observation_uuid = string(),
+      scientific_name = string(),
+      genus = string(),
+      family = string(),
+      leaves_green = int32(),
+      leaves_colored = int32(),
+      leaves_no_live = int32(),
+      leaves_breaking_buds = int32()
+    ))
 
   # Do the join in Arrow (memory efficient) and filter out NAs
   merged <- photos_ds %>%
