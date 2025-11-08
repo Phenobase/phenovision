@@ -64,40 +64,38 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
                   format(nrow(annotations), big.mark = ",")))
 
   # =========================================================================
-  # Step 2: Join with photos parquet
+  # Step 2: Join with photos parquet (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  2. Joining with photo metadata...")
+  message("     (MEMORY OPTIMIZED: Arrow join before collect)")
 
-  photos <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j) %>%
-    filter(observation_uuid %in% !!annotations$observation_uuid) %>%
-    collect()
+  # Open photos dataset
+  photos_ds <- open_dataset(photos_parquet) %>%
+    select(observation_uuid, photo_id, extension, batch_j)
 
-  message(sprintf("    Matched %s photos", format(nrow(photos), big.mark = ",")))
+  # Create annotations Arrow table for join
+  annotations_tbl <- arrow_table(annotations)
 
-  # =========================================================================
-  # Step 3: Filter to single-photo observations
-  # =========================================================================
-
-  message("  3. Filtering to single-photo observations...")
-
-  single_photo_obs <- photos %>%
+  # Do the join in Arrow (memory efficient)
+  # Then filter to single-photo observations before collecting
+  photos_joined <- photos_ds %>%
+    inner_join(annotations_tbl, by = "observation_uuid") %>%
     group_by(observation_uuid) %>%
     filter(n() == 1) %>%
-    ungroup()
+    ungroup() %>%
+    collect()
 
-  message(sprintf("    Kept %s single-photo observations",
-                  format(nrow(single_photo_obs), big.mark = ",")))
+  message(sprintf("    Matched %s single-photo observations",
+                  format(nrow(photos_joined), big.mark = ",")))
 
   # =========================================================================
-  # Step 4: Merge and parse flags
+  # Step 3: Parse flowering/fruiting flags
   # =========================================================================
 
-  message("  4. Parsing flowering/fruiting flags...")
+  message("  3. Parsing flowering/fruiting flags...")
 
-  merged <- single_photo_obs %>%
-    inner_join(annotations, by = "observation_uuid") %>%
+  merged <- photos_joined %>%
     mutate(
       # Parse reproductive_condition (pipe-separated)
       flowering = as.integer(grepl("flowers", reproductive_condition, fixed = TRUE)),
@@ -308,19 +306,23 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   }
 
   # =========================================================================
-  # Step 4: Join with photos parquet
+  # Step 4: Join with photos parquet (MEMORY OPTIMIZED)
   # =========================================================================
 
   message("  4. Joining with photo metadata...")
+  message("     (MEMORY OPTIMIZED: Arrow join before collect)")
 
-  photos <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j) %>%
-    filter(observation_uuid %in% !!annotations$observation_uuid) %>%
+  # Open photos dataset
+  photos_ds <- open_dataset(photos_parquet) %>%
+    select(observation_uuid, photo_id, extension, batch_j)
+
+  # Create annotations Arrow table for join
+  annotations_tbl <- arrow_table(annotations)
+
+  # Do the join in Arrow (memory efficient) and filter out NAs
+  merged <- photos_ds %>%
+    inner_join(annotations_tbl, by = "observation_uuid") %>%
     collect()
-
-  merged <- annotations %>%
-    left_join(photos, by = "observation_uuid") %>%
-    filter(!is.na(batch_j))
 
   message(sprintf("    Matched %s photos", format(nrow(merged), big.mark = ",")))
 
