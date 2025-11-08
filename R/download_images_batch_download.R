@@ -106,8 +106,9 @@ download_images_by_batch <- function(parquet_path,
   }
 
   # Estimate number of images
+  max_batch <- max(batches_to_download)
   n_last <- angio_photos %>%
-    filter(batch_j == max(batches_to_download)) %>%
+    filter(batch_j == max_batch) %>%
     count() %>%
     collect() %>%
     pull(n)

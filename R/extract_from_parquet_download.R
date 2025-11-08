@@ -46,48 +46,39 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
 
   message("  1. Loading reproductive annotations...")
 
-  annotations <- open_dataset(annotation_parquet) %>%
+  annotations_ds <- open_dataset(annotation_parquet) %>%
     filter(reproductive_condition != "") %>%
     select(
       observation_uuid,
       reproductive_condition,
       scientific_name,
       taxon_id
-    ) %>%
-    collect()
+    )
+
+  # Count for logging
+  annotation_count <- annotations_ds %>% count() %>% pull(n)
 
   message(sprintf("    Found %s observations with reproductive annotations",
-                  format(nrow(annotations), big.mark = ",")))
+                  format(annotation_count, big.mark = ",")))
 
   # Note: Annotations from DwC are already filtered to research-grade in parse_phenology_dwc()
   message(sprintf("    All %s observations are research-grade",
-                  format(nrow(annotations), big.mark = ",")))
+                  format(annotation_count, big.mark = ",")))
 
   # =========================================================================
-  # Step 2: Join with photos parquet (MEMORY OPTIMIZED)
+  # Step 2: Join with photos parquet (Arrow-to-Arrow)
   # =========================================================================
 
-  message("  2. Joining with photo metadata...")
-  message("     (MEMORY OPTIMIZED: Arrow join before collect)")
+  message("  2. Joining with photo metadata (Arrow-to-Arrow join)...")
 
-  # Open photos dataset
+  # Open photos dataset and cast observation_uuid to match annotations (utf8/string)
   photos_ds <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j)
+    select(observation_uuid, photo_id, extension, batch_j) %>%
+    mutate(observation_uuid = cast(observation_uuid, utf8()))
 
-  # Create annotations Arrow table for join
-  # Ensure observation_uuid is string type (not large_string) to match photos parquet
-  annotations_tbl <- annotations %>%
-    mutate(observation_uuid = as.character(observation_uuid)) %>%
-    arrow_table(schema = schema(
-      observation_uuid = string(),
-      reproductive_condition = string(),
-      scientific_name = string(),
-      taxon_id = string()
-    ))
-
-  # Do the join in Arrow (memory efficient)
+  # Join two Arrow datasets, then collect
   photos_joined <- photos_ds %>%
-    inner_join(annotations_tbl, by = "observation_uuid") %>%
+    inner_join(annotations_ds, by = "observation_uuid") %>%
     collect()
 
   message(sprintf("    Matched %s photos",
@@ -325,32 +316,29 @@ extract_leaf_from_parquet <- function(annotation_parquet,
   }
 
   # =========================================================================
-  # Step 4: Join with photos parquet (MEMORY OPTIMIZED)
+  # Step 4: Join with photos parquet
   # =========================================================================
 
   message("  4. Joining with photo metadata...")
-  message("     (MEMORY OPTIMIZED: Arrow join before collect)")
 
-  # Open photos dataset
+  # Open photos and cast observation_uuid to string type (to match annotations)
   photos_ds <- open_dataset(photos_parquet) %>%
-    select(observation_uuid, photo_id, extension, batch_j)
+    select(observation_uuid, photo_id, extension, batch_j) %>%
+    mutate(observation_uuid = cast(observation_uuid, utf8()))
 
-  # Create annotations Arrow table for join
-  # Ensure observation_uuid is string type (not large_string) to match photos parquet
-  annotations_tbl <- annotations %>%
-    mutate(observation_uuid = as.character(observation_uuid)) %>%
-    arrow_table(schema = schema(
-      observation_uuid = string(),
-      scientific_name = string(),
-      genus = string(),
-      family = string(),
-      leaves_green = int32(),
-      leaves_colored = int32(),
-      leaves_no_live = int32(),
-      leaves_breaking_buds = int32()
-    ))
+  # Write annotations to temp Arrow table for Arrow join
+  annotations_tbl <- arrow_table(annotations, schema = schema(
+    observation_uuid = utf8(),
+    scientific_name = utf8(),
+    genus = utf8(),
+    family = utf8(),
+    leaves_green = int32(),
+    leaves_colored = int32(),
+    leaves_no_live = int32(),
+    leaves_breaking_buds = int32()
+  ))
 
-  # Do the join in Arrow (memory efficient) and filter out NAs
+  # Join in Arrow, then collect
   merged <- photos_ds %>%
     inner_join(annotations_tbl, by = "observation_uuid") %>%
     collect()
