@@ -75,7 +75,9 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
     select(observation_uuid, photo_id, extension, batch_j)
 
   # Create annotations Arrow table for join
-  annotations_tbl <- arrow_table(annotations)
+  # Cast observation_uuid to string type to match photos parquet schema
+  annotations_tbl <- arrow_table(annotations) %>%
+    mutate(observation_uuid = cast(observation_uuid, string()))
 
   # Do the join in Arrow (memory efficient)
   photos_joined <- photos_ds %>%
@@ -328,7 +330,9 @@ extract_leaf_from_parquet <- function(annotation_parquet,
     select(observation_uuid, photo_id, extension, batch_j)
 
   # Create annotations Arrow table for join
-  annotations_tbl <- arrow_table(annotations)
+  # Cast observation_uuid to string type to match photos parquet schema
+  annotations_tbl <- arrow_table(annotations) %>%
+    mutate(observation_uuid = cast(observation_uuid, string()))
 
   # Do the join in Arrow (memory efficient) and filter out NAs
   merged <- photos_ds %>%
