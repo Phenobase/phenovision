@@ -78,24 +78,35 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
   annotations_tbl <- arrow_table(annotations)
 
   # Do the join in Arrow (memory efficient)
-  # Then filter to single-photo observations before collecting
   photos_joined <- photos_ds %>%
     inner_join(annotations_tbl, by = "observation_uuid") %>%
-    group_by(observation_uuid) %>%
-    filter(n() == 1) %>%
-    ungroup() %>%
     collect()
 
-  message(sprintf("    Matched %s single-photo observations",
+  message(sprintf("    Matched %s photos",
                   format(nrow(photos_joined), big.mark = ",")))
 
   # =========================================================================
-  # Step 3: Parse flowering/fruiting flags
+  # Step 3: Filter to single-photo observations
   # =========================================================================
 
-  message("  3. Parsing flowering/fruiting flags...")
+  message("  3. Filtering to single-photo observations...")
 
-  merged <- photos_joined %>%
+  # Filter to single-photo observations (n() not supported in Arrow)
+  single_photo_obs <- photos_joined %>%
+    group_by(observation_uuid) %>%
+    filter(n() == 1) %>%
+    ungroup()
+
+  message(sprintf("    Kept %s single-photo observations",
+                  format(nrow(single_photo_obs), big.mark = ",")))
+
+  # =========================================================================
+  # Step 4: Parse flowering/fruiting flags
+  # =========================================================================
+
+  message("  4. Parsing flowering/fruiting flags...")
+
+  merged <- single_photo_obs %>%
     mutate(
       # Parse reproductive_condition (pipe-separated)
       flowering = as.integer(grepl("flowers", reproductive_condition, fixed = TRUE)),
