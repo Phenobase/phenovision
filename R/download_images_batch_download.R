@@ -86,14 +86,18 @@ download_images_by_batch <- function(parquet_path,
     pull(batch_j) %>%
     sort()
 
-  # Get already downloaded batches
-  batch_done <- list.files(images_size_dir, pattern = "^batch_", full.names = TRUE)
+  # Get already downloaded batches (only non-empty folders)
+  batch_folders <- list.files(images_size_dir, pattern = "^batch_", full.names = TRUE)
+  # Check which folders actually contain images
+  batch_done <- batch_folders[sapply(batch_folders, function(f) length(list.files(f)) > 0)]
   batch_done_int <- as.integer(str_extract(batch_done, "[0-9]+$"))
 
   # Determine which batches to download
   if (!is.null(batch_ids)) {
-    batches_to_download <- intersect(batch_ids, all_batches)
-    message(sprintf("    User specified %d batches", length(batches_to_download)))
+    # Intersect with all_batches, then exclude already downloaded
+    batches_to_download <- setdiff(intersect(batch_ids, all_batches), batch_done_int)
+    message(sprintf("    User specified %d batches, %d already downloaded",
+                    length(batch_ids), length(intersect(batch_ids, batch_done_int))))
   } else {
     batches_to_download <- setdiff(all_batches, batch_done_int)
   }
@@ -136,7 +140,9 @@ download_images_by_batch <- function(parquet_path,
     photos_i <- open_dataset(parquet_path) %>%
       filter(batch_j == batch_id) %>%
       collect() %>%
-      mutate(img_id = paste(photo_id, extension, sep = "."))
+      mutate(img_id = paste(photo_id, extension, sep = ".")) %>%
+      # Deduplicate by photo_id and extension to avoid duplicate downloads
+      distinct(photo_id, extension, .keep_all = TRUE)
 
     # Check if batch already exists - only download missing images
     if (dir.exists(f_target)) {
