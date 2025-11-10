@@ -299,36 +299,46 @@ download_batch_from_list <- function(batch_data, status_dir) {
   n_to_download <- length(urls_to_download)
 
   # ===========================================================================
-  # Step 2: ATTEMPT 1 - Initial download IN CHUNKS
+  # Step 2: ATTEMPT 1 - Initial download IN MICRO-BATCHES
   # ===========================================================================
-  # Download in chunks to avoid overwhelming curl's connection pool
-  # Empirically, trying to download 100K files at once leads to 50%+ failure rate
+  # CRITICAL: Must use small batches (≤100 files) with multiplex=FALSE
+  # Empirical testing showed:
+  #   - 5000 files: 22% success (massive failures)
+  #   - 100 files with multiplex=FALSE: 100% success
+  # HTTP/2 multiplexing causes connection failures with S3
 
-  chunk_size <- 5000
+  chunk_size <- 100  # CRITICAL: Do not increase above 100
   n_chunks <- ceiling(n_to_download / chunk_size)
 
-  message(sprintf("[Batch %d] Downloading %s images in %d chunks of ~%d (attempt 1)...",
+  message(sprintf("[Batch %d] Downloading %s images in %d micro-batches of ~%d (attempt 1)...",
                   batch_id, format(n_to_download, big.mark = ","),
                   n_chunks, chunk_size))
 
-  # Download each chunk
+  # Download each micro-batch
   xi_list <- list()
   for (chunk_i in seq_len(n_chunks)) {
     start_idx <- (chunk_i - 1) * chunk_size + 1
     end_idx <- min(chunk_i * chunk_size, n_to_download)
     chunk_indices <- start_idx:end_idx
 
-    message(sprintf("[Batch %d] Chunk %d/%d: downloading images %d-%d...",
-                    batch_id, chunk_i, n_chunks, start_idx, end_idx))
+    if (chunk_i %% 50 == 0) {  # Report progress every 50 chunks
+      message(sprintf("[Batch %d] Chunk %d/%d: downloading images %d-%d...",
+                      batch_id, chunk_i, n_chunks, start_idx, end_idx))
+    }
 
     xi_chunk <- curl::multi_download(
       urls = urls_to_download[chunk_indices],
       destfiles = dest_to_download[chunk_indices],
       resume = TRUE,
-      progress = FALSE  # Less verbose for chunked downloads
+      progress = FALSE,
+      multiplex = FALSE,      # CRITICAL: Disable HTTP/2 multiplexing
+      multi_timeout = 60      # CRITICAL: Longer timeout
     )
 
     xi_list[[chunk_i]] <- xi_chunk
+
+    # Small delay to avoid overwhelming server
+    if (chunk_i < n_chunks) Sys.sleep(0.5)
   }
 
   # Combine all chunk results
@@ -347,7 +357,7 @@ download_batch_from_list <- function(batch_data, status_dir) {
   # ===========================================================================
 
   if (n_failed_attempt1 > 0) {
-    message(sprintf("[Batch %d] Retrying %s failed downloads in chunks (attempt 2)...",
+    message(sprintf("[Batch %d] Retrying %s failed downloads in micro-batches (attempt 2)...",
                     batch_id, format(n_failed_attempt1, big.mark = ",")))
 
     # Keep successful downloads from attempt 1
@@ -356,7 +366,7 @@ download_batch_from_list <- function(batch_data, status_dir) {
     # Get indices of failed downloads
     failed_indices <- which(fs_0)
 
-    # Chunk the retry downloads as well
+    # Micro-batch the retry downloads with same settings
     n_retry_chunks <- ceiling(length(failed_indices) / chunk_size)
 
     xi2_list <- list()
@@ -365,17 +375,23 @@ download_batch_from_list <- function(batch_data, status_dir) {
       end_idx <- min(chunk_i * chunk_size, length(failed_indices))
       chunk_failed_indices <- failed_indices[start_idx:end_idx]
 
-      message(sprintf("[Batch %d] Retry chunk %d/%d: %d images...",
-                      batch_id, chunk_i, n_retry_chunks, length(chunk_failed_indices)))
+      if (chunk_i %% 50 == 0) {
+        message(sprintf("[Batch %d] Retry chunk %d/%d: %d images...",
+                        batch_id, chunk_i, n_retry_chunks, length(chunk_failed_indices)))
+      }
 
       xi2_chunk <- curl::multi_download(
         urls = urls_to_download[chunk_failed_indices],
         destfiles = dest_to_download[chunk_failed_indices],
         resume = TRUE,
-        progress = FALSE
+        progress = FALSE,
+        multiplex = FALSE,      # CRITICAL
+        multi_timeout = 60      # CRITICAL
       )
 
       xi2_list[[chunk_i]] <- xi2_chunk
+
+      if (chunk_i < n_retry_chunks) Sys.sleep(0.5)
     }
 
     # Combine retry results
