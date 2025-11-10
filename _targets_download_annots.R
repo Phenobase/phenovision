@@ -26,6 +26,9 @@
 #
 # Usage:
 #   targets::tar_make(script = "_targets_download_annots.R")
+#   # Crew controller automatically parallelizes with 6 workers
+#
+#   # Or via CLI wrapper:
 #   Rscript run_pipeline.R --pipeline=download_annots
 
 # =============================================================================
@@ -34,6 +37,7 @@
 
 library(targets)
 library(tarchetypes)
+library(crew)
 
 # Load common configuration
 source("_targets_common.R")
@@ -46,11 +50,22 @@ source_download()   # Download-specific functions
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 
-# Set targets options
+# Set targets options with crew controller
 tar_option_set(
-  packages = c("tidyverse", "arrow", "jsonlite", "data.table", "rsample"),
-  format = "rds"  # Standard R format (qs would be faster but requires qs2 package)
+  packages = c("tidyverse", "arrow", "jsonlite", "data.table", "rsample", "curl"),
+  format = "rds",  # Standard R format (qs would be faster but requires qs2 package)
+  controller = crew_controller_local(
+    workers = 6,
+    seconds_idle = 60  # Keep workers alive for 60 seconds after finishing
+  )
 )
+
+# Configure parallel processing
+# Using crew for parallelization (modern targets approach)
+# - Runs up to 6 batch downloads in parallel via dynamic branching
+# - Each worker runs download_batch_from_list() which uses curl::multi_download()
+#   with built-in concurrency for efficient I/O (100 files per micro-batch)
+# - Simply use: tar_make(script = "_targets_download_annots.R")
 
 # =============================================================================
 # Pipeline
@@ -98,7 +113,8 @@ tar_plan(
 
   # Image download settings
   image_batch_size = 100000,  # Images per batch
-  image_download_cores = 10,  # Parallel download workers
+  image_download_cores = 6,  # Parallel download workers (matches available cores)
+  image_download_status_dir = file.path(metadata_dir, "img_download_status"),  # Failed download logs
 
   # Update frequency flags
   force_metadata_update = FALSE,  # Set to TRUE to force re-download of metadata
@@ -318,49 +334,71 @@ tar_plan(
   ),
 
   # ===========================================================================
-  # Step 5: Download Images for Needed Batches
+  # Step 5: Download Images for ALL Batches (Not Just Annotated)
+  # ===========================================================================
+  #
+  # New architecture based on collaborator's script:
+  # 1. Get ALL unique batch_j values from parquet (single query)
+  # 2. Compare against existing batch folders to find missing batches
+  # 3. Pre-extract ALL photo metadata for missing batches (single query)
+  # 4. Prepare download lists with pre-computed URLs/paths (no parquet access)
+  # 5. Dynamic branching: Map over download lists (each worker gets pre-extracted data)
+  # 6. Aggregate results
+  #
+  # This ensures we download ALL images for inference, not just annotated ones.
+  # Pre-extraction avoids parallel parquet access bottleneck.
+  #
   # ===========================================================================
 
-  # Identify which batches are needed for training
-  needed_batches = {
-    # Get batch IDs from all CSVs
-    repro_batches <- bind_rows(
-      read_csv(repro_train_csv, show_col_types = FALSE),
-      read_csv(repro_val_csv, show_col_types = FALSE),
-      read_csv(repro_test_csv, show_col_types = FALSE)
-    ) %>%
-      pull(file_name) %>%
-      str_extract("batch_[0-9]+") %>%
-      str_remove("batch_") %>%
-      as.integer() %>%
-      unique()
+  # Step 5.1: Get all unique batch IDs from parquet (SINGLE QUERY)
+  all_batches_in_parquet = identify_all_batches(
+    parquet_path = photos_parquet_updated
+  ),
 
-    leaf_batches <- bind_rows(
-      read_csv(leaf_train_csv, show_col_types = FALSE),
-      read_csv(leaf_val_csv, show_col_types = FALSE),
-      read_csv(leaf_test_csv, show_col_types = FALSE),
-      read_csv(leaf_seconds_csv, show_col_types = FALSE)
-    ) %>%
-      pull(file_name) %>%
-      str_extract("batch_[0-9]+") %>%
-      str_remove("batch_") %>%
-      as.integer() %>%
-      unique()
+  # Step 5.2: Compare against existing folders to find missing batches
+  batches_to_download = identify_missing_batches_v2(
+    all_batches = all_batches_in_parquet,
+    images_root = images_root
+  ),
 
-    sort(unique(c(repro_batches, leaf_batches)))
-  },
+  # Step 5.3: Pre-extract photo metadata for ALL missing batches (SINGLE QUERY)
+  # This avoids multiple workers querying the parquet in parallel
+  batch_metadata_extracted = extract_batch_metadata(
+    parquet_path = photos_parquet_updated,
+    batches_to_download = batches_to_download
+  ),
 
-  # Download images for needed batches
-  # NOTE: This may take a long time! Consider running separately.
+  # Step 5.4: Prepare download lists with pre-computed URLs and destination paths
+  # Converts metadata to list-of-lists structure for efficient distribution
+  # IMPORTANT: iteration = "list" ensures pattern=map() indexes as [[i]] not [i]
   tar_target(
-    image_batches_downloaded,
-    download_images_by_batch(
-      parquet_path = photos_parquet_updated,
-      image_dir = dirname(images_root),
-      batch_ids = needed_batches,
-      n_cores = image_download_cores
+    batch_download_lists,
+    prepare_batch_download_lists(
+      batch_metadata = batch_metadata_extracted,
+      images_root = images_root,
+      size = "medium"
     ),
-    format = "file"
+    iteration = "list"
+  ),
+
+  # Step 5.5: Download batches using dynamic branching
+  # Each worker receives pre-extracted data (NO parquet access!)
+  # Crew controller parallelizes across 6 workers automatically
+  tar_target(
+    batch_download_status,
+    download_batch_from_list(
+      batch_data = batch_download_lists,
+      status_dir = image_download_status_dir
+    ),
+    pattern = map(batch_download_lists),
+    iteration = "list"
+  ),
+
+  # Step 5.6: Aggregate download results across all batches
+  download_summary_batches = summarize_batch_downloads(
+    batch_download_status = batch_download_status,
+    all_batches = all_batches_in_parquet,
+    batches_to_download = batches_to_download
   ),
 
   # ===========================================================================
@@ -376,7 +414,7 @@ tar_plan(
     leaf_val_csv
     leaf_test_csv
     leaf_seconds_csv
-    image_batches_downloaded
+    download_summary_batches  # Changed from image_batches_downloaded
 
     # Compute summary
     list(
