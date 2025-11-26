@@ -2,12 +2,33 @@
 .Rhistory
 .RData
 .Ruserdata
-data/inat/images
 output
 .guild
 .claude
 _targets
 
+# Data directory (too large for git)
+data/
+
 # Claude Code notes and utilities (not for version control)
 .claude_notes_and_utils/
 CLAUDE.md
+
+# Model weights (too large for git - use HuggingFace Hub)
+models/
+
+# Logs
+logs/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# R crash dumps
+core.R-*
+
+# Temporary files
+.guild_temp_*
+*.tmp
+Rplot*.png
