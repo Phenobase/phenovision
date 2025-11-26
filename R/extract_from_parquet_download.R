@@ -108,7 +108,7 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
   merged <- single_photo_obs %>%
     mutate(
       # Parse reproductive_condition (pipe-separated)
-      flowering = as.integer(grepl("flowers", reproductive_condition, fixed = TRUE)),
+      flowering = as.integer(grepl("flowers", reproductive_condition, fixed = TRUE) & !grepl("no flowers or fruits", reproductive_condition, fixed = TRUE)),
       fruiting = as.integer(grepl("fruits or seeds", reproductive_condition, fixed = TRUE))
     )
 
@@ -120,6 +120,7 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
   n_flowering <- sum(merged$flowering == 1)
   n_fruiting <- sum(merged$fruiting == 1)
   n_both <- sum(merged$flowering == 1 & merged$fruiting == 1)
+  n_neither <- sum(merged$flowering == 0 & merged$fruiting == 0)
 
   message(sprintf("    Flowering: %s (%.1f%%)", format(n_flowering, big.mark = ","),
                   100 * n_flowering / nrow(merged)))
@@ -127,6 +128,8 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
                   100 * n_fruiting / nrow(merged)))
   message(sprintf("    Both:      %s (%.1f%%)", format(n_both, big.mark = ","),
                   100 * n_both / nrow(merged)))
+  message(sprintf("    Neither:      %s (%.1f%%)", format(n_neither, big.mark = ","),
+                  100 * n_neither / nrow(merged)))
 
   # =========================================================================
   # Step 5: Add file paths

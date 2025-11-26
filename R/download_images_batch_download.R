@@ -86,11 +86,9 @@ download_images_by_batch <- function(parquet_path,
     pull(batch_j) %>%
     sort()
 
-  # Get already downloaded batches (only non-empty folders)
+  # Get already downloaded batches
   batch_folders <- list.files(images_size_dir, pattern = "^batch_", full.names = TRUE)
-  # Check which folders actually contain images
-  batch_done <- batch_folders[sapply(batch_folders, function(f) length(list.files(f)) > 0)]
-  batch_done_int <- as.integer(str_extract(batch_done, "[0-9]+$"))
+  batch_done_int <- as.integer(str_extract(batch_folders, "[0-9]+$"))
 
   # Determine which batches to download
   if (!is.null(batch_ids)) {
@@ -106,7 +104,7 @@ download_images_by_batch <- function(parquet_path,
 
   if (length(batches_to_download) == 0) {
     message("    No batches need downloading - all complete!")
-    return(batch_done)
+    return(batch_folders)
   }
 
   # Estimate number of images

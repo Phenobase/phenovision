@@ -1,3 +1,12 @@
+#!/usr/bin/env Rscript
+#| requires:
+#|     - file: data
+#|       target-type: link
+#|     - file: models
+#|       target-type: link
+#|     - file: output
+#|       target-type: link
+
 library(reticulate)
 library(tidyverse)
 library(tidymodels)
@@ -247,17 +256,20 @@ for(i in 1:num_epochs) {
   # sensitivity(val_df, fruit, .pred_fr_max)
   # specificity(val_df, fruit, .pred_fr_max)
 
-  cat("Epoch ", i, " Test:",
-      "\ngreen leaves acc: ", val_acc_gr$.estimate[1],
-      "\ncolored leaves acc: ", val_acc_cl$.estimate[1],
-      "\nno live leaves acc: ", val_acc_no$.estimate[1],
-      "\nbreaking leaf bud acc: ", val_acc_bb$.estimate[1],
-      "\ngreen leaves j-index: ", val_jind_gr$.estimate[1],
-      "\ncolored leaves j-index: ", val_jind_cl$.estimate[1],
-      "\nno live leaves j-index: ", val_jind_no$.estimate[1],
-      "\nbreaking leaf buds j-index: ", val_jind_bb$.estimate[1],
-      "\nloss: ", val_loss$cpu()$numpy(),
-      "\n")
+  # Log metrics in GuildAI-compatible format (Round 1)
+  # CRITICAL: Log step FIRST, then metrics (one per line: "key: value")
+  cat("step:", i, "\n")
+  cat("round: 1\n")  # Track training round
+  cat("val_green_acc:", val_acc_gr$.estimate[1], "\n")
+  cat("val_colored_acc:", val_acc_cl$.estimate[1], "\n")
+  cat("val_no_live_acc:", val_acc_no$.estimate[1], "\n")
+  cat("val_breaking_buds_acc:", val_acc_bb$.estimate[1], "\n")
+  cat("val_green_jindex:", val_jind_gr$.estimate[1], "\n")
+  cat("val_colored_jindex:", val_jind_cl$.estimate[1], "\n")
+  cat("val_no_live_jindex:", val_jind_no$.estimate[1], "\n")
+  cat("val_breaking_buds_jindex:", val_jind_bb$.estimate[1], "\n")
+  cat("val_loss:", val_loss$cpu()$numpy(), "\n")
+  cat("\n")  # Blank line for readability
 
   log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
   log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
@@ -277,6 +289,9 @@ for(i in 1:num_epochs) {
   torch$save(vit, file.path(model_folder, "checkpoints", paste0("vit_finetuned_epoch", i, ".pt")))
 
 }
+
+# Save round 1 epoch count for continuous step numbering in round 2
+round1_epochs <- num_epochs
 
 ###### add a second round of annotated data
 vit <- torch$load("output/leaves/model_02_12_2025/checkpoints/vit_finetuned_epoch4.pt")
@@ -437,6 +452,7 @@ clip_grad <- py_none()
 
 num_epochs <- 4
 
+# Round 2 training loop - continue step numbering from round 1
 for(i in 1:num_epochs) {
 
   val_dat = eval$evaluate(val_dl, vit, "cuda:0")
@@ -530,17 +546,21 @@ for(i in 1:num_epochs) {
   # sensitivity(val_df, fruit, .pred_fr_max)
   # specificity(val_df, fruit, .pred_fr_max)
 
-  cat("Epoch ", i, " Test:",
-      "\ngreen leaves acc: ", val_acc_gr$.estimate[1],
-      "\ncolored leaves acc: ", val_acc_cl$.estimate[1],
-      "\nno live leaves acc: ", val_acc_no$.estimate[1],
-      "\nbreaking leaf bud acc: ", val_acc_bb$.estimate[1],
-      "\ngreen leaves j-index: ", val_jind_gr$.estimate[1],
-      "\ncolored leaves j-index: ", val_jind_cl$.estimate[1],
-      "\nno live leaves j-index: ", val_jind_no$.estimate[1],
-      "\nbreaking leaf buds j-index: ", val_jind_bb$.estimate[1],
-      "\nloss: ", val_loss$cpu()$numpy(),
-      "\n")
+  # Log metrics in GuildAI-compatible format (Round 2)
+  # Continue step numbering from round 1 for continuous metric tracking
+  # CRITICAL: Log step FIRST, then metrics (one per line: "key: value")
+  cat("step:", round1_epochs + i, "\n")
+  cat("round: 2\n")  # Track training round
+  cat("val_green_acc:", val_acc_gr$.estimate[1], "\n")
+  cat("val_colored_acc:", val_acc_cl$.estimate[1], "\n")
+  cat("val_no_live_acc:", val_acc_no$.estimate[1], "\n")
+  cat("val_breaking_buds_acc:", val_acc_bb$.estimate[1], "\n")
+  cat("val_green_jindex:", val_jind_gr$.estimate[1], "\n")
+  cat("val_colored_jindex:", val_jind_cl$.estimate[1], "\n")
+  cat("val_no_live_jindex:", val_jind_no$.estimate[1], "\n")
+  cat("val_breaking_buds_jindex:", val_jind_bb$.estimate[1], "\n")
+  cat("val_loss:", val_loss$cpu()$numpy(), "\n")
+  cat("\n")  # Blank line for readability
 
   log_writer$add_scalar('perf/val_acc_gr', val_acc_gr$.estimate[1], i)
   log_writer$add_scalar('perf/val_acc_cl', val_acc_cl$.estimate[1], i)
