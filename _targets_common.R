@@ -176,15 +176,21 @@ setup_targets_parallel <- function(workers = config$num_targets_workers) {
   tar_option_set(
     packages = c(
       "arrow", "dplyr", "tidyr", "purrr", "readr", "stringr",
-      "reticulate", "torch", "here", "fs", "cli"
+      "reticulate", "here", "fs", "cli",
+      "ggplot2", "patchwork",  # Needed for plotting functions
+      "guildai"  # Needed for best epoch selection from training runs
     ),
     format = "rds",
     error = "continue",  # Continue on errors
     memory = "transient",  # Don't keep objects in memory
     garbage_collection = TRUE,
     workspace_on_error = TRUE,  # Save workspace on error for debugging
-    controller = crew::crew_controller_local(workers = workers)
   )
+  if(workers > 0) {
+    tar_option_set(controller = crew::crew_controller_local(workers = workers))
+  } else {
+    tar_option_set(deployment = "main")
+  }
 
   message("Targets configured for ", workers, " parallel workers")
 }
@@ -194,7 +200,9 @@ setup_targets_sequential <- function() {
   tar_option_set(
     packages = c(
       "arrow", "dplyr", "tidyr", "purrr", "readr", "stringr",
-      "reticulate", "torch", "here", "fs", "cli"
+      "reticulate", "here", "fs", "cli",
+      "ggplot2", "patchwork",  # Needed for plotting functions
+      "guildai"  # Needed for best epoch selection from training runs
     ),
     format = "rds",
     error = "stop",  # Stop on first error

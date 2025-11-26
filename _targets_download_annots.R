@@ -252,31 +252,30 @@ tar_plan(
     images_root = images_root
   ),
 
-  # Split reproductive data using tidymodels
-  repro_splits = split_repro_data(
-    repro_annotations,
-    train_prop = train_prop,
-    val_prop = val_prop,
-    test_prop = test_prop,
-    seed = split_seed
-  ),
+  # Get the most recent observation date for annotations (for filename tracking)
+  repro_max_date = {
+    max_date <- open_dataset(photos_parquet_updated) %>%
+      filter(observation_uuid %in% repro_annotations$observation_uuid) %>%
+      summarize(max_date = max(observed_on, na.rm = TRUE)) %>%
+      collect() %>%
+      pull(max_date)
+    format(max_date, "%Y-%m-%d")
+  },
 
-  # Write reproductive splits to CSV
+  # Write full reproductive annotations to CSV (for training pipeline)
+  # Note: Splitting is now handled by training pipeline with versioning
+  # Filename includes date of most recent annotation for tracking
   tar_target(
-    repro_train_csv,
-    write_csv_split(repro_splits, "train", output_dir_repro, images_root),
-    format = "file"
-  ),
-
-  tar_target(
-    repro_val_csv,
-    write_csv_split(repro_splits, "val", output_dir_repro, images_root),
-    format = "file"
-  ),
-
-  tar_target(
-    repro_test_csv,
-    write_csv_split(repro_splits, "test", output_dir_repro, images_root),
+    repro_annotations_full_csv,
+    {
+      output_file <- file.path(output_dir_repro,
+                               paste0("repro_annotations_full_", repro_max_date, ".csv"))
+      write_csv(repro_annotations, output_file)
+      message(sprintf("Wrote %s annotations to %s",
+                      format(nrow(repro_annotations), big.mark = ","),
+                      output_file))
+      output_file
+    },
     format = "file"
   ),
 
@@ -407,9 +406,7 @@ tar_plan(
 
   download_summary = {
     # Dependencies
-    repro_train_csv
-    repro_val_csv
-    repro_test_csv
+    repro_annotations_full_csv  # Full annotations for training pipeline
     leaf_train_csv
     leaf_val_csv
     leaf_test_csv
@@ -419,15 +416,9 @@ tar_plan(
     # Compute summary
     list(
       reproductive = list(
-        train = nrow(repro_splits$train),
-        val = nrow(repro_splits$val),
-        test = nrow(repro_splits$test),
         total = nrow(repro_annotations),
-        files = list(
-          train = repro_train_csv,
-          val = repro_val_csv,
-          test = repro_test_csv
-        )
+        full_csv = repro_annotations_full_csv,
+        note = "Splitting now handled by training pipeline with versioning"
       ),
       leaves = list(
         train = nrow(leaf_splits$train),
@@ -443,23 +434,19 @@ tar_plan(
         )
       ),
       images = list(
-        batches_needed = length(needed_batches),
-        batches_downloaded = length(image_batches_downloaded),
-        batch_ids = needed_batches
+        batches_available = length(all_batches_in_parquet),
+        batches_to_download = length(batches_to_download),
+        download_summary = download_summary_batches
       ),
       message = paste0(
         "\n",
         paste(rep("=", 70), collapse = ""), "\n",
-        "PARQUET-BASED DOWNLOAD AND SPLIT COMPLETE\n",
+        "PARQUET-BASED DOWNLOAD COMPLETE\n",
         paste(rep("=", 70), collapse = ""), "\n",
         "Reproductive Annotations:\n",
-        sprintf("  Train:      %d (%.1f%%)\n", nrow(repro_splits$train),
-                100 * nrow(repro_splits$train) / nrow(repro_annotations)),
-        sprintf("  Validation: %d (%.1f%%)\n", nrow(repro_splits$val),
-                100 * nrow(repro_splits$val) / nrow(repro_annotations)),
-        sprintf("  Test:       %d (%.1f%%)\n", nrow(repro_splits$test),
-                100 * nrow(repro_splits$test) / nrow(repro_annotations)),
-        sprintf("  Total:      %d\n\n", nrow(repro_annotations)),
+        sprintf("  Total:      %d\n", nrow(repro_annotations)),
+        sprintf("  Full CSV:   %s\n", repro_annotations_full_csv),
+        sprintf("  Note:       Splitting handled by training pipeline\n\n"),
         "Leaf Annotations:\n",
         sprintf("  Train:      %d (%.1f%%)\n", nrow(leaf_splits$train),
                 100 * nrow(leaf_splits$train) / nrow(leaf_annotations)),
@@ -470,14 +457,12 @@ tar_plan(
         sprintf("  Seconds:    %d (for round 2 training)\n", nrow(leaf_splits$seconds)),
         sprintf("  Total:      %d\n\n", nrow(leaf_annotations)),
         "Image Downloads:\n",
-        sprintf("  Batches needed:     %d\n", length(needed_batches)),
-        sprintf("  Batches downloaded: %d\n", length(image_batches_downloaded)),
-        sprintf("  Batch IDs: %s\n\n", paste(head(needed_batches, 10), collapse = ", ")),
+        sprintf("  Batches available:   %d\n", length(all_batches_in_parquet)),
+        sprintf("  Batches to download: %d\n", length(batches_to_download)),
+        sprintf("  Batch IDs (first 10): %s\n\n", paste(head(batches_to_download, 10), collapse = ", ")),
         "Output Files:\n",
         "  Reproductive:\n",
-        sprintf("    Train:      %s\n", repro_train_csv),
-        sprintf("    Validation: %s\n", repro_val_csv),
-        sprintf("    Test:       %s\n", repro_test_csv),
+        sprintf("    Full annotations: %s\n", repro_annotations_full_csv),
         "\n  Leaves:\n",
         sprintf("    Train:      %s\n", leaf_train_csv),
         sprintf("    Validation: %s\n", leaf_val_csv),
