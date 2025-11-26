@@ -1,10 +1,33 @@
+#!/usr/bin/env Rscript
+#| requires:
+#|     - file: data
+#|       target-type: link
+#|     - file: models
+#|       target-type: link
+#|     - file: output
+#|       target-type: link
+
 library(reticulate)
 library(tidyverse)
 library(tidymodels)
 library(probably)
 
-# Add this near the top of your script
-pretrained_model <- "mae"  # Options: "plantclef", "imagenet", "imagenet21k", "dino", "mae", "clip"
+# Source evaluation helper function
+source("R/training_eval_helper_training.R")
+
+# =============================================================================
+# GuildAI Flags (adjustable parameters)
+# =============================================================================
+
+# Model versioning and data paths
+model_version <- "v1.1.0"  # Version string for this training run
+train_csv <- "data/inat/train_v1.1.0.csv"  # Path to versioned training data
+val_csv <- "data/inat/val_v1.1.0.csv"  # Path to versioned validation data
+
+# Model initialization
+pretrained_model <- "mae"  # Options: "plantclef", "imagenet", "imagenet21k", "dino", "mae", "clip", "doi"
+pretrained_doi <- ""  # DOI for HuggingFace model (only used if pretrained_model = "doi")
+reinit_head <- FALSE  # If TRUE, reinitialize classification head even when loading from DOI
 
 torch <- import("torch")
 timm <- import("timm")
@@ -18,21 +41,19 @@ eval <- import_from_path("evaluate", "py")
 NativeScaler <- misc$NativeScalerWithGradNormCount
 types <- import("types")
 
-# Generate date string for model folder
-current_date <- format(Sys.Date(), "%Y_%m_%d")
-
-# Create a model folder with pretrained model type and date
-model_folder <- file.path("output", paste0(pretrained_model, "_", current_date))
+# Create model output folder using version
+model_folder <- file.path("output/reproductive", model_version)
 cat("Model will be saved to:", model_folder, "\n")
-if(!dir.exists(model_folder)) dir.create(model_folder)
+cat("Model version:", model_version, "\n")
+if(!dir.exists(model_folder)) dir.create(model_folder, recursive = TRUE)
 if(!dir.exists(file.path(model_folder, "checkpoints"))) dir.create(file.path(model_folder, "checkpoints"))
 
-bad_images <- read_rds("data/inat/bad_images.rds")
-
-inat_train <- read_csv("data/inat/train.csv") |>
-  filter(!file_name %in% bad_images)
-inat_val <- read_csv("data/inat/validation.csv") |>
-  filter(!file_name %in% bad_images)
+# Load training and validation data from versioned CSV files
+# Note: Bad images have been filtered out during data splitting
+cat("Loading training data from:", train_csv, "\n")
+cat("Loading validation data from:", val_csv, "\n")
+inat_train <- read_csv(train_csv)
+inat_val <- read_csv(val_csv)
 
 train_img <- r_to_py(inat_train$file_name)
 train_fruit_flower <- inat_train |>
@@ -61,6 +82,26 @@ if (pretrained_model == "plantclef") {
 
   # Use custom position embedding interpolation
   pos_embed$interpolate_pos_embed(vit, checkpoint_model)
+} else if (pretrained_model == "doi") {
+  # Load from HuggingFace DOI
+  if (pretrained_doi == "" || is.null(pretrained_doi)) {
+    stop("pretrained_doi must be specified when pretrained_model = 'doi'")
+  }
+
+  cat("Loading model from HuggingFace DOI:", pretrained_doi, "\n")
+
+  # Source the model loading function
+  source("R/model_loading_training.R")
+
+  # Load model from DOI (already on CUDA)
+  vit <- load_phenovision_for_training(
+    doi = pretrained_doi,
+    num_classes = 2L,  # Reproductive model has 2 classes
+    reinit_head = reinit_head,
+    device = "cuda"
+  )
+
+  cat("Model loaded successfully from DOI\n")
 } else {
   # Use timm for other pretrained models
   model_name <- switch(
@@ -88,13 +129,36 @@ if (pretrained_model == "plantclef") {
   vit$load_state_dict(timm_state_dict, strict = FALSE)
 }
 
-# Initialize the classification head
-torch$nn$init$trunc_normal_(vit$head$weight, std = 1e-5)
+# Initialize the classification head (unless we're using DOI and kept the head)
+if (pretrained_model != "doi" || reinit_head) {
+  torch$nn$init$trunc_normal_(vit$head$weight, std = 1e-5)
+}
+
+# Ensure model is on CUDA
+if (!vit$training) {
+  vit$train()  # Set to training mode
+}
 vit <- vit$cuda()
 
 # Continue with the original script
 config <- timm$data$resolve_data_config(model = vit)
-transform <- timm$data$create_transform(!!!config)
+
+# Training transform with explicit augmentation
+transform <- timm$data$create_transform(
+  input_size = list(3L, 224L, 224L),
+  is_training = TRUE,
+  color_jitter = FALSE,
+  auto_augment = 'rand-m9-mstd0.5-inc1',  # RandAugment
+  interpolation = 'bicubic',
+  re_prob = 0.25,  # Random erasing probability
+  re_mode = 'pixel',
+  re_count = 1,
+  mean = list(0.485, 0.456, 0.406),
+  std = list(0.229, 0.224, 0.255)
+)
+
+# Validation transform without augmentation
+val_transform <- timm$data$create_transform(!!!config)
 
 batch_size <- 384L
 
@@ -102,7 +166,7 @@ train_ds <- ds$PhenoDataset(train_img, train_fruit_flower, transform = transform
 train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = 10L,
                                     is_training = TRUE)
 
-val_ds <- ds$PhenoDataset(val_img, val_fruit_flower, transform = transform)
+val_ds <- ds$PhenoDataset(val_img, val_fruit_flower, transform = val_transform)
 val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = 10L)
 
 #test_it <- as_iterator(train_dl)
@@ -137,90 +201,45 @@ clip_grad <- py_none()
 
 num_epochs <- 100
 
-for(i in 1:num_epochs) {
+# =============================================================================
+# Training Loop with num_epochs=0 Support
+# =============================================================================
 
-  val_dat = eval$evaluate(val_dl, vit, "cuda:0")
-  val_preds <- torch$nn$functional$sigmoid(torch$cat(val_dat[[1]]))
-  val_truth <- torch$cat(val_dat[[2]])
-  val_loss <- criterion(val_preds, val_truth)
-  val_df <- as.data.frame(val_truth$cpu()$numpy()) |>
-    mutate(fruit = as.integer(V1), flower = as.integer(V2)) |>
-    bind_cols(as.data.frame(val_preds$cpu()$numpy()) |>
-                rename(.pred_fruit = V1, .pred_flower = V2)) |>
-    select(-V1, -V2) |>
-    mutate(fruit = factor(fruit, levels = c("1", "0")),
-           flower = factor(flower, levels = c("1", "0")))
+# Save initial model as epoch 0 (enables num_epochs=0 testing)
+checkpoint_name <- paste0("phenovision_", model_version, "_epoch0.pt")
+torch$save(vit, file.path(model_folder, "checkpoints", checkpoint_name))
+cat("Saved initial model as:", checkpoint_name, "\n")
 
-  threshold_data_fr <- val_df %>%
-    threshold_perf(fruit, .pred_fruit, thresholds = seq(0, 1, by = 0.05),
-                   event_level = "first")
+# Initial evaluation (step 1 = epoch 0)
+cat("\n=== Initial Evaluation (epoch 0) ===\n")
+evaluate_and_log(vit, val_dl, eval, torch, criterion, step_num = 1)
 
-  max_ji_fr <- threshold_data_fr |>
-    filter(.metric == "j_index") |>
-    slice_max(.estimate, n = 5)
+# Training loop (only if num_epochs > 0)
+if (num_epochs > 0) {
+  for (i in 1:num_epochs) {
+    cat("\n=== Training epoch", i, "of", num_epochs, "===\n")
 
-  threshold_data_fl <- val_df %>%
-    threshold_perf(flower, .pred_flower, thresholds = seq(0, 1, by = 0.05),
-                   event_level = "first")
-
-  max_ji_fr <- threshold_data_fr |>
-    filter(.metric == "j_index") |>
-    slice_max(.estimate, n = 5)
-
-  max_ji_fl <- threshold_data_fl |>
-    filter(.metric == "j_index") |>
-    slice_max(.estimate, n = 5)
-
-  val_df <- val_df |>
-    mutate(
-      .pred_fl_max = make_two_class_pred(
-        estimate = .pred_flower,
-        levels = levels(flower),
-        threshold = max_ji_fl$.threshold[1],
-        buffer = 0.025
-      ),
-      .pred_fr_max = make_two_class_pred(
-        estimate = .pred_fruit,
-        levels = levels(fruit),
-        threshold = max_ji_fr$.threshold[1],
-        buffer = 0.025
-      )
+    # Train one epoch
+    train_stats <- engine$train_one_epoch(
+      vit, criterion, train_dl,
+      optimizer, "cuda", i, loss_scaler,
+      clip_grad, mixup_fn = py_none(),
+      log_writer = log_writer,
+      args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 5L, lr = lr, min_lr = min_lr,
+                                   epochs = num_epochs)
     )
 
-  val_acc_fl <- accuracy(val_df, flower, .pred_fl_max)
-  val_acc_fr <- accuracy(val_df, fruit, .pred_fr_max)
+    # Save checkpoint
+    checkpoint_name <- paste0("phenovision_", model_version, "_epoch", i, ".pt")
+    torch$save(vit, file.path(model_folder, "checkpoints", checkpoint_name))
+    cat("Saved checkpoint:", checkpoint_name, "\n")
 
-  val_jind_fl <- j_index(val_df, flower, .pred_fl_max)
-  val_jind_fr <- j_index(val_df, fruit, .pred_fr_max)
-
-  # sensitivity(val_df, flower, .pred_fl_max)
-  # specificity(val_df, flower, .pred_fl_max)
-  #
-  # sensitivity(val_df, fruit, .pred_fr_max)
-  # specificity(val_df, fruit, .pred_fr_max)
-
-  cat("Epoch ", i, " Test:",
-      "\nflower acc: ", val_acc_fl$.estimate[1],
-      "\nfruit acc: ", val_acc_fr$.estimate[1],
-      "\nflower j-index: ", val_jind_fl$.estimate[1],
-      "\nfruit j-index: ", val_jind_fr$.estimate[1],
-      "\nloss: ", val_loss$cpu()$numpy(),
-      "\n")
-
-  #log_writer$add_scalar('perf/val_acc_fr', val_acc_fr$.estimate[1], i)
-  #log_writer$add_scalar('perf/val_acc_fl', val_acc_fl$.estimate[1], i)
-  #log_writer$add_scalar('perf/val_loss', val_loss, i)
-
-  train_stats <- engine$train_one_epoch(
-    vit, criterion, train_dl,
-    optimizer, "cuda", i, loss_scaler,
-    clip_grad, mixup_fn = py_none(),
-    log_writer = log_writer,
-    args = types$SimpleNamespace(accum_iter = 1L, warmup_epochs = 5L, lr = lr, min_lr = min_lr,
-                                 epochs = num_epochs)
-  )
-
-  # Include the pretrained model type in the checkpoint filename
-  checkpoint_name <- paste0("vit_finetuned_", pretrained_model, "_epoch", i, ".pt")
-  torch$save(vit, file.path(model_folder, "checkpoints", checkpoint_name))
+    # Evaluate (step i+1 = epoch i)
+    cat("\n=== Evaluation (epoch", i, ") ===\n")
+    evaluate_and_log(vit, val_dl, eval, torch, criterion, step_num = i + 1)
+  }
 }
+
+cat("\n=== Training Complete ===\n")
+cat("Final checkpoint: epoch", num_epochs, "\n")
+cat("Total evaluations logged:", num_epochs + 1, "(step 1 to", num_epochs + 1, ")\n")
