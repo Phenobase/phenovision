@@ -1,0 +1,50 @@
+# GuildAI Ignore File
+# Prevents Guild from copying large/problematic files when creating run directories
+
+# Circular symlink - causes "Too many levels of symbolic links" error
+data/phenobase_dwca_annotation
+
+# Large data directories (should be accessed via requirements/symlinks instead)
+data
+
+# Model checkpoints and outputs (will be generated during runs)
+output
+models
+
+# Targets cache
+_targets
+
+# Guild run directories
+.guild
+
+# Git
+.git
+.gitignore
+
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+.Python
+.ipynb_checkpoints
+
+# Logs
+logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
