@@ -2,5 +2,36 @@
 .Rhistory
 .RData
 .Ruserdata
-data/inat/images
 output
+.guild
+.claude
+_targets
+
+# Claude Code notes and utilities (not for version control)
+.claude_notes_and_utils/
+CLAUDE.md
+
+# Large data directories (symlinked or too large for git)
+data/inat/images
+data/phenobase_inat_data/
+data/phenobase_dwca_annotation
+data/leaves/phenobase_dwca_annotation
+
+# Model weights (too large for git - use HuggingFace Hub)
+models/
+
+# Logs
+logs/
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# R crash dumps
+core.R-*
+
+# Temporary files
+.guild_temp_*
+*.tmp
+Rplot*.png
