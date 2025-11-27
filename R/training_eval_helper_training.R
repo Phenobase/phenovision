@@ -10,8 +10,17 @@
 # - reticulate (torch, eval modules)
 # - dplyr, tidyr
 # - probably (threshold_perf, make_two_class_pred)
-# - yardstick (accuracy, j_index)
+# - yardstick (accuracy, j_index, sensitivity, precision)
 # =============================================================================
+
+# Define custom metric set for threshold_perf that includes precision (PPV)
+# Default metrics only include sensitivity, specificity, j_index - NOT precision
+.dqi_metrics <- yardstick::metric_set(
+ yardstick::sensitivity,
+ yardstick::specificity,
+ yardstick::precision,
+ yardstick::j_index
+)
 
 #' Evaluate Model and Log Metrics for GuildAI
 #'
@@ -58,13 +67,15 @@ evaluate_and_log <- function(model, val_dl, eval_module, torch_module, criterion
   # =========================================================================
 
   # Fruit: Calculate threshold performance with finer grid
+  # Use custom metrics that include precision (PPV) for DQI calculation
   threshold_data_fr <- val_df %>%
     probably::threshold_perf(fruit, .pred_fruit, thresholds = seq(0, 1, by = 0.01),
-                             event_level = "first")
+                             event_level = "first", metrics = .dqi_metrics)
 
   # Add DQI metric for fruit (DQI = PPV + Sensitivity - 1)
-  ppv_fr <- threshold_data_fr %>% dplyr::filter(.metric == "ppv")
-  sens_fr <- threshold_data_fr %>% dplyr::filter(.metric == "sens")
+  # Note: yardstick uses "precision" not "ppv", "sensitivity" not "sens"
+  ppv_fr <- threshold_data_fr %>% dplyr::filter(.metric == "precision")
+  sens_fr <- threshold_data_fr %>% dplyr::filter(.metric == "sensitivity")
   dqi_fr <- ppv_fr %>%
     dplyr::inner_join(sens_fr, by = ".threshold", suffix = c("_ppv", "_sens")) %>%
     dplyr::transmute(
@@ -86,13 +97,15 @@ evaluate_and_log <- function(model, val_dl, eval_module, torch_module, criterion
     dplyr::slice_max(.estimate, n = 1, with_ties = FALSE)
 
   # Flower: Calculate threshold performance with finer grid
+  # Use custom metrics that include precision (PPV) for DQI calculation
   threshold_data_fl <- val_df %>%
     probably::threshold_perf(flower, .pred_flower, thresholds = seq(0, 1, by = 0.01),
-                             event_level = "first")
+                             event_level = "first", metrics = .dqi_metrics)
 
   # Add DQI metric for flower (DQI = PPV + Sensitivity - 1)
-  ppv_fl <- threshold_data_fl %>% dplyr::filter(.metric == "ppv")
-  sens_fl <- threshold_data_fl %>% dplyr::filter(.metric == "sens")
+  # Note: yardstick uses "precision" not "ppv", "sensitivity" not "sens"
+  ppv_fl <- threshold_data_fl %>% dplyr::filter(.metric == "precision")
+  sens_fl <- threshold_data_fl %>% dplyr::filter(.metric == "sensitivity")
   dqi_fl <- ppv_fl %>%
     dplyr::inner_join(sens_fl, by = ".threshold", suffix = c("_ppv", "_sens")) %>%
     dplyr::transmute(
