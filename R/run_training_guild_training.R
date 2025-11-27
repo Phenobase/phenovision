@@ -113,6 +113,9 @@ run_training_guild <- function(script_path,
     if (script_is_subdir) {
       temp_script_name <- paste0(".guild_temp_", basename(script_path))
       temp_script_path <- temp_script_name
+      # NOTE: This temp file must NOT be in .gitignore - GuildAI uses .gitignore
+      # to determine what files to copy to the run directory
+
       file.copy(script_path, temp_script_path, overwrite = TRUE)
       message("Copied script to root directory for Guild AI compatibility: ", temp_script_path)
       script_path_for_guild <- temp_script_path
