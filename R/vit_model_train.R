@@ -29,6 +29,12 @@ pretrained_model <- "mae"  # Options: "plantclef", "imagenet", "imagenet21k", "d
 pretrained_doi <- ""  # DOI for HuggingFace model (only used if pretrained_model = "doi")
 reinit_head <- FALSE  # If TRUE, reinitialize classification head even when loading from DOI
 
+# Data loader workers (reads from SLURM_CPUS_PER_TASK env var if available)
+num_workers <- {
+  slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
+  if (nchar(slurm_cpus) > 0) as.integer(slurm_cpus) else 8L
+}
+
 torch <- import("torch")
 timm <- import("timm")
 PIL <- import("PIL")
@@ -163,11 +169,11 @@ val_transform <- timm$data$create_transform(!!!config)
 batch_size <- 384L
 
 train_ds <- ds$PhenoDataset(train_img, train_fruit_flower, transform = transform)
-train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = 10L,
+train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
                                     is_training = TRUE)
 
 val_ds <- ds$PhenoDataset(val_img, val_fruit_flower, transform = val_transform)
-val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = 10L)
+val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers)
 
 #test_it <- as_iterator(train_dl)
 #test_dat <- iter_next(test_it)

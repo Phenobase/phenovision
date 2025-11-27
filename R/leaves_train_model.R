@@ -13,6 +13,16 @@ library(tidymodels)
 library(probably)
 library(phyf)
 
+# =============================================================================
+# GuildAI Flags (adjustable parameters)
+# =============================================================================
+
+# Data loader workers (reads from SLURM_CPUS_PER_TASK env var if available)
+num_workers <- {
+  slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
+  if (nchar(slurm_cpus) > 0) as.integer(slurm_cpus) else 8L
+}
+
 torch <- import("torch")
 timm <- import("timm")
 PIL <- import("PIL")
@@ -109,19 +119,19 @@ val_transform <- timm$data$create_transform(!!!config)
 batch_size <- 384L
 
 train_ds <- ds$PhenoDataset(train_img, train_leaves, transform = transform)
-train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
                                     is_training = TRUE)
 
 # train_ds_bg <- ds$PhenoDataset(train_img_bg, train_leaves_bg, transform = transform)
-# train_dl_bg <- timm$data$create_loader(train_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+# train_dl_bg <- timm$data$create_loader(train_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
 #                                        is_training = TRUE)
 
 val_ds <- ds$PhenoDataset(val_img, val_leaves, transform = val_transform)
-val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
                                   is_training = FALSE)
 
 # val_ds_bg <- ds$PhenoDataset(val_img_bg, val_leaves_bg, transform = transform)
-# val_dl_bg <- timm$data$create_loader(val_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = 7L)
+# val_dl_bg <- timm$data$create_loader(val_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = num_workers)
 
 #test_it <- as_iterator(train_dl)
 #test_dat <- iter_next(test_it)
@@ -305,7 +315,7 @@ sec_leaves <- leaves_seconds |>
   as.matrix()
 
 bad_ds <- del$PhenoDatasetDeleter(sec_img, sec_leaves)
-bad_dl <- torch$utils$data$DataLoader(bad_ds, 1024L, num_workers = 7L)
+bad_dl <- torch$utils$data$DataLoader(bad_ds, 1024L, num_workers = num_workers)
 
 bad_img <- iterate(bad_dl)
 bad_imgs <- map(bad_img, 1) |>
@@ -325,7 +335,7 @@ sec_leaves <- leaves_seconds |>
   as.matrix()
 
 sec_ds <- ds$PhenoDataset(sec_img, sec_leaves, transform = val_transform)
-sec_dl <- timm$data$create_loader(sec_ds, c(3L, 224L, 224L), 2560L, num_workers = 7L,
+sec_dl <- timm$data$create_loader(sec_ds, c(3L, 224L, 224L), 2560L, num_workers = num_workers,
                                   is_training = FALSE)
 
 sec_infer = eval$infer(sec_dl, vit, "cuda:0")
@@ -409,15 +419,15 @@ val_transform <- timm$data$create_transform(!!!config)
 batch_size <- 384L
 
 train_ds <- ds$PhenoDataset(train_img, train_leaves, transform = transform)
-train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+train_dl <- timm$data$create_loader(train_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
                                     is_training = TRUE)
 
 # train_ds_bg <- ds$PhenoDataset(train_img_bg, train_leaves_bg, transform = transform)
-# train_dl_bg <- timm$data$create_loader(train_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+# train_dl_bg <- timm$data$create_loader(train_ds_bg, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
 #                                        is_training = TRUE)
 
 val_ds <- ds$PhenoDataset(val_img, val_leaves, transform = val_transform)
-val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = 7L,
+val_dl <- timm$data$create_loader(val_ds, c(3L, 224L, 224L), batch_size, num_workers = num_workers,
                                   is_training = FALSE)
 
 model_folder <- "output/leaves/model_02_12_2025/second"
