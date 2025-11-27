@@ -13,7 +13,7 @@
 # Resources (CPU only, no GPU needed for download)
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=6
 #SBATCH --mem-per-cpu=4G
 
 # Job run time (downloads can be slow)
