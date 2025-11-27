@@ -4,7 +4,7 @@
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick
-#SBATCH --partition=hpg-default
+#SBATCH --partition=default
 
 # Where to put the outputs: %j expands into the job number
 #SBATCH --output logs/%x-%j.out

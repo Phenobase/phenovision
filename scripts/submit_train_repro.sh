@@ -4,8 +4,8 @@
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:a100:1
+#SBATCH --partition=hpg-b200
+#SBATCH --gres=gpu:1
 
 # Where to put the outputs: %j expands into the job number
 #SBATCH --output logs/%x-%j.out

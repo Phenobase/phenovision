@@ -262,6 +262,137 @@ print_pipeline_header <- function(pipeline_name) {
   cli::cli_alert_info("Data root: {data_root}")
 }
 
+#' Run a PhenoVision Pipeline
+#'
+#' Convenience function to run pipelines from an R console.
+#' Can run locally or submit to SLURM.
+#'
+#' @param pipeline Character. Pipeline name: "inference", "train_repro",
+#'   "train_leaf", or "download_annots"
+#' @param submit Logical. If TRUE, submit to SLURM instead of running locally.
+#'   Default FALSE.
+#' @param workers Integer. Number of parallel workers (ignored if submit=TRUE).
+#'   Default uses config value (10).
+#' @param debug Logical. If TRUE, run sequentially in current session for
+#'   debugging. Default FALSE.
+#' @param dry_run Logical. If TRUE, show what would be run without executing.
+#'   Default FALSE.
+#'
+#' @examples
+#' \dontrun{
+#' # Run inference locally with default workers
+#' run_pipeline("inference")
+#'
+#' # Submit training to SLURM
+#' run_pipeline("train_repro", submit = TRUE)
+#'
+#' # Run with specific worker count
+#' run_pipeline("inference", workers = 4)
+#'
+#' # Debug mode (sequential, in current session)
+#' run_pipeline("train_repro", debug = TRUE)
+#' }
+run_pipeline <- function(pipeline,
+                         submit = FALSE,
+                         workers = NULL,
+                         debug = FALSE,
+                         dry_run = FALSE) {
+
+  # Validate pipeline name
+
+  valid_pipelines <- c("inference", "train_repro", "train_leaf", "download_annots")
+  if (!pipeline %in% valid_pipelines) {
+    stop("Invalid pipeline: '", pipeline, "'\n",
+         "Valid options: ", paste(valid_pipelines, collapse = ", "))
+  }
+
+  targets_file <- paste0("_targets_", pipeline, ".R")
+  slurm_script <- paste0("scripts/submit_", pipeline, ".sh")
+
+  # Check files exist
+
+if (!file.exists(targets_file)) {
+    stop("Targets file not found: ", targets_file)
+  }
+
+  if (submit) {
+    # =========================================================================
+    # SLURM Submission
+    # =========================================================================
+    if (!file.exists(slurm_script)) {
+      stop("SLURM script not found: ", slurm_script)
+    }
+
+    cat("========================================\n")
+    cat("Submitting pipeline to SLURM\n")
+    cat("========================================\n")
+    cat("Pipeline:      ", pipeline, "\n")
+    cat("Targets file:  ", targets_file, "\n")
+    cat("SLURM script:  ", slurm_script, "\n")
+    cat("========================================\n\n")
+
+    if (dry_run) {
+      cat("DRY RUN: Would execute:\n")
+      cat("  system('sbatch", slurm_script, "')\n")
+      return(invisible(NULL))
+    }
+
+    # Submit the job
+    result <- system(paste("sbatch", slurm_script), intern = TRUE)
+    cat(result, "\n")
+    cat("\nJob submitted successfully!\n")
+    cat("Check status with: squeue -u $USER\n")
+    cat("Check logs in: logs/\n")
+
+    return(invisible(result))
+
+  } else {
+    # =========================================================================
+    # Local Execution
+    # =========================================================================
+
+    # Set workers
+    if (is.null(workers)) {
+      workers <- config$num_targets_workers
+    }
+
+    cat("========================================\n")
+    cat("Running pipeline locally\n")
+    cat("========================================\n")
+    cat("Pipeline:      ", pipeline, "\n")
+    cat("Targets file:  ", targets_file, "\n")
+    cat("Workers:       ", workers, "\n")
+    cat("Debug mode:    ", debug, "\n")
+    cat("========================================\n\n")
+
+    if (dry_run) {
+      cat("DRY RUN: Would execute:\n")
+      cat("  Sys.setenv(TARGETS_WORKERS = ", workers, ")\n", sep = "")
+      cat("  targets::tar_make(script = '", targets_file, "')\n", sep = "")
+      return(invisible(NULL))
+    }
+
+    # Set TARGETS_WORKERS env var
+    Sys.setenv(TARGETS_WORKERS = workers)
+
+    if (debug) {
+      cat("Running in DEBUG mode (sequential execution)\n\n")
+      Sys.setenv(TARGETS_WORKERS = 0)
+      targets::tar_make(
+        script = targets_file,
+        callr_function = NULL  # Run in current session for debugging
+      )
+    } else {
+      targets::tar_make(script = targets_file)
+    }
+
+    cat("\nTo visualize the pipeline:\n")
+    cat("  targets::tar_visnetwork(script = '", targets_file, "')\n\n", sep = "")
+
+    return(invisible(TRUE))
+  }
+}
+
 # =============================================================================
 # Initialization Message
 # =============================================================================
@@ -274,6 +405,7 @@ message("Project root: ", project_root)
 message("Data root: ", data_root)
 message("")
 message("Available functions:")
+message("  - run_pipeline(name, submit=FALSE)  # Run or submit pipeline")
 message("  - source_common()")
 message("  - source_inference()")
 message("  - source_training()")
