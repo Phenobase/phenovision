@@ -53,7 +53,7 @@ parser$add_argument(
   "--workers",
   type = "integer",
   default = 4,
-  help = "Number of parallel workers for targets (local run only)"
+  help = "Number of parallel workers for targets (sets TARGETS_WORKERS env var)"
 )
 
 parser$add_argument(
@@ -144,7 +144,8 @@ cat("========================================\n\n")
 
 if (args$dry_run) {
   cat("DRY RUN: Would execute:\n")
-  cat("  targets::tar_make(script = '", targets_file, "', callr_workers = ", args$workers, ")\n", sep = "")
+  cat("  Sys.setenv(TARGETS_WORKERS = ", args$workers, ")\n", sep = "")
+  cat("  targets::tar_make(script = '", targets_file, "')\n", sep = "")
   quit(status = 0)
 }
 
@@ -178,6 +179,11 @@ if (!args$no_log) {
   sink(log_con, type = "message")
 }
 
+# Set TARGETS_WORKERS env var for the pipeline to read
+# (This is read by setup_targets_parallel() in _targets_common.R)
+Sys.setenv(TARGETS_WORKERS = args$workers)
+cat("Set TARGETS_WORKERS=", args$workers, "\n\n")
+
 # Run the pipeline
 start_time <- Sys.time()
 
@@ -185,16 +191,14 @@ tryCatch({
   if (args$debug) {
     # Debug mode: sequential, stop on error
     cat("Running in DEBUG mode (sequential execution)\n\n")
+    Sys.setenv(TARGETS_WORKERS = 0)  # Force sequential for debug
     tar_make(
       script = targets_file,
       callr_function = NULL  # Run in current session for debugging
     )
   } else {
-    # Normal mode: parallel
-    tar_make(
-      script = targets_file,
-      callr_workers = args$workers
-    )
+    # Normal mode: parallel (workers read from TARGETS_WORKERS env var)
+    tar_make(script = targets_file)
   }
 
   end_time <- Sys.time()

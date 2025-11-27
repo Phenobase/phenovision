@@ -30,8 +30,11 @@ date;hostname;pwd
 # Print GPU info
 nvidia-smi
 
+# Pass SLURM CPU allocation to targets (reads from --cpus-per-task above)
+export TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+
 # Run the inference pipeline
-Rscript run_pipeline.R --pipeline=inference --workers=10
+Rscript run_pipeline.R --pipeline=inference
 
 # Report completion
 date

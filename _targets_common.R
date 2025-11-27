@@ -172,7 +172,33 @@ source_download <- function(verbose = TRUE) {
 # =============================================================================
 
 #' Configure targets for parallel execution
-setup_targets_parallel <- function(workers = config$num_targets_workers) {
+#'
+#' Worker count priority:
+#' 1. Explicit function argument (not NULL) - allows training to force workers=0
+#' 2. SLURM_CPUS_PER_TASK env var - automatically set by SLURM from --cpus-per-task
+#' 3. TARGETS_WORKERS env var - set by run_pipeline.R --workers=N for local runs
+#' 4. config$num_targets_workers - default (10)
+setup_targets_parallel <- function(workers = NULL) {
+  # Determine worker count based on priority
+  if (!is.null(workers)) {
+    # Explicit argument takes priority (allows training to force workers=0)
+    message("Using explicit workers argument: ", workers, " workers")
+  } else {
+    slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
+    targets_workers <- Sys.getenv("TARGETS_WORKERS", unset = "")
+
+    if (nchar(slurm_cpus) > 0) {
+      workers <- as.integer(slurm_cpus)
+      message("Using SLURM_CPUS_PER_TASK: ", workers, " workers")
+    } else if (nchar(targets_workers) > 0) {
+      workers <- as.integer(targets_workers)
+      message("Using TARGETS_WORKERS env var: ", workers, " workers")
+    } else {
+      workers <- config$num_targets_workers
+      message("Using config default: ", workers, " workers")
+    }
+  }
+
   tar_option_set(
     packages = c(
       "arrow", "dplyr", "tidyr", "purrr", "readr", "stringr",

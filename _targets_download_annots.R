@@ -50,19 +50,34 @@ source_download()   # Download-specific functions
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 
+# Determine worker count from environment
+# Priority: SLURM_CPUS_PER_TASK > TARGETS_WORKERS > default (6)
+.download_workers <- {
+  slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
+  targets_workers <- Sys.getenv("TARGETS_WORKERS", unset = "")
+  if (nchar(slurm_cpus) > 0) {
+    as.integer(slurm_cpus)
+  } else if (nchar(targets_workers) > 0) {
+    as.integer(targets_workers)
+  } else {
+    6L  # Default for this pipeline
+  }
+}
+message("Download pipeline using ", .download_workers, " workers")
+
 # Set targets options with crew controller
 tar_option_set(
   packages = c("tidyverse", "arrow", "jsonlite", "data.table", "rsample", "curl"),
   format = "rds",  # Standard R format (qs would be faster but requires qs2 package)
   controller = crew_controller_local(
-    workers = 6,
+    workers = .download_workers,
     seconds_idle = 60  # Keep workers alive for 60 seconds after finishing
   )
 )
 
 # Configure parallel processing
 # Using crew for parallelization (modern targets approach)
-# - Runs up to 6 batch downloads in parallel via dynamic branching
+# - Runs batch downloads in parallel via dynamic branching (workers from env var)
 # - Each worker runs download_batch_from_list() which uses curl::multi_download()
 #   with built-in concurrency for efficient I/O (100 files per micro-batch)
 # - Simply use: tar_make(script = "_targets_download_annots.R")

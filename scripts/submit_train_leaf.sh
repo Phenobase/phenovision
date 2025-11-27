@@ -30,8 +30,11 @@ date;hostname;pwd
 # Print GPU info
 nvidia-smi
 
+# Pass SLURM CPU allocation to targets (reads from --cpus-per-task above)
+export TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+
 # Run the leaf training pipeline
-Rscript run_pipeline.R --pipeline=train_leaf --workers=4
+Rscript run_pipeline.R --pipeline=train_leaf
 
 # Report completion
 date

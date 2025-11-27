@@ -26,8 +26,11 @@ source activate rstudio-gpu
 # Save useful information
 date;hostname;pwd
 
+# Pass SLURM CPU allocation to targets (reads from --cpus-per-task above)
+export TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+
 # Run the download annotations pipeline
-Rscript run_pipeline.R --pipeline=download_annots --workers=4
+Rscript run_pipeline.R --pipeline=download_annots
 
 # Report completion
 date

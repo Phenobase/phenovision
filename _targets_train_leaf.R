@@ -30,8 +30,8 @@ library(tarchetypes)  # Modern targets syntax
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 
-# Configure targets for sequential execution (training is not parallelizable)
-setup_targets_parallel(workers = 1)
+# Configure targets for sequential execution (GPU training is not parallelizable)
+setup_targets_parallel(workers = 0)
 
 # =============================================================================
 # Pipeline (Modern tar_plan() Syntax)

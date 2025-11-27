@@ -30,8 +30,8 @@ conflicts_prefer(dplyr::filter)
 conflicts_prefer(lubridate::yday)
 conflicts_prefer(lubridate::year)
 
-# Configure targets for parallel execution
-setup_targets_parallel(workers = config$num_targets_workers)
+# Configure targets for parallel execution (reads TARGETS_WORKERS or SLURM_CPUS_PER_TASK env var)
+setup_targets_parallel()
 
 # =============================================================================
 # Pipeline (Modern tar_plan() Syntax)

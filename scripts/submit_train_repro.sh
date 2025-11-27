@@ -18,11 +18,11 @@
 #SBATCH --mem-per-cpu=8G
 
 # Job run time (training can take days)
-#SBATCH --time=72:00:00
+#SBATCH --time=96:00:00
 
 # Activate conda
 source /home/${USER}/.bashrc
-source activate rstudio-gpu
+source activate rstudio-gpu2
 
 # Save useful information
 date;hostname;pwd
@@ -30,8 +30,11 @@ date;hostname;pwd
 # Print GPU info
 nvidia-smi
 
+# Pass SLURM CPU allocation to targets (reads from --cpus-per-task above)
+export TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+
 # Run the reproductive training pipeline
-Rscript run_pipeline.R --pipeline=train_repro --workers=4
+Rscript run_pipeline.R --pipeline=train_repro
 
 # Report completion
 date
