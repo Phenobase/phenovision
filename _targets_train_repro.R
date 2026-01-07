@@ -59,7 +59,7 @@ tar_plan(
   # Training hyperparameters (separate targets so changing one doesn't invalidate all)
   batch_size = 384L,
   blr = 5e-4,  # Base learning rate
-  num_epochs = 0L,
+  num_epochs = 10L,
   weight_decay = 0.05,
   layer_decay = 0.65,
 

@@ -132,19 +132,33 @@ if (args$submit) {
 # Local Execution
 # =============================================================================
 
+# Determine actual worker count (SLURM overrides --workers argument)
+slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
+if (nchar(slurm_cpus) > 0) {
+  actual_workers <- as.integer(slurm_cpus)
+  running_under_slurm <- TRUE
+} else {
+  actual_workers <- args$workers
+  running_under_slurm <- FALSE
+}
+
 cat("========================================\n")
-cat("Running pipeline locally\n")
+if (running_under_slurm) {
+  cat("Running pipeline under SLURM\n")
+} else {
+  cat("Running pipeline locally\n")
+}
 cat("========================================\n")
 cat("Pipeline:      ", args$pipeline, "\n")
 cat("Targets file:  ", targets_file, "\n")
-cat("Workers:       ", args$workers, "\n")
+cat("Workers:       ", actual_workers, "\n")
 cat("Debug mode:    ", args$debug, "\n")
 cat("Dry run:       ", args$dry_run, "\n")
 cat("========================================\n\n")
 
 if (args$dry_run) {
   cat("DRY RUN: Would execute:\n")
-  cat("  Sys.setenv(TARGETS_WORKERS = ", args$workers, ")\n", sep = "")
+  cat("  Sys.setenv(TARGETS_WORKERS = ", actual_workers, ")\n", sep = "")
   cat("  targets::tar_make(script = '", targets_file, "')\n", sep = "")
   quit(status = 0)
 }
@@ -181,8 +195,12 @@ if (!args$no_log) {
 
 # Set TARGETS_WORKERS env var for the pipeline to read
 # (This is read by setup_targets_parallel() in _targets_common.R)
-Sys.setenv(TARGETS_WORKERS = args$workers)
-cat("Set TARGETS_WORKERS=", args$workers, "\n\n")
+# Note: SLURM submit script already exports TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+if (!running_under_slurm) {
+  # Running locally - set from --workers argument
+  Sys.setenv(TARGETS_WORKERS = actual_workers)
+}
+cat("Using TARGETS_WORKERS=", actual_workers, "\n\n")
 
 # Run the pipeline
 start_time <- Sys.time()

@@ -22,7 +22,10 @@
 
 # Activate conda
 source /home/${USER}/.bashrc
-source activate rstudio-gpu
+source activate reticulate-gpu2
+
+# Force reticulate to use the conda environment's Python
+export RETICULATE_PYTHON=/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/bin/python
 
 # Save useful information
 date;hostname;pwd
