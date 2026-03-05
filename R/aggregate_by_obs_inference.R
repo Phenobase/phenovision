@@ -32,11 +32,15 @@
 #' 7. Formats output for Phenobase ingestion
 #' 8. Creates iNaturalist URLs for observation and image
 #'
-#' **Trait Name Mapping:**
+#' **Trait Name Mapping (Leaves):**
 #' - `gr` → "green leaves"
 #' - `cl` → "colored leaves"
 #' - `bb` → "breaking buds"
 #' - `no` → "no live leaves"
+#'
+#' **Trait Name Mapping (Reproductive):**
+#' - `fl` → "flower"
+#' - `fr` → "fruit"
 #'
 #' @examples
 #' \dontrun{
@@ -158,10 +162,14 @@ aggregate_by_obs <- function(annotations_long_leaves,
       prediction_class = detected,
       trait = dplyr::case_match(
         trait,
+        # Leaf phenology
         "gr" ~ "green leaves",
         "cl" ~ "colored leaves",
         "bb" ~ "breaking buds",
         "no" ~ "no live leaves",
+        # Reproductive structures
+        "fl" ~ "flower",
+        "fr" ~ "fruit",
         .default = ""
       )
     )

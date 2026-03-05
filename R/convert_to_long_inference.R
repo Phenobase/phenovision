@@ -120,9 +120,61 @@ convert_to_long <- function(annotations_thresholded_leaves,
       )
   }
 
-  # TODO: Add flower/fruit implementation if needed
   if (trait == "flower/fruit") {
-    stop("flower/fruit conversion not yet implemented in this function")
+    # Pivot classification columns
+    inf_class <- annotations_thresholded_leaves |>
+      dplyr::select(photo_id, starts_with(".class_")) |>
+      dplyr::mutate(
+        .class_fl = as.character(as.factor(.class_fl)),
+        .class_fr = as.character(as.factor(.class_fr))
+      ) |>
+      tidyr::pivot_longer(
+        -photo_id,
+        names_to = "trait",
+        names_prefix = ".class_",
+        values_to = "detected"
+      )
+
+    # Pivot equivocal columns
+    inf_equiv <- annotations_thresholded_leaves |>
+      dplyr::select(photo_id, starts_with(".equivocal_")) |>
+      tidyr::pivot_longer(
+        -photo_id,
+        names_to = "trait",
+        names_prefix = ".equivocal_",
+        values_to = "equivocal"
+      )
+
+    # Pivot prediction columns
+    inf_pred <- annotations_thresholded_leaves |>
+      dplyr::select(photo_id, .pred_flower, .pred_fruit) |>
+      tidyr::pivot_longer(
+        -photo_id,
+        names_to = "trait",
+        names_prefix = ".pred_",
+        values_to = "preds"
+      ) |>
+      dplyr::mutate(
+        trait = dplyr::case_match(
+          trait,
+          "flower" ~ "fl",
+          "fruit" ~ "fr",
+          .default = ""
+        )
+      )
+
+    # Join all pivoted data
+    inf_df <- inf_class |>
+      dplyr::left_join(inf_equiv, by = c("photo_id", "trait")) |>
+      dplyr::left_join(inf_pred, by = c("photo_id", "trait")) |>
+      dplyr::left_join(
+        annotations_thresholded_leaves |>
+          dplyr::select(
+            photo_id, batch_j, extension, path, run_name,
+            taxon_id, model_version, observation_uuid
+          ),
+        by = "photo_id"
+      )
   }
 
   inf_df

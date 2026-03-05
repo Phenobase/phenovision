@@ -66,6 +66,10 @@ tar_plan(
   thresholds_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv",
   fam_dat_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/family_stats.csv",
 
+  # Reproductive threshold and family stats paths
+  thresholds_repro_path = "output/reproductive/v1.1.0/final_buffer_params.csv",
+  fam_dat_repro_path = "output/reproductive/v1.1.0/family_stats.csv",
+
   # =========================================================================
   # Model Configuration
   # =========================================================================
@@ -218,9 +222,213 @@ tar_plan(
   # REPRODUCTIVE STRUCTURES BRANCH
   # =========================================================================
 
-  # TODO: Implement reproductive inference
-  # For now, leaving as placeholder for future implementation
-  # See leaf branch below for pattern to follow
+  # --- Threshold Loading ---
+  # Load and convert threshold buffer params to expected list format
+
+  tar_target(
+    thresholds_repro_raw,
+    readr::read_csv(thresholds_repro_path)
+  ),
+
+  tar_target(
+    thresholds_repro,
+    {
+      # Convert CSV to list format expected by threshold_annotations()
+      fl_row <- thresholds_repro_raw |> dplyr::filter(class == "flower")
+      fr_row <- thresholds_repro_raw |> dplyr::filter(class == "fruit")
+
+      list(
+        fl = c(fl_row$threshold, fl_row$buffer_lower, fl_row$buffer_upper),
+        fr = c(fr_row$threshold, fr_row$buffer_lower, fr_row$buffer_upper)
+      )
+    }
+  ),
+
+  # --- Family Statistics ---
+
+  tar_target(
+    fam_dat_repro_raw,
+    readr::read_csv(fam_dat_repro_path)
+  ),
+
+  tar_target(
+    fam_dat_long_repro,
+    {
+      # The reproductive family stats file has a different format
+      # (family, n, n_positive, accuracy, class)
+      # Convert to the expected long format for aggregate_by_obs
+
+      # Note: This assumes equiv_prop columns exist, otherwise we may need to
+      # generate placeholder values or modify the approach
+      fam_dat_repro_raw |>
+        dplyr::rename(trait = class) |>
+        dplyr::mutate(
+          trait = dplyr::case_match(
+            trait,
+            "flower" ~ "fl",
+            "fruit" ~ "fr",
+            .default = trait
+          ),
+          # Placeholder values - update when full family stats available
+          proportion_certainty_family = NA_real_,
+          accuracy_family = accuracy,
+          accuracy_excluding_certainty_family = accuracy,
+          count_family = n
+        ) |>
+        dplyr::select(
+          family, trait,
+          proportion_certainty_family,
+          accuracy_family,
+          accuracy_excluding_certainty_family,
+          count_family
+        )
+    }
+  ),
+
+  # --- Inference (runs on ALL images, not filtered like leaves) ---
+
+  tar_target(
+    annotations_repro,
+    annotate_batch(
+      images_batch,
+      model_doi_repro,
+      trait = "flower/fruit",
+      num_workers = num_workers_data
+    ),
+    iteration = "list",
+    pattern = map(images_batch)
+  ),
+
+  # --- Threshold Application ---
+
+  tar_target(
+    annotations_thresholded_repro,
+    threshold_annotations(
+      annotations_repro,
+      thresholds_repro,
+      trait = "flower/fruit",
+      meta_images = meta_images_path
+    ),
+    pattern = map(annotations_repro),
+    iteration = "list"
+  ),
+
+  # --- Convert to Long Format ---
+
+  tar_target(
+    annotations_long_repro,
+    convert_to_long(annotations_thresholded_repro, trait = "flower/fruit"),
+    pattern = map(annotations_thresholded_repro),
+    iteration = "list"
+  ),
+
+  # --- Aggregate by Observation ---
+
+  tar_target(
+    annotations_by_obs_repro,
+    aggregate_by_obs(
+      annotations_long_repro,
+      taxonomy,
+      families,
+      genera,
+      fam_dat_long_repro,
+      meta_images = meta_images_path,
+      meta_taxa = meta_taxa_path
+    ),
+    pattern = map(annotations_long_repro),
+    iteration = "list"
+  ),
+
+  # --- Final Formatting ---
+
+  tar_target(
+    annotations_by_obs_final_repro,
+    finalize_annotations_by_obs(
+      annotations_by_obs_repro,
+      fields = NULL,
+      field_map = field_map
+    ),
+    pattern = map(annotations_by_obs_repro),
+    iteration = "list"
+  ),
+
+  # --- Filter for Ingestion (High Certainty Detections Only) ---
+
+  tar_target(
+    annotations_by_obs_ingest_repro,
+    {
+      annotations_by_obs_final_repro |>
+        dplyr::filter(
+          certainty == "High",
+          predictionClass == "Detected"
+        ) |>
+        dplyr::select(
+          -proportionCertaintyFamily,
+          -countFamily,
+          -countImages,
+          -certainty,
+          -predictionProbability,
+          -predictionClass,
+          -accuracyFamily
+        )
+    },
+    pattern = map(annotations_by_obs_final_repro),
+    iteration = "list"
+  ),
+
+  # --- Output: Reproductive CSVs ---
+
+  tar_target(
+    annotations_internal_repro,
+    {
+      dir.create(file.path(results_dir_repro, "final_internal"),
+                 recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(results_dir_repro, "final_internal",
+                        paste0(tar_name(), ".csv"))
+      readr::write_csv(annotations_by_obs_final_repro, path)
+      path
+    },
+    pattern = map(annotations_by_obs_final_repro),
+    format = "file"
+  ),
+
+  tar_target(
+    annotations_ingest_repro,
+    {
+      dir.create(file.path(results_dir_repro, "final_ingest"),
+                 recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(results_dir_repro, "final_ingest",
+                        paste0(tar_name(), ".csv"))
+      readr::write_csv(annotations_by_obs_ingest_repro, path)
+      path
+    },
+    pattern = map(annotations_by_obs_ingest_repro),
+    format = "file"
+  ),
+
+  # Concatenate all reproductive internal format CSVs
+  tar_target(
+    annotations_internal_repro_all_csv,
+    {
+      path <- file.path(results_dir_repro, "annotations_internal_all.csv")
+      if (file.exists(path)) file.remove(path)
+      concatenate_csvs(annotations_by_obs_final_repro, path)
+    },
+    pattern = map(annotations_by_obs_final_repro),
+    format = "file"
+  ),
+
+  # Concatenate all reproductive ingestion format CSVs
+  tar_target(
+    annotations_ingest_repro_all_csv,
+    {
+      path <- file.path(results_dir_repro, "annotations_ingest_all.csv")
+      if (file.exists(path)) file.remove(path)
+      concatenate_csvs(annotations_by_obs_ingest_repro, path)
+    },
+    pattern = map(annotations_by_obs_ingest_repro),
+    format = "file"
+  ),
 
   # =========================================================================
   # LEAF PHENOLOGY BRANCH

@@ -107,9 +107,67 @@ convert_fam_to_long <- function(fam_dat, trait = c("flower/fruit", "leaves")) {
       )
   }
 
-  # TODO: Implement flower/fruit if needed
   if (trait == "flower/fruit") {
-    stop("flower/fruit conversion not yet implemented")
+    # Pivot proportion of equivocal (uncertainty) columns
+    fam_equiv <- fam_dat |>
+      dplyr::select(family, starts_with("equiv_prop_")) |>
+      tidyr::pivot_longer(
+        -family,
+        names_to = "trait",
+        names_prefix = "equiv_prop_",
+        values_to = "proportion_certainty_family"
+      ) |>
+      # Invert: high proportion equivocal = low proportion certain
+      dplyr::mutate(proportion_certainty_family = 1 - proportion_certainty_family)
+
+    # Pivot accuracy INCLUDING equivocal as errors
+    fam_acc <- fam_dat |>
+      dplyr::select(family, ends_with("_incl_equiv")) |>
+      tidyr::pivot_longer(
+        -family,
+        names_to = "trait",
+        names_prefix = ".accuracy_family_",
+        values_to = "accuracy_family"
+      ) |>
+      dplyr::mutate(
+        trait = dplyr::case_match(
+          trait,
+          "flower_incl_equiv" ~ "fl",
+          "fruit_incl_equiv" ~ "fr",
+          .default = ""
+        )
+      )
+
+    # Pivot accuracy EXCLUDING equivocal (only high certainty)
+    fam_acc_cert <- fam_dat |>
+      dplyr::select(
+        family,
+        starts_with(".accuracy_family_"),
+        -ends_with("_incl_equiv")
+      ) |>
+      tidyr::pivot_longer(
+        -family,
+        names_to = "trait",
+        names_prefix = ".accuracy_family_",
+        values_to = "accuracy_excluding_certainty_family"
+      ) |>
+      dplyr::mutate(
+        trait = dplyr::case_match(
+          trait,
+          "flower" ~ "fl",
+          "fruit" ~ "fr",
+          .default = ""
+        )
+      )
+
+    # Join all pivoted statistics
+    fam_stats <- fam_acc |>
+      dplyr::left_join(fam_acc_cert, by = c("family", "trait")) |>
+      dplyr::left_join(fam_equiv, by = c("family", "trait")) |>
+      dplyr::left_join(
+        fam_dat |> dplyr::select(family, count_family = count),
+        by = "family"
+      )
   }
 
   fam_stats
