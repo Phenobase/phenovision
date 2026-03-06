@@ -248,111 +248,106 @@ tar_plan(
   ),
 
   # ===========================================================================
-  # Model Upload to HuggingFace
+  # HuggingFace Upload Command
   # ===========================================================================
 
   tar_target(
-    hf_model_upload,
+    hf_upload_command,
     {
-      # TODO: Create function wrapping R/phenovisionL_push_to_hf_hub.R
+      # Generate the exact command to upload model to HuggingFace
+      # This is NOT run automatically - requires human review first
+      #
+      # Note: leaf pipeline uses output_dir-based versioning rather than
+      # a fixed model_version target. The version for the registry must be
+      # assigned manually when adding the new entry to model_registry.yaml.
+      checkpoint <- training_run_round2$checkpoint_path
 
-      training_run_round2  # Dependency
-      test_results_path  # Dependency
-      threshold_buffers  # Dependency
-      family_stats  # Dependency
+      cmd <- paste0(
+        "Rscript R/push_to_hf_hub.R \\\n",
+        "  --checkpoint '", checkpoint, "' \\\n",
+        "  --hf-repo 'phenobase/phenovisionL' \\\n",
+        "  --num-labels 3 \\\n",
+        "  --version '<VERSION>' \\\n",
+        "  --thresholds '", threshold_buffers, "' \\\n",
+        "  --family-stats '", family_stats, "'"
+      )
 
-      # Return instructions for user
       list(
-        checkpoint = training_run_round2$checkpoint_path,
+        command = cmd,
+        checkpoint = checkpoint,
         threshold_file = threshold_buffers,
-        family_stats_file = family_stats,
-        instructions = paste0(
-          "Manual step required:\n",
-          "1. Run: Rscript R/phenovisionL_push_to_hf_hub.R\n",
-          "2. Provide checkpoint path: ", training_run_round2$checkpoint_path, "\n",
-          "3. Upload threshold file: ", threshold_buffers, "\n",
-          "4. Upload family stats: ", family_stats
-        )
+        family_stats_file = family_stats
       )
     }
   ),
 
   # ===========================================================================
-  # DOI Minting Reminder
+  # Upload Instructions File
   # ===========================================================================
+  # Writes all upload instructions to a text file in the output directory
+  # so the user can review them without loading targets in R.
 
   tar_target(
-    doi_reminder,
+    upload_instructions_file,
     {
-      hf_model_upload  # Dependency
+      hf_upload_command  # Dependency
 
-      # Return reminder message
-      list(
-        message = paste0(
-          "\n",
-          paste(rep("=", 70), collapse = ""), "\n",
-          "NEXT STEPS: Model Upload and DOI\n",
-          paste(rep("=", 70), collapse = ""), "\n",
-          "1. Upload model to HuggingFace Hub:\n",
-          "   - Repository: phenobase/phenovisionL\n",
-          "   - Checkpoint: ", training_run_round2$checkpoint_path, "\n",
-          "   - Threshold file: ", threshold_buffers, "\n",
-          "   - Family stats: ", family_stats, "\n\n",
-          "2. Create DOI via HuggingFace:\n",
-          "   - Go to model repository settings\n",
-          "   - Click 'Create DOI'\n",
-          "   - Record DOI for use in inference pipeline\n\n",
-          "3. Update inference pipeline:\n",
-          "   - Edit _targets_common.R\n",
-          "   - Update config$model_doi_leaves with new DOI\n\n",
-          "4. Test inference with new model:\n",
-          "   - Rscript run_pipeline.R --pipeline=inference\n",
-          paste(rep("=", 70), collapse = "")
-        )
+      instructions_text <- paste0(
+        "PhenoVision Leaf Model - Upload Instructions\n",
+        "Generated: ", Sys.time(), "\n",
+        strrep("=", 70), "\n\n",
+        "Round 1 checkpoint: ",
+        training_run_round1$checkpoint_path, "\n",
+        "Round 2 checkpoint: ",
+        training_run_round2$checkpoint_path, "\n",
+        "Round 2 filtered data: ",
+        round2_filtered_data, "\n\n",
+        strrep("-", 70), "\n",
+        "STEP 1: Assign a version (e.g., v1.1.0)\n",
+        "  Replace <VERSION> in the command below.\n\n",
+        strrep("-", 70), "\n",
+        "STEP 2: Review results, then run the upload command:\n\n",
+        hf_upload_command$command, "\n\n",
+        strrep("-", 70), "\n",
+        "STEP 3: Create DOI via HuggingFace:\n",
+        "  - Go to ",
+        "https://huggingface.co/phenobase/phenovisionL/settings\n",
+        "  - Click 'Create DOI'\n",
+        "  - Record the new DOI\n\n",
+        strrep("-", 70), "\n",
+        "STEP 4: Add version to model_registry.yaml:\n",
+        "  - Add new version entry under leaves > versions\n",
+        "  - Set doi, output_dir, thresholds_file, etc.\n",
+        "  - Update current: to the new version\n\n",
+        strrep("-", 70), "\n",
+        "STEP 5: Update inference pipeline version:\n",
+        "  - In _targets_inference.R, set: ",
+        "model_version_leaves = \"<VERSION>\"\n\n",
+        strrep("-", 70), "\n",
+        "STEP 6: Test inference:\n",
+        "  Rscript run_pipeline.R --pipeline=inference\n\n",
+        strrep("=", 70), "\n\n",
+        "Training Summary\n",
+        strrep("-", 70), "\n",
+        "Init checkpoint:      ", checkpoint_init, "\n",
+        "Epochs (R1/R2):       ",
+        num_epochs_round1, " / ", num_epochs_round2, "\n",
+        "Batch size:           ", batch_size, "\n",
+        "Base LR:              ", blr, "\n",
+        "Weight decay:         ", weight_decay, "\n",
+        "Layer decay:          ", layer_decay, "\n",
+        "Confidence threshold: ", confidence_threshold, "\n",
+        "Output dir:           ", output_dir, "\n",
+        "Threshold file:       ", threshold_buffers, "\n",
+        "Family stats:         ", family_stats, "\n",
+        "Completion time:      ", Sys.time(), "\n"
       )
-    }
-  ),
 
-  # ===========================================================================
-  # Final Summary
-  # ===========================================================================
-
-  tar_target(
-    training_summary,
-    {
-      doi_reminder  # Ensure all steps complete first
-
-      # Compile summary
-      list(
-        config = list(
-          checkpoint_init = checkpoint_init,
-          resume_round1_from = resume_round1_from,
-          resume_round2_from = resume_round2_from,
-          batch_size = batch_size,
-          blr = blr,
-          num_epochs_round1 = num_epochs_round1,
-          num_epochs_round2 = num_epochs_round2,
-          weight_decay = weight_decay,
-          layer_decay = layer_decay,
-          confidence_threshold = confidence_threshold,
-          train_csv = train_csv,
-          val_csv = val_csv,
-          seconds_csv = seconds_csv,
-          output_dir = output_dir,
-          guild_label_r1 = guild_label_r1,
-          guild_label_r2 = guild_label_r2,
-          guild_tag = guild_tag
-        ),
-        round1_checkpoint = training_run_round1$checkpoint_path,
-        round2_checkpoint = training_run_round2$checkpoint_path,
-        filtered_data = round2_filtered_data,
-        test_results = test_results_path,
-        thresholds = threshold_buffers,
-        family_stats = family_stats,
-        upload_instructions = hf_model_upload$instructions,
-        doi_reminder = doi_reminder$message,
-        completion_time = Sys.time()
-      )
-    }
+      out_path <- file.path(output_dir, "UPLOAD_INSTRUCTIONS.txt")
+      writeLines(instructions_text, out_path)
+      cat(instructions_text)  # Also print to console
+      out_path
+    },
+    format = "file"
   )
 )
