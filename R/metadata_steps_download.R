@@ -21,7 +21,7 @@
 #' @param force_download Re-download even if recent file exists
 #' @return Path to downloaded tar.gz file
 #' @export
-download_inat_metadata <- function(metadata_dir, force_download = FALSE) {
+download_inat_metadata <- function(metadata_dir) {
   library(xfun)
 
   message("Downloading iNaturalist metadata...")
@@ -33,17 +33,15 @@ download_inat_metadata <- function(metadata_dir, force_download = FALSE) {
   meta_file <- file.path(metadata_dir, "inaturalist-open-data-latest.tar.gz")
 
   # Check if recent metadata exists (within 30 days)
-  download_needed <- force_download
-  if (!download_needed && file.exists(meta_file)) {
+  download_needed <- TRUE
+  if (file.exists(meta_file)) {
     file_age_days <- as.numeric(difftime(Sys.time(), file.mtime(meta_file), units = "days"))
-    if (file_age_days > 30) {
-      message(sprintf("  Existing metadata is %d days old, re-downloading...", round(file_age_days)))
-      download_needed <- TRUE
-    } else {
+    if (file_age_days <= 30) {
       message(sprintf("  Using existing metadata (%.1f days old)", file_age_days))
+      download_needed <- FALSE
+    } else {
+      message(sprintf("  Existing metadata is %d days old, re-downloading...", round(file_age_days)))
     }
-  } else {
-    download_needed <- TRUE
   }
 
   if (download_needed) {
@@ -52,7 +50,13 @@ download_inat_metadata <- function(metadata_dir, force_download = FALSE) {
   }
 
   message(sprintf("Metadata tar.gz ready: %s", meta_file))
-  return(meta_file)
+
+  # Return file metadata so targets detects changes without hashing the 27GB file
+  list(
+    path = meta_file,
+    mtime = as.character(file.mtime(meta_file)),
+    size = file.size(meta_file)
+  )
 }
 
 
@@ -68,18 +72,14 @@ download_inat_metadata <- function(metadata_dir, force_download = FALSE) {
 extract_inat_metadata <- function(tarfile, metadata_dir) {
   message("Extracting iNaturalist metadata...")
 
-  # Check if extraction is needed
   taxa_file <- file.path(metadata_dir, "taxa.csv")
   obs_file <- file.path(metadata_dir, "observations.csv")
   photos_file <- file.path(metadata_dir, "photos.csv")
 
-  if (all(file.exists(c(taxa_file, obs_file, photos_file)))) {
-    message("  Using existing extracted files")
-  } else {
-    message("  Extracting metadata archive (70+ GB, this may take 10+ minutes)...")
-    # Use --strip-components=1 to remove the dated top-level directory
-    system(paste0("tar -xzf ", tarfile, " -C ", metadata_dir, " --strip-components=1"))
-  }
+  # Always extract — targets handles caching decisions upstream
+  message("  Extracting metadata archive (70+ GB, this may take 10+ minutes)...")
+  # Use --strip-components=1 to remove the dated top-level directory
+  system(paste0("tar -xzf ", tarfile, " -C ", metadata_dir, " --strip-components=1"))
 
   extracted_files <- c(taxa_file, obs_file, photos_file)
   message(sprintf("Extracted %d files", length(extracted_files)))
@@ -228,6 +228,16 @@ enrich_photos_with_observations <- function(angio_photos, metadata_extracted) {
 
   message("Enriching photos with observation data...")
   message(sprintf("  Processing %s photos", format(nrow(angio_photos), big.mark = ",")))
+
+  # Early return if no photos to enrich (avoids loading entire observations file)
+  if (nrow(angio_photos) == 0) {
+    message("  No new photos to enrich - returning empty data frame")
+    return(angio_photos %>%
+      mutate(latitude = double(), longitude = double(),
+             positional_accuracy = integer(), taxon_id = integer(),
+             observed_on = as.Date(character()), anomaly_score = double(),
+             yr = integer(), mth = integer()))
+  }
 
   obs_file <- metadata_extracted[grep("observations.csv", metadata_extracted)]
 

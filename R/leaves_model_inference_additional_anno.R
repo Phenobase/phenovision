@@ -1,3 +1,7 @@
+## DEPRECATED: Use prepare_rob_bb_annotations() in R/extract_leaf_annotations_download.R
+## and the rob_annot2_file target in _targets_download_annots.R instead.
+## This script is kept for reference only.
+
 library(tidyverse)
 library(unglue)
 library(arrow)

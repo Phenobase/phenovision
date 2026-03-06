@@ -1,0 +1,47 @@
+# PhenoVision Model Version Registry
+#
+# Maps model versions to DOIs, HuggingFace repos, and artifact paths.
+# Used by get_model_info() to resolve version -> paths/DOI.
+#
+# Each version specifies:
+#   doi: HuggingFace DOI (null if not yet uploaded)
+#   hf_repo: HuggingFace repository name
+#   data_date: Date of iNaturalist data snapshot used for training (matches data_update_trigger)
+#   output_dir: Local output directory containing model artifacts
+#   thresholds_file: Filename for threshold/buffer parameters
+#   thresholds_format: "csv" or "rds" (how to read the file)
+#   family_stats_file: Filename for family-level accuracy statistics
+
+reproductive:
+  current: "v1.1.0"
+  num_labels: 2
+  versions:
+    v1.0.0:
+      doi: "10.57967/hf/2763"
+      hf_repo: "phenobase/phenovision"
+      data_date: null
+      output_dir: "output/model_04_13_2024"
+      thresholds_file: null
+      thresholds_format: null
+      family_stats_file: null
+    v1.1.0:
+      doi: "10.57967/hf/7952"
+      hf_repo: "phenobase/phenovision"
+      data_date: "2025-10-27"
+      output_dir: "output/reproductive/v1.1.0"
+      thresholds_file: "final_buffer_params.csv"
+      thresholds_format: "csv"
+      family_stats_file: "family_stats.csv"
+
+leaves:
+  current: "v1.0.0"
+  num_labels: 3
+  versions:
+    v1.0.0:
+      doi: "10.57967/hf/5785"
+      hf_repo: "phenobase/phenovisionL"
+      data_date: null
+      output_dir: "output/leaves/v1.0.0"
+      thresholds_file: "epoch_1_threshold_buffers.csv"
+      thresholds_format: "rds"
+      family_stats_file: "family_stats.csv"

@@ -15,7 +15,7 @@
 #' @param force_download Re-download even if recent file exists
 #' @return Path to downloaded zip file
 #' @export
-download_dwc_archive <- function(annotation_dir, force_download = FALSE) {
+download_dwc_archive <- function(annotation_dir) {
   library(xfun)
 
   message("Downloading DwC archive...")
@@ -27,17 +27,15 @@ download_dwc_archive <- function(annotation_dir, force_download = FALSE) {
   dwc_zip <- file.path(annotation_dir, "phenobase_dwca.zip")
 
   # Check if recent DwC exists (within 7 days - iNaturalist updates weekly)
-  download_needed <- force_download
-  if (!download_needed && file.exists(dwc_zip)) {
+  download_needed <- TRUE
+  if (file.exists(dwc_zip)) {
     file_age_days <- as.numeric(difftime(Sys.time(), file.mtime(dwc_zip), units = "days"))
-    if (file_age_days > 7) {
-      message(sprintf("  Existing DwC archive is %d days old, re-downloading...", round(file_age_days)))
-      download_needed <- TRUE
-    } else {
+    if (file_age_days <= 7) {
       message(sprintf("  Using existing DwC archive (%.1f days old)", file_age_days))
+      download_needed <- FALSE
+    } else {
+      message(sprintf("  Existing DwC archive is %d days old, re-downloading...", round(file_age_days)))
     }
-  } else {
-    download_needed <- TRUE
   }
 
   if (download_needed) {
@@ -46,7 +44,13 @@ download_dwc_archive <- function(annotation_dir, force_download = FALSE) {
   }
 
   message(sprintf("DwC archive ready: %s", dwc_zip))
-  return(dwc_zip)
+
+  # Return file metadata so targets detects changes without hashing
+  list(
+    path = dwc_zip,
+    mtime = as.character(file.mtime(dwc_zip)),
+    size = file.size(dwc_zip)
+  )
 }
 
 
@@ -63,12 +67,9 @@ extract_dwc_archive <- function(zipfile, annotation_dir) {
 
   obs_file <- file.path(annotation_dir, "observations.csv")
 
-  if (file.exists(obs_file)) {
-    message("  Using existing extracted observations.csv")
-  } else {
-    message("  Extracting DwC archive (this may take 30+ minutes)...")
-    system2("unzip", args = c("-o", zipfile, "-d", annotation_dir), stdout = TRUE)
-  }
+  # Always extract — targets handles caching decisions upstream
+  message("  Extracting DwC archive (this may take 30+ minutes)...")
+  system2("unzip", args = c("-o", zipfile, "-d", annotation_dir), stdout = TRUE)
 
   if (!file.exists(obs_file)) {
     stop("observations.csv not found - extraction may have failed")

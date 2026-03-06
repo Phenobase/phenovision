@@ -4,7 +4,6 @@
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick
-#SBATCH --partition=default
 
 # Where to put the outputs: %j expands into the job number
 #SBATCH --output logs/%x-%j.out
@@ -14,7 +13,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6
-#SBATCH --mem-per-cpu=4G
+#SBATCH --mem-per-cpu=16G
 
 # Job run time (downloads can be slow)
 #SBATCH --time=12:00:00

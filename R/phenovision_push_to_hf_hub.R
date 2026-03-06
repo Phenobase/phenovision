@@ -1,3 +1,6 @@
+## DEPRECATED: Use R/push_to_hf_hub.R instead (unified script with CLI arguments)
+## This script is kept for historical reference only.
+##
 ## A lot of this code based on https://github.com/huggingface/transformers/blob/main/src/transformers/models/vit_mae/convert_vit_mae_to_pytorch.py
 
 library(reticulate)

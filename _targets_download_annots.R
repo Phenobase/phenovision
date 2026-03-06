@@ -111,7 +111,7 @@ tar_plan(
 
   # Rob's manual leaf annotation files
   rob_annot_csv = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
-  rob_annot2_csv = "data/leaves/rob_new_annotations_bb.csv",
+  bb_scoring_csv = "data/leaves/bbPresenceScoringRescoreAllStates.csv",
 
   # Target genera for leaf annotations (from collaborator workflow)
   leaf_target_genera = {
@@ -131,29 +131,30 @@ tar_plan(
   image_download_cores = 6,  # Parallel download workers (matches available cores)
   image_download_status_dir = file.path(metadata_dir, "img_download_status"),  # Failed download logs
 
-  # Update frequency flags
-  force_metadata_update = FALSE,  # Set to TRUE to force re-download of metadata
-  force_annotation_update = FALSE,  # Set to TRUE to force re-download of DwC archive
+  # Data update trigger: change this date to force a full data update.
+  # When this value changes, all download + extraction + processing targets re-run.
+  # Set to the date you're triggering the update. No need to reset afterwards.
+  data_update_trigger = "2025-11-07",
 
   # ===========================================================================
   # Step 1: Update iNaturalist Metadata (Granular Targets)
   # ===========================================================================
 
   # 1a. Download metadata tar.gz (26+ GB, ~30 min)
+  # Returns list(path, mtime, size) — no format="file" to avoid hashing 27GB
   tar_target(
     metadata_tarfile,
-    download_inat_metadata(
-      metadata_dir = metadata_dir,
-      force_download = force_metadata_update
-    ),
-    format = "file"
+    {
+      data_update_trigger  # Dependency: changing trigger forces re-download
+      download_inat_metadata(metadata_dir = metadata_dir)
+    }
   ),
 
   # 1b. Extract metadata (70+ GB extracted, ~10 min)
   tar_target(
     metadata_extracted,
     extract_inat_metadata(
-      tarfile = metadata_tarfile,
+      tarfile = metadata_tarfile$path,
       metadata_dir = metadata_dir
     ),
     format = "file"
@@ -220,20 +221,20 @@ tar_plan(
   # ===========================================================================
 
   # 2a. Download DwC archive (10+ GB, ~2 hours)
+  # Returns list(path, mtime, size) — no format="file" to avoid hashing 10GB
   tar_target(
     dwc_zipfile,
-    download_dwc_archive(
-      annotation_dir = annotation_dir,
-      force_download = force_annotation_update
-    ),
-    format = "file"
+    {
+      data_update_trigger  # Same trigger controls both download branches
+      download_dwc_archive(annotation_dir = annotation_dir)
+    }
   ),
 
   # 2b. Extract DwC archive (~30 min)
   tar_target(
     dwc_extracted,
     extract_dwc_archive(
-      zipfile = dwc_zipfile,
+      zipfile = dwc_zipfile$path,
       annotation_dir = annotation_dir
     ),
     format = "file"
@@ -267,24 +268,13 @@ tar_plan(
     images_root = images_root
   ),
 
-  # Get the most recent observation date for annotations (for filename tracking)
-  repro_max_date = {
-    max_date <- open_dataset(photos_parquet_updated) %>%
-      filter(observation_uuid %in% repro_annotations$observation_uuid) %>%
-      summarize(max_date = max(observed_on, na.rm = TRUE)) %>%
-      collect() %>%
-      pull(max_date)
-    format(max_date, "%Y-%m-%d")
-  },
-
   # Write full reproductive annotations to CSV (for training pipeline)
-  # Note: Splitting is now handled by training pipeline with versioning
-  # Filename includes date of most recent annotation for tracking
+  # Filename uses data_update_trigger date to track which data snapshot was used
   tar_target(
     repro_annotations_full_csv,
     {
       output_file <- file.path(output_dir_repro,
-                               paste0("repro_annotations_full_", repro_max_date, ".csv"))
+                               paste0("repro_annotations_full_", data_update_trigger, ".csv"))
       write_csv(repro_annotations, output_file)
       message(sprintf("Wrote %s annotations to %s",
                       format(nrow(repro_annotations), big.mark = ","),
@@ -300,7 +290,25 @@ tar_plan(
 
   # Track Rob's manual annotation files
   tar_target(rob_annot_file, rob_annot_csv, format = "file"),
-  tar_target(rob_annot2_file, rob_annot2_csv, format = "file"),
+  tar_target(bb_scoring_file, bb_scoring_csv, format = "file"),
+
+  # Generate rob_annot2 data from scoring CSV + metadata
+  # (replaces the lost rob_new_annotations_bb.csv static file)
+  tar_target(
+    rob_annot2_file,
+    {
+      out_path <- "data/leaves/rob_new_annotations_bb.csv"
+      result <- prepare_rob_bb_annotations(
+        scoring_csv = bb_scoring_file,
+        photos_parquet = photos_parquet_updated,
+        taxa_parquet = file.path(metadata_dir, "taxa/part-0.parquet"),
+        images_root = images_root
+      )
+      readr::write_csv(result, out_path)
+      out_path
+    },
+    format = "file"
+  ),
 
   # Extract leaf annotations by joining parquets and Rob's annotations
   leaf_annotations = extract_leaf_from_parquet(

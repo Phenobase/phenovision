@@ -327,3 +327,107 @@ extract_leaf_annotations <- function(leaf_parquet_path,
 
   return(all_meta)
 }
+
+
+#' Prepare Rob's Breaking Buds Annotations from Scoring CSV
+#'
+#' Generates the `rob_new_annotations_bb.csv` data from the raw scoring CSV
+#' (`bbPresenceScoringRescoreAllStates.csv`) by joining with photo and taxonomy
+#' metadata. Replaces the standalone script `R/leaves_model_inference_additional_anno.R`.
+#'
+#' @param scoring_csv Character. Path to Rob's scoring CSV
+#'   (bbPresenceScoringRescoreAllStates.csv)
+#' @param photos_parquet Character. Path to photos parquet dataset
+#' @param taxa_parquet Character. Path to taxa parquet file
+#' @param images_root Character. Root path for image files
+#'
+#' @return Data frame with columns: bb, photo_id, Detect_Agree,
+#'   Green leaves (0/1), observation_uuid, name, genus, family, file_name, etc.
+#'
+#' @details
+#' The scoring CSV contains Rob's manual assessment of breaking-bud presence
+#' for a set of photos. This function enriches it with metadata needed by
+#' `extract_leaf_from_parquet()`.
+#'
+#' @export
+prepare_rob_bb_annotations <- function(scoring_csv,
+                                        photos_parquet,
+                                        taxa_parquet,
+                                        images_root) {
+
+  library(dplyr)
+  library(tidyr)
+  library(arrow)
+  library(readr)
+
+  message("Preparing Rob's breaking buds annotations from scoring CSV...")
+
+  # Step 1: Read scoring CSV and filter to scored photos
+  scoring <- read_csv(scoring_csv, show_col_types = FALSE) %>%
+    drop_na(Detect_Agree) %>%
+    mutate(
+      bb = Detect_Agree,
+      photo_id = as.character(File)
+    )
+
+  message(sprintf("  Loaded %d scored photos", nrow(scoring)))
+
+  # Step 2: Join with photo metadata
+  photo_meta <- open_dataset(photos_parquet) %>%
+    select(observation_uuid, photo_uuid, photo_id, batch_j, extension, taxon_id) %>%
+    filter(photo_id %in% unique(scoring$photo_id)) %>%
+    collect() %>%
+    mutate(photo_id = as.character(photo_id))
+
+  scoring <- scoring %>%
+    left_join(photo_meta, by = "photo_id")
+
+  message(sprintf("  Matched %d photos to metadata", sum(!is.na(scoring$observation_uuid))))
+
+  # Step 3: Add taxonomy (inline to avoid cross-pipeline dependency on add_taxonomy())
+  meta_taxa <- open_dataset(taxa_parquet)
+
+  scoring <- scoring %>%
+    left_join(
+      meta_taxa %>%
+        select(taxon_id, name, ancestry, rank_level, rank) %>%
+        filter(taxon_id %in% unique(scoring$taxon_id)) %>%
+        collect(),
+      by = "taxon_id"
+    )
+
+  families <- meta_taxa %>% filter(rank == "family") %>% collect()
+  genera <- meta_taxa %>% filter(rank == "genus") %>% collect()
+
+  taxonomy <- scoring %>%
+    select(photo_id, ancestry) %>%
+    mutate(taxa_ids = stringr::str_split(ancestry, "/")) %>%
+    select(-ancestry) %>%
+    unnest_longer(taxa_ids, transform = as.integer)
+
+  fams <- taxonomy %>%
+    left_join(families %>% select(taxon_id, family = name),
+              by = c(taxa_ids = "taxon_id")) %>%
+    drop_na()
+
+  gens <- taxonomy %>%
+    left_join(genera %>% select(taxon_id, genus = name),
+              by = c(taxa_ids = "taxon_id")) %>%
+    drop_na()
+
+  scoring <- scoring %>%
+    left_join(fams %>% select(photo_id, family), by = "photo_id") %>%
+    left_join(gens %>% select(photo_id, genus), by = "photo_id")
+
+  # Step 4: Construct file paths
+  scoring <- scoring %>%
+    mutate(file_name = file.path(
+      images_root,
+      paste0("batch_", batch_j),
+      paste0(photo_id, ".", extension)
+    ))
+
+  message(sprintf("  Final dataset: %d rows", nrow(scoring)))
+
+  scoring
+}

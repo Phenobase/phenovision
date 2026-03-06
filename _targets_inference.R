@@ -3,9 +3,11 @@
 # This targets pipeline runs inference on plant images using both reproductive
 # structures and leaf phenology models. The pipeline has independent branches
 # for each model type, enabling smart re-processing:
-# - Changing reproductive model DOI triggers only reproductive re-inference
-# - Changing leaf model DOI triggers only leaf re-inference
-# - New images trigger both
+# - Changing model version triggers only that branch's re-inference
+# - New images trigger both branches
+#
+# Model versions are resolved via model_registry.yaml, which maps
+# version -> DOI, thresholds, family stats, and output paths.
 #
 # Usage:
 #   targets::tar_make(script = "_targets_inference.R")
@@ -19,7 +21,7 @@
 source("_targets_common.R")
 
 # Load functions
-source_common()     # Common functions (model loading, etc.)
+source_common()     # Common functions (model loading, versioning, registry)
 source_inference()  # Inference-specific functions
 
 # Additional packages
@@ -43,48 +45,45 @@ tar_plan(
   # Configuration (Separate Targets for Granular Dependencies)
   # =========================================================================
 
-  # Model DOIs (changing these triggers re-inference)
-  model_doi_repro = config$model_doi_repro,
-  model_doi_leaves = config$model_doi_leaves,
+  # --- Model Versions ---
+  # Changing a version triggers re-inference for that branch only.
+  # Versions are resolved via model_registry.yaml -> DOI, thresholds, etc.
+  model_version_repro = "v1.1.0",
+  model_version_leaves = "v1.0.0",
 
-  # Worker configuration
-  num_targets_workers = config$num_targets_workers,
-  num_workers_data = config$num_workers_data,
+  # --- Worker Configuration ---
+  num_workers_data = 4L,
 
-  # Paths from common config
-  metadata_photos = paths$metadata_photos,
-  metadata_root = paths$metadata_root,
-  images_root = paths$images_root,
-  output_repro = paths$output_repro,
-  output_leaves = paths$output_leaves,
+  # --- Data Paths ---
+  metadata_photos = "/blue/guralnick/share/phenobase_inat_data/metadata/angio_photos",
+  metadata_root = "/blue/guralnick/share/phenobase_inat_data/metadata",
+  images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium",
 
-  # Leaf-specific configuration
+  # --- Leaf-Specific Filtering ---
   rob_annot_path = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
   genera_exclude_leaves = c("Logfia", "Oxalis", "Viola"),
 
-  # Threshold and family stats paths (TODO: link these to model DOI automatically)
-  thresholds_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/epoch_1_threshold_buffers.csv",
-  fam_dat_leaves_path = "output/leaves/phenovision-init_model2_04_11_2025/family_stats.csv",
-
-  # Reproductive threshold and family stats paths
-  thresholds_repro_path = "output/reproductive/v1.1.0/final_buffer_params.csv",
-  fam_dat_repro_path = "output/reproductive/v1.1.0/family_stats.csv",
-
   # =========================================================================
-  # Model Configuration
+  # Model Registry Lookup (resolves version -> DOI, paths, thresholds)
   # =========================================================================
 
-  # Create output directories
-  tar_target(model_doi_path_repro, gsub("\\/", "_", model_doi_repro)),
-  tar_target(model_doi_path_leaves, gsub("\\/", "_", model_doi_leaves)),
-  tar_target(results_dir_repro, file.path(output_repro, model_doi_path_repro)),
-  tar_target(results_dir_leaves, file.path(output_leaves, model_doi_path_leaves)),
+  # Registry info for each model type
+  tar_target(model_info_repro, get_model_info(model_version_repro, "reproductive")),
+  tar_target(model_info_leaves, get_model_info(model_version_leaves, "leaves")),
 
-  # Load models
+  # DOIs (derived from registry)
+  tar_target(model_doi_repro, model_info_repro$doi),
+  tar_target(model_doi_leaves, model_info_leaves$doi),
+
+  # Results directories (inference output organized by version)
+  tar_target(results_dir_repro, file.path(model_info_repro$output_dir, "inference")),
+  tar_target(results_dir_leaves, file.path(model_info_leaves$output_dir, "inference")),
+
+  # Load models from HuggingFace via DOI
   tar_target(model_repro, load_phenovision(model_doi_repro, type = "classifier")),
   tar_target(model_leaves, load_phenovision(model_doi_leaves, type = "classifier")),
 
-  # Model versions
+  # Model version strings (commit hashes from HuggingFace, used in output metadata)
   tar_target(model_vers_repro, model_version(model_doi_repro)),
   tar_target(model_vers_leaves, model_version(model_doi_leaves)),
 
@@ -222,44 +221,23 @@ tar_plan(
   # REPRODUCTIVE STRUCTURES BRANCH
   # =========================================================================
 
-  # --- Threshold Loading ---
-  # Load and convert threshold buffer params to expected list format
-
-  tar_target(
-    thresholds_repro_raw,
-    readr::read_csv(thresholds_repro_path)
-  ),
+  # --- Threshold Loading (via model registry) ---
 
   tar_target(
     thresholds_repro,
-    {
-      # Convert CSV to list format expected by threshold_annotations()
-      fl_row <- thresholds_repro_raw |> dplyr::filter(class == "flower")
-      fr_row <- thresholds_repro_raw |> dplyr::filter(class == "fruit")
-
-      list(
-        fl = c(fl_row$threshold, fl_row$buffer_lower, fl_row$buffer_upper),
-        fr = c(fr_row$threshold, fr_row$buffer_lower, fr_row$buffer_upper)
-      )
-    }
+    load_model_thresholds(model_version_repro, "reproductive")
   ),
 
   # --- Family Statistics ---
 
   tar_target(
     fam_dat_repro_raw,
-    readr::read_csv(fam_dat_repro_path)
+    readr::read_csv(model_info_repro$family_stats_path, show_col_types = FALSE)
   ),
 
   tar_target(
     fam_dat_long_repro,
     {
-      # The reproductive family stats file has a different format
-      # (family, n, n_positive, accuracy, class)
-      # Convert to the expected long format for aggregate_by_obs
-
-      # Note: This assumes equiv_prop columns exist, otherwise we may need to
-      # generate placeholder values or modify the approach
       fam_dat_repro_raw |>
         dplyr::rename(trait = class) |>
         dplyr::mutate(
@@ -269,7 +247,6 @@ tar_plan(
             "fruit" ~ "fr",
             .default = trait
           ),
-          # Placeholder values - update when full family stats available
           proportion_certainty_family = NA_real_,
           accuracy_family = accuracy,
           accuracy_excluding_certainty_family = accuracy,
@@ -489,11 +466,11 @@ tar_plan(
     pattern = map(images_batch_leaves)
   ),
 
-  # --- Threshold Loading ---
+  # --- Threshold Loading (via model registry) ---
 
   tar_target(
     thresholds_leaves,
-    readr::read_csv(thresholds_leaves_path)
+    load_model_thresholds(model_version_leaves, "leaves")
   ),
 
   # --- Threshold Application ---
@@ -523,7 +500,7 @@ tar_plan(
 
   tar_target(
     fam_dat_leaves,
-    readr::read_csv(fam_dat_leaves_path)
+    readr::read_csv(model_info_leaves$family_stats_path, show_col_types = FALSE)
   ),
 
   tar_target(

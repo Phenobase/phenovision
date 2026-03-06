@@ -1554,24 +1554,36 @@ tar_plan(
       # Compute family-level accuracy statistics using test predictions
       # (test_predictions already has family column and .pred_class columns)
 
+      # Map predicted classes to match truth encoding:
+      # truth: factor "1" (positive) / "0" (negative)
+      # predicted: character "detected" / "not detected"
+      pred_flower <- ifelse(
+        test_predictions$.pred_class_flower == "detected", "1", "0"
+      )
+      pred_fruit <- ifelse(
+        test_predictions$.pred_class_fruit == "detected", "1", "0"
+      )
+
       # Compute accuracy by family for flowers
       flower_stats <- test_predictions %>%
+        dplyr::mutate(.pred_mapped = pred_flower) %>%
         dplyr::group_by(family) %>%
         dplyr::summarise(
           n = dplyr::n(),
           n_positive = sum(flower == "1"),
-          accuracy = mean(.pred_class_flower == flower),
+          accuracy = mean(.pred_mapped == flower),
           .groups = "drop"
         ) %>%
         dplyr::mutate(class = "flower")
 
       # Compute accuracy by family for fruits
       fruit_stats <- test_predictions %>%
+        dplyr::mutate(.pred_mapped = pred_fruit) %>%
         dplyr::group_by(family) %>%
         dplyr::summarise(
           n = dplyr::n(),
           n_positive = sum(fruit == "1"),
-          accuracy = mean(.pred_class_fruit == fruit),
+          accuracy = mean(.pred_mapped == fruit),
           .groups = "drop"
         ) %>%
         dplyr::mutate(class = "fruit")
@@ -1617,7 +1629,7 @@ tar_plan(
 
       output_path <- file.path(
         output_dir,
-        paste0("epoch_", num_epochs, "_thresholds.csv")
+        "optimal_thresholds.csv"
       )
       readr::write_csv(threshold_df, output_path)
 
@@ -1627,119 +1639,94 @@ tar_plan(
   ),
 
   # ===========================================================================
-  # Model Upload to HuggingFace
+  # HuggingFace Upload Command
   # ===========================================================================
 
   tar_target(
-    hf_model_upload,
+    hf_upload_command,
     {
-      # Return instructions for user (use best checkpoint by DQI)
-      list(
+      # Generate the exact command to upload model to HuggingFace
+      # This is NOT run automatically - requires human review first
+      cmd <- generate_hf_upload_command(
         checkpoint = best_checkpoint_file,
-        best_epoch = best_epoch_info$best_epoch,
-        threshold_file = threshold_file,
-        family_stats_file = family_stats,
-        report = training_report,
-        instructions = paste0(
-          "Manual step required:\n",
-          "1. Run: Rscript R/phenovision_push_to_hf_hub.R\n",
-          "2. Provide checkpoint path: ", best_checkpoint_file,
-          " (best epoch: ", best_epoch_info$best_epoch, ")\n",
-          "3. Upload threshold file: ", threshold_file, "\n",
-          "4. Upload family stats: ", family_stats, "\n",
-          "5. Upload training report: ", training_report
-        )
-      )
-    }
-  ),
-
-  # ===========================================================================
-  # DOI Minting Reminder
-  # ===========================================================================
-
-  tar_target(
-    doi_reminder,
-    {
-      hf_model_upload  # Dependency
-
-      # Return reminder message (use best checkpoint by DQI)
-      list(
-        message = paste0(
-          "\n",
-          strrep("=", 70), "\n",
-          "NEXT STEPS: Model Upload and DOI\n",
-          strrep("=", 70), "\n",
-          "Best epoch selected: ", best_epoch_info$best_epoch,
-          " (avg DQI: ", round((best_epoch_info$metrics$val_flower_dqi +
-                                best_epoch_info$metrics$val_fruit_dqi) / 2, 4), ")\n\n",
-          "1. Upload model to HuggingFace Hub:\n",
-          "   - Repository: phenobase/phenovision\n",
-          "   - Checkpoint: ", best_checkpoint_file, "\n",
-          "   - Threshold file: ", threshold_file, "\n",
-          "   - Family stats: ", family_stats, "\n\n",
-          "2. Create DOI via HuggingFace:\n",
-          "   - Go to model repository settings\n",
-          "   - Click 'Create DOI'\n",
-          "   - Record DOI for use in inference pipeline\n\n",
-          "3. Update inference pipeline:\n",
-          "   - Edit _targets_common.R\n",
-          "   - Update config$model_doi_repro with new DOI\n\n",
-          "4. Test inference with new model:\n",
-          "   - Rscript run_pipeline.R --pipeline=inference\n",
-          strrep("=", 70)
-        )
-      )
-    }
-  ),
-
-  # ===========================================================================
-  # Final Summary
-  # ===========================================================================
-
-  tar_target(
-    training_summary,
-    {
-      doi_reminder  # Ensure all steps complete first
-
-      # Compile summary (using best checkpoint by DQI)
-      list(
-        config = list(
-          model_version = model_version,
-          pretrained_model = pretrained_model,
-          pretrained_doi = pretrained_doi,
-          reinit_head = reinit_head,
-          resume_from = resume_from,
-          batch_size = batch_size,
-          blr = blr,
-          num_epochs = num_epochs,
-          weight_decay = weight_decay,
-          layer_decay = layer_decay,
-          train_csv = train_csv,
-          val_csv = val_csv,
-          test_csv = test_csv,
-          output_dir = output_dir,
-          guild_label = guild_label,
-          guild_tag = guild_tag
-        ),
-        guild_run = training_run$run_info,
-        best_epoch = best_epoch_info$best_epoch,
-        best_epoch_metric_used = best_epoch_info$metric_used,
-        checkpoint = best_checkpoint_file,
-        best_epoch_metrics = best_epoch_info$metrics,
-        test_summary = test_summary,
-        optimal_thresholds = list(
-          flower = optimal_thresholds$flower$threshold,
-          fruit = optimal_thresholds$fruit$threshold
-        ),
-        conformal_coverage = conformal_coverage,
-        recommended_alpha = recommended_alpha,
-        threshold_file = threshold_file,
+        model_type = "reproductive",
+        version = model_version,
+        thresholds = final_buffer_params_file,
         family_stats = family_stats,
-        training_report = training_report,
-        upload_instructions = hf_model_upload$instructions,
-        doi_reminder = doi_reminder$message,
-        completion_time = Sys.time()
+        report = training_report
+      )
+
+      list(
+        command = cmd,
+        checkpoint = best_checkpoint_file,
+        best_epoch = best_epoch_info$best_epoch,
+        threshold_file = final_buffer_params_file,
+        family_stats_file = family_stats,
+        report = training_report
       )
     }
+  ),
+
+  # ===========================================================================
+  # Upload Instructions File
+  # ===========================================================================
+  # Writes all upload instructions to a text file in the output directory
+  # so the user can review them without loading targets in R.
+
+  tar_target(
+    upload_instructions_file,
+    {
+      hf_upload_command  # Dependency
+
+      instructions_text <- paste0(
+        "PhenoVision Reproductive Model ", model_version, " - Upload Instructions\n",
+        "Generated: ", Sys.time(), "\n",
+        strrep("=", 70), "\n\n",
+        "Best epoch: ", best_epoch_info$best_epoch,
+        " (avg DQI: ", round((best_epoch_info$metrics$val_flower_dqi +
+                              best_epoch_info$metrics$val_fruit_dqi) / 2, 4), ")\n",
+        "Metric used: ", best_epoch_info$metric_used, "\n\n",
+        strrep("-", 70), "\n",
+        "STEP 1: Review results, then run the upload command:\n\n",
+        hf_upload_command$command, "\n\n",
+        strrep("-", 70), "\n",
+        "STEP 2: Create DOI via HuggingFace:\n",
+        "  - Go to https://huggingface.co/phenobase/phenovision/settings\n",
+        "  - Click 'Create DOI'\n",
+        "  - Record the new DOI (format: 10.57967/hf/XXXX)\n\n",
+        strrep("-", 70), "\n",
+        "STEP 3: Update model_registry.yaml:\n",
+        "  - Set doi: \"<new-DOI>\" for version ", model_version, "\n\n",
+        strrep("-", 70), "\n",
+        "STEP 4: Update inference pipeline version:\n",
+        "  - In _targets_inference.R, set: model_version_repro = \"", model_version, "\"\n\n",
+        strrep("-", 70), "\n",
+        "STEP 5: Test inference:\n",
+        "  Rscript run_pipeline.R --pipeline=inference\n\n",
+        strrep("=", 70), "\n\n",
+        "Training Summary\n",
+        strrep("-", 70), "\n",
+        "Model version:    ", model_version, "\n",
+        "Pretrained model: ", pretrained_model, "\n",
+        "Pretrained DOI:   ", pretrained_doi, "\n",
+        "Epochs:           ", num_epochs, "\n",
+        "Batch size:       ", batch_size, "\n",
+        "Base LR:          ", blr, "\n",
+        "Weight decay:     ", weight_decay, "\n",
+        "Layer decay:      ", layer_decay, "\n",
+        "Output dir:       ", output_dir, "\n",
+        "Checkpoint:       ", sub(paste0(getwd(), "/"), "", best_checkpoint_file, fixed = TRUE), "\n",
+        "Threshold file:   ", final_buffer_params_file, "\n",
+        "Family stats:     ", family_stats, "\n",
+        "Training report:  ", training_report, "\n",
+        "Completion time:  ", Sys.time(), "\n"
+      )
+
+      out_path <- file.path(output_dir, "UPLOAD_INSTRUCTIONS.txt")
+      writeLines(instructions_text, out_path)
+      cat(instructions_text)  # Also print to console
+      out_path
+    },
+    format = "file"
   )
 )
