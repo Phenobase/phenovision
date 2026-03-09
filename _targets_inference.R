@@ -53,6 +53,7 @@ tar_plan(
 
   # --- Worker Configuration ---
   num_workers_data = 4L,
+  batch_size_inference = 1280L,
 
   # --- Data Paths ---
   metadata_photos = "/blue/guralnick/share/phenobase_inat_data/metadata/angio_photos",
@@ -246,7 +247,8 @@ tar_plan(
       images_batch,
       model_doi_repro,
       trait = "flower/fruit",
-      num_workers = num_workers_data
+      num_workers = num_workers_data,
+      batch_size = batch_size_inference
     ),
     iteration = "list",
     pattern = map(images_batch)
@@ -436,7 +438,8 @@ tar_plan(
       images_batch_leaves,
       model_doi_leaves,
       trait = "leaves",
-      num_workers = num_workers_data
+      num_workers = num_workers_data,
+      batch_size = batch_size_inference
     ),
     iteration = "list",
     pattern = map(images_batch_leaves)

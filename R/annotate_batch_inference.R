@@ -59,6 +59,7 @@ annotate_batch <- function(images_batch_split,
                            model_doi = "10.57967/hf/2763",
                            trait = c("flower/fruit", "leaves"),
                            num_workers = 6L,
+                           batch_size = 1280L,
                            done = NULL) {
 
   trait <- match.arg(trait)
@@ -137,7 +138,7 @@ annotate_batch <- function(images_batch_split,
   inf_dl <- timm$data$create_loader(
     inf_ds,
     c(3L, 224L, 224L),
-    batch_size_inference,  # From _targets_common.R
+    batch_size,
     num_workers = num_workers,
     is_training = FALSE
   )
