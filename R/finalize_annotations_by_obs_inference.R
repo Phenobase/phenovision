@@ -60,11 +60,16 @@ finalize_annotations_by_obs <- function(annotations_by_obs_leaves,
   field_map_v <- field_map$new_field
   names(field_map_v) <- field_map$old_field
 
-  # Map certainty and add recorded_by
+  # Map certainty, add recorded_by, basis_of_record, and deterministic annotation ID
   annotations_by_obs_leaves <- annotations_by_obs_leaves |>
     dplyr::mutate(
       certainty = ifelse(equivocal == "Unequivocal", "High", "Low"),
-      recorded_by = observer_id
+      recorded_by = observer_id,
+      basis_of_record = "MachineObservation",
+      machine_learning_annotation_id = uuid::UUIDfromName(
+        "b0e67a2e-5e87-4d94-b67d-3f7c9a1d8f4e",  # Fixed PhenoVision namespace
+        paste0(observation_uuid, model_uri, trait)
+      )
     )
 
   # Select only fields that exist in both data and field_map
@@ -79,7 +84,7 @@ finalize_annotations_by_obs <- function(annotations_by_obs_leaves,
   # Add verbatim and formatted trait, annotation method
   leaf_data_new <- leaf_data_new |>
     dplyr::mutate(
-      verbatimTrait = trait,
+      verbatim_trait = trait,
       trait = paste0(trait, " present"),
       annotation_method = "machine"
     )

@@ -309,6 +309,17 @@ run_pipeline <- function(pipeline,
   targets_file <- paste0("_targets_", pipeline, ".R")
   slurm_script <- paste0("scripts/submit_", pipeline, ".sh")
 
+  # Resolve the targets project name and store directory from _targets.yaml
+  project_names <- c(
+    inference = "main",
+    train_repro = "train_repro",
+    train_leaf = "train_leaf",
+    download_annots = "download_annots"
+  )
+  project_name <- project_names[[pipeline]]
+  Sys.setenv(TAR_PROJECT = project_name)
+  store_dir <- targets::tar_config_get("store", project = project_name)
+
   # Check files exist
 
 if (!file.exists(targets_file)) {
@@ -361,6 +372,7 @@ if (!file.exists(targets_file)) {
     cat("========================================\n")
     cat("Pipeline:      ", pipeline, "\n")
     cat("Targets file:  ", targets_file, "\n")
+    cat("Store:         ", store_dir, "\n")
     cat("Workers:       ", workers, "\n")
     cat("Debug mode:    ", debug, "\n")
     cat("========================================\n\n")
@@ -368,7 +380,7 @@ if (!file.exists(targets_file)) {
     if (dry_run) {
       cat("DRY RUN: Would execute:\n")
       cat("  Sys.setenv(TARGETS_WORKERS = ", workers, ")\n", sep = "")
-      cat("  targets::tar_make(script = '", targets_file, "')\n", sep = "")
+      cat("  targets::tar_make(script = '", targets_file, "', store = '", store_dir, "')\n", sep = "")
       return(invisible(NULL))
     }
 
@@ -380,14 +392,15 @@ if (!file.exists(targets_file)) {
       Sys.setenv(TARGETS_WORKERS = 0)
       targets::tar_make(
         script = targets_file,
+        store = store_dir,
         callr_function = NULL  # Run in current session for debugging
       )
     } else {
-      targets::tar_make(script = targets_file)
+      targets::tar_make(script = targets_file, store = store_dir)
     }
 
     cat("\nTo visualize the pipeline:\n")
-    cat("  targets::tar_visnetwork(script = '", targets_file, "')\n\n", sep = "")
+    cat("  targets::tar_visnetwork(script = '", targets_file, "', store = '", store_dir, "')\n\n", sep = "")
 
     return(invisible(TRUE))
   }

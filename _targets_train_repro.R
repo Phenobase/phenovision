@@ -1551,44 +1551,53 @@ tar_plan(
   tar_target(
     family_stats,
     {
-      # Compute family-level accuracy statistics using test predictions
-      # (test_predictions already has family column and .pred_class columns)
+      # Compute family-level accuracy statistics with buffer zone analysis
+      # Uses buffer parameters to identify equivocal predictions and compute
+      # proportion of certain predictions per family (for Phenobase schema)
 
-      # Map predicted classes to match truth encoding:
-      # truth: factor "1" (positive) / "0" (negative)
-      # predicted: character "detected" / "not detected"
-      pred_flower <- ifelse(
-        test_predictions$.pred_class_flower == "detected", "1", "0"
-      )
-      pred_fruit <- ifelse(
-        test_predictions$.pred_class_fruit == "detected", "1", "0"
-      )
+      # Get buffer zone parameters from accuracy-based buffer analysis
+      fl_thresh <- accuracy_buffer_flower_overall$optimal_threshold
+      fl_buf_lower <- accuracy_buffer_flower_overall$buffer_lower
+      fl_buf_upper <- accuracy_buffer_flower_overall$buffer_upper
+      fr_thresh <- accuracy_buffer_fruit_overall$optimal_threshold
+      fr_buf_lower <- accuracy_buffer_fruit_overall$buffer_lower
+      fr_buf_upper <- accuracy_buffer_fruit_overall$buffer_upper
 
-      # Compute accuracy by family for flowers
-      flower_stats <- test_predictions %>%
-        dplyr::mutate(.pred_mapped = pred_flower) %>%
+      dat <- test_predictions %>%
+        dplyr::mutate(
+          # With buffer zones: predictions in buffer zone are equivocal (NA)
+          pred_fl_eq = dplyr::case_when(
+            .pred_flower >= fl_thresh + fl_buf_upper ~ "1",
+            .pred_flower <= fl_thresh - fl_buf_lower ~ "0",
+            TRUE ~ NA_character_
+          ),
+          pred_fr_eq = dplyr::case_when(
+            .pred_fruit >= fr_thresh + fr_buf_upper ~ "1",
+            .pred_fruit <= fr_thresh - fr_buf_lower ~ "0",
+            TRUE ~ NA_character_
+          ),
+          # Without buffer: simple threshold on all data
+          pred_fl_no_eq = ifelse(.pred_flower >= fl_thresh, "1", "0"),
+          pred_fr_no_eq = ifelse(.pred_fruit >= fr_thresh, "1", "0")
+        )
+
+      # Wide format: one row per family with all metrics
+      # Column names match what convert_fam_to_long() expects
+      family_stats_df <- dat %>%
         dplyr::group_by(family) %>%
         dplyr::summarise(
-          n = dplyr::n(),
-          n_positive = sum(flower == "1"),
-          accuracy = mean(.pred_mapped == flower),
+          count = dplyr::n(),
+          # Proportion of equivocal predictions per family
+          equiv_prop_fl = sum(is.na(pred_fl_eq)) / dplyr::n(),
+          equiv_prop_fr = sum(is.na(pred_fr_eq)) / dplyr::n(),
+          # Accuracy including equivocal as errors: certain correct / total
+          .accuracy_family_flower_incl_equiv = sum(pred_fl_eq == flower, na.rm = TRUE) / dplyr::n(),
+          .accuracy_family_fruit_incl_equiv = sum(pred_fr_eq == fruit, na.rm = TRUE) / dplyr::n(),
+          # Accuracy excluding equivocal consideration: simple threshold on all data
+          .accuracy_family_flower = mean(pred_fl_no_eq == flower),
+          .accuracy_family_fruit = mean(pred_fr_no_eq == fruit),
           .groups = "drop"
-        ) %>%
-        dplyr::mutate(class = "flower")
-
-      # Compute accuracy by family for fruits
-      fruit_stats <- test_predictions %>%
-        dplyr::mutate(.pred_mapped = pred_fruit) %>%
-        dplyr::group_by(family) %>%
-        dplyr::summarise(
-          n = dplyr::n(),
-          n_positive = sum(fruit == "1"),
-          accuracy = mean(.pred_mapped == fruit),
-          .groups = "drop"
-        ) %>%
-        dplyr::mutate(class = "fruit")
-
-      family_stats_df <- dplyr::bind_rows(flower_stats, fruit_stats)
+        )
 
       # Save to file
       output_path <- file.path(output_dir, "family_stats.csv")

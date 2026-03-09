@@ -90,6 +90,17 @@ if (!file.exists(targets_file)) {
        "Available pipelines: download_annots, train_repro, train_leaf, inference")
 }
 
+# Resolve the targets project name and store directory from _targets.yaml
+# Each pipeline has its own isolated store to prevent target name collisions
+project_names <- c(
+  inference = "main",
+  train_repro = "train_repro",
+  train_leaf = "train_leaf",
+  download_annots = "download_annots"
+)
+project_name <- project_names[[args$pipeline]]
+Sys.setenv(TAR_PROJECT = project_name)
+
 # =============================================================================
 # SLURM Submission
 # =============================================================================
@@ -132,6 +143,12 @@ if (args$submit) {
 # Local Execution
 # =============================================================================
 
+# Load targets early so we can resolve store_dir for display
+library(targets)
+
+# Resolve store directory from _targets.yaml project config
+store_dir <- tar_config_get("store", project = project_name)
+
 # Determine actual worker count (SLURM overrides --workers argument)
 slurm_cpus <- Sys.getenv("SLURM_CPUS_PER_TASK", unset = "")
 if (nchar(slurm_cpus) > 0) {
@@ -150,7 +167,9 @@ if (running_under_slurm) {
 }
 cat("========================================\n")
 cat("Pipeline:      ", args$pipeline, "\n")
+cat("Project:       ", project_name, "\n")
 cat("Targets file:  ", targets_file, "\n")
+cat("Store:         ", store_dir, "\n")
 cat("Workers:       ", actual_workers, "\n")
 cat("Debug mode:    ", args$debug, "\n")
 cat("Dry run:       ", args$dry_run, "\n")
@@ -159,12 +178,9 @@ cat("========================================\n\n")
 if (args$dry_run) {
   cat("DRY RUN: Would execute:\n")
   cat("  Sys.setenv(TARGETS_WORKERS = ", actual_workers, ")\n", sep = "")
-  cat("  targets::tar_make(script = '", targets_file, "')\n", sep = "")
+  cat("  targets::tar_make(script = '", targets_file, "', store = '", store_dir, "')\n", sep = "")
   quit(status = 0)
 }
-
-# Load targets
-library(targets)
 
 # Set working directory to project root (where this script lives)
 script_dir <- dirname(normalizePath(commandArgs(trailingOnly = FALSE)[4]))
@@ -212,11 +228,12 @@ tryCatch({
     Sys.setenv(TARGETS_WORKERS = 0)  # Force sequential for debug
     tar_make(
       script = targets_file,
+      store = store_dir,
       callr_function = NULL  # Run in current session for debugging
     )
   } else {
     # Normal mode: parallel (workers read from TARGETS_WORKERS env var)
-    tar_make(script = targets_file)
+    tar_make(script = targets_file, store = store_dir)
   }
 
   end_time <- Sys.time()
@@ -256,8 +273,8 @@ tryCatch({
   if (args$debug) {
     cat("Running in debug mode. Workspace saved for inspection.\n")
     cat("Check targets metadata with:\n")
-    cat("  targets::tar_meta(script = '", targets_file, "')\n", sep = "")
-    cat("  targets::tar_workspace(name_of_failed_target)\n")
+    cat("  targets::tar_meta(script = '", targets_file, "', store = '", store_dir, "')\n", sep = "")
+    cat("  targets::tar_workspace(name_of_failed_target, store = '", store_dir, "')\n", sep = "")
   }
 
   # Close log connections
@@ -271,6 +288,6 @@ tryCatch({
 })
 
 cat("\nTo visualize the pipeline:\n")
-cat("  targets::tar_visnetwork(script = '", targets_file, "')\n\n", sep = "")
+cat("  targets::tar_visnetwork(script = '", targets_file, "', store = '", store_dir, "')\n\n", sep = "")
 cat("To check status:\n")
-cat("  targets::tar_progress(script = '", targets_file, "')\n\n", sep = "")
+cat("  targets::tar_progress(script = '", targets_file, "', store = '", store_dir, "')\n\n", sep = "")

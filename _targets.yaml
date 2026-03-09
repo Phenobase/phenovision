@@ -1,2 +1,15 @@
 main:
   script: _targets_inference.R
+  store: _targets_stores/inference
+
+train_repro:
+  script: _targets_train_repro.R
+  store: _targets_stores/train_repro
+
+train_leaf:
+  script: _targets_train_leaf.R
+  store: _targets_stores/train_leaf
+
+download_annots:
+  script: _targets_download_annots.R
+  store: _targets_stores/download

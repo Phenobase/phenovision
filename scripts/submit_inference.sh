@@ -4,7 +4,6 @@
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick
-#SBATCH --partition=hpg-b200
 #SBATCH --gres=gpu:1
 
 # Where to put the outputs: %j expands into the job number
