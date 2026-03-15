@@ -33,7 +33,10 @@ conflicts_prefer(lubridate::yday)
 conflicts_prefer(lubridate::year)
 
 # Configure targets for parallel execution (reads TARGETS_WORKERS or SLURM_CPUS_PER_TASK env var)
-setup_targets_parallel()
+# gpu_workers creates a separate "gpu" controller for inference targets,
+# preventing multiple workers from loading models onto the same GPU simultaneously.
+# With 3 L4 GPUs, 3 inference branches run in parallel on separate GPUs.
+setup_targets_parallel(gpu_workers = 3)
 
 # =============================================================================
 # Pipeline (Modern tar_plan() Syntax)
@@ -79,6 +82,10 @@ tar_plan(
   # Results directories (inference output organized by version)
   tar_target(results_dir_repro, file.path(model_info_repro$output_dir, "inference")),
   tar_target(results_dir_leaves, file.path(model_info_leaves$output_dir, "inference")),
+
+  # Data dates (from training data snapshot, used in output filenames)
+  tar_target(data_date_repro, model_info_repro$data_date %||% "unknown"),
+  tar_target(data_date_leaves, model_info_leaves$data_date %||% "unknown"),
 
   # Load models from HuggingFace via DOI
   tar_target(model_repro, load_phenovision(model_doi_repro, type = "classifier")),
@@ -132,18 +139,23 @@ tar_plan(
   ),
 
   # Group images by run_name for pattern mapping
+  # memory = "persistent" keeps this in the controller's memory so it doesn't
+  # re-read 836 MB from store for each of the ~188 downstream pattern branches
   tar_target(
     images_batch,
     images_df |>
       dplyr::group_by(run_name) |>
       targets::tar_group(),
-    iteration = "group"
+    iteration = "group",
+    memory = "persistent"
   ),
 
   # =========================================================================
   # Taxonomy
   # =========================================================================
 
+  # memory = "persistent" on taxonomy/families/genera because they are
+  # dependencies of ~188 pattern branches (aggregate_by_obs for both models)
   tar_target(
     taxonomy,
     {
@@ -160,21 +172,24 @@ tar_plan(
         dplyr::mutate(taxa_ids = stringr::str_split(ancestry, "/")) |>
         dplyr::select(-ancestry) |>
         tidyr::unnest_longer(taxa_ids, transform = as.integer)
-    }
+    },
+    memory = "persistent"
   ),
 
   tar_target(
     families,
     arrow::open_dataset(meta_taxa_path) |>
       dplyr::filter(rank == "family") |>
-      dplyr::collect()
+      dplyr::collect(),
+    memory = "persistent"
   ),
 
   tar_target(
     genera,
     arrow::open_dataset(meta_taxa_path) |>
       dplyr::filter(rank == "genus") |>
-      dplyr::collect()
+      dplyr::collect(),
+    memory = "persistent"
   ),
 
   # =========================================================================
@@ -213,7 +228,8 @@ tar_plan(
       "observed_image_guid", "observed_image_guid",
       "basis_of_record", "basis_of_record",
       "machine_learning_annotation_id", "machine_learning_annotation_id"
-    )
+    ),
+    memory = "persistent"
   ),
 
   # =========================================================================
@@ -222,9 +238,12 @@ tar_plan(
 
   # --- Threshold Loading (via model registry) ---
 
+  # memory = "persistent" on thresholds and family stats — tiny objects
+  # used by 94 pattern branches each
   tar_target(
     thresholds_repro,
-    load_model_thresholds(model_version_repro, "reproductive")
+    load_model_thresholds(model_version_repro, "reproductive"),
+    memory = "persistent"
   ),
 
   # --- Family Statistics ---
@@ -236,7 +255,8 @@ tar_plan(
 
   tar_target(
     fam_dat_long_repro,
-    convert_fam_to_long(fam_dat_repro_raw, trait = "flower/fruit")
+    convert_fam_to_long(fam_dat_repro_raw, trait = "flower/fruit"),
+    memory = "persistent"
   ),
 
   # --- Inference (runs on ALL images, not filtered like leaves) ---
@@ -251,7 +271,8 @@ tar_plan(
       batch_size = batch_size_inference
     ),
     iteration = "list",
-    pattern = map(images_batch)
+    pattern = map(images_batch),
+    resources = tar_resources(crew = tar_resources_crew(controller = "gpu"))
   ),
 
   # --- Threshold Application ---
@@ -339,7 +360,7 @@ tar_plan(
       dir.create(file.path(results_dir_repro, "final_internal"),
                  recursive = TRUE, showWarnings = FALSE)
       path <- file.path(results_dir_repro, "final_internal",
-                        paste0(tar_name(), ".csv"))
+                        paste0(targets::tar_name(), ".csv"))
       readr::write_csv(annotations_by_obs_final_repro, path)
       path
     },
@@ -353,7 +374,7 @@ tar_plan(
       dir.create(file.path(results_dir_repro, "final_ingest"),
                  recursive = TRUE, showWarnings = FALSE)
       path <- file.path(results_dir_repro, "final_ingest",
-                        paste0(tar_name(), ".csv"))
+                        paste0(targets::tar_name(), ".csv"))
       readr::write_csv(annotations_by_obs_ingest_repro, path)
       path
     },
@@ -362,14 +383,21 @@ tar_plan(
   ),
 
   # Concatenate all reproductive internal format CSVs
+  # Reads per-batch CSV files one at a time to avoid loading all into memory.
+  # Depends on annotations_internal_repro (format = "file", character vector of paths).
   tar_target(
     annotations_internal_repro_all_csv,
     {
-      path <- file.path(results_dir_repro, "annotations_internal_all.csv")
+      dir.create(results_dir_repro, recursive = TRUE, showWarnings = FALSE)
+      fname <- paste0("annotations_internal_repro_",
+                       model_version_repro, "_", data_date_repro, ".csv")
+      path <- file.path(results_dir_repro, fname)
       if (file.exists(path)) file.remove(path)
-      concatenate_csvs(annotations_by_obs_final_repro, path)
+      for (f in annotations_internal_repro) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
     },
-    pattern = map(annotations_by_obs_final_repro),
     format = "file"
   ),
 
@@ -377,11 +405,16 @@ tar_plan(
   tar_target(
     annotations_ingest_repro_all_csv,
     {
-      path <- file.path(results_dir_repro, "annotations_ingest_all.csv")
+      dir.create(results_dir_repro, recursive = TRUE, showWarnings = FALSE)
+      fname <- paste0("annotations_ingest_repro_",
+                       model_version_repro, "_", data_date_repro, ".csv")
+      path <- file.path(results_dir_repro, fname)
       if (file.exists(path)) file.remove(path)
-      concatenate_csvs(annotations_by_obs_ingest_repro, path)
+      for (f in annotations_ingest_repro) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
     },
-    pattern = map(annotations_by_obs_ingest_repro),
     format = "file"
   ),
 
@@ -410,23 +443,18 @@ tar_plan(
 
   tar_target(
     taxonomy_leaves,
-    taxonomy |> dplyr::filter(taxa_ids %in% genus_taxon_ids$taxon_id)
+    taxonomy |> dplyr::filter(taxa_ids %in% genus_taxon_ids$taxon_id),
+    memory = "persistent"
   ),
 
   # Filter image batches to only target genera
+  # Note: images_batch already has taxon_id from the images target (parquet select).
+  # No need to re-scan the 26.6 GB parquet per branch.
   tar_target(
     images_batch_leaves,
-    {
-      images_batch |>
-        dplyr::left_join(
-          arrow::open_dataset(meta_images_path) |>
-            dplyr::select(photo_id, taxon_id) |>
-            dplyr::filter(photo_id %in% images_batch$photo_id),
-          copy = TRUE
-        ) |>
-        dplyr::left_join(taxonomy_leaves, by = "taxon_id") |>
-        tidyr::drop_na(taxa_ids)
-    },
+    images_batch |>
+      dplyr::left_join(taxonomy_leaves, by = "taxon_id") |>
+      tidyr::drop_na(taxa_ids),
     pattern = map(images_batch)
   ),
 
@@ -442,14 +470,16 @@ tar_plan(
       batch_size = batch_size_inference
     ),
     iteration = "list",
-    pattern = map(images_batch_leaves)
+    pattern = map(images_batch_leaves),
+    resources = tar_resources(crew = tar_resources_crew(controller = "gpu"))
   ),
 
   # --- Threshold Loading (via model registry) ---
 
   tar_target(
     thresholds_leaves,
-    load_model_thresholds(model_version_leaves, "leaves")
+    load_model_thresholds(model_version_leaves, "leaves"),
+    memory = "persistent"
   ),
 
   # --- Threshold Application ---
@@ -484,7 +514,8 @@ tar_plan(
 
   tar_target(
     fam_dat_long_leaves,
-    convert_fam_to_long(fam_dat_leaves, trait = "leaves")
+    convert_fam_to_long(fam_dat_leaves, trait = "leaves"),
+    memory = "persistent"
   ),
 
   # --- Aggregate by Observation ---
@@ -559,7 +590,7 @@ tar_plan(
       path <- file.path(
         results_dir_leaves,
         "final_internal",
-        paste0(tar_name(), ".csv")
+        paste0(targets::tar_name(), ".csv")
       )
       readr::write_csv(annotations_by_obs_final_leaves, path)
       path
@@ -581,7 +612,7 @@ tar_plan(
       path <- file.path(
         results_dir_leaves,
         "final_ingest",
-        paste0(tar_name(), ".csv")
+        paste0(targets::tar_name(), ".csv")
       )
       readr::write_csv(annotations_by_obs_ingest_leaves, path)
       path
@@ -594,29 +625,105 @@ tar_plan(
   # OUTPUT: Combined Files
   # =========================================================================
 
-  # Concatenate all internal format CSVs into one file
+  # Concatenate all leaves internal format CSVs
+  # Reads per-batch CSV files one at a time to avoid loading all into memory.
   tar_target(
     annotations_internal_all_csv,
     {
-      path <- file.path(results_dir_leaves, "annotations_internal_all.csv")
-      # Remove existing file to start fresh
+      dir.create(results_dir_leaves, recursive = TRUE, showWarnings = FALSE)
+      fname <- paste0("annotations_internal_leaves_",
+                       model_version_leaves, "_", data_date_leaves, ".csv")
+      path <- file.path(results_dir_leaves, fname)
       if (file.exists(path)) file.remove(path)
-      concatenate_csvs(annotations_by_obs_final_leaves, path)
+      for (f in annotations_internal) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
     },
-    pattern = map(annotations_by_obs_final_leaves),
     format = "file"
   ),
 
-  # Concatenate all ingestion format CSVs into one file
+  # Concatenate all leaves ingestion format CSVs
   tar_target(
     annotations_ingest_all_csv,
     {
-      path <- file.path(results_dir_leaves, "annotations_ingest_all.csv")
-      # Remove existing file to start fresh
+      dir.create(results_dir_leaves, recursive = TRUE, showWarnings = FALSE)
+      fname <- paste0("annotations_ingest_leaves_",
+                       model_version_leaves, "_", data_date_leaves, ".csv")
+      path <- file.path(results_dir_leaves, fname)
       if (file.exists(path)) file.remove(path)
-      concatenate_csvs(annotations_by_obs_ingest_leaves, path)
+      for (f in annotations_ingest) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
     },
-    pattern = map(annotations_by_obs_ingest_leaves),
+    format = "file"
+  ),
+
+  # =========================================================================
+  # PRODUCTION DATASETS: Combined Repro + Leaves
+  # =========================================================================
+  # Merges reproductive and leaf annotations into unified files.
+  # Output to output/production_datasets/{date}/ with versioned filenames.
+  # Uses streaming concatenation to avoid loading all data into memory.
+
+  tar_target(
+    production_date,
+    format(Sys.Date(), "%Y-%m-%d")
+  ),
+
+  tar_target(
+    production_dir,
+    {
+      d <- file.path("output", "production_datasets", production_date)
+      dir.create(d, recursive = TRUE, showWarnings = FALSE)
+      d
+    }
+  ),
+
+  # Combined internal format (all predictions, both models)
+  tar_target(
+    production_internal_csv,
+    {
+      fname <- paste0("annotations_internal_all_",
+                       "repro-", model_version_repro, "_",
+                       "leaves-", model_version_leaves, "_",
+                       production_date, ".csv")
+      path <- file.path(production_dir, fname)
+      if (file.exists(path)) file.remove(path)
+      # Stream repro batches
+      for (f in annotations_internal_repro) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      # Stream leaves batches
+      for (f in annotations_internal) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
+    },
+    format = "file"
+  ),
+
+  # Combined ingest format (high-certainty detections, both models)
+  tar_target(
+    production_ingest_csv,
+    {
+      fname <- paste0("annotations_ingest_all_",
+                       "repro-", model_version_repro, "_",
+                       "leaves-", model_version_leaves, "_",
+                       production_date, ".csv")
+      path <- file.path(production_dir, fname)
+      if (file.exists(path)) file.remove(path)
+      # Stream repro batches
+      for (f in annotations_ingest_repro) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      # Stream leaves batches
+      for (f in annotations_ingest) {
+        concatenate_csvs(readr::read_csv(f, show_col_types = FALSE), path)
+      }
+      path
+    },
     format = "file"
   )
 )

@@ -4,17 +4,19 @@
 #SBATCH --mail-type=FAIL,END
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick
-#SBATCH --gres=gpu:1
+#SBATCH --partition=hpg-turin
+#SBATCH --gres=gpu:l4:3
 
 # Where to put the outputs: %j expands into the job number
 #SBATCH --output logs/%x-%j.out
 #SBATCH --error logs/%x-%j.err
 
 # Resources (GPU inference on millions of images)
+# Note: 3 GPU workers (~5 GB each) + CPU workers need headroom; 120 GB total
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=10
-#SBATCH --mem-per-cpu=8G
+#SBATCH --mem-per-cpu=12G
 
 # Job run time (inference on full dataset can take days)
 #SBATCH --time=72:00:00
@@ -34,6 +36,9 @@ nvidia-smi
 
 # Pass SLURM CPU allocation to targets (reads from --cpus-per-task above)
 export TARGETS_WORKERS=$SLURM_CPUS_PER_TASK
+
+# Reset GPU lock files for fresh allocation
+rm -f .gpu_locks/gpu_*.lock
 
 # Run the inference pipeline
 Rscript run_pipeline.R --pipeline=inference

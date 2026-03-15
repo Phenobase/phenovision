@@ -178,7 +178,7 @@ source_download <- function(verbose = TRUE) {
 #' 2. SLURM_CPUS_PER_TASK env var - automatically set by SLURM from --cpus-per-task
 #' 3. TARGETS_WORKERS env var - set by run_pipeline.R --workers=N for local runs
 #' 4. config$num_targets_workers - default (10)
-setup_targets_parallel <- function(workers = NULL) {
+setup_targets_parallel <- function(workers = NULL, gpu_workers = NULL) {
   # Determine worker count based on priority
   if (!is.null(workers)) {
     # Explicit argument takes priority (allows training to force workers=0)
@@ -204,7 +204,8 @@ setup_targets_parallel <- function(workers = NULL) {
       "arrow", "dplyr", "tidyr", "purrr", "readr", "stringr",
       "reticulate", "here", "fs", "cli",
       "ggplot2", "patchwork",  # Needed for plotting functions
-      "guildai"  # Needed for best epoch selection from training runs
+      "guildai",  # Needed for best epoch selection from training runs
+      "filelock"  # Needed for GPU lock acquisition in annotate_batch
     ),
     format = "rds",
     error = "continue",  # Continue on errors
@@ -213,12 +214,25 @@ setup_targets_parallel <- function(workers = NULL) {
     workspace_on_error = TRUE,  # Save workspace on error for debugging
   )
   if(workers > 0) {
-    tar_option_set(controller = crew::crew_controller_local(workers = workers))
+    if (!is.null(gpu_workers) && gpu_workers > 0) {
+      # Create controller group: separate GPU and CPU pools
+      # GPU targets run sequentially to avoid CUDA OOM on single GPU
+      cpu_workers <- max(1, workers - gpu_workers)
+      tar_option_set(
+        controller = crew::crew_controller_group(
+          crew::crew_controller_local(name = "default", workers = cpu_workers),
+          crew::crew_controller_local(name = "gpu", workers = gpu_workers)
+        )
+      )
+      message("Targets configured for ", cpu_workers, " CPU + ", gpu_workers, " GPU workers")
+    } else {
+      tar_option_set(controller = crew::crew_controller_local(workers = workers))
+      message("Targets configured for ", workers, " parallel workers")
+    }
   } else {
     tar_option_set(deployment = "main")
+    message("Targets configured for sequential execution (main process)")
   }
-
-  message("Targets configured for ", workers, " parallel workers")
 }
 
 #' Configure targets for sequential execution (debugging)
@@ -228,7 +242,8 @@ setup_targets_sequential <- function() {
       "arrow", "dplyr", "tidyr", "purrr", "readr", "stringr",
       "reticulate", "here", "fs", "cli",
       "ggplot2", "patchwork",  # Needed for plotting functions
-      "guildai"  # Needed for best epoch selection from training runs
+      "guildai",  # Needed for best epoch selection from training runs
+      "filelock"  # Needed for GPU lock acquisition in annotate_batch
     ),
     format = "rds",
     error = "stop",  # Stop on first error

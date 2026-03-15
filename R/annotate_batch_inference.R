@@ -64,9 +64,47 @@ annotate_batch <- function(images_batch_split,
 
   trait <- match.arg(trait)
 
+  # Assign this worker to a specific GPU using CUDA_VISIBLE_DEVICES.
+  # MUST happen before ANY Python imports (including load_phenovision) so
+  # CUDA initializes with only the assigned GPU visible.
+  # Once CUDA is initialized in a persistent worker, the GPU assignment sticks
+  # for all subsequent calls, so we only need to acquire on first call.
+  #
+  # Note: SLURM may pre-set CUDA_VISIBLE_DEVICES (e.g., "0,1,2" for 3 GPUs),
+  # so we use a separate flag to track whether we've already assigned a single GPU.
+  if (Sys.getenv("PHENOVISION_GPU_ASSIGNED") == "") {
+    gpu_lock_dir <- file.path(here::here(), ".gpu_locks")
+    dir.create(gpu_lock_dir, showWarnings = FALSE, recursive = TRUE)
+
+    ngpus <- as.integer(system("nvidia-smi -L 2>/dev/null | wc -l",
+                               intern = TRUE))
+    if (is.na(ngpus) || ngpus < 1L) ngpus <- 1L
+
+    # Acquire a GPU by creating a lock file (gpu_0.lock, gpu_1.lock, etc.)
+    # Each persistent worker holds its lock for its entire lifetime.
+    gpu_id <- NA_integer_
+    for (i in seq_len(ngpus) - 1L) {
+      lf <- file.path(gpu_lock_dir, paste0("gpu_", i, ".lock"))
+      lock_result <- filelock::lock(lf, timeout = 0)
+      if (!is.null(lock_result)) {
+        gpu_id <- i
+        # Do NOT unlock — hold lock for worker lifetime.
+        # Lock is auto-released when the worker process exits.
+        break
+      }
+    }
+    if (is.na(gpu_id)) gpu_id <- 0L  # fallback if all locked
+
+    Sys.setenv(CUDA_VISIBLE_DEVICES = as.character(gpu_id))
+    Sys.setenv(PHENOVISION_GPU_ASSIGNED = "1")
+    message("Worker ", Sys.getpid(), " acquired GPU ", gpu_id,
+            " (CUDA_VISIBLE_DEVICES=", gpu_id, ")")
+  }
+
   inf_images <- images_batch_split$path
 
-  # Load model from DOI
+  # Load model from DOI (imports transformers/torch — CUDA_VISIBLE_DEVICES
+  # must already be set before this call)
   phenovision <- load_phenovision(model_doi)
 
   # Validate model output dimensions
@@ -103,7 +141,7 @@ annotate_batch <- function(images_batch_split,
     inf_trait <- tibble::tibble(
       leaves_green = rep(0.5, length(inf_images)),
       leaves_colored = rep(0.5, length(inf_images)),
-      leaves_breaking_buds = rep(0.5, length(inf_images))  # TYPO FIXED HERE
+      leaves_breaking_buds = rep(0.5, length(inf_images))
     ) |>
       as.matrix()
     n_lab <- 3L
@@ -124,7 +162,7 @@ annotate_batch <- function(images_batch_split,
   config <- timm$data$resolve_data_config(model = vit2)
   transform <- timm$data$create_transform(!!!config)
 
-  # Move model to GPU
+  # Move model to GPU (always cuda:0 since CUDA_VISIBLE_DEVICES limits visibility)
   phenovision <- phenovision$cuda()
 
   # Create dataset and dataloader
@@ -201,6 +239,13 @@ annotate_batch <- function(images_batch_split,
 
   # Attach timing as attribute
   attr(inf_res, "timing") <- timing
+
+  # Free GPU memory so persistent crew workers don't accumulate CUDA allocations.
+  # Without this, PyTorch's memory cache keeps the model + tensors on GPU,
+  # which would cause OOM on the next branch or confuse GPU auto-selection.
+  rm(phenovision, inf_logits, inf_preds, inf_truth, inf_dl, inf_ds, inf_dat)
+  gc()
+  torch$cuda$empty_cache()
 
   inf_res
 }
