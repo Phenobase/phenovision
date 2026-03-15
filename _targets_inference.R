@@ -360,7 +360,9 @@ tar_plan(
       dir.create(file.path(results_dir_repro, "final_internal"),
                  recursive = TRUE, showWarnings = FALSE)
       path <- file.path(results_dir_repro, "final_internal",
-                        paste0(targets::tar_name(), ".csv"))
+                        paste0(targets::tar_name(), "_",
+                               model_version_repro, "_",
+                               data_date_repro, ".csv"))
       readr::write_csv(annotations_by_obs_final_repro, path)
       path
     },
@@ -374,7 +376,9 @@ tar_plan(
       dir.create(file.path(results_dir_repro, "final_ingest"),
                  recursive = TRUE, showWarnings = FALSE)
       path <- file.path(results_dir_repro, "final_ingest",
-                        paste0(targets::tar_name(), ".csv"))
+                        paste0(targets::tar_name(), "_",
+                               model_version_repro, "_",
+                               data_date_repro, ".csv"))
       readr::write_csv(annotations_by_obs_ingest_repro, path)
       path
     },
@@ -581,16 +585,14 @@ tar_plan(
   tar_target(
     annotations_internal,
     {
-      # Create output directory if needed
       dir.create(file.path(results_dir_leaves, "final_internal"),
-                 recursive = TRUE,
-                 showWarnings = FALSE)
-
-      # Write CSV
+                 recursive = TRUE, showWarnings = FALSE)
       path <- file.path(
         results_dir_leaves,
         "final_internal",
-        paste0(targets::tar_name(), ".csv")
+        paste0(targets::tar_name(), "_",
+               model_version_leaves, "_",
+               data_date_leaves, ".csv")
       )
       readr::write_csv(annotations_by_obs_final_leaves, path)
       path
@@ -603,16 +605,14 @@ tar_plan(
   tar_target(
     annotations_ingest,
     {
-      # Create output directory if needed
       dir.create(file.path(results_dir_leaves, "final_ingest"),
-                 recursive = TRUE,
-                 showWarnings = FALSE)
-
-      # Write CSV
+                 recursive = TRUE, showWarnings = FALSE)
       path <- file.path(
         results_dir_leaves,
         "final_ingest",
-        paste0(targets::tar_name(), ".csv")
+        paste0(targets::tar_name(), "_",
+               model_version_leaves, "_",
+               data_date_leaves, ".csv")
       )
       readr::write_csv(annotations_by_obs_ingest_leaves, path)
       path
