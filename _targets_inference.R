@@ -83,9 +83,17 @@ tar_plan(
   tar_target(results_dir_repro, file.path(model_info_repro$output_dir, "inference")),
   tar_target(results_dir_leaves, file.path(model_info_leaves$output_dir, "inference")),
 
-  # Data dates (from training data snapshot, used in output filenames)
-  tar_target(data_date_repro, model_info_repro$data_date %||% "unknown"),
-  tar_target(data_date_leaves, model_info_leaves$data_date %||% "unknown"),
+  # Data dates (from training data snapshot, used in output filenames only).
+  # Read directly from registry to avoid coupling with model_info targets,
+  # which would cascade invalidation through model loading and GPU inference.
+  tar_target(data_date_repro, {
+    reg <- yaml::read_yaml("model_registry.yaml")
+    reg$reproductive$versions[[model_version_repro]]$data_date %||% "unknown"
+  }),
+  tar_target(data_date_leaves, {
+    reg <- yaml::read_yaml("model_registry.yaml")
+    reg$leaves$versions[[model_version_leaves]]$data_date %||% "unknown"
+  }),
 
   # Load models from HuggingFace via DOI
   tar_target(model_repro, load_phenovision(model_doi_repro, type = "classifier")),
