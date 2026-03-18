@@ -82,11 +82,12 @@ finalize_annotations_by_obs <- function(annotations_by_obs_leaves,
   colnames(leaf_data_new) <- field_map_v[colnames(leaf_data_new)]
 
   # Add verbatim and formatted trait, annotation method
+  # Column names match Phenobase schema (camelCase)
   leaf_data_new <- leaf_data_new |>
     dplyr::mutate(
-      verbatim_trait = trait,
+      verbatimTrait = trait,
       trait = paste0(trait, " present"),
-      annotation_method = "machine"
+      annotationMethod = "machine"
     )
 
   leaf_data_new

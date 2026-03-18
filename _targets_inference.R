@@ -208,34 +208,35 @@ tar_plan(
     field_map,
     tibble::tribble(
       ~new_field, ~old_field,
-      "datasource", "datasource",
-      "scientific_name", "scientific_name",
+      # Field names match Phenobase schema (fields/Phenobase_fields - MasterSheet.csv)
+      "dataSource", "datasource",
+      "scientificName", "scientific_name",
       "trait", "trait",
       "family", "family",
       "year", "year",
-      "day_of_year", "day_of_year",
+      "dayOfYear", "day_of_year",
       "latitude", "latitude",
       "longitude", "longitude",
-      "observed_metadata_url", "observed_metadata_url",
-      "annotation_method", "annotation_method",
-      "occurrence_id", "observation_uuid",
+      "observedMetadataUrl", "observed_metadata_url",
+      "annotationMethod", "annotation_method",
+      "occurrenceID", "observation_uuid",
       "genus", "genus",
       "date", "verbatim_date",
-      "recorded_by", "recorded_by",
-      "coordinate_uncertainty_in_meters", "coordinate_uncertainty_meters",
-      "model_uri", "model_uri",
-      "accuracy_excluding_certainty_family", "accuracy_excluding_certainty_family",
-      "observed_image_url", "observed_image_url",
-      "prediction_class", "detected",
-      "count_images", "count_images",
-      "count_family", "count_family",
+      "recordedBy", "recorded_by",
+      "coordinateUncertaintyInMeters", "coordinate_uncertainty_meters",
+      "modelUri", "model_uri",
+      "accuracyExcludingUncertainFamily", "accuracy_excluding_certainty_family",
+      "observedImageUrl", "observed_image_url",
+      "predictionClass", "detected",
+      "countImages", "count_images",
+      "countFamily", "count_family",
       "certainty", "certainty",
-      "prediction_probability", "pred_med",
-      "proportion_certainty_family", "proportion_certainty_family",
-      "accuracy_family", "accuracy_family",
-      "observed_image_guid", "observed_image_guid",
-      "basis_of_record", "basis_of_record",
-      "machine_learning_annotation_id", "machine_learning_annotation_id"
+      "predictionProbability", "pred_med",
+      "proportionCertaintyFamily", "proportion_certainty_family",
+      "accuracyFamily", "accuracy_family",
+      "observedImageGuid", "observed_image_guid",
+      "basisOfRecord", "basis_of_record",
+      "annotationID", "machine_learning_annotation_id"
     ),
     memory = "persistent"
   ),
@@ -344,16 +345,16 @@ tar_plan(
       annotations_by_obs_final_repro |>
         dplyr::filter(
           certainty == "High",
-          prediction_class == "Detected"
+          predictionClass == "Detected"
         ) |>
         dplyr::select(
-          -proportion_certainty_family,
-          -count_family,
-          -count_images,
+          -proportionCertaintyFamily,
+          -countFamily,
+          -countImages,
           -certainty,
-          -prediction_probability,
-          -prediction_class,
-          -accuracy_family
+          -predictionProbability,
+          -predictionClass,
+          -accuracyFamily
         )
     },
     pattern = map(annotations_by_obs_final_repro),
@@ -568,17 +569,17 @@ tar_plan(
       annotations_by_obs_final_leaves |>
         dplyr::filter(
           certainty == "High",
-          prediction_class == "Detected",
-          verbatim_trait != "no live leaves"
+          predictionClass == "Detected",
+          verbatimTrait != "no live leaves"
         ) |>
         dplyr::select(
-          -proportion_certainty_family,
-          -count_family,
-          -count_images,
+          -proportionCertaintyFamily,
+          -countFamily,
+          -countImages,
           -certainty,
-          -prediction_probability,
-          -prediction_class,
-          -accuracy_family
+          -predictionProbability,
+          -predictionClass,
+          -accuracyFamily
         )
     },
     pattern = map(annotations_by_obs_final_leaves),
@@ -740,16 +741,20 @@ tar_plan(
   # =========================================================================
   # Samples ~1000 rows from each model type (ceiling(1000/n_branches) per batch)
   # for human verification of annotation quality.
+  # Output nested under the dated production folder: {production_dir}/test/
+  # Uses cached production_date to match production dataset filenames.
+
+  # --- Internal format (all columns) ---
 
   tar_target(
-    verification_sample_repro,
+    verification_sample_repro_internal,
     {
       n_per_batch <- ceiling(1000 / length(annotations_internal_repro))
-      dir.create(file.path("output", "production_datasets", "test"),
-                 recursive = TRUE, showWarnings = FALSE)
-      path <- file.path("output", "production_datasets", "test",
-                         paste0("verification_sample_repro_",
-                                model_version_repro, "_", data_date_repro, ".csv"))
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_repro_internal_",
+                                model_version_repro, "_", production_date, ".csv"))
       if (file.exists(path)) file.remove(path)
       set.seed(42)
       for (f in annotations_internal_repro) {
@@ -763,14 +768,14 @@ tar_plan(
   ),
 
   tar_target(
-    verification_sample_leaves,
+    verification_sample_leaves_internal,
     {
       n_per_batch <- ceiling(1000 / length(annotations_internal))
-      dir.create(file.path("output", "production_datasets", "test"),
-                 recursive = TRUE, showWarnings = FALSE)
-      path <- file.path("output", "production_datasets", "test",
-                         paste0("verification_sample_leaves_",
-                                model_version_leaves, "_", data_date_leaves, ".csv"))
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_leaves_internal_",
+                                model_version_leaves, "_", production_date, ".csv"))
       if (file.exists(path)) file.remove(path)
       set.seed(42)
       for (f in annotations_internal) {
@@ -784,17 +789,76 @@ tar_plan(
   ),
 
   tar_target(
-    verification_sample_combined,
+    verification_sample_combined_internal,
     {
-      dir.create(file.path("output", "production_datasets", "test"),
-                 recursive = TRUE, showWarnings = FALSE)
-      path <- file.path("output", "production_datasets", "test",
-                         paste0("verification_sample_combined_",
-                                model_version_repro, "_",
-                                model_version_leaves, ".csv"))
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_combined_internal_",
+                                production_date, ".csv"))
       if (file.exists(path)) file.remove(path)
-      concatenate_csvs(readr::read_csv(verification_sample_repro, show_col_types = FALSE), path)
-      concatenate_csvs(readr::read_csv(verification_sample_leaves, show_col_types = FALSE), path)
+      concatenate_csvs(readr::read_csv(verification_sample_repro_internal, show_col_types = FALSE), path)
+      concatenate_csvs(readr::read_csv(verification_sample_leaves_internal, show_col_types = FALSE), path)
+      path
+    },
+    format = "file"
+  ),
+
+  # --- Ingest format (high-certainty detections only) ---
+
+  tar_target(
+    verification_sample_repro_ingest,
+    {
+      n_per_batch <- ceiling(1000 / length(annotations_ingest_repro))
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_repro_ingest_",
+                                model_version_repro, "_", production_date, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      set.seed(42)
+      for (f in annotations_ingest_repro) {
+        batch <- readr::read_csv(f, show_col_types = FALSE)
+        samp <- batch |> dplyr::slice_sample(n = min(n_per_batch, nrow(batch)))
+        concatenate_csvs(samp, path)
+      }
+      path
+    },
+    format = "file"
+  ),
+
+  tar_target(
+    verification_sample_leaves_ingest,
+    {
+      n_per_batch <- ceiling(1000 / length(annotations_ingest))
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_leaves_ingest_",
+                                model_version_leaves, "_", production_date, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      set.seed(42)
+      for (f in annotations_ingest) {
+        batch <- readr::read_csv(f, show_col_types = FALSE)
+        samp <- batch |> dplyr::slice_sample(n = min(n_per_batch, nrow(batch)))
+        concatenate_csvs(samp, path)
+      }
+      path
+    },
+    format = "file"
+  ),
+
+  tar_target(
+    verification_sample_combined_ingest,
+    {
+      test_dir <- file.path(production_dir, "test")
+      dir.create(test_dir, recursive = TRUE, showWarnings = FALSE)
+      path <- file.path(test_dir,
+                         paste0("verification_sample_combined_ingest_",
+                                production_date, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      concatenate_csvs(readr::read_csv(verification_sample_repro_ingest, show_col_types = FALSE), path)
+      concatenate_csvs(readr::read_csv(verification_sample_leaves_ingest, show_col_types = FALSE), path)
       path
     },
     format = "file"
