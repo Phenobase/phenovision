@@ -733,5 +733,70 @@ tar_plan(
       path
     },
     format = "file"
+  ),
+
+  # =========================================================================
+  # VERIFICATION SAMPLES: Random subset for human review
+  # =========================================================================
+  # Samples ~1000 rows from each model type (ceiling(1000/n_branches) per batch)
+  # for human verification of annotation quality.
+
+  tar_target(
+    verification_sample_repro,
+    {
+      n_per_batch <- ceiling(1000 / length(annotations_internal_repro))
+      dir.create(file.path("output", "production_datasets", "test"),
+                 recursive = TRUE, showWarnings = FALSE)
+      path <- file.path("output", "production_datasets", "test",
+                         paste0("verification_sample_repro_",
+                                model_version_repro, "_", data_date_repro, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      set.seed(42)
+      for (f in annotations_internal_repro) {
+        batch <- readr::read_csv(f, show_col_types = FALSE)
+        samp <- batch |> dplyr::slice_sample(n = min(n_per_batch, nrow(batch)))
+        concatenate_csvs(samp, path)
+      }
+      path
+    },
+    format = "file"
+  ),
+
+  tar_target(
+    verification_sample_leaves,
+    {
+      n_per_batch <- ceiling(1000 / length(annotations_internal))
+      dir.create(file.path("output", "production_datasets", "test"),
+                 recursive = TRUE, showWarnings = FALSE)
+      path <- file.path("output", "production_datasets", "test",
+                         paste0("verification_sample_leaves_",
+                                model_version_leaves, "_", data_date_leaves, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      set.seed(42)
+      for (f in annotations_internal) {
+        batch <- readr::read_csv(f, show_col_types = FALSE)
+        samp <- batch |> dplyr::slice_sample(n = min(n_per_batch, nrow(batch)))
+        concatenate_csvs(samp, path)
+      }
+      path
+    },
+    format = "file"
+  ),
+
+  tar_target(
+    verification_sample_combined,
+    {
+      dir.create(file.path("output", "production_datasets", "test"),
+                 recursive = TRUE, showWarnings = FALSE)
+      path <- file.path("output", "production_datasets", "test",
+                         paste0("verification_sample_combined_",
+                                model_version_repro, "_",
+                                model_version_leaves, ".csv"))
+      if (file.exists(path)) file.remove(path)
+      concatenate_csvs(readr::read_csv(verification_sample_repro, show_col_types = FALSE), path)
+      concatenate_csvs(readr::read_csv(verification_sample_leaves, show_col_types = FALSE), path)
+      path
+    },
+    format = "file"
   )
 )
