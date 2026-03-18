@@ -66,9 +66,9 @@ convert_to_long <- function(annotations_thresholded_leaves,
     inf_class <- annotations_thresholded_leaves |>
       dplyr::select(photo_id, starts_with(".class_")) |>
       dplyr::mutate(
-        .class_gr = as.character(as.factor(.class_gr)),
-        .class_cl = as.character(as.factor(.class_cl)),
-        .class_bb = as.character(as.factor(.class_bb))
+        .class_gr = as.character(probably::as.factor(.class_gr)),
+        .class_cl = as.character(probably::as.factor(.class_cl)),
+        .class_bb = as.character(probably::as.factor(.class_bb))
       ) |>
       tidyr::pivot_longer(
         -photo_id,
@@ -125,8 +125,8 @@ convert_to_long <- function(annotations_thresholded_leaves,
     inf_class <- annotations_thresholded_leaves |>
       dplyr::select(photo_id, starts_with(".class_")) |>
       dplyr::mutate(
-        .class_fl = as.character(as.factor(.class_fl)),
-        .class_fr = as.character(as.factor(.class_fr))
+        .class_fl = as.character(probably::as.factor(.class_fl)),
+        .class_fr = as.character(probably::as.factor(.class_fr))
       ) |>
       tidyr::pivot_longer(
         -photo_id,
