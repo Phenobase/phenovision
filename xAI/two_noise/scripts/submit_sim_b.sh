@@ -22,7 +22,7 @@
 # Grid is 5 N* × 4 Ne = 20 cells -> array 0-19. %8 caps concurrent tasks at 8 (be a good burst
 # citizen; raise/lower to taste). If you change the grids below, update --array to match
 # (n_cells = len(N*_grid) * len(Ne_grid)).
-#SBATCH --array=0-19%8
+#SBATCH --array=0-14%8
 
 cd /blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/two_noise
 
@@ -31,8 +31,8 @@ export JAX_PLATFORMS=cpu
 
 # Publication grid (must match the default grid in sim_b_phase.py, or pass explicitly here AND
 # in --array sizing). Defaults: N*_grid = 600,100,30,10,3 ; Ne_grid = 600,200,60,20  (=20 cells).
-N_STAR_GRID="600,100,30,10,3"
-NE_GRID="600,200,60,20"
+N_STAR_GRID="600,200,80,30,15"
+NE_GRID="600,120,30"
 
 # Per-cell publication settings: N=600 individuals, L=25 loci, anisotropic A (ratio 8),
 # epistasis on (sigma_eps=0.3 so M can become anisotropic and then be compressed by gradient
@@ -42,7 +42,7 @@ mamba run -n two_noise_jax python -m sim.sim_b_phase \
     --n-star-grid "${N_STAR_GRID}" \
     --Ne-grid "${NE_GRID}" \
     --N 600 --L 25 \
-    --A-eigratio 8.0 --sigma-eps 0.3 --env-amp 0.8 --mu 5e-2 \
+    --A-eigratio 8.0 --sigma-eps 0.3 --env-amp 0.4 --mu 5e-2 \
     --generations 1200 --burn-in 700 \
     --replicates 32 \
     --seed 0 \

@@ -63,6 +63,20 @@ def neg_log_posterior(W, data: LogRegData):
     return ll + prior
 
 
+def true_fisher_grad(W, data: LogRegData, gen):
+    """Sampled-label (true) Fisher gradient: labels drawn from the model's predictive
+    distribution. Stays informative even at the MAP (where the empirical gradient -> 0), so it
+    gives SOAP a well-conditioned curvature basis. Assign to W._soap_precond_grad so SOAP
+    accumulates its L,R preconditioner factors from the true Fisher (framework §3; Morwani 2024)."""
+    with torch.no_grad():
+        probs = torch.softmax(data.X @ W, dim=1)
+        y_s = torch.multinomial(probs, 1, generator=gen).squeeze(1)
+    W2 = W.detach().clone().requires_grad_(True)
+    loss = torch.nn.functional.cross_entropy(data.X @ W2, y_s, reduction="sum")
+    (g,) = torch.autograd.grad(loss, W2)
+    return g.detach()
+
+
 # --------------------------------------------------------------------------- reference posterior
 def numpyro_reference(data: LogRegData, num_warmup=800, num_samples=2000, seed=0):
     """Gold-standard posterior mean + covariance over vec(W) via NUTS."""
@@ -86,16 +100,21 @@ def numpyro_reference(data: LogRegData, num_warmup=800, num_samples=2000, seed=0
 
 # --------------------------------------------------------------------------- optimizer samplers
 def run_sampler(data: LogRegData, alpha, demographic, T=1.0, lr=2e-3, seed=0,
-                warmup=4000, freeze_after=True, sample_steps=20000, thin=10):
+                warmup=4000, freeze_after=True, sample_steps=20000, thin=10,
+                use_true_fisher=False):
     """Optimizer-as-sampler. Returns (mean, cov) over vec(W) from post-warmup snapshots.
 
     alpha: precond_power (0 -> SGD-like isotropic, 0.5 -> whitening, 1.0 -> natural gradient).
     demographic: inject the §9.5 noise (the FDT-restoring term). With demographic=False and
     full-batch gradients the chain just descends to the MAP (no posterior exploration).
+    use_true_fisher: drive SOAP's preconditioner basis from the sampled-label (true) Fisher via
+    the _soap_precond_grad hook, instead of the empirical gradient (which vanishes at the MAP and
+    leaves the basis ill-conditioned). Fixes α=1 flat-direction over-dispersion.
     """
     d, K = data.X.shape[1], data.K
     W = torch.nn.Parameter(torch.zeros(d, K, dtype=torch.float64))
     demo_gen = torch.Generator().manual_seed(seed + 7)
+    tf_gen = torch.Generator().manual_seed(seed + 11)
     opt = SOAPFullPower([W], lr=lr, betas=(0.0, 0.99), precond_power=alpha,
                         damping=1e-5, relative_damping=False, precondition_frequency=10,
                         weight_decay=0.0, eps=1e-12,
@@ -107,6 +126,8 @@ def run_sampler(data: LogRegData, alpha, demographic, T=1.0, lr=2e-3, seed=0,
         opt.zero_grad()
         U = neg_log_posterior(W, data)
         U.backward()
+        if use_true_fisher:
+            W._soap_precond_grad = true_fisher_grad(W, data, tf_gen)
         opt.step()
 
     # Phase 1: warm up basis (refreshes on, noise off) -> converge to MAP + curvature eigenbasis.
@@ -149,14 +170,15 @@ def run_comparison(data: LogRegData, seed=0, **kw):
     """Compare four samplers against the NUTS reference; return a tidy list of dicts."""
     ref_mean, ref_cov = numpyro_reference(data, seed=seed)
     specs = [
-        ("SGD (no demo)",        0.0, False),
-        ("SOAP a=0.5 + demo",    0.5, True),
-        ("SOAP-NG a=1 (no demo)", 1.0, False),
-        ("SOAP-NG a=1 + demo",   1.0, True),
+        ("SGD (no demo)",              0.0, False, False),
+        ("SOAP a=0.5 + demo",          0.5, True,  False),
+        ("SOAP-NG a=1 (no demo)",      1.0, False, False),
+        ("SOAP-NG a=1 + demo",         1.0, True,  False),
+        ("SOAP-NG a=1 + demo + trueF", 1.0, True,  True),
     ]
     rows = []
-    for name, alpha, demo in specs:
-        m, c = run_sampler(data, alpha=alpha, demographic=demo, seed=seed, **kw)
+    for name, alpha, demo, tf in specs:
+        m, c = run_sampler(data, alpha=alpha, demographic=demo, use_true_fisher=tf, seed=seed, **kw)
         cos, slope = covariance_shape_recovery(c, ref_cov)
         rows.append({"sampler": name, "alpha": alpha, "demographic": demo,
                      "cov_cosine_to_posterior": round(cos, 4),

@@ -84,6 +84,51 @@ preconditioner via the `_soap_precond_grad` hook (curvature/true_fisher.py) — 
 Morwani fix for exactly this; (ii) calibrate damping/temperature per the ~2x SGLD constant. This
 is consistent with the theory calling §2.4 "a separate, larger contribution."
 
+## Relation to prior work (for the paper's §2.4 / "related work")
+
+The demographic-noise construction is closest to the SGD-as-Bayesian-inference literature, and
+being explicit about that is what keeps the contribution defensible. It is **not** a new sampling
+algorithm — it is structured preconditioned SGLD — and the comparison is as follows.
+
+**Mandt, Hoffman & Blei (2017), "SGD as Approximate Bayesian Inference" (MHB).** Constant-LR SGD
+near a minimum is the OU process `dθ = -HA(θ-θ*)dt + (1/√S) H B dW`, `BBᵀ=C`, with a Gaussian
+stationary law; MHB *tune* the preconditioner `H` and LR so this Gaussian best matches (min-KL) the
+posterior. In the framework's terms **MHB is exactly the `N_e→∞` limit** of the two-noise SDE —
+only gradient (minibatch) noise, diffusion `HCH/S`. The breeder's equation is the other limit
+(`N*→∞`, only demographic drift `G/N_e`); the two-noise SDE is their common ancestor (§1, §10).
+
+**The bridge at the natural-gradient point.** At `H=C^{-1}=A^{-1}` (precond_power=1), MHB's *gradient*
+noise is already FDT-shaped: `HCH = A^{-1}A A^{-1} = A^{-1} = H`. So plain preconditioned SGD's
+minibatch noise alone yields `V_stat ∝ A^{-1}` (the posterior covariance *shape*) at an effective
+temperature `~1/2S` — which is exactly what our §2.3/§2.4 toys show for SOAP-NG with minibatch noise.
+The **demographic term then adds temperature control decoupled from batch size** (set `T` to the
+posterior's `T=1` regardless of `S`); at the natural-gradient point it is "a pure temperature
+rescaling" (§9.5), shape-inert — which is *why* the breeder's-equation↔SGD correspondence survives
+SGD's missing term. **Off** the natural-gradient point (α≠1) the two diverge: MHB's C-shaped noise
+gives `V_stat ∝ C^{-α}` (wrong posterior shape at α=½/Adam), while the H-shaped demographic injection
+reshapes it toward `H` and, if dominant, restores exact sampling.
+
+**SGLD / pSGLD / SGFS.** The injection itself is Welling & Teh (2011) (isotropic) → Li et al. (2016)
+(preconditioned) → Ahn et al. (2012) SGFS (preconditioning by inverse gradient covariance). The
+exact-Fisher requirement (below) is the same one these methods need.
+
+**How our empirical result sits in this map.** We used a *full-batch* potential, so MHB's noise
+source is off — which is why SGD-no-demo collapses to the MAP (nothing to sample with) and the
+demographic injection *is* the noise (pure pSGLD). With minibatch noise present we would be in MHB's
+regime and SGD would already wander. Our SOAP-NG α=1 over-disperses flat directions because SOAP's
+*empirical* Fisher mis-estimates low curvature — the same true-vs-empirical-Fisher caveat MHB assumes
+away (it takes `C` to be the true Fisher); the fix is true-Fisher preconditioning (Ahn 2012; Morwani
+2024), wired in via the `_soap_precond_grad` hook (see the true-Fisher variant in posterior_sampling).
+
+**What is actually new (not the algorithm):** (i) the *biological derivation* of the missing term —
+it is the `√(G/N_e)dW_1` finite-population transmission noise, so a real evolving population already
+runs pSGLD that SGD must bolt on; (ii) the *exact FDT condition* `C∝G^{-1}` (`G=A^{-1}` under Fisher)
+as the equivalence point, with the α-continuum making MHB-SGD, whitening/Adam, and natural-gradient
+sampling three points on one dial shared with the biological G–A exponent; (iii) framing MHB and the
+breeder's equation as the two finite-sample limits (`N_e→∞` vs `N*→∞`) of one SDE.
+
+Cite and distinguish: MHB 2017, Welling & Teh 2011, Li et al. 2016, Ahn et al. 2012, Morwani et al. 2024.
+
 ## Implication for the paper
 
 The §2.4 claim — *only SOAP-NG (α=1) + demographic noise recovers the posterior covariance, while

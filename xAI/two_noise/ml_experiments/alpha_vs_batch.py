@@ -80,18 +80,35 @@ def run_cell(model_name, dataset, alpha, batch_size, micro_batch, budget_microba
         model = make_model(model_name, num_classes=meta.num_classes)
 
     lr = args.lr if args.lr is not None else default_lr("soap", alpha, args.base_lr)
+    # Full-inverse (alpha->1) over-steps at small batch (high gradient noise) and can diverge;
+    # an update-norm trust region keeps it finite so the cell yields a real datapoint. Harmless
+    # at small alpha (updates are already small).
     optimizer, lr_actual = make_optimizer(
         "soap", model.parameters(), alpha=alpha, lr=lr,
         weight_decay=args.weight_decay, base_lr=args.base_lr,
+        max_update_norm=2.0,
     )
 
-    result = train_eval(
-        model, optimizer, train_loader, val_loader, device,
-        max_steps=opt_steps, accum_steps=accum_steps,
-        log_every=max(1, opt_steps // 4), eval_every=0,
-        eval_max_batches=args.eval_max_batches, grad_clip=args.grad_clip,
-        amp=args.amp, lr=lr_actual,
-    )
+    try:
+        result = train_eval(
+            model, optimizer, train_loader, val_loader, device,
+            max_steps=opt_steps, accum_steps=accum_steps,
+            log_every=max(1, opt_steps // 4), eval_every=0,
+            eval_max_batches=args.eval_max_batches, grad_clip=args.grad_clip,
+            amp=args.amp, lr=lr_actual,
+        )
+    except FloatingPointError as e:
+        # Divergence (e.g. alpha=1 at tiny batch): record this cell as worst, keep the sweep alive
+        # so alpha* is still found from the finite cells (run() already filters non-finite).
+        print(f"[alpha_vs_batch] DIVERGED B={batch_size} alpha={alpha:g}: {e}")
+        return dict(
+            model=model_name, dataset=dataset, optimizer="soap", alpha=alpha, lr=lr_actual,
+            batch_size=batch_size, micro_batch=micro_batch, accum_steps=accum_steps,
+            budget_microbatches=budget_microbatches, opt_steps=opt_steps,
+            val_loss=float("inf"), val_metric=float("nan"), val_metric_name="diverged",
+            best_train_loss=float("inf"), peak_mem_mb=float("nan"),
+            mean_step_time_ms=float("nan"), is_alpha_star=False, seed=args.seed,
+        )
     best_train = min((r["train_loss"] for r in result.records), default=float("nan"))
     return dict(
         model=model_name, dataset=dataset, optimizer="soap", alpha=alpha, lr=lr_actual,
