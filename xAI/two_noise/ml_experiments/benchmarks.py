@@ -78,9 +78,15 @@ def run(args) -> Path:
         model = make_model(args.model, num_classes=meta.num_classes)
 
     lr = args.lr if args.lr is not None else default_lr(args.optimizer, args.alpha, args.base_lr)
+    # max_update_norm is an UPDATE-space trust region (clips the preconditioned step), distinct
+    # from --grad-clip which clips the raw gradient. The full inverse (alpha->1) amplifies even a
+    # clipped gradient in flat directions, so only the update-norm clip keeps it finite. 0 = off.
+    soap_kw = {}
+    if args.optimizer == "soap" and args.max_update_norm > 0:
+        soap_kw["max_update_norm"] = args.max_update_norm
     optimizer, lr_actual = make_optimizer(
         args.optimizer, model.parameters(), alpha=args.alpha, lr=lr,
-        weight_decay=args.weight_decay, base_lr=args.base_lr,
+        weight_decay=args.weight_decay, base_lr=args.base_lr, **soap_kw,
     )
 
     eff_bs = args.batch_size * args.accum_steps
@@ -133,6 +139,9 @@ def build_parser():
     p.add_argument("--eval-every", type=int, default=0, help="val eval every N steps (0 = end only)")
     p.add_argument("--eval-max-batches", type=int, default=0, help="cap val batches (0 = full)")
     p.add_argument("--grad-clip", type=float, default=1.0)
+    p.add_argument("--max-update-norm", type=float, default=0.0,
+                   help="SOAP update-space trust region (clips preconditioned step); 0=off. "
+                        "Needed to keep alpha->1 finite at small batch.")
     p.add_argument("--amp", action="store_true", help="autocast (cuda only)")
     p.add_argument("--block-size", type=int, default=256, help="LM sequence length")
     p.add_argument("--num-workers", type=int, default=4)
