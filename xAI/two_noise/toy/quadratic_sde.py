@@ -181,3 +181,60 @@ def fit_loglog_slope(curvature: np.ndarray, vstat: np.ndarray):
     A = np.vstack([x, np.ones_like(x)]).T
     coef, *_ = np.linalg.lstsq(A, y, rcond=None)
     return float(coef[0]), float(coef[1])
+
+
+# ----------------------------------------------- §2.3: the ACTUAL optimizer's stationary law
+def simulate_soap_stationary(p_curv, q_curv, alpha: float, S: float, lr: float,
+                             n_steps: int, burn_in: int, seed: int = 0,
+                             damping: float = 1e-4, demographic_temperature: float = 0.0,
+                             demographic_warmup: int = 2000, relative_damping: bool = True):
+    """Run SOAPFullPower(precond_power=α) on a separable 2D quadratic with Fisher gradient noise,
+    and return (curvature_flat, vstat_flat) for fitting the stationary-variance law (§2.3).
+
+    The parameter is a matrix ``W`` (m×n) with per-entry curvature ``κ_ij = p_i q_j`` (a Kronecker
+    structure SOAP captures), loss ``L = ½ Σ κ_ij W_ij²``. We use a *matrix* parameter so the
+    optimizer takes its Kronecker (precond_power=α) path — the 1D fallback hardcodes α=0.5. The
+    stochastic gradient is ``g = κ⊙W + ξ`` with ``ξ_ij ~ N(0, κ_ij / S)`` (gradient-noise
+    covariance ``C = A``, the Fisher identity), so SOAP's empirical preconditioner ``≈ A`` near the
+    optimum and the framework predicts stationary ``Var(W_ij) ∝ κ_ij^{-α}``.
+
+    Returns flattened ``(kappa, vstat)`` over all entries; fit with :func:`fit_loglog_slope`
+    (expected slope ``-α``).
+    """
+    import torch  # local import: keeps the analytic/numpy core torch-free
+    from optim.soap_full_power import SOAPFullPower
+
+    p_curv = np.asarray(p_curv, float)
+    q_curv = np.asarray(q_curv, float)
+    m, n = p_curv.size, q_curv.size
+    kappa = np.outer(p_curv, q_curv)                      # (m, n) per-entry curvature
+    kappa_t = torch.tensor(kappa, dtype=torch.float64)
+    noise_std_t = torch.sqrt(kappa_t / S)                # C = A: per-entry grad-noise std
+
+    torch.manual_seed(seed)
+    gen = torch.Generator().manual_seed(seed + 1)
+    demo_gen = torch.Generator().manual_seed(seed + 2)
+    W = torch.nn.Parameter(torch.zeros(m, n, dtype=torch.float64))
+    opt = SOAPFullPower([W], lr=lr, precond_power=alpha, damping=damping,
+                        relative_damping=relative_damping, precondition_frequency=10,
+                        weight_decay=0.0, eps=1e-12,
+                        demographic_noise=demographic_temperature > 0.0,
+                        demographic_temperature=demographic_temperature,
+                        demographic_generator=demo_gen,
+                        demographic_warmup=demographic_warmup)
+
+    sq = np.zeros((m, n))
+    mean = np.zeros((m, n))
+    count = 0
+    for t in range(n_steps):
+        with torch.no_grad():
+            g = kappa_t * W + noise_std_t * torch.randn(m, n, generator=gen, dtype=torch.float64)
+        W.grad = g
+        opt.step()
+        if t >= burn_in:
+            wd = W.detach().numpy()
+            sq += wd ** 2
+            mean += wd
+            count += 1
+    var = sq / count - (mean / count) ** 2
+    return kappa.ravel(), var.ravel()
