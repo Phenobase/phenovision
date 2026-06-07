@@ -1,0 +1,13 @@
+# two_noise subproject — never commit run outputs, logs, caches
+runs/
+logs/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# large/local artifacts
+*.pt
+*.npz
+*.parquet
+# hydra multirun dirs
+multirun/
+outputs/
