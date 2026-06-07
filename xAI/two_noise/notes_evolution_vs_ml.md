@@ -55,6 +55,21 @@ basis; `precond_eigvals_from_hook`) **fixed it**: SOAP-NG (α=1) + demographic +
 recovers the posterior best — shape (cos 0.86, slope 1.11) AND magnitude (total_var 4.91 ≈
 posterior 4.98), beating whitening (α=0.5). (notes_posterior_sampling.md.)
 
+**At-scale confirmation (ViT-S, CIFAR-100, batch 16, α=1).** A direct test of the import on a real
+model at the small batch where full-inverse NaNs:
+- A) empirical Fisher, damping 1e-4 → **diverges** (NaN @ step 11, val acc = chance).
+- C) empirical Fisher, damping 1e-2 (100×) → **still diverges** (NaN @ step 64). **Damping alone is
+  NOT enough at scale.**
+- B) **true-Fisher eigenvalues + damping 1e-2 → fully stable** (finite all 2000 steps, val acc
+  0.151 ≫ chance).
+So the *necessary* ingredient for a stable full-inverse step at small batch is the correctly-
+specified (true/sampled-label) curvature, not the variance ceiling — the empirical-Fisher
+mis-estimation IS the instability, and importing biology's low-noise true Fisher removes it. This
+is the optimization-side twin of the §2.4 sampling result and the strongest demonstrated
+evolution→ML transfer in the project. (Note: for *sampling* the FDT-safe stabilizer was damping
+not a trust region; for *optimization stability* the decisive factor is true-Fisher curvature.
+Both say: get the curvature right and bound it.)
+
 **A sharp sub-finding on which stabilizer is FDT-safe.** Evolution's two intrinsic stabilizers are
 NOT interchangeable for *sampling*:
 - **Variance ceiling (damping)** floors the denominator in BOTH drift and noise, so it cancels in
