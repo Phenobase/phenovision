@@ -44,9 +44,28 @@ def optimizer_panel() -> pd.DataFrame | None:
     return pd.concat(frames, ignore_index=True) if frames else None
 
 
-def sim_panel() -> pd.DataFrame | None:
-    """M-anisotropy vs N* from Sim B, if present."""
-    f = RUNS / "sim_b" / "results.csv"
+def sim_panel(N_for_neff: int = 600) -> pd.DataFrame | None:
+    """Biology panel: G-anisotropy vs effective N*. Prefer the clean incoherent compression sweep
+    (sim_b_compression: errors-in-variables noise, no lag-load); fall back to the spatial Sim B.
+
+    The incoherent sweep is parameterized by env_amp (gradient-noise magnitude). We map it to an
+    effective N* via the C-inflation equivalence (environmental variance inflates the gradient
+    covariance C, equivalent to lowering N* in the C/N* term): N*_eff = N / (1 + env_amp^2) — a
+    heuristic, monotone mapping so the x-axis is shared with the optimizer panel (larger eff sample
+    size = less noise). Anisotropy compresses (falls) as N*_eff falls."""
+    f = RUNS / "sim_b_compression" / "results.csv"
+    if f.exists():
+        df = pd.read_csv(f)
+        df = df.copy()
+        df["eff_N_star"] = N_for_neff / (1.0 + df["env_amp"] ** 2)
+        return df
+    f2 = RUNS / "sim_b" / "results.csv"
+    return pd.read_csv(f2) if f2.exists() else None
+
+
+def alpha1_panel() -> pd.DataFrame | None:
+    """The at-scale import panel: full-inverse (alpha=1) ViT stability by condition."""
+    f = RUNS / "alpha1_stability" / "results.csv"
     return pd.read_csv(f) if f.exists() else None
 
 
@@ -65,6 +84,11 @@ def build(outdir: Path = OUT):
         sim.to_csv(outdir / "sim_panel.csv", index=False); written.append("sim_panel.csv")
     else:
         print("[note] no sim_b results yet -> sim panel skipped")
+    a1 = alpha1_panel()
+    if a1 is not None:
+        a1.to_csv(outdir / "alpha1_panel.csv", index=False); written.append("alpha1_panel.csv")
+    else:
+        print("[note] no alpha1_stability results yet -> alpha1 panel skipped")
     print("wrote:", ", ".join(written), "to", outdir)
     return written
 

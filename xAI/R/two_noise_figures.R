@@ -1,12 +1,11 @@
 #!/usr/bin/env Rscript
-# §4/§5 shared-prediction figure for the two_noise paper.
-# Consumes tidy CSVs written by xAI/two_noise/figures/export_csv.py:
-#   runs/figures/sde_curve.csv        (analytic alpha* vs effective sample size)
-#   runs/figures/optimizer_panel.csv  (alpha* vs batch, real models)   [optional]
-#   runs/figures/sim_panel.csv        (M-anisotropy vs N*, Sim B)      [optional]
-# One phenomenon, two substrates, on a shared effective-sample-size axis.
-#
-# Run: Rscript xAI/R/two_noise_figures.R   (from repo root, in an env with ggplot2)
+# §4/§5 shared-prediction figure for the two_noise paper — 3 panels telling the
+# errors-in-variables story across substrates.
+#   runs/figures/sde_curve.csv        analytic alpha* vs effective sample size
+#   runs/figures/optimizer_panel.csv  alpha* vs batch, real models            [optional]
+#   runs/figures/sim_panel.csv        G-anisotropy vs effective N* (Sim B incoherent)
+#   runs/figures/alpha1_panel.csv     full-inverse ViT stability by condition  [optional]
+# Run: Rscript xAI/R/two_noise_figures.R   (from repo root, env with ggplot2+patchwork)
 
 suppressPackageStartupMessages({
   library(ggplot2); library(readr); library(dplyr); library(patchwork)
@@ -14,50 +13,70 @@ suppressPackageStartupMessages({
 
 fig_dir <- "xAI/two_noise/runs/figures"
 out_dir <- "xAI/figures"; dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
-
 theme_set(theme_minimal(base_size = 12) +
-          theme(panel.grid.minor = element_blank(),
-                plot.title = element_text(face = "bold")))
+          theme(panel.grid.minor = element_blank(), plot.title = element_text(face = "bold")))
+ok <- function(f) file.exists(file.path(fig_dir, f))
+rd <- function(f) suppressWarnings(read_csv(file.path(fig_dir, f), show_col_types = FALSE))
 
-sde <- read_csv(file.path(fig_dir, "sde_curve.csv"), show_col_types = FALSE)
-
-# LEFT panel: ML alpha* vs effective batch, with the SDE curve overlaid.
-p_left <- ggplot() +
+# ---- Panel 1: ML optimizer — alpha* vs effective batch, SDE curve overlaid ----------------
+sde <- rd("sde_curve.csv")
+p1 <- ggplot() +
   geom_line(data = sde, aes(eff_sample_size, alpha_star),
             linetype = "dashed", linewidth = 1, colour = "grey30") +
   scale_x_log10() + ylim(0, 1) +
   labs(title = "Optimizer (ML)", x = "effective batch size  S",
-       y = expression(alpha^"*"~"(precond_power)"),
-       subtitle = "dashed = two-noise SDE prediction")
-opt_f <- file.path(fig_dir, "optimizer_panel.csv")
-if (file.exists(opt_f)) {
-  opt <- read_csv(opt_f, show_col_types = FALSE)
+       y = expression(alpha^"*"~"(precond_power)"), subtitle = "dashed = two-noise SDE")
+if (ok("optimizer_panel.csv")) {
+  opt <- rd("optimizer_panel.csv")
   bcol <- intersect(c("batch_size", "eff_sample_size", "S"), names(opt))[1]
   acol <- intersect(c("alpha_star", "alpha_best"), names(opt))[1]
+  if (is.na(acol) && "is_alpha_star" %in% names(opt) && "alpha" %in% names(opt)) {
+    opt <- opt %>% filter(is_alpha_star); acol <- "alpha"
+  }
   if (!is.na(bcol) && !is.na(acol))
-    p_left <- p_left + geom_point(data = opt, aes(.data[[bcol]], .data[[acol]]),
-                                  size = 3, colour = "#D55E00")
+    p1 <- p1 + geom_point(data = opt, aes(.data[[bcol]], .data[[acol]]),
+                          size = 3, colour = "#D55E00")
 }
 
-# RIGHT panel: biology M-anisotropy vs N*, same SDE curve overlaid (mapped to alpha).
-sim_f <- file.path(fig_dir, "sim_panel.csv")
-if (file.exists(sim_f)) {
-  sim <- read_csv(sim_f, show_col_types = FALSE)
-  ncol <- intersect(c("n_star", "N_star", "Nstar"), names(sim))[1]
-  ycol <- intersect(c("m_anisotropy", "M_anisotropy", "anisotropy", "aniso_ratio"), names(sim))[1]
-  p_right <- ggplot(sim, aes(.data[[ncol]], .data[[ycol]])) +
-    geom_point(size = 2, alpha = .5, colour = "#0072B2") +
-    geom_smooth(se = TRUE, colour = "#0072B2", method = "loess", formula = y ~ x) +
+# ---- Panel 2: Biology — G-anisotropy vs effective N* (compression as N* falls) ------------
+if (ok("sim_panel.csv")) {
+  sim <- rd("sim_panel.csv")
+  xcol <- intersect(c("eff_N_star", "n_star", "N_star"), names(sim))[1]
+  ycol <- intersect(c("G_anisotropy", "m_anisotropy", "M_anisotropy"), names(sim))[1]
+  p2 <- ggplot(sim, aes(.data[[xcol]], .data[[ycol]])) +
+    geom_line(colour = "#0072B2", linewidth = 1) +
+    geom_point(size = 3, colour = "#0072B2") +
+    geom_hline(yintercept = 1, linetype = "dotted", colour = "grey50") +
     scale_x_log10() +
     labs(title = "Evolution (biology)", x = expression(N^"*"~"(effective sample size)"),
-         y = "M eigenvalue anisotropy")
+         y = "G eigenvalue anisotropy", subtitle = "compresses toward isotropy as N* falls")
 } else {
-  p_right <- ggplot() + annotate("text", 0, 0, label = "Sim B pending") +
-    labs(title = "Evolution (biology)") + theme_void()
+  p2 <- ggplot() + labs(title = "Evolution (biology)") + theme_void()
 }
 
-combined <- p_left + p_right +
-  plot_annotation(title = "One prediction, two substrates: alpha* / G-A exponent vs effective sample size")
+# ---- Panel 3: the import — full-inverse (alpha=1) ViT stability by condition --------------
+if (ok("alpha1_panel.csv")) {
+  a1 <- rd("alpha1_panel.csv")
+  ycol <- intersect(c("finite_fraction", "finite_frac"), names(a1))[1]
+  lab <- if ("label" %in% names(a1)) a1$label else a1$condition
+  a1$lab <- factor(lab, levels = lab[order(a1[[ycol]])])
+  a1$stable <- ifelse(a1[[ycol]] > 0.9, "stable", "diverged")
+  p3 <- ggplot(a1, aes(lab, .data[[ycol]], fill = stable)) +
+    geom_col(width = .6) +
+    scale_fill_manual(values = c(stable = "#009E73", diverged = "#D55E00"), guide = "none") +
+    ylim(0, 1) + coord_flip() +
+    labs(title = expression("Full-inverse ("*alpha*"=1) ViT @ batch 16"),
+         x = NULL, y = "fraction of finite steps",
+         subtitle = "true-Fisher curvature stabilizes; damping alone does not")
+} else {
+  p3 <- ggplot() + labs(title = "ViT alpha=1 stability") + theme_void()
+}
+
+combined <- (p1 | p2) / p3 +
+  plot_layout(heights = c(1.4, 1)) +
+  plot_annotation(
+    title = "Errors-in-variables in the curvature/selection signal: one law across substrates",
+    subtitle = "alpha*/anisotropy rise with effective sample size; correctly-specified (true-Fisher / high-h^2) curvature stabilizes the full inverse")
 ggsave(file.path(out_dir, "two_noise_shared_prediction.png"), combined,
-       width = 11, height = 4.5, dpi = 150)
+       width = 11, height = 8, dpi = 150)
 cat("wrote", file.path(out_dir, "two_noise_shared_prediction.png"), "\n")
