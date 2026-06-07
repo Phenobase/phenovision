@@ -59,6 +59,31 @@ SOAP-driven sampler exactly recovers an anisotropic posterior) is genuine resear
 - Or use a separately-estimated curvature (curvature/lanczos.py true-Fisher) to set H for the
   noise, independent of the Adam denom (cleaner FDT, departs from "pure SOAP").
 
+## Logistic-regression application (ml_experiments/posterior_sampling.py) — honest result
+
+Multinomial logistic regression (2D weight W, Gaussian prior), full-batch potential so all noise
+is the demographic injection (pure pSGLD), NUTS reference. 4 samplers, warm-up-then-freeze recipe.
+Representative run (n=400, d=5, K=3; cov metric = matrix cosine to posterior + eig-slope, 1=match):
+
+| sampler              | cov_cos | eig_slope | total_var | reads as |
+|----------------------|---------|-----------|-----------|----------|
+| SGD (no demo)        | 0.14    | —         | 0.0000    | does NOT sample (collapses to MAP) ✓ |
+| SOAP-NG a=1 (no demo)| 0.25    | 2.49      | 0.054     | does NOT sample (no FDT term) ✓ |
+| SOAP a=0.5 + demo    | 0.80    | 1.02      | 7.32      | samples; shape decent |
+| SOAP-NG a=1 + demo   | 0.65    | 1.36      | 9.57      | samples; OVER-disperses flat dirs |
+
+**Robustly demonstrated:** the demographic term is what enables posterior sampling — without it
+(SGD, SOAP-no-demo) the chain collapses to the MAP (total_var ~ 0); with it, the chain explores.
+This is the §9.5 / §2.4 headline ("biology gets the FDT-restoring term for free").
+
+**NOT cleanly shown (open refinement):** that a=1 *best* recovers the posterior. Here a=0.5 edges
+a=1 because, with small damping, a=1 over-amplifies LOW-curvature directions (eig-slope 1.36 > 1):
+SOAP's EMPIRICAL Fisher mis-estimates flat-direction curvature, so 1/denom is too large there.
+Fix paths (documented, not yet run): (i) feed the TRUE (sampled-label) Fisher to the
+preconditioner via the `_soap_precond_grad` hook (curvature/true_fisher.py) — the framework §3 /
+Morwani fix for exactly this; (ii) calibrate damping/temperature per the ~2x SGLD constant. This
+is consistent with the theory calling §2.4 "a separate, larger contribution."
+
 ## Implication for the paper
 
 The §2.4 claim — *only SOAP-NG (α=1) + demographic noise recovers the posterior covariance, while
