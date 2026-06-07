@@ -147,6 +147,47 @@ signal — the cleanest single bridge we have.
 **Also robustly shown in Sim B:** flat M–A alignment (0.0° everywhere — the no-eigenvalue-order-
 inversion correction) and, in the strong-perturbation regime, Ne→replicate-variance inflation.
 
+## 5c. Why true Fisher, and why now (related-work positioning — avoid overclaiming)
+
+The true Fisher is NOT new, and the paper must say so plainly. It is the basis of natural-gradient
+methods (Amari 1998), of K-FAC and Gauss-Newton methods (Martens & Grosse 2015; Martens 2020), and
+of Fisher-preconditioned sampling (SGFS — Ahn, Korattikara & Welling 2012). Its superiority over the
+*empirical* Fisher as a curvature estimate is the explicit subject of Kunstner, Hennig & Balles
+(2019), "Limitations of the empirical Fisher approximation." So "use the true Fisher" is established.
+
+The genuine question is why the **empirical** Fisher is the default in the optimizers people run
+(Adam, RMSProp, Shampoo, SOAP) and why no one used the true Fisher to **stabilize the full inverse**:
+
+1. **Cost.** Empirical Fisher = `E[g²]`/`E[ggᵀ]` from gradients you already have (free). True Fisher
+   needs an extra forward+backward on labels sampled from the model's predictive distribution every
+   step (~2×; we measured 4.4× on ViT-S). Disqualifying at scale.
+2. **The failure it fixes is side-stepped, not solved.** Almost nobody runs the full inverse (α=1);
+   the adaptive family lives at α=0.5 *whitening* (divide by √v), where the square root *suppresses*
+   the empirical Fisher's flat-direction mis-estimation, so it rarely blows up. The field's answer to
+   "α=1 is unstable" has been "don't use α=1," plus cheaper patches (LM damping, trust regions,
+   Shampoo's LR-grafting, the root itself).
+3. **No incentive to make the full inverse work.** Morwani et al. (2024) showed the H^{1/2}→full-
+   inverse exponent change doesn't manifest in optimization *speed*; Lin et al. (2024) removed the
+   root for *numerical* (half-precision) reasons, not curvature quality. So why pay 2× to enable a
+   regime that isn't even faster?
+4. **The sampling use is niche/small-scale.** SGFS/pSGLD care about the true Fisher for posterior
+   fidelity but at small scale; large-scale full-inverse Bayesian sampling isn't stress-tested, so the
+   empirical-Fisher over-dispersion (§2.4) hasn't bitten anyone publicly.
+
+**What the biological lens adds (the actual claim).** Not the technique. It is the *motivation to
+enter the unfashionable corner* and the *prediction of what's required there*: biology demonstrably
+runs at the full inverse (G∝A⁻¹) on the *correctly-specified* curvature (selection on the true fitness
+curvature integrated over the population, not an empirical-gradient proxy), with stability from correct
+curvature + a variance ceiling — NOT a trust region. So the analogy predicts (i) the full inverse is
+worth wanting and (ii) the true Fisher is the *necessary* ingredient, and damping alone will not
+suffice. Our ViT result confirms exactly that — including the part no one would have checked because
+no one wanted the full inverse: **100× damping still diverges; only the true Fisher stabilizes.** The
+underexplored, defensible claim is the *necessity of the true Fisher in the full-inverse small-batch
+regime* (not its existence), surfaced by a motivation the speed-focused ML literature lacked.
+
+Cite/distinguish: Amari 1998; Martens & Grosse 2015 (K-FAC); Martens 2020; Kunstner et al. 2019;
+Ahn et al. 2012 (SGFS); Morwani et al. 2024; Lin et al. 2024.
+
 ## 6. Directional summary of imports
 - **biology → ML:** damping = mutation ceiling; trust region = variance-gated response; the stable
   route to C⁻¹ is *generative* (CMA-ES / slow covariance accumulation), not inversion; true-Fisher
