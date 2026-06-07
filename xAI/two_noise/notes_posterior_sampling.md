@@ -84,6 +84,38 @@ preconditioner via the `_soap_precond_grad` hook (curvature/true_fisher.py) — 
 Morwani fix for exactly this; (ii) calibrate damping/temperature per the ~2x SGLD constant. This
 is consistent with the theory calling §2.4 "a separate, larger contribution."
 
+## RESOLVED: α=1 best-recovers the posterior with true-Fisher EIGENVALUES + damping
+
+The α=1-optimality gap closed once two biological stabilizers were imported correctly:
+
+1. **True-Fisher eigenvalues, not just basis** (`precond_eigvals_from_hook=True`): the in-basis
+   second moment (the preconditioner eigenvalue scaling) is accumulated from the sampled-label
+   Fisher gradient, not the empirical gradient. The empirical Fisher mis-estimates low-curvature
+   directions; the true Fisher is correctly specified (biology's "Fisher" is the actual fitness
+   curvature). The earlier `_soap_precond_grad` hook fixed only the *basis*, leaving the
+   over-dispersion in the eigenvalues — this fixes the eigenvalues too.
+2. **Damping, NOT a trust region** (FDT-critical). A `max_update_norm` trust region clips the
+   deterministic drift but NOT the injected noise → the restoring force weakens relative to the
+   noise → runaway over-dispersion (we measured total_var ~4e4 vs posterior ~5). Damping instead
+   floors the denominator in BOTH drift and noise, so it cancels in the stationary `V=T/a` and
+   preserves FDT/temperature while still bounding the Newton step. **For SAMPLING only the
+   ceiling-type stabilizer (damping) is FDT-safe; the bounded-response trust region is not.**
+
+Result (n=400, d=5, K=3; posterior trace ≈ 4.98):
+
+| sampler                       | cov_cos | eig_slope | total_var |
+|-------------------------------|---------|-----------|-----------|
+| SGD (no demo)                 | 0.15    | —         | 0.00 (no sampling) |
+| SOAP a=0.5 + demo             | 0.84    | 1.03      | 7.69 |
+| SOAP-NG a=1 + demo (empirical)| 0.71    | 1.33      | 10.7 (over-disperses) |
+| **SOAP-NG a=1 + demo + trueF**| **0.86**| **1.11**  | **4.91 ≈ posterior** |
+
+So **SOAP-NG (α=1) + demographic noise + true-Fisher best recovers the posterior covariance — in
+shape (highest cosine, slope→1) AND magnitude (total_var 4.91 ≈ 4.98)**, even resolving the ~2×
+temperature constant. This is the §2.4 headline, and it required importing biology's low-noise,
+correctly-specified curvature + the variance-ceiling stabilizer — the evolution→ML transfer made
+operational (see notes_evolution_vs_ml.md).
+
 ## Relation to prior work (for the paper's §2.4 / "related work")
 
 The demographic-noise construction is closest to the SGD-as-Bayesian-inference literature, and

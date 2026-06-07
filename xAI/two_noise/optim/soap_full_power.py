@@ -116,6 +116,7 @@ class SOAPFullPower(torch.optim.Optimizer):
         demographic_generator: "torch.Generator | None" = None,
         demographic_precond_clamp: float = 0.0,
         demographic_warmup: int = 0,
+        precond_eigvals_from_hook: bool = False,
         parity_mode: bool = False,
     ):
         defaults = dict(
@@ -133,6 +134,10 @@ class SOAPFullPower(torch.optim.Optimizer):
             demographic_generator=demographic_generator,
             demographic_precond_clamp=demographic_precond_clamp,
             demographic_warmup=demographic_warmup,
+            # --- accumulate the in-basis second moment (eigenvalues) from the true-Fisher hook
+            #     gradient instead of the empirical gradient (the descent direction stays empirical).
+            #     Fixes flat-direction over-amplification when the empirical Fisher is mis-specified.
+            precond_eigvals_from_hook=precond_eigvals_from_hook,
             # --- exact-parity routing with vanilla SOAP (test-only) ---
             parity_mode=parity_mode,
         )
@@ -278,7 +283,17 @@ class SOAPFullPower(torch.optim.Optimizer):
                 eas = exp_avg_sq if two_d else exp_avg_sq.unsqueeze(1)
 
                 ea.mul_(beta1).add_(g_rot, alpha=1.0 - beta1)
-                eas.mul_(beta2).add_(g_rot.square(), alpha=1.0 - beta2)
+                # Second moment (the preconditioner eigenvalues): from the empirical projected
+                # gradient by default, or from the projected TRUE-FISHER hook gradient when
+                # precond_eigvals_from_hook is set (so the eigenvalue scaling, not just the basis,
+                # reflects the true curvature). The first moment (descent direction) stays empirical.
+                sq_src = g_rot
+                if (group["precond_eigvals_from_hook"] and state["use_precond"]):
+                    pg = getattr(p, "_soap_precond_grad", None)
+                    if pg is not None:
+                        pg2d = pg if pg.dim() == 2 else pg.unsqueeze(1)
+                        sq_src = self._project(pg2d, qL, qR)
+                eas.mul_(beta2).add_(sq_src.square(), alpha=1.0 - beta2)
 
                 # --- THE MODIFICATION: tunable exponent + LM damping ---------
                 # Vanilla SOAP: denom = eas.sqrt() + eps   (power = 0.5)

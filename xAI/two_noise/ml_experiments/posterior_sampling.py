@@ -69,7 +69,10 @@ def true_fisher_grad(W, data: LogRegData, gen):
     gives SOAP a well-conditioned curvature basis. Assign to W._soap_precond_grad so SOAP
     accumulates its L,R preconditioner factors from the true Fisher (framework §3; Morwani 2024)."""
     with torch.no_grad():
-        probs = torch.softmax(data.X @ W, dim=1)
+        logits = data.X @ W
+        if not torch.isfinite(logits).all():
+            return torch.zeros_like(W)  # diverged this step; skip the hook rather than crash
+        probs = torch.softmax(logits, dim=1)
         y_s = torch.multinomial(probs, 1, generator=gen).squeeze(1)
     W2 = W.detach().clone().requires_grad_(True)
     loss = torch.nn.functional.cross_entropy(data.X @ W2, y_s, reduction="sum")
@@ -115,11 +118,22 @@ def run_sampler(data: LogRegData, alpha, demographic, T=1.0, lr=2e-3, seed=0,
     W = torch.nn.Parameter(torch.zeros(d, K, dtype=torch.float64))
     demo_gen = torch.Generator().manual_seed(seed + 7)
     tf_gen = torch.Generator().manual_seed(seed + 11)
+    # Stabilizer choice matters for SAMPLING (not just optimization). damping = the "variance
+    # ceiling": it floors the denominator in BOTH the drift and the noise, so it cancels in the
+    # stationary V = T/a -> FDT/posterior preserved while the Newton step (alpha=1, true-Fisher
+    # eigenvalues) is bounded. A max_update_norm trust region would clip the drift but NOT the
+    # noise, breaking FDT and causing runaway over-dispersion -> we do NOT use it for the sampler.
+    # (relative damping at alpha=1 with true-Fisher eigenvalues; tiny absolute otherwise.)
+    if use_true_fisher:
+        damping, rel_damp = 1e-2, True
+    else:
+        damping, rel_damp = 1e-5, False
     opt = SOAPFullPower([W], lr=lr, betas=(0.0, 0.99), precond_power=alpha,
-                        damping=1e-5, relative_damping=False, precondition_frequency=10,
-                        weight_decay=0.0, eps=1e-12,
+                        damping=damping, relative_damping=rel_damp, precondition_frequency=10,
+                        weight_decay=0.0, eps=1e-12, max_update_norm=0.0,
                         demographic_noise=False, demographic_temperature=T,
-                        demographic_generator=demo_gen, demographic_warmup=0)
+                        demographic_generator=demo_gen, demographic_warmup=0,
+                        precond_eigvals_from_hook=use_true_fisher)
     grp = opt.param_groups[0]
 
     def closure_step():
