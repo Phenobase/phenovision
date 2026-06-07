@@ -78,21 +78,45 @@ the mutation-selection variance ceiling is what keeps G at a well-defined equili
 - **The demographic term** — biology has it for free (finite-N transmission); ML must inject it
   (pSGLD), and getting the temperature/shape right is delicate (§2.4).
 
-## 5b. Sim B compression: an honest limitation
+## 5b. Sim B compression: confounded by lag-load, then RESOLVED with incoherent noise
 
-The predicted M-anisotropy *compression* as N\* falls did **not** robustly reproduce. Two runs:
-v1 (env-amp 0.8, N\* to 3) showed lag-load *enhancement* at deep N\*; v2 (env-amp 0.4, N\*≥15)
-showed anisotropy roughly flat/slightly rising and a weakened Ne-variance signal. Cause is
-mechanistic, not tuning: the **spatial-correlation knob that lowers N\* makes the per-generation
-perturbation coherent across individuals → a per-generation optimum shift (lag-load, Force 3) that
-*enhances* anisotropy and fights the gradient-noise attenuation (Force 2)**. Compounded by the slow
-M-evolution timescale (Sim A): M barely evolves anisotropy, so there is little to compress.
-Cleanly demonstrating compression likely needs (a) an N\* mechanism that injects *incoherent*
-within-individual gradient noise (no coherent mean shift), and (b) long enough runs for M to evolve
-anisotropy first. **Robustly shown in Sim B regardless:** flat M–A alignment (0.0° everywhere, the
-no-eigenvalue-order-inversion correction) and, in the strong-perturbation v1 regime, Ne→replicate-
-variance inflation. The compression prediction stands theoretically but is not cleanly demonstrated
-in this sim — a limitation to state plainly.
+The spatial-correlation N\* knob (sim_b_phase.py) did NOT show compression: lowering N\* via
+correlation makes the per-generation optimum perturbation *coherent* across individuals → a
+per-generation shift (lag-load, Force 3) that *enhances* anisotropy and fights the gradient-noise
+attenuation (Force 2). Compounded by measuring M, which barely evolves anisotropy (the slow
+M-timescale, Sim A) so there is little to compress.
+
+**Resolved** (sim/sim_b_compression.py) with two fixes, both diagnosed correctly:
+1. **Incoherent perturbation** — independent per-individual optimum noise δ_i ~ N(0, amp² I)
+   (identity kernel in run_sim_perturbed): no coherent shift → no lag-load, isolating attenuation.
+2. **Measure G, not M** — G (standing genetic covariance) responds on the standing-variance
+   timescale; M needs the slow architectural timescale.
+
+Result (Ne large, A_eigratio 6): G-anisotropy compresses MONOTONICALLY toward isotropy as the
+noise rises — 1.51 → 1.44 → 1.32 → 1.17 → 1.06 for amp 0→0.4→0.8→1.5→2.5 — with G–A alignment
+flat (<0.65°) until extreme noise. So **Force-2 compression is real and demonstrable**; the
+earlier failure was a mechanism/observable confound, not a wrong prediction. (Test: 1 pass.)
+
+**Biological interpretation of the incoherent noise = errors-in-variables = environmental
+variance.** Perturbing each individual's optimum independently is identical (fitness depends on
+z−θ_i) to independent ENVIRONMENTAL/DEVELOPMENTAL variance in the expressed phenotype (P = G + E):
+selection acts on a noisy read of the breeding value → regression dilution → low heritability
+(R = h²S; E is exactly what makes h²<1 attenuate the response). It attenuates anisotropically
+(stronger in sharp-A directions) → compresses the anisotropy ratio. Magnitude-of-E inflates the
+gradient covariance C, which is equivalent to lowering the effective N\* in the gradient-noise term
+C/N\*: **σ²_E ↑ ≡ inflate C ≡ lower effective N\* ≡ Force-2 compression.** The spatial-correlation
+ρ̄ route is the framework's *headline* (limited-dispersal/niche-construction) version; the
+errors-in-variables route is the classical (environmental-variance) version — both drive Force 2.
+
+**Cross-substrate symmetry of errors-in-variables.** Biology: E blurs selection's read on the
+genotype → attenuated/compressed response; remedy = higher heritability / larger effective sample.
+ML: minibatch/empirical-Fisher noise blurs the *curvature* estimate → the §2.4 α=1 over-dispersion;
+remedy = true Fisher / larger batch. "True Fisher fixes ML α=1" and "high heritability / large N\*
+keeps biology at α≈1" are the SAME statement about errors-in-variables in the curvature/selection
+signal — the cleanest single bridge we have.
+
+**Also robustly shown in Sim B:** flat M–A alignment (0.0° everywhere — the no-eigenvalue-order-
+inversion correction) and, in the strong-perturbation regime, Ne→replicate-variance inflation.
 
 ## 6. Directional summary of imports
 - **biology → ML:** damping = mutation ceiling; trust region = variance-gated response; the stable
