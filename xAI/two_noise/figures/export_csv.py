@@ -36,12 +36,30 @@ def analytic_sde_curve(cond_number=1e3, dim=24,
 
 
 def optimizer_panel() -> pd.DataFrame | None:
-    """alpha* vs effective batch from the real-model runs, if present."""
+    """ML optimizer panel: the FULL-INVERSE PENALTY vs batch size.
+
+    The argmin alpha* is flat at 0.5 across batches (whitening robustly best at this scale), so it
+    hides the law. The signal is in the GAP: val_loss(alpha=1) - val_loss(alpha=0.5) per batch,
+    which shrinks monotonically as batch grows (full inverse becomes more favorable as gradient
+    noise falls) — the noise-dependent-alpha* prediction in the right direction. Returns one row
+    per batch with the gap (and the per-alpha val_losses for reference)."""
     d = RUNS / "alpha_vs_batch"
     if not d.exists():
         return None
     frames = [pd.read_csv(f) for f in d.glob("*.csv")]
-    return pd.concat(frames, ignore_index=True) if frames else None
+    if not frames:
+        return None
+    df = pd.concat(frames, ignore_index=True)
+    piv = df.pivot_table(index="batch_size", columns="alpha", values="val_loss", aggfunc="first")
+    if 1.0 not in piv.columns or 0.5 not in piv.columns:
+        return df  # fall back to raw if the needed alphas are absent
+    out = pd.DataFrame({
+        "batch_size": piv.index,
+        "full_inverse_penalty": (piv[1.0] - piv[0.5]).values,  # val_loss(a=1) - val_loss(a=0.5)
+        "val_loss_a05": piv[0.5].values,
+        "val_loss_a10": piv[1.0].values,
+    }).reset_index(drop=True)
+    return out
 
 
 def sim_panel(N_for_neff: int = 600) -> pd.DataFrame | None:

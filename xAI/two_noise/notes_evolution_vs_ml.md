@@ -14,6 +14,20 @@ is not a different rule: census populations make the gradient-noise term 1/N\* s
 runs at *large effective batch*, where ML α=1 is also stable. Shrink N\* in the sim and biology
 destabilizes off α=1 too (Sim B). One law (the noise-dependent α*), two substrates — the §5 figure.
 
+## 1b. The real-model α*-vs-batch result (honest, and positive in the right direction)
+
+The argmin α* on ViT-S/CIFAR-100 is **flat at 0.5** across batch∈{16,…,4096} — whitening is robustly
+best at this scale/budget, so the argmin does NOT reproduce the toy's "α* rises with batch" crossover.
+BUT the law is visible in the **gap**: the full-inverse penalty val_loss(α=1) − val_loss(α=0.5)
+**shrinks monotonically with batch: 0.98 → 0.95 → 0.84 → 0.65 → 0.30** — full-inverse becomes more
+favorable as gradient noise falls, the noise-dependent-α* prediction's *direction*. It just doesn't
+cross 0.5 within batch ≤ 4096 (extrapolation suggests crossover at larger batch). Two honest caveats:
+(i) the argmin trend is an exact/toy-regime result; at real-model scale only the relative-favorability
+gradient shows it. (ii) α=1 no longer *diverges* at small batch here only because of the
+`max_update_norm=2` trust region added to the avb sweep; without a stabilizer it NaNs (Panel 3), and
+the trust region is an optimizer device (it breaks FDT for sampling — §2.4). So the figure's optimizer
+panel plots the **penalty-closing gap**, not the flat argmin.
+
 ## 2. Why evolution gets G∝A⁻¹ with no blow-up: GENERATE vs INVERT
 
 **ML computes H≈C⁻¹ by inverting a noisy estimate.** A near-singular flat direction (small

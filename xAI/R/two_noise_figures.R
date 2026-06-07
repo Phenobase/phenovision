@@ -18,24 +18,22 @@ theme_set(theme_minimal(base_size = 12) +
 ok <- function(f) file.exists(file.path(fig_dir, f))
 rd <- function(f) suppressWarnings(read_csv(file.path(fig_dir, f), show_col_types = FALSE))
 
-# ---- Panel 1: ML optimizer — alpha* vs effective batch, SDE curve overlaid ----------------
-sde <- rd("sde_curve.csv")
-p1 <- ggplot() +
-  geom_line(data = sde, aes(eff_sample_size, alpha_star),
-            linetype = "dashed", linewidth = 1, colour = "grey30") +
-  scale_x_log10() + ylim(0, 1) +
-  labs(title = "Optimizer (ML)", x = "effective batch size  S",
-       y = expression(alpha^"*"~"(precond_power)"), subtitle = "dashed = two-noise SDE")
-if (ok("optimizer_panel.csv")) {
+# ---- Panel 1: ML optimizer — the FULL-INVERSE PENALTY shrinks as batch grows --------------
+# argmin alpha* is flat at 0.5 (whitening robustly best at this scale); the law is in the GAP
+# val_loss(alpha=1) - val_loss(alpha=0.5), which falls toward 0 as batch grows = full inverse
+# becomes more favorable as gradient noise falls (the noise-dependent-alpha* prediction's direction).
+if (ok("optimizer_panel.csv") && "full_inverse_penalty" %in% names(rd("optimizer_panel.csv"))) {
   opt <- rd("optimizer_panel.csv")
-  bcol <- intersect(c("batch_size", "eff_sample_size", "S"), names(opt))[1]
-  acol <- intersect(c("alpha_star", "alpha_best"), names(opt))[1]
-  if (is.na(acol) && "is_alpha_star" %in% names(opt) && "alpha" %in% names(opt)) {
-    opt <- opt %>% filter(is_alpha_star); acol <- "alpha"
-  }
-  if (!is.na(bcol) && !is.na(acol))
-    p1 <- p1 + geom_point(data = opt, aes(.data[[bcol]], .data[[acol]]),
-                          size = 3, colour = "#D55E00")
+  p1 <- ggplot(opt, aes(batch_size, full_inverse_penalty)) +
+    geom_hline(yintercept = 0, linetype = "dotted", colour = "grey50") +
+    geom_line(colour = "#D55E00", linewidth = 1) +
+    geom_point(size = 3, colour = "#D55E00") +
+    scale_x_log10() +
+    labs(title = "Optimizer (ML)", x = "effective batch size  S",
+         y = expression("val-loss penalty of "*alpha*"=1 vs "*alpha*"=0.5"),
+         subtitle = "full-inverse penalty shrinks as batch grows (noise falls)")
+} else {
+  p1 <- ggplot() + labs(title = "Optimizer (ML)") + theme_void()
 }
 
 # ---- Panel 2: Biology — G-anisotropy vs effective N* (compression as N* falls) ------------
