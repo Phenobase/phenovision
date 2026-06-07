@@ -43,8 +43,8 @@ if (file.exists(opt_f)) {
 sim_f <- file.path(fig_dir, "sim_panel.csv")
 if (file.exists(sim_f)) {
   sim <- read_csv(sim_f, show_col_types = FALSE)
-  ncol <- intersect(c("N_star", "n_star", "Nstar"), names(sim))[1]
-  ycol <- intersect(c("M_anisotropy", "anisotropy", "aniso_ratio"), names(sim))[1]
+  ncol <- intersect(c("n_star", "N_star", "Nstar"), names(sim))[1]
+  ycol <- intersect(c("m_anisotropy", "M_anisotropy", "anisotropy", "aniso_ratio"), names(sim))[1]
   p_right <- ggplot(sim, aes(.data[[ncol]], .data[[ycol]])) +
     geom_point(size = 2, alpha = .5, colour = "#0072B2") +
     geom_smooth(se = TRUE, colour = "#0072B2", method = "loess", formula = y ~ x) +
