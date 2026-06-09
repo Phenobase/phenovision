@@ -48,21 +48,23 @@ from sim.drift_estimator import split_scaling_rotation, cos_direction
 
 
 def _theta_seq(regime, tau, n, env_sigma, key):
-    if regime in ("static", "canalization"):
+    # static, canalization, AND exploration all use a STATIC peak (theta=0); exploration differs
+    # only by the diversity premium (Force 1 + non-collapse), NOT a fluctuating optimum. Only the
+    # TRACKING regime moves the optimum (Force 3, lag-load).
+    if regime in ("static", "canalization", "exploration"):
         return jnp.zeros((tau, n))
-    if regime == "exploration":
-        # iid fluctuating optimum ~ N(0, env_sigma^2 I): variation becomes valuable
-        return env_sigma * jax.random.normal(key, (tau, n))
     if regime == "tracking":
-        # random-walk optimum (drift), covariance set by env_sigma per step in trait 0
-        steps = env_sigma * jax.random.normal(key, (tau, n)) * jnp.array([1.0, 0.3])
-        return jnp.cumsum(steps, axis=0)
+        # ISOTROPIC random-walk (drifting) optimum -> lag-load (Force 3) -> M grows toward the
+        # movement covariance Ω∝I (isotropic), contrasting with exploration's A⁻¹ and canalization.
+        return jnp.cumsum(env_sigma * jax.random.normal(key, (tau, n)), axis=0)
     raise ValueError(regime)
 
 
 def measure_drift(M0, A, *, design="eig_diag", regime="static", N=600, L=12, mu=0.02,
                   burn_in=400, tau=60, n_replicates=64, Lm=8, mu_mod=0.25, mut_var_mod=0.02,
-                  N_star=1e6, env_sigma=0.0, seed=0, lam=1.0, Omega=None):
+                  N_star=1e6, env_sigma=0.0, seed=0, lam=1.0, Omega=None,
+                  diversity_lambda=0.0, mut_load_coef=0.0,
+                  challenge_strength=0.0, challenge_sigma=0.0):
     n = 2
     A = np.asarray(A, float)
     config = make_config(N=N, L=L, n_traits=n, mu=mu, A=jnp.asarray(A, jnp.float32), Ne=N)
@@ -84,7 +86,9 @@ def measure_drift(M0, A, *, design="eig_diag", regime="static", N=600, L=12, mu=
 
     hyper_frozen = make_hyper(design=design, n_traits=n, Lm=Lm, mu_mod=0.0)
     hyper_active = make_hyper(design=design, n_traits=n, Lm=Lm, mu_mod=mu_mod,
-                              mut_var_mod=mut_var_mod)
+                              mut_var_mod=mut_var_mod, diversity_lambda=diversity_lambda,
+                              mut_load_coef=mut_load_coef, challenge_strength=challenge_strength,
+                              challenge_sigma=challenge_sigma)
     k0, k1, k2 = jax.random.split(jax.random.PRNGKey(seed), 3)
     # phase 1: frozen burn-in -> fast variables equilibrated at M0
     _, final = run_evo_sim(k1, config, hyper_frozen, design, burn_in, n_replicates,

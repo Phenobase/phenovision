@@ -28,11 +28,19 @@ def test_static_canalization_and_drift_alignment():
     #  it to the doc's >0.9. The robust mechanism signal is the curvature-differential above.)
 
 
-def test_exploration_grows_M():
-    A = np.diag([1.0, 4.0])
-    M0 = np.diag([0.06, 0.06])
-    r = measure_drift(M0, A, design="eig_diag", regime="exploration", N=400, L=10,
-                      burn_in=250, tau=50, n_replicates=48, env_sigma=0.6, seed=0)
-    # a fluctuating optimum makes variation valuable: M grows (opposite of canalization)
-    assert r["trM_end"] > r["trM0"], (r["trM0"], r["trM_end"])
-    assert r["cos_drift_vs_theory"] > 0.6, r["cos_drift_vs_theory"]
+def test_exploration_emergent_bet_hedging():
+    # GENUINE exploration: static peak + a shared random-disaster challenge each generation (the
+    # portfolio mechanism). Diversity emerges as protective and -- balanced against the emergent
+    # anisotropic cost -- is parked in the FLAT direction, driving M toward A⁻¹ (no imposed term).
+    A = np.diag([1.0, 4.0]); M0 = np.diag([0.06, 0.06])
+    cfg = dict(design="eig_diag", N=500, L=10, burn_in=300, tau=70, n_replicates=96, seed=0)
+    base = measure_drift(M0, A, regime="canalization", **cfg)                       # no challenge
+    expl = measure_drift(M0, A, regime="canalization",
+                         challenge_strength=1.0, challenge_sigma=1.5, **cfg)        # + disaster
+    bf, bs = np.diag(base["dM"]); ef, es = np.diag(expl["dM"])  # flat=trait0(a=1), steep=trait1(a=4)
+    # the challenge lifts the FLAT-direction drift relative to canalization (variation maintained)
+    assert ef > bf, (bf, ef)
+    # and the evolved-M ratio moves toward the A⁻¹ target (a_steep/a_flat = 4)
+    rb = base["M_end"][0, 0] / max(base["M_end"][1, 1], 1e-9)
+    re = expl["M_end"][0, 0] / max(expl["M_end"][1, 1], 1e-9)
+    assert re > rb, (rb, re)

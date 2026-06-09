@@ -67,6 +67,17 @@ class EvoHyper(NamedTuple):
     P: int             # number of modifier parameters (= dim of b_mod; design-dependent)
     mu_mod: float      # per-locus modifier mutation rate (0 => frozen M; the V1/V2 fixed-M case)
     mut_var_mod: float # variance of a modifier mutational increment (sets ε and 𝒢_M scale)
+    diversity_lambda: float = 0.0  # (legacy) imposed bet-hedging benefit ½λ logdet S; runs away
+                                   # without a balancing cost. Prefer the EMERGENT challenge below.
+    mut_load_coef: float = 0.0     # (legacy) imposed anisotropic mutation-load cost ½c tr(A S).
+    # --- GENUINE bet-hedging: a shared per-generation random selective challenge (the "portfolio"
+    #     / random-disaster mechanism). Each generation a random optimum θ_chal ~ N(0, σ²I) imposes
+    #     extra HARD selection exp(-½ s |z-θ_chal|²); diverse families always have some offspring
+    #     near θ_chal, clustered families occasionally get wiped out. Because lineage success is
+    #     multiplicative across generations, avoiding wipeout earns the geometric-mean (logdet)
+    #     premium -> the bet-hedging benefit EMERGES; the static A selection supplies the cost.
+    challenge_strength: float = 0.0  # s: strength of the random per-generation challenge (0=off)
+    challenge_sigma: float = 0.0     # σ: std of the random challenge optimum (wide => can't track)
 
 
 def n_modifier_params(design: str, n: int) -> int:
@@ -185,13 +196,36 @@ def step_generation_evolvable(key, state: EvoState, config: Config, hyper: EvoHy
     N, L, n = config.shape_key
     Ne = config.Ne
     th = config.theta if theta is None else theta
-    key, k_pool, k_p1, k_p2, k_seg1, k_seg2, k_segm1, k_segm2, k_mut1, k_mut2, k_mm1, k_mm2 = \
-        jax.random.split(key, 12)
+    key, k_pool, k_p1, k_p2, k_seg1, k_seg2, k_segm1, k_segm2, k_mut1, k_mut2, k_mm1, k_mm2, k_chal = \
+        jax.random.split(key, 13)
 
     # phenotype + fitness from the focal genotype (epistasis via engine; additive if sigma_eps=0)
     eng_state = State(y=state.y, eps=state.eps, key=key)
     z = genotype_to_phenotype(eng_state, config)                  # (N, n)
-    W = fitness(z, th, config.A)                                  # (N,)
+    W = fitness(z, th, config.A)                                  # (N,) static stabilizing selection
+
+    # GENUINE bet-hedging (the portfolio / random-disaster mechanism): a SHARED per-generation
+    # random challenge optimum θ_chal ~ N(0, σ²I) imposes extra hard selection. Diverse families
+    # always have offspring near the random θ_chal; clustered families risk a total wipeout. The
+    # benefit of diversity (and hence M -> A⁻¹, balanced against the static-A cost) EMERGES from
+    # the multiplicative-across-generations structure -- no imposed cost/benefit term.
+    if hyper.challenge_strength > 0.0:
+        theta_chal = hyper.challenge_sigma * jax.random.normal(k_chal, (n,))   # one disaster, shared
+        d = z - theta_chal[None, :]
+        W = W * jnp.exp(-0.5 * hyper.challenge_strength * jnp.sum(d * d, axis=1))
+
+    # EXPLORATION regime: the net second-order load  ½c·tr(A S) - ½λ·logdet S  applied as a
+    # per-individual selection differential. The benefit ½λ logdet S (bet-hedging / non-collapse)
+    # rewards diversity direction-blindly; the cost ½c tr(A S) penalizes variance ∝ curvature.
+    # Their balance is minimized at S ∝ A⁻¹ (s_i = λ/(c a_i)) -- the inverse-curvature fixed point.
+    # The cost is imposed because the IBM's EMERGENT mutation load is too weak to balance the
+    # benefit (it runs away). λ=0 => off (canalization / tracking use the emergent dynamics only).
+    if hyper.diversity_lambda > 0.0:
+        s_chol_par, _ = s_chol_all(state.m, design, n)            # (N, n, n)
+        S = jnp.einsum("nij,nkj->nik", s_chol_par, s_chol_par)    # S = L Lᵀ per individual
+        logdet_S = 2.0 * jnp.sum(jnp.log(jnp.diagonal(s_chol_par, axis1=1, axis2=2) + 1e-12), axis=1)
+        trAS = jnp.einsum("ij,nji->n", config.A, S)               # tr(A S) per individual
+        W = W * jnp.exp(0.5 * hyper.diversity_lambda * logdet_S - 0.5 * hyper.mut_load_coef * trAS)
 
     # finite-Ne breeding pool (demographic drift if Ne < N)
     pool_idx = jax.random.choice(k_pool, N, shape=(Ne,), replace=False)
@@ -310,7 +344,12 @@ def continue_evo_sim(states_batched, config: Config, hyper: EvoHyper, design: st
     return traj, final
 
 
-def make_hyper(*, design="eig_diag", n_traits=2, Lm=6, mu_mod=0.0, mut_var_mod=0.01) -> EvoHyper:
+def make_hyper(*, design="eig_diag", n_traits=2, Lm=6, mu_mod=0.0, mut_var_mod=0.01,
+               diversity_lambda=0.0, mut_load_coef=0.0,
+               challenge_strength=0.0, challenge_sigma=0.0) -> EvoHyper:
     """Build an EvoHyper, computing P from the design and n_traits."""
     return EvoHyper(Lm=int(Lm), P=int(n_modifier_params(design, n_traits)),
-                    mu_mod=float(mu_mod), mut_var_mod=float(mut_var_mod))
+                    mu_mod=float(mu_mod), mut_var_mod=float(mut_var_mod),
+                    diversity_lambda=float(diversity_lambda), mut_load_coef=float(mut_load_coef),
+                    challenge_strength=float(challenge_strength),
+                    challenge_sigma=float(challenge_sigma))
