@@ -175,21 +175,23 @@ def init_evo_population(key, config: Config, hyper: EvoHyper, design: str,
 # ============================================================================================
 
 def step_generation_evolvable(key, state: EvoState, config: Config, hyper: EvoHyper,
-                              design: str) -> EvoState:
+                              design: str, theta=None) -> EvoState:
     """Advance one generation (jit/scan-compatible). Mirrors engine.step_generation for the
     finite-Ne pool, fitness-weighted parent sampling, segregation and recombination; the
     DIFFERENCES are: (a) modifier loci are inherited+mutated alongside focal loci, and (b) focal
     mutation is the per-individual CORRELATED injection whose covariance is the offspring's own
-    modifier-encoded S_ind."""
+    modifier-encoded S_ind. `theta` overrides config.theta for this generation (V3 regimes:
+    static / drifting / fluctuating optimum)."""
     N, L, n = config.shape_key
     Ne = config.Ne
+    th = config.theta if theta is None else theta
     key, k_pool, k_p1, k_p2, k_seg1, k_seg2, k_segm1, k_segm2, k_mut1, k_mut2, k_mm1, k_mm2 = \
         jax.random.split(key, 12)
 
     # phenotype + fitness from the focal genotype (epistasis via engine; additive if sigma_eps=0)
     eng_state = State(y=state.y, eps=state.eps, key=key)
     z = genotype_to_phenotype(eng_state, config)                  # (N, n)
-    W = fitness(z, config.theta, config.A)                        # (N,)
+    W = fitness(z, th, config.A)                                  # (N,)
 
     # finite-Ne breeding pool (demographic drift if Ne < N)
     pool_idx = jax.random.choice(k_pool, N, shape=(Ne,), replace=False)
@@ -285,6 +287,27 @@ def run_evo_sim(key, config: Config, hyper: EvoHyper, design: str, n_generations
                      n_generations=n_generations, target_b_mod=target_b_mod)
     final, traj = jax.vmap(run_fn)(rep_keys)
     return (traj, final) if return_final else traj
+
+
+def _run_one_from_state(state, config, hyper, design, theta_seq):
+    """Continue ONE replicate from a given EvoState for len(theta_seq) generations, applying a
+    per-generation optimum theta_seq (G, n). Returns (final_state, per-gen measurements)."""
+    def body(s, theta_t):
+        ns = step_generation_evolvable(s.key, s, config, hyper, design, theta=theta_t)
+        return ns, measure_evolvable(ns, config, hyper, design)
+    return lax.scan(body, state, theta_seq)
+
+
+def continue_evo_sim(states_batched, config: Config, hyper: EvoHyper, design: str, theta_seq):
+    """Continue a BATCH of replicate states (leading replicate axis, e.g. from run_evo_sim with
+    return_final) for theta_seq.shape[0] generations under a shared per-generation optimum
+    schedule theta_seq (n_generations, n). Returns (traj, final) — traj leaves have a leading
+    (replicate, generation, ...) shape. Used by V3: frozen-burn-in equilibration (run_evo_sim,
+    mu_mod=0) -> release modifiers (this, mu_mod>0) and measure the slow M-drift."""
+    run_fn = partial(_run_one_from_state, config=config, hyper=hyper, design=design,
+                     theta_seq=theta_seq)
+    final, traj = jax.vmap(run_fn)(states_batched)
+    return traj, final
 
 
 def make_hyper(*, design="eig_diag", n_traits=2, Lm=6, mu_mod=0.0, mut_var_mod=0.01) -> EvoHyper:
