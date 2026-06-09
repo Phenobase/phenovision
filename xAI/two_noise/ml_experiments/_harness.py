@@ -381,6 +381,7 @@ def default_lr(optimizer: str, alpha: float, base_lr: float = 1e-3) -> float:
     """
     if optimizer == "adamw":
         return base_lr
+    # soap and riccati both behave Newton-like as alpha -> 1, so share the schedule.
     # linear-in-alpha interpolation of the log10 lr from base (α=0.5) to base/10 (α=1.0).
     if alpha <= 0.5:
         return base_lr
@@ -427,6 +428,31 @@ def make_optimizer(
         )
         soap_kw.update(kw)
         return SOAPFullPower(params, **soap_kw), lr
+    if name == "riccati":
+        from optim.riccati_precond import RiccatiPrecond
+        # alpha selects the base mode (whiten=1/2, inverse=1); --precond-mode overrides.
+        mode = kw.pop("precond_mode", None) or ("whiten" if alpha <= 0.5 else "inverse")
+        ric_kw = dict(
+            lr=lr,
+            precond=mode,
+            shrink=kw.pop("shrink", 0.0),
+            inner_steps=kw.pop("inner_steps", 2),
+            eta_p=kw.pop("eta_p", 0.5),
+            damping=kw.pop("damping", 1e-6),
+            safeguard=kw.pop("safeguard", 8.0),
+            precond_every=kw.pop("precond_every", 1),
+            weight_decay=weight_decay,
+            momentum=kw.pop("momentum", 0.0),
+            precond_stats_from_hook=kw.pop("precond_stats_from_hook", False),
+            evolve_M=kw.pop("evolve_m", False),
+            evolve_M_weighted=kw.pop("evolve_m_weighted", True),
+            eta_M=kw.pop("eta_m", 1e-3),
+            meta_every=kw.pop("meta_every", 20),
+            langevin=kw.pop("langevin", False),
+            temperature=kw.pop("temperature", 1.0),
+        )
+        ric_kw.update(kw)
+        return RiccatiPrecond(params, **ric_kw), lr
     raise ValueError(f"unknown optimizer {name!r}")
 
 

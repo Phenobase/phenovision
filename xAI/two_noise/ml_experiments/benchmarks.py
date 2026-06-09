@@ -41,12 +41,19 @@ CSV_COLUMNS = [
     "model", "dataset", "optimizer", "alpha", "lr", "batch_size", "accum_steps",
     "eff_batch_size", "step", "train_loss", "wallclock_s", "lr_actual", "val_metric",
     "val_metric_name", "val_loss", "peak_mem_mb", "step_time_ms", "seed",
+    "precond_mode", "shrink", "evolve_m",
 ]
 
 
 def config_name(args, lr_actual) -> str:
     """Filesystem-safe config id used for the CSV filename."""
-    opt = args.optimizer if args.optimizer == "adamw" else f"soap_a{args.alpha:g}"
+    if args.optimizer == "adamw":
+        opt = "adamw"
+    elif args.optimizer == "soap":
+        opt = f"soap_a{args.alpha:g}"
+    else:  # riccati
+        mode = args.precond_mode or ("whiten" if args.alpha <= 0.5 else "inverse")
+        opt = f"riccati_{mode}_rho{args.shrink:g}" + ("_evM" if args.evolve_m else "")
     return (f"{args.model}__{args.dataset}__{opt}__lr{lr_actual:g}"
             f"__bs{args.batch_size}x{args.accum_steps}__s{args.seed}")
 
@@ -81,22 +88,38 @@ def run(args) -> Path:
     # max_update_norm is an UPDATE-space trust region (clips the preconditioned step), distinct
     # from --grad-clip which clips the raw gradient. The full inverse (alpha->1) amplifies even a
     # clipped gradient in flat directions, so only the update-norm clip keeps it finite. 0 = off.
-    soap_kw = {}
+    opt_kw = {}
     if args.optimizer == "soap" and args.max_update_norm > 0:
-        soap_kw["max_update_norm"] = args.max_update_norm
+        opt_kw["max_update_norm"] = args.max_update_norm
+    if args.optimizer == "riccati":
+        # Riccati uses shrink/safeguard as the stabilizer, NOT max_update_norm (which
+        # clips the step and breaks FDT). precond_mode overrides the alpha->mode default.
+        if args.precond_mode:
+            opt_kw["precond_mode"] = args.precond_mode
+        opt_kw["shrink"] = args.shrink
+        opt_kw["inner_steps"] = args.inner_steps
+        if args.evolve_m:
+            opt_kw["evolve_m"] = True
+            opt_kw["eta_m"] = args.eta_m
+            opt_kw["meta_every"] = args.meta_every
     optimizer, lr_actual = make_optimizer(
         args.optimizer, model.parameters(), alpha=args.alpha, lr=lr,
-        weight_decay=args.weight_decay, base_lr=args.base_lr, **soap_kw,
+        weight_decay=args.weight_decay, base_lr=args.base_lr, **opt_kw,
     )
 
     eff_bs = args.batch_size * args.accum_steps
     static = dict(
         model=args.model, dataset=args.dataset,
-        optimizer=args.optimizer, alpha=args.alpha if args.optimizer == "soap" else "",
+        optimizer=args.optimizer,
+        alpha=args.alpha if args.optimizer in ("soap", "riccati") else "",
         lr=lr_actual, lr_actual=lr_actual, batch_size=args.batch_size,
         accum_steps=args.accum_steps, eff_batch_size=eff_bs,
         val_metric_name="perplexity" if meta.task == "lm" else "accuracy",
         seed=args.seed,
+        precond_mode=(args.precond_mode or ("whiten" if args.alpha <= 0.5 else "inverse"))
+        if args.optimizer == "riccati" else "",
+        shrink=args.shrink if args.optimizer == "riccati" else "",
+        evolve_m=int(args.evolve_m) if args.optimizer == "riccati" else "",
     )
 
     result = train_eval(
@@ -126,8 +149,17 @@ def build_parser():
                    help="vit_s|vit_b|nanogpt|nanogpt_m|tiny_vision")
     p.add_argument("--dataset", required=True,
                    help="cifar100|tiny_imagenet|tinystories|synthetic_vision|synthetic_lm")
-    p.add_argument("--optimizer", default="adamw", choices=["adamw", "soap"])
+    p.add_argument("--optimizer", default="adamw", choices=["adamw", "soap", "riccati"])
     p.add_argument("--alpha", type=float, default=0.5, help="precond_power for soap (ignored for adamw)")
+    # --- riccati-only knobs (matrix-free Newton-Schulz preconditioner) ---
+    p.add_argument("--precond-mode", default="", choices=["", "whiten", "inverse"],
+                   help="riccati base mode; default derived from alpha (<=0.5 whiten, else inverse)")
+    p.add_argument("--shrink", type=float, default=0.0,
+                   help="riccati shrinkage rho toward isotropy (effective-exponent reducer / stabilizer)")
+    p.add_argument("--inner-steps", type=int, default=2, help="riccati Newton-Schulz inner steps")
+    p.add_argument("--evolve-m", action="store_true", help="riccati evolving-M meta-loop (O4)")
+    p.add_argument("--eta-m", type=float, default=1e-3, help="evolve-M meta learning rate")
+    p.add_argument("--meta-every", type=int, default=20, help="evolve-M accumulation window")
     p.add_argument("--lr", type=float, default=None, help="explicit lr; default derived from optimizer/alpha")
     p.add_argument("--base-lr", type=float, default=1e-3, help="reference lr for the default_lr schedule")
     p.add_argument("--batch-size", type=int, default=128, help="micro-batch size")
