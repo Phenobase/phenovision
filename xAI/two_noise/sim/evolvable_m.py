@@ -77,7 +77,10 @@ class EvoHyper(NamedTuple):
     #     multiplicative across generations, avoiding wipeout earns the geometric-mean (logdet)
     #     premium -> the bet-hedging benefit EMERGES; the static A selection supplies the cost.
     challenge_strength: float = 0.0  # s: strength of the random per-generation challenge (0=off)
-    challenge_sigma: float = 0.0     # σ: std of the random challenge optimum (wide => can't track)
+    challenge_sigma: float = 0.0     # σ: overall std of the random challenge optimum θ_chal
+    challenge_aniso: jnp.ndarray = None  # (n,) per-trait relative std of θ_chal; Cov(θ_chal)=
+                                         # diag((σ·aniso)²)=Ω_chal. None => isotropic (ones). Used
+                                         # to test Channel 1 (M∝Ω) vs Channel 2 (M∝A⁻¹).
 
 
 def n_modifier_params(design: str, n: int) -> int:
@@ -210,7 +213,8 @@ def step_generation_evolvable(key, state: EvoState, config: Config, hyper: EvoHy
     # benefit of diversity (and hence M -> A⁻¹, balanced against the static-A cost) EMERGES from
     # the multiplicative-across-generations structure -- no imposed cost/benefit term.
     if hyper.challenge_strength > 0.0:
-        theta_chal = hyper.challenge_sigma * jax.random.normal(k_chal, (n,))   # one disaster, shared
+        aniso = jnp.ones((n,)) if hyper.challenge_aniso is None else hyper.challenge_aniso
+        theta_chal = hyper.challenge_sigma * aniso * jax.random.normal(k_chal, (n,))  # Ω_chal=diag((σ·aniso)²)
         d = z - theta_chal[None, :]
         W = W * jnp.exp(-0.5 * hyper.challenge_strength * jnp.sum(d * d, axis=1))
 
@@ -346,10 +350,11 @@ def continue_evo_sim(states_batched, config: Config, hyper: EvoHyper, design: st
 
 def make_hyper(*, design="eig_diag", n_traits=2, Lm=6, mu_mod=0.0, mut_var_mod=0.01,
                diversity_lambda=0.0, mut_load_coef=0.0,
-               challenge_strength=0.0, challenge_sigma=0.0) -> EvoHyper:
+               challenge_strength=0.0, challenge_sigma=0.0, challenge_aniso=None) -> EvoHyper:
     """Build an EvoHyper, computing P from the design and n_traits."""
+    aniso = None if challenge_aniso is None else jnp.asarray(challenge_aniso, jnp.float32)
     return EvoHyper(Lm=int(Lm), P=int(n_modifier_params(design, n_traits)),
                     mu_mod=float(mu_mod), mut_var_mod=float(mut_var_mod),
                     diversity_lambda=float(diversity_lambda), mut_load_coef=float(mut_load_coef),
                     challenge_strength=float(challenge_strength),
-                    challenge_sigma=float(challenge_sigma))
+                    challenge_sigma=float(challenge_sigma), challenge_aniso=aniso)
