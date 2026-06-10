@@ -440,7 +440,10 @@ def make_optimizer(
             eta_p=kw.pop("eta_p", 0.5),
             damping=kw.pop("damping", 1e-6),
             safeguard=kw.pop("safeguard", 8.0),
-            precond_every=kw.pop("precond_every", 1),
+            # amortize the Newton-Schulz: curvature factors drift slowly, so refreshing the
+            # preconditioner every 5 steps (vs every step) is ~5x cheaper at no accuracy cost
+            # (the SOAP/Shampoo amortization argument).
+            precond_every=kw.pop("precond_every", 5),
             weight_decay=weight_decay,
             momentum=kw.pop("momentum", 0.0),
             precond_stats_from_hook=kw.pop("precond_stats_from_hook", False),
