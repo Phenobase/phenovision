@@ -32,7 +32,10 @@ mkdir -p logs runs/riccati_evolve_m
 # Defaults: ViT-S / CIFAR-100, batch 64 (small enough to stress gradient noise), AMP(bf16), 4000
 # steps, all three conditions. Override:  sbatch scripts/submit_riccati_o2.sh --batch 32 ...
 ARGS=("--device" "cuda" "--model" "vit_s" "--dataset" "cifar100" "--batch" "128"
-      "--max-steps" "4000" "--amp" "--eta-m-grid" "3e-4" "1e-3" "3e-3" "--meta-every-grid" "20")
+      "--max-steps" "4000" "--amp" "--lanczos"
+      "--conditions" "adamw" "soap" "whiten" "inverse" "evolve"
+      "--cond-lrs" "adamw=1e-3,soap=1e-3,whiten=3e-3,inverse=3e-4,evolve=3e-4"
+      "--eta-m-grid" "3e-4" "1e-3" "3e-3" "--meta-every-grid" "20")
 if [[ $# -gt 0 ]]; then
     ARGS=("$@")
 fi
