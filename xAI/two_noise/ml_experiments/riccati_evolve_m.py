@@ -41,12 +41,14 @@ if str(ROOT) not in sys.path:
 
 from ml_experiments._harness import (RUNS_DIR, evaluate, is_lm_model, make_data,
                                      make_model, make_optimizer)
+from curvature.operative_exponent import operative_exponent_factors, operative_exponent_lanczos
 
 CSV_COLUMNS = [
     "condition", "label", "model", "dataset", "eta_M", "meta_every", "lr",
     "batch", "max_steps", "amp", "diverged", "finite_fraction", "n_steps_run",
     "step", "train_loss", "val_loss", "val_metric", "wallclock_s",
-    "op_exponent_topk", "op_exponent_flat", "M_topk_align", "seed",
+    "op_exponent_overall", "op_exponent_topk", "op_exponent_flat",
+    "op_exponent_true_hessian", "seed",
 ]
 
 
@@ -75,43 +77,13 @@ def _loglog_slope(c, g):
     return float(np.polyfit(np.log(c[ok]), np.log(g[ok]), 1)[0])
 
 
-@torch.no_grad()
-def operative_exponent(optimizer, top_frac=0.3):
-    """Across the optimizer's 2D-parameter Kronecker factors, the realized operative exponent
-    (=-slope of log eig(G) vs log eig(C)) in the top-k (steep) and bottom (flat) curvature
-    subspaces, and the alignment of the learned source M's top eigenvector with C's top
-    eigenvector (the well-sampled subspace). Size-weighted means over layers."""
-    topk_slopes, flat_slopes, aligns, weights = [], [], [], []
-    for group in optimizer.param_groups:
-        for p in group["params"]:
-            st = optimizer.state.get(p, {})
-            if not st.get("use_kron", False) or "CL" not in st:
-                continue
-            for Ckey, Gkey, Mkey in (("CL", "GL", "ML"), ("CR", "GR", "MR")):
-                C = st[Ckey].float(); G = st[Gkey].float()
-                cw, V = torch.linalg.eigh(0.5 * (C + C.t()))
-                # eigenvalues of G in C's eigenbasis (diagonal approximation)
-                gdiag = torch.diagonal(V.t() @ G @ V).clamp_min(1e-12)
-                cw = cw.clamp_min(1e-12)
-                order = torch.argsort(cw)                       # ascending curvature
-                c_sorted = cw[order].cpu().numpy(); g_sorted = gdiag[order].cpu().numpy()
-                k = max(2, int(top_frac * len(c_sorted)))
-                flat_slopes.append(_loglog_slope(c_sorted[:k], g_sorted[:k]))
-                topk_slopes.append(_loglog_slope(c_sorted[-k:], g_sorted[-k:]))
-                if Mkey in st:
-                    M = st[Mkey].float()
-                    mw, Vm = torch.linalg.eigh(0.5 * (M + M.t()))
-                    aligns.append(abs(float(Vm[:, -1] @ V[:, -1])))
-                weights.append(C.shape[0])
-    def wmean(xs):
-        xs = [(x, w) for x, w in zip(xs, weights) if math.isfinite(x)]
-        if not xs:
-            return float("nan")
-        return sum(x * w for x, w in xs) / sum(w for _, w in xs)
-    op_top = -wmean(topk_slopes) if topk_slopes else float("nan")
-    op_flat = -wmean(flat_slopes) if flat_slopes else float("nan")
-    align = (sum(aligns) / len(aligns)) if aligns else float("nan")
-    return op_top, op_flat, align
+# The operative-exponent diagnostics live in curvature/operative_exponent.py (validated):
+#   (i)  operative_exponent_factors  -- realized exponent vs the optimizer's own curvature C
+#        (the DESIGN exponent: whiten->0.5, inverse->1.0). Measured every checkpoint (cheap).
+#        MUST be read mid-training: at convergence the gradient->0, C drops below the damping
+#        floor, and the exponent degenerates to 0.
+#   (ii) operative_exponent_lanczos  -- exponent vs the TRUE loss Hessian (HVP/Lanczos). Differs
+#        from (i) when C != H (empirical vs true Fisher); computed once at the final step (costly).
 
 
 def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr):
@@ -164,9 +136,22 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20):
         elif not diverged:
             diverged = True
         if step == 1 or step % ckpt_every == 0 or step == args.max_steps:
-            op_top, op_flat, align = operative_exponent(optimizer)
+            params_finite = all(torch.isfinite(p).all().item() for p in model.parameters())
+            # (i) DESIGN exponent vs the optimizer's own curvature C (cheap, every checkpoint)
+            op_over, op_top, op_flat = (operative_exponent_factors(optimizer)
+                                        if params_finite else (float("nan"),) * 3)
+            # (ii) TRUE-Hessian exponent at the final step only (HVP/Lanczos; costly)
+            op_true = float("nan")
+            if params_finite and step == args.max_steps and args.lanczos:
+                fb = next(batch_iter)
+                def _lf():
+                    with torch.autocast("cuda", dtype=torch.bfloat16, enabled=use_amp):
+                        return _forward_loss(model, fb, device, is_lm)
+                op_true = operative_exponent_lanczos(
+                    _lf, optimizer, [p for p in model.parameters() if p.dim() == 2],
+                    k=args.lanczos_k, generator=torch.Generator(device="cpu").manual_seed(0))[0]
             val_metric = val_loss = float("nan")
-            if all(torch.isfinite(p).all().item() for p in model.parameters()):
+            if params_finite:
                 val_metric, val_loss, _ = evaluate(model, val_loader, device, is_lm,
                                                    max_batches=args.eval_max_batches)
                 model.train()
@@ -176,10 +161,11 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20):
                 lr=lr, batch=args.batch, max_steps=args.max_steps, amp=use_amp,
                 diverged=diverged, finite_fraction=n_finite / step, n_steps_run=step,
                 step=step, train_loss=lv, val_loss=val_loss, val_metric=val_metric,
-                wallclock_s=time.time() - t0, op_exponent_topk=op_top,
-                op_exponent_flat=op_flat, M_topk_align=align, seed=args.seed))
+                wallclock_s=time.time() - t0, op_exponent_overall=op_over,
+                op_exponent_topk=op_top, op_exponent_flat=op_flat,
+                op_exponent_true_hessian=op_true, seed=args.seed))
             print(f"[o4][{label}] step {step}/{args.max_steps} loss={lv:.4f} val={val_loss:.4f} "
-                  f"op_top={op_top:.2f} op_flat={op_flat:.2f} align={align:.2f} fin={finite}")
+                  f"op(i)=[{op_over:.2f},top{op_top:.2f},flat{op_flat:.2f}] op(ii)H={op_true:.2f} fin={finite}")
         if diverged and not finite and step > args.max_steps // 5:
             break
     print(f"[o4][{label}] DONE diverged={diverged} final_train={last:.4f}")
@@ -222,6 +208,8 @@ def build_parser():
     p.add_argument("--base-lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=0.01)
     p.add_argument("--grad-clip", type=float, default=1.0)
+    p.add_argument("--lanczos", action="store_true", help="(ii) true-Hessian operative exponent at the final step")
+    p.add_argument("--lanczos-k", type=int, default=16)
     p.add_argument("--eta-m-grid", type=float, nargs="+", default=[3e-4, 1e-3, 3e-3])
     p.add_argument("--meta-every-grid", type=int, nargs="+", default=[20])
     p.add_argument("--eval-max-batches", type=int, default=50)

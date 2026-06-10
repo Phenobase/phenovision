@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 
 from optim.riccati_precond import RiccatiPrecond
-from curvature.operative_exponent import operative_exponent_factors
+from curvature.operative_exponent import operative_exponent_factors, operative_exponent_lanczos
 
 
 def test_probe_recovers_known_exponent():
@@ -49,3 +49,26 @@ def test_trained_whiten_half_inverse_one():
     assert abs(trained("inverse", shrink=0.0) - 1.0) < 0.15
     # shrinkage reduces the operative exponent (the O3 law) on a real-ish model
     assert trained("inverse", shrink=0.7) < trained("inverse", shrink=0.0) - 0.2
+
+
+def test_lanczos_probe_recovers_known_exponent():
+    # (ii) ground-truth probe: with a NON-degenerate Hessian (single output) and the preconditioner
+    # set EXACTLY to G = H^{-alpha}, the true-Hessian gain probe must return alpha.
+    warnings.filterwarnings("ignore")
+    torch.manual_seed(0)
+    n, B = 24, 4096
+    X = torch.randn(B, n) * torch.logspace(-0.7, 0.7, n)
+    Sig = (X.t() @ X) / B                                   # true Hessian of ½ mean (Wx)²
+
+    def probe(alpha):
+        W = nn.Linear(n, 1, bias=False)
+        opt = RiccatiPrecond(W.parameters(), precond="inverse")
+        params = list(W.parameters()); st = opt.state[params[0]]; st["use_kron"] = True
+        w, V = torch.linalg.eigh(Sig)
+        st["CR"] = Sig.float(); st["GR"] = ((V * (w ** (-alpha))) @ V.t()).float()
+        st["CL"] = torch.ones(1, 1); st["GL"] = torch.ones(1, 1)
+        lf = lambda: 0.5 * (W(X) ** 2).mean()
+        return operative_exponent_lanczos(lf, opt, params, k=20, n_iter=60,
+                                          generator=torch.Generator().manual_seed(5))[0]
+    for a in (0.0, 0.5, 1.0):
+        assert abs(probe(a) - a) < 0.05, (a, probe(a))
