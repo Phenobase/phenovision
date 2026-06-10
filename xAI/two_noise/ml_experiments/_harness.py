@@ -437,7 +437,7 @@ def make_optimizer(
             precond=mode,
             shrink=kw.pop("shrink", 0.0),
             inner_steps=kw.pop("inner_steps", 2),
-            eta_p=kw.pop("eta_p", 0.5),
+            eta_p=kw.pop("eta_p", 1.0),
             damping=kw.pop("damping", 1e-6),
             safeguard=kw.pop("safeguard", 8.0),
             # amortize the Newton-Schulz: curvature factors drift slowly, so refreshing the

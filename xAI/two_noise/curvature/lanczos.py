@@ -70,6 +70,25 @@ def top_k_eigenvalues(loss_fn, params, k: int = 20, n_iter: int = None, generato
     return torch.sort(evals, descending=True).values[:k]
 
 
+def top_k_eigenpairs(loss_fn, params, k: int = 10, n_iter: int = None, generator=None):
+    """Top-k Hessian (Ritz value, Ritz vector) pairs via Lanczos. Returns (evals (k,),
+    evecs (dim, k)) sorted by descending eigenvalue. Ritz vectors = Q @ eig(T)."""
+    params = [p for p in params if p.requires_grad]
+    n_iter = n_iter or max(3 * k, 30)
+    alphas, betas, Q = lanczos_tridiag(loss_fn, params, n_iter, generator)
+    m = alphas.numel()
+    T = torch.diag(alphas)
+    if betas.numel():
+        idx = torch.arange(betas.numel())
+        T[idx, idx + 1] = betas
+        T[idx + 1, idx] = betas
+    evals, S = torch.linalg.eigh(T)                 # ascending; S columns = eigvecs in Lanczos basis
+    Qm = torch.stack(Q[:m], dim=1)                  # (dim, m)
+    ritz = Qm @ S                                   # (dim, m) Ritz vectors
+    order = torch.argsort(evals, descending=True)[:k]
+    return evals[order], ritz[:, order]
+
+
 def hutchinson_trace(loss_fn, params, n_probes: int = 100, generator=None) -> float:
     """Stochastic estimate of tr(H) via Rademacher probes."""
     params = [p for p in params if p.requires_grad]

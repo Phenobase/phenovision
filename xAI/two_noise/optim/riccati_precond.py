@@ -76,12 +76,16 @@ def _spec_norm(M, iters=3):
 
 
 def _ns_inverse(C, G0, steps, eta_p, rho, safeguard):
-    """Warm-started Newton-Schulz / Riccati toward C^{-1}  (alpha = 1).
-    G_{j+1} = G_j + eta_p (G_j - G_j C G_j), i.e. Riccati with source M = G_j.
-    Includes a spectral safeguard against the conditional-convergence overshoot
-    (Newton-Schulz only converges from G0 with ||C G0|| < ~2)."""
+    """Warm-started Newton-Schulz toward C^{-1}  (alpha = 1).
+    G_{j+1} = G_j + eta_p (G_j - G_j C G_j); at eta_p=1 this is the standard quadratically-
+    convergent NS  G(2I - CG).  CRITICAL: NS only converges from G0 with ||C G0|| < 2. The cold
+    start G0 = I has ||C G0|| = ||C||, which EXCEEDS the basin for any anisotropic C (spectral
+    norm > 2) -> it diverges (realized alpha = 0, not 1; the inverse mode silently never inverts).
+    Fix: if G0 is out of the basin, (re)initialize to G0 = I / ||Cs|| so ||Cs G0|| = 1."""
     Cs = _shrink(C, rho)
     G = G0
+    if _spec_norm(Cs @ G) > 1.9:                       # cold start or drifted out of the NS basin
+        G = torch.eye(C.shape[0], device=C.device, dtype=C.dtype) / (_spec_norm(Cs) + 1e-30)
     for _ in range(steps):
         CG = Cs @ G
         # rescale G into the convergence basin if it has drifted out
@@ -112,9 +116,12 @@ def _ns_inv_sqrt(C, steps, eps):
 
 def _riccati_with_source(C, G0, M, steps, eta_p, rho, safeguard):
     """General Riccati G <- G + eta_p (M - G C G) for an arbitrary SPD source M
-    (used by the evolving-M meta-loop). Fixed point G C G = M."""
+    (used by the evolving-M meta-loop). Fixed point G C G = M. Same NS-basin caveat as
+    _ns_inverse: re-init G into the basin (||Cs G|| < 2) if the warm start is out of it."""
     Cs = _shrink(C, rho)
     G = G0
+    if _spec_norm(Cs @ G) > 1.9:
+        G = torch.eye(C.shape[0], device=C.device, dtype=C.dtype) / (_spec_norm(Cs) + 1e-30)
     for _ in range(steps):
         CG = Cs @ G
         nrm = _spec_norm(CG)
@@ -129,7 +136,11 @@ def _precond_factor(C, G_prev, mode, steps, eta_p, rho, safeguard, eps):
     if mode == "inverse":
         return _ns_inverse(C, G_prev, steps, eta_p, rho, safeguard)
     elif mode == "whiten":
-        return _ns_inv_sqrt(C, steps, eps)
+        # The coupled (Higham) inverse-sqrt is run FRESH each refresh (not warm-started), so it
+        # needs enough iterations to converge: ~2 leaves G≈I (NOT whitening). It is cheap (matmuls
+        # only), so use >=8 iterations regardless of inner_steps (which is for the warm-started
+        # inverse mode). ||GCG-I||: 0.9 at 2 iters, 1e-4 at 10.
+        return _ns_inv_sqrt(C, max(steps, 10), eps)
     else:
         raise ValueError(f"unknown precond mode {mode!r}")
 
@@ -173,7 +184,7 @@ class RiccatiPrecond(Optimizer):
     """
 
     def __init__(self, params, lr=3e-3, precond="whiten", shrink=0.0,
-                 beta_c=0.95, inner_steps=2, eta_p=0.5, damping=1e-6,
+                 beta_c=0.95, inner_steps=2, eta_p=1.0, damping=1e-6,
                  safeguard=8.0, precond_every=1, weight_decay=0.0, momentum=0.0,
                  precond_stats_from_hook=False,
                  evolve_M=False, evolve_M_weighted=True, eta_M=1e-3, meta_every=20,
