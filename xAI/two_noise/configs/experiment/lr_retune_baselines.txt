@@ -1,0 +1,6 @@
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer adamw --lr 0.0003
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer soap --alpha 0.5 --lr 0.0003
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer adamw --lr 0.001
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer soap --alpha 0.5 --lr 0.001
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer adamw --lr 0.003
+--model vit_s --dataset cifar100 --batch-size 128 --max-steps 1500 --eval-every 250 --log-every 50 --out-dir runs/lr_retune --seed 0 --optimizer soap --alpha 0.5 --lr 0.003

@@ -87,10 +87,18 @@ def _loglog_slope(c, g):
 
 
 def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr):
+    # --- established baselines (NOT RiccatiPrecond; the operative-exponent diagnostic is NaN for
+    #     these -- they have no CL/GL factors -- but they anchor the loss/val comparison) ---
+    if cond == "adamw":
+        return make_optimizer("adamw", model.parameters(), lr=lr, weight_decay=wd, base_lr=base_lr)
+    if cond == "soap":      # standard SOAP = eigendecomposition whitening (precond_power=0.5)
+        return make_optimizer("soap", model.parameters(), alpha=0.5, lr=lr,
+                              weight_decay=wd, base_lr=base_lr)
+    # --- RiccatiPrecond variants (matrix-free) ---
     if cond == "whiten":
         return make_optimizer("riccati", model.parameters(), alpha=0.5, lr=lr,
                               weight_decay=wd, base_lr=base_lr, precond_mode="whiten", shrink=0.0)
-    if cond == "inverse":   # naive full inverse, no evolve (expected to struggle/diverge)
+    if cond == "inverse":   # naive full inverse, no evolve
         return make_optimizer("riccati", model.parameters(), alpha=1.0, lr=lr,
                               weight_decay=wd, base_lr=base_lr, precond_mode="inverse",
                               shrink=0.0, damping=1e-2)
@@ -102,7 +110,7 @@ def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr):
     raise ValueError(cond)
 
 
-def run_condition(cond, args, device, eta_M=1e-3, meta_every=20):
+def run_condition(cond, args, device, eta_M=1e-3, meta_every=20, lr_override=None):
     label = cond if cond != "evolve" else f"evolve_etaM{eta_M:g}_m{meta_every}"
     torch.manual_seed(args.seed)
     gen = torch.Generator().manual_seed(args.seed)
@@ -113,7 +121,8 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20):
     model = (make_model(args.model, vocab_size=meta.vocab_size) if is_lm
              else make_model(args.model, num_classes=meta.num_classes)).to(device)
     is_lm = is_lm_model(model)
-    optimizer, lr = _make_opt(cond, eta_M, meta_every, model, args.lr,
+    use_lr = lr_override if lr_override is not None else args.lr
+    optimizer, lr = _make_opt(cond, eta_M, meta_every, model, use_lr,
                               args.weight_decay, args.base_lr)
 
     use_cuda = device.type == "cuda"; use_amp = args.amp and use_cuda
@@ -185,11 +194,19 @@ def run(args):
                           else ("cuda" if torch.cuda.is_available() else "cpu"))
     print(f"[o4] device={device} batch={args.batch} max_steps={args.max_steps} amp={args.amp}")
     rows = []
-    rows += run_condition("whiten", args, device)
-    rows += run_condition("inverse", args, device)
-    grid = [(em, me) for em in args.eta_m_grid for me in args.meta_every_grid]
-    for em, me in grid:
-        rows += run_condition("evolve", args, device, eta_M=em, meta_every=me)
+    # per-condition lr from --cond-lrs "adamw=1e-3,soap=1e-3,whiten=3e-3,inverse=3e-4,evolve=3e-4"
+    cond_lr = {}
+    if args.cond_lrs:
+        for kv in args.cond_lrs.split(","):
+            k, v = kv.split("="); cond_lr[k.strip()] = float(v)
+    for cond in args.conditions:
+        if cond == "evolve":
+            for em in args.eta_m_grid:
+                for me in args.meta_every_grid:
+                    rows += run_condition("evolve", args, device, eta_M=em, meta_every=me,
+                                          lr_override=cond_lr.get("evolve"))
+        else:
+            rows += run_condition(cond, args, device, lr_override=cond_lr.get(cond))
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "riccati_evolve_m")
     csv_path = out_dir / f"{args.model}_{args.dataset}.csv"
     write_csv(csv_path, rows)
@@ -205,6 +222,11 @@ def build_parser():
     p.add_argument("--batch", type=int, default=128)
     p.add_argument("--max-steps", type=int, default=4000)
     p.add_argument("--lr", type=float, default=None)
+    p.add_argument("--conditions", nargs="+",
+                   default=["adamw", "soap", "whiten", "inverse", "evolve"],
+                   help="comparators to run (baselines adamw/soap + riccati whiten/inverse/evolve)")
+    p.add_argument("--cond-lrs", default="",
+                   help="per-condition lr, e.g. 'adamw=1e-3,soap=1e-3,inverse=3e-4,evolve=3e-4'")
     p.add_argument("--base-lr", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=0.01)
     p.add_argument("--grad-clip", type=float, default=1.0)
