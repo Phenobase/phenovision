@@ -78,10 +78,23 @@ def main():
     ap.add_argument("--demo-temps", type=float, nargs="*", default=[1e-3],
                     help="pSGLD temperatures T for the demo variants")
     ap.add_argument("--demo-warmup", type=int, default=200)
+    ap.add_argument("--group", default="all", choices=["all", "stable_evo", "baselines"],
+                    help="split the run into separate jobs: 'stable_evo' (stable_evo + its demo "
+                         "variants) | 'baselines' (sgd/adamw/soap) | 'all'. Writes "
+                         "compare_grid_<group>.txt for non-all groups.")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--no-amp", action="store_true")
     ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args()
+
+    # group split (separate SLURM jobs, independent tracking)
+    if args.group == "stable_evo":
+        args.optimizers = ["stable_evo"]; args.demo_on = ["stable_evo"]
+    elif args.group == "baselines":
+        args.optimizers = [o for o in args.optimizers if o != "stable_evo"]; args.demo_on = []
+    out_path = Path(args.out)
+    if args.group != "all" and out_path == OUT:
+        out_path = out_path.with_name(f"compare_grid_{args.group}.txt")
 
     from ml_experiments._harness import default_lr
     from ml_experiments.lr_finder import parse_opt_tag
@@ -114,13 +127,14 @@ def main():
                     lines.append(base + f" --demographic-noise --demographic-temperature {T:g} "
                                         f"--demographic-warmup {args.demo_warmup}")
 
-    out = Path(args.out)
+    out = out_path
     out.write_text("\n".join(lines) + "\n")
-    print(f"Wrote {len(lines)} full-run configs to {out}"
+    print(f"Wrote {len(lines)} full-run configs to {out}  (group={args.group})"
           + (f"  ({fellback} cells used default_lr fallback)" if fellback else "  (all lrs from lr_finder)"))
     print(f"  optimizers={args.optimizers}  batches={args.batch_sizes}  "
           f"demo_on={args.demo_on}  demo_temps={args.demo_temps}")
-    print(f"SLURM array: sbatch --array=0-{len(lines) - 1}%3 scripts/submit_optimizer_compare.sh")
+    print(f"SLURM array: TN_CMP_GRID={out} sbatch --array=0-{len(lines) - 1}%2 "
+          f"scripts/submit_optimizer_compare.sh")
 
 
 if __name__ == "__main__":

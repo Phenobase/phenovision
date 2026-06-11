@@ -26,11 +26,13 @@ set -euo pipefail
 cd /blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/two_noise
 mkdir -p logs runs/benchmarks
 
-GRID=configs/experiment/compare_grid.txt
+# grid file is selectable via TN_CMP_GRID (set per split job: stable_evo vs baselines)
+GRID="${TN_CMP_GRID:-configs/experiment/compare_grid.txt}"
 if [[ ! -f "$GRID" ]]; then
     echo "Grid $GRID not found; run: mamba run -n two_noise python scripts/gen_compare_grid.py"
     exit 1
 fi
+echo "[cmp] using grid $GRID"
 LINE=$(( SLURM_ARRAY_TASK_ID + 1 ))
 ARGS=$(sed -n "${LINE}p" "$GRID")
 if [[ -z "$ARGS" ]]; then
