@@ -14,6 +14,7 @@ gracefully if the runs are absent. Run:  python3 -m figures.optimizer_compare
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -26,7 +27,8 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-BENCH = ROOT / "runs" / "benchmarks"
+# benchmark CSV dir; override with TN_BENCH_DIR to analyze an isolated run (e.g. the convergence run)
+BENCH = Path(os.environ.get("TN_BENCH_DIR", str(ROOT / "runs" / "benchmarks")))
 OUTFIG = ROOT / "figures"
 OUTCSV = ROOT / "runs" / "figures"
 

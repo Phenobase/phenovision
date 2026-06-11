@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
 import sys
 from pathlib import Path
 
@@ -66,7 +67,14 @@ def main():
                     default=["sgd", "adamw", "soap@0.5", "soap@1.0", "stable_evo"])
     ap.add_argument("--batch-sizes", type=int, nargs="+", default=[64, 256, 1024, 4096])
     ap.add_argument("--micro-batch", type=int, default=256)
-    ap.add_argument("--max-steps", type=int, default=8000, help="to-convergence cap")
+    ap.add_argument("--max-steps", type=int, default=8000, help="fixed step budget (if --epochs<=0)")
+    ap.add_argument("--epochs", type=int, default=0,
+                    help="TRUE-CONVERGENCE budget: per-batch max_steps = epochs*ceil(dataset/eff_batch), "
+                         "eval_every scaled to ~50 evals. Equalizes data seen across batches and lets "
+                         "early stopping trim plateaus. Overrides --max-steps when >0.")
+    ap.add_argument("--dataset-size", type=int, default=50000, help="train-set size for --epochs budgeting")
+    ap.add_argument("--runs-dir", default=str(ROOT / "runs" / "benchmarks"),
+                    help="output dir for the per-config CSVs (use a fresh dir to isolate a run)")
     ap.add_argument("--eval-every", type=int, default=200)
     ap.add_argument("--log-every", type=int, default=50)
     ap.add_argument("--early-stop-patience", type=int, default=8,
@@ -108,19 +116,27 @@ def main():
         print(f"[warn] {SUGGESTED} not found -> falling back to default_lr for every cell. "
               f"Run stage 1 first: python -m ml_experiments.lr_finder")
 
-    common = (f"--max-steps {args.max_steps} --eval-every {args.eval_every} "
-              f"--log-every {args.log_every} --early-stop-patience {args.early_stop_patience} "
-              f"--early-stop-min-delta {args.early_stop_min_delta:g} --seed {args.seed}"
-              + ("" if args.no_amp else " --amp"))
+    def _budget(bs):
+        """(max_steps, eval_every) for this batch — epoch-budgeted (true convergence) if --epochs>0."""
+        if args.epochs > 0:
+            spe = max(1, math.ceil(args.dataset_size / bs))    # optimizer steps per epoch
+            ms = args.epochs * spe
+            return ms, max(20, ms // 50)                       # ~50 evals/run
+        return args.max_steps, args.eval_every
+
+    tail = (f"--log-every {args.log_every} --early-stop-patience {args.early_stop_patience} "
+            f"--early-stop-min-delta {args.early_stop_min_delta:g} --seed {args.seed} "
+            f"--out-dir {args.runs_dir}" + ("" if args.no_amp else " --amp"))
 
     lines, fellback = [], 0
     for bs in args.batch_sizes:
         micro = min(bs, args.micro_batch)
         accum = max(1, bs // micro)
-        bsargs = f"--batch-size {micro} --accum-steps {accum}"
+        ms, ee = _budget(bs)
+        bsargs = f"--batch-size {micro} --accum-steps {accum} --max-steps {ms} --eval-every {ee}"
         for tag in args.optimizers:
             lr, fb = _lr_for(sug, tag, bs, default_lr_fn); fellback += fb
-            base = f"--model {args.model} --dataset {args.dataset} {_base_parts(tag, lr)} {bsargs} {common}"
+            base = f"--model {args.model} --dataset {args.dataset} {_base_parts(tag, lr)} {bsargs} {tail}"
             lines.append(base)
             if tag in args.demo_on:
                 for T in args.demo_temps:
