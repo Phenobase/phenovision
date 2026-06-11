@@ -41,7 +41,8 @@ CSV_COLUMNS = [
     "model", "dataset", "optimizer", "alpha", "lr", "batch_size", "accum_steps",
     "eff_batch_size", "step", "train_loss", "wallclock_s", "lr_actual", "val_metric",
     "val_metric_name", "val_loss", "peak_mem_mb", "step_time_ms", "seed",
-    "precond_mode", "shrink", "evolve_m", "mean_exponent", "demo_temp",
+    "precond_mode", "shrink", "evolve_m", "mean_exponent",
+    "exp_std", "exp_max", "exp_frac_high", "exp_frac_floor", "demo_temp",
 ]
 
 

@@ -66,6 +66,13 @@ def load_configs(model="vit_s", dataset="cifar100") -> list[dict]:
             continue
         k = max(1, min(3, len(evals)))
         stationary = float(evals["val_loss"].iloc[-k:].mean())
+
+        def _last(col):
+            if col not in df.columns:
+                return float("nan")
+            s = pd.to_numeric(df[col], errors="coerce").dropna()
+            return float(s.iloc[-1]) if len(s) else float("nan")
+
         out.append(dict(
             file=f.name, label=_opt_label(df), eff_batch=int(df["eff_batch_size"].iloc[0]),
             lr=float(df["lr_actual"].iloc[0]), frame=df, evals=evals,
@@ -76,6 +83,9 @@ def load_configs(model="vit_s", dataset="cifar100") -> list[dict]:
             peak_mem_mb=float(pd.to_numeric(df["peak_mem_mb"], errors="coerce").max()),
             wallclock_s=float(pd.to_numeric(df["wallclock_s"], errors="coerce").max()),
             steps=int(pd.to_numeric(df["step"], errors="coerce").max()),
+            # final realized-exponent distribution (stable_evo; NaN for the others)
+            exp_mean=_last("mean_exponent"), exp_std=_last("exp_std"), exp_max=_last("exp_max"),
+            exp_frac_high=_last("exp_frac_high"), exp_frac_floor=_last("exp_frac_floor"),
         ))
     return out
 
@@ -91,7 +101,9 @@ def best_per_cell(configs: list[dict]) -> pd.DataFrame:
     for (label, eb), c in sorted(seen.items()):
         rows.append({k: c[k] for k in ("label", "eff_batch", "lr", "stationary_val_loss",
                                        "final_val_metric", "val_metric_name",
-                                       "mean_step_time_ms", "peak_mem_mb", "wallclock_s", "steps")})
+                                       "mean_step_time_ms", "peak_mem_mb", "wallclock_s", "steps",
+                                       "exp_mean", "exp_std", "exp_max",
+                                       "exp_frac_high", "exp_frac_floor")})
     return pd.DataFrame(rows)
 
 
@@ -118,26 +130,48 @@ def _plot_trajectories(configs, best, outpath):
 
 
 def _plot_alpha_traj(configs, outpath):
-    """stable_evo realized exponent over training, one line per batch."""
-    se = [c for c in configs if c["label"] == "stable_evo" and "mean_exponent" in c["frame"].columns]
+    """stable_evo realized-exponent DISTRIBUTION over training: mean±std + max (left), and the
+    fraction strongly leaning Newton (right) — the mean alone hides the spread. Color = batch
+    (so the batch-dependence is visible); base solid, +demo dashed."""
+    se = [c for c in configs if str(c["label"]).startswith("stable_evo")
+          and "mean_exponent" in c["frame"].columns]
     if not se:
         return
-    fig, ax = plt.subplots(figsize=(6.5, 4.2))
+    batches = sorted({c["eff_batch"] for c in se})
+    cmap = {b: plt.cm.viridis(i / max(len(batches) - 1, 1)) for i, b in enumerate(batches)}
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(12, 4.6))
     plotted = False
-    for c in sorted(se, key=lambda c: c["eff_batch"]):
+    for c in sorted(se, key=lambda c: (c["eff_batch"], "demo" in str(c["label"]))):
         d = c["frame"].copy()
-        d["mean_exponent"] = pd.to_numeric(d["mean_exponent"], errors="coerce")
+        for col in ("step", "mean_exponent", "exp_std", "exp_max", "exp_frac_high"):
+            if col in d.columns:
+                d[col] = pd.to_numeric(d[col], errors="coerce")
         d = d[d["mean_exponent"].notna()]
         if d.empty:
             continue
-        ax.plot(pd.to_numeric(d["step"]), d["mean_exponent"], "-", label=f"eff batch {c['eff_batch']}")
+        color = cmap[c["eff_batch"]]
+        is_demo = "demo" in str(c["label"])
+        ls = "--" if is_demo else "-"
+        tag = f"B{c['eff_batch']}" + ("+demo" if is_demo else "")
+        st = d["step"]
+        axL.plot(st, d["mean_exponent"], ls, color=color, label=tag)
+        if "exp_std" in d and d["exp_std"].notna().any():
+            axL.fill_between(st, d["mean_exponent"] - d["exp_std"], d["mean_exponent"] + d["exp_std"],
+                             color=color, alpha=0.12)
+        if "exp_max" in d and d["exp_max"].notna().any():
+            axL.plot(st, d["exp_max"], ls, color=color, alpha=0.4, lw=0.8)
+        if "exp_frac_high" in d and d["exp_frac_high"].notna().any():
+            axR.plot(st, d["exp_frac_high"], ls, color=color, label=tag)
         plotted = True
     if not plotted:
         plt.close(fig); return
-    ax.axhline(0.5, color="grey", ls=":", lw=1, label="whitening (½)")
-    ax.set_xlabel("step"); ax.set_ylabel("realized exponent α  (mean over coords)")
-    ax.set_title("StableEvolutionSOAP: realized α over training (higher batch → higher α)")
-    ax.legend(fontsize=8); ax.grid(alpha=.25)
+    axL.axhline(0.5, color="grey", ls=":", lw=1)
+    axL.set_xlabel("step"); axL.set_ylabel("realized α  (mean ± std; faint line = max)")
+    axL.set_title("StableEvolutionSOAP: exponent distribution over training")
+    axL.legend(fontsize=7, ncol=2); axL.grid(alpha=.25)
+    axR.set_xlabel("step"); axR.set_ylabel("fraction strongly leaning Newton (lean > 0.8)")
+    axR.set_title("How much is exploited vs held at whitening")
+    axR.legend(fontsize=7); axR.grid(alpha=.25)
     fig.tight_layout(); fig.savefig(outpath, dpi=140); plt.close(fig)
     print("wrote", outpath)
 

@@ -207,25 +207,51 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
             self._demo_gen_cache[device] = g
         return self._demo_gen_cache[device]
 
-    def mean_exponent(self):
-        """Size-weighted mean of the last realized per-coordinate exponent across all
-        preconditioned params (the optimizer's OWN-terms operative alpha). NaN before the
-        first preconditioned step. Used by the cross-substrate alpha*(noise) overlay.
+    def exponent_stats(self):
+        """Distributional summary of the realized per-coordinate exponent across all preconditioned
+        2D params, computed at READ time (a single host sync). The MEAN alone hides that selection
+        produces a SPREAD — noise-dominated directions sit at ~1/2 while clean directions lean
+        toward Newton — so we also report the spread and the tails:
 
-        alpha_mean is stored as a 0-dim DEVICE tensor (step() does no host sync); the single
-        host sync happens here, at read time only."""
-        tot, w = None, 0
+          mean       : size-weighted mean exponent
+          std        : spread of exponents across coordinates
+          max        : the most-Newton direction (the strongest exploit; <= alpha_max)
+          frac_high  : fraction strongly leaning to Newton (normalized lean > 0.8 within
+                       [alpha_min, alpha_max]) — "how much is being exploited"
+          frac_floor : fraction pinned near whitening (normalized lean < 0.1) — "how much is
+                       held at the stable boundary"
+
+        All accumulators stay on-device; one stacked .tolist() does the only host sync."""
+        n_tot = 0
+        ssum = ssq = smax = nhi = nlo = None
         for group in self.param_groups:
+            a_min, a_max = group["alpha_min"], group["alpha_max"]
+            span = max(a_max - a_min, 1e-9)
             for p in group["params"]:
-                st = self.state.get(p, {})
-                if "alpha_mean" in st:
-                    n = st.get("alpha_numel", 1)
-                    term = st["alpha_mean"] * n
-                    tot = term if tot is None else tot + term
-                    w += n
-        if not w or tot is None:
-            return float("nan")
-        return float(tot / w)            # one host sync, only when read
+                al = self.state.get(p, {}).get("alpha_last")
+                if al is None:
+                    continue
+                n_tot += al.numel()
+                lean = (al - a_min) / span
+                s_, q_, m_ = al.sum(), (al * al).sum(), al.max()
+                hi, lo = (lean > 0.8).sum(), (lean < 0.1).sum()
+                ssum = s_ if ssum is None else ssum + s_
+                ssq = q_ if ssq is None else ssq + q_
+                smax = m_ if smax is None else torch.maximum(smax, m_)
+                nhi = hi if nhi is None else nhi + hi
+                nlo = lo if nlo is None else nlo + lo
+        if n_tot == 0 or ssum is None:
+            return dict(mean=float("nan"), std=float("nan"), max=float("nan"),
+                        frac_high=float("nan"), frac_floor=float("nan"))
+        mean = ssum / n_tot
+        var = (ssq / n_tot - mean * mean).clamp_min(0.0)
+        vals = torch.stack([mean, var.sqrt(), smax.to(mean.dtype),
+                            nhi.to(mean.dtype) / n_tot, nlo.to(mean.dtype) / n_tot]).tolist()
+        return dict(mean=vals[0], std=vals[1], max=vals[2], frac_high=vals[3], frac_floor=vals[4])
+
+    def mean_exponent(self):
+        """Size-weighted mean realized exponent (NaN before the first preconditioned step)."""
+        return self.exponent_stats()["mean"]
 
     @torch.no_grad()
     def step(self, closure=None):
@@ -279,12 +305,11 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                         alpha = a_min + (a_max - a_min) * shrink      # in [alpha_min, alpha_max]
 
                     # surface the realized per-coordinate exponent (the optimizer's OWN-terms
-                    # operative alpha) for cross-substrate logging; aggregate via mean_exponent().
-                    # Keep it ON-DEVICE (no host sync per step) so the instrumentation does not slow
-                    # the step — the single host sync happens only when mean_exponent() is read
-                    # (every log_every steps), keeping step time competitive with plain SOAP.
-                    state["alpha_mean"] = alpha.mean().detach()     # 0-dim device tensor, no sync
-                    state["alpha_numel"] = alpha.numel()            # python int (shape meta, no sync)
+                    # operative alpha) for cross-substrate logging. Store the FULL per-coordinate
+                    # tensor as a detached reference (no compute, no host sync per step) — the
+                    # distributional reductions happen only when exponent_stats()/mean_exponent()
+                    # are read (every log_every steps), so step time stays competitive with SOAP.
+                    state["alpha_last"] = alpha.detach()
 
                     # (3) BOUNDED RESPONSE: relative spectral floor / LM damping in the target.
                     v_damp = v_hat + damping * v_hat.amax().clamp_min(eps)

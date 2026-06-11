@@ -62,6 +62,27 @@ def test_mean_exponent_in_range():
     assert 0.5 - 1e-6 <= a <= 0.9 + 1e-6, a
 
 
+def test_exponent_stats_distribution():
+    """exponent_stats() returns a coherent distribution summary: mean/std/max in [alpha_min,
+    alpha_max], fracs in [0,1], not NaN after training, and consistent with mean_exponent()."""
+    torch.manual_seed(0)
+    n, m, B = 16, 8, 256
+    X = torch.randn(B, n) * torch.logspace(-1.0, 1.0, n)
+    Y = X @ torch.randn(m, n).t() + 0.5 * torch.randn(B, m)
+    W = nn.Linear(n, m, bias=False)
+    opt = StableEvolutionSOAP(W.parameters(), lr=2e-3, alpha_min=0.5, alpha_max=0.9,
+                              precondition_frequency=5, damping=1e-2)
+    assert all(math.isnan(v) for v in opt.exponent_stats().values())   # nothing accumulated yet
+    for _ in range(40):
+        opt.zero_grad(); ((W(X) - Y) ** 2).mean().backward(); opt.step()
+    es = opt.exponent_stats()
+    assert 0.5 - 1e-6 <= es["mean"] <= 0.9 + 1e-6
+    assert 0.5 - 1e-6 <= es["max"] <= 0.9 + 1e-6
+    assert es["max"] >= es["mean"] - 1e-6 and es["std"] >= 0.0
+    assert 0.0 <= es["frac_high"] <= 1.0 and 0.0 <= es["frac_floor"] <= 1.0
+    assert abs(opt.mean_exponent() - es["mean"]) < 1e-6
+
+
 def test_selection_off_forces_ceiling():
     """selection_off=True pins every coordinate at alpha_max (the recapitulation framing)."""
     torch.manual_seed(0)

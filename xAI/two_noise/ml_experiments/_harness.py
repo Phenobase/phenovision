@@ -660,9 +660,17 @@ def train_eval(
                 val_metric=float("nan"),
                 val_loss=float("nan"),
             )
-            # surface the optimizer's realized operative exponent if it exposes one
-            # (StableEvolutionSOAP) — for the cross-substrate alpha*(noise) overlay.
-            if hasattr(optimizer, "mean_exponent"):
+            # surface the optimizer's realized operative-exponent DISTRIBUTION if it exposes one
+            # (StableEvolutionSOAP) — mean + spread + tails, for the cross-substrate overlay and to
+            # show how much is leaning Newton vs pinned at whitening (and how that shifts with batch).
+            if hasattr(optimizer, "exponent_stats"):
+                es = optimizer.exponent_stats()
+                row["mean_exponent"] = es["mean"]
+                row["exp_std"] = es["std"]
+                row["exp_max"] = es["max"]
+                row["exp_frac_high"] = es["frac_high"]
+                row["exp_frac_floor"] = es["frac_floor"]
+            elif hasattr(optimizer, "mean_exponent"):
                 row["mean_exponent"] = optimizer.mean_exponent()
             if do_eval:
                 vm, vl, _ = evaluate(model, val_loader, device, is_lm, eval_max_batches)
