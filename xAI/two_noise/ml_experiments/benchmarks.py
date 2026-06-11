@@ -141,6 +141,9 @@ def run(args) -> Path:
                    if (args.demographic_noise and args.demographic_temperature > 0) else ""),
     )
 
+    out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "benchmarks")
+    csv_path = out_dir / f"{config_name(args, lr_actual)}.csv"
+    # flush partial results to the CSV at every eval (within-run visibility + preemption safety)
     result = train_eval(
         model, optimizer, train_loader, val_loader, device,
         max_steps=args.max_steps, epochs=args.epochs, accum_steps=args.accum_steps,
@@ -149,11 +152,9 @@ def run(args) -> Path:
         amp=args.amp, lr=lr_actual, extra_record_fields=static,
         early_stop_patience=args.early_stop_patience,
         early_stop_min_delta=args.early_stop_min_delta,
+        eval_hook=lambda res: write_csv(csv_path, res.records, static),
     )
     static["val_metric_name"] = result.val_metric_name
-
-    out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "benchmarks")
-    csv_path = out_dir / f"{config_name(args, lr_actual)}.csv"
     write_csv(csv_path, result.records, static)
 
     print(f"[benchmarks] {csv_path}")

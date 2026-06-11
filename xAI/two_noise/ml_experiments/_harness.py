@@ -563,6 +563,7 @@ def train_eval(
     extra_record_fields: Optional[dict] = None,
     early_stop_patience: int = 0,
     early_stop_min_delta: float = 0.0,
+    eval_hook: Optional[Callable] = None,
 ) -> TrainResult:
     """Train for max_steps OPTIMIZER steps (or `epochs` epochs) and return tidy records + metrics.
 
@@ -684,6 +685,16 @@ def train_eval(
                     else:
                         no_improve += 1
             result.records.append(row)
+            # within-run visibility: stream a progress line to stdout (-> SLURM .out, tail-able)
+            # and flush partial results to disk each eval (also preemption-safe).
+            if do_eval:
+                print(f"[train_eval] step {step}/{total_opt_steps} "
+                      f"train_loss={micro_loss:.4f} val_loss={vl:.4f} "
+                      f"{result.val_metric_name}={vm:.4f}"
+                      + (f" early_stop[{no_improve}/{early_stop_patience}]"
+                         if early_stop_patience > 0 else ""), flush=True)
+                if eval_hook is not None:
+                    eval_hook(result)
 
         for cb_name, (cb_fn, cb_freq) in callbacks.items():
             if cb_freq > 0 and step % cb_freq == 0:
