@@ -41,19 +41,23 @@ CSV_COLUMNS = [
     "model", "dataset", "optimizer", "alpha", "lr", "batch_size", "accum_steps",
     "eff_batch_size", "step", "train_loss", "wallclock_s", "lr_actual", "val_metric",
     "val_metric_name", "val_loss", "peak_mem_mb", "step_time_ms", "seed",
-    "precond_mode", "shrink", "evolve_m",
+    "precond_mode", "shrink", "evolve_m", "mean_exponent", "demo_temp",
 ]
 
 
 def config_name(args, lr_actual) -> str:
     """Filesystem-safe config id used for the CSV filename."""
-    if args.optimizer == "adamw":
-        opt = "adamw"
+    if args.optimizer in ("adamw", "sgd"):
+        opt = args.optimizer
+    elif args.optimizer == "stable_evo":
+        opt = "stable_evo" + ("_seloff" if args.selection_off else "")
     elif args.optimizer == "soap":
         opt = f"soap_a{args.alpha:g}"
     else:  # riccati
         mode = args.precond_mode or ("whiten" if args.alpha <= 0.5 else "inverse")
         opt = f"riccati_{mode}_rho{args.shrink:g}" + ("_evM" if args.evolve_m else "")
+    if getattr(args, "demographic_noise", False) and args.demographic_temperature > 0:
+        opt += f"_demoT{args.demographic_temperature:g}"      # pSGLD posterior-sampling variant
     return (f"{args.model}__{args.dataset}__{opt}__lr{lr_actual:g}"
             f"__bs{args.batch_size}x{args.accum_steps}__s{args.seed}")
 
@@ -89,8 +93,20 @@ def run(args) -> Path:
     # from --grad-clip which clips the raw gradient. The full inverse (alpha->1) amplifies even a
     # clipped gradient in flat directions, so only the update-norm clip keeps it finite. 0 = off.
     opt_kw = {}
-    if args.optimizer == "soap" and args.max_update_norm > 0:
+    if args.optimizer in ("soap", "stable_evo") and args.max_update_norm > 0:
         opt_kw["max_update_norm"] = args.max_update_norm
+    if args.optimizer == "stable_evo":
+        # selection-driven exponent; recapitulation = selection_off + alpha_max=1.0.
+        opt_kw["selection_off"] = args.selection_off
+        opt_kw["alpha_max"] = args.alpha_max
+    # demographic-noise (pSGLD) injection — supported by soap and stable_evo (both run Adam in the
+    # Kronecker eigenbasis). Turns convergence into posterior sampling; we measure how it moves
+    # the realized alpha, final accuracy, and speed.
+    if args.demographic_noise and args.optimizer in ("soap", "stable_evo"):
+        opt_kw["demographic_noise"] = True
+        opt_kw["demographic_temperature"] = args.demographic_temperature
+        opt_kw["demographic_warmup"] = args.demographic_warmup
+        opt_kw["demographic_generator"] = torch.Generator().manual_seed(args.seed + 9973)
     if args.optimizer == "riccati":
         # Riccati uses shrink/safeguard as the stabilizer, NOT max_update_norm (which
         # clips the step and breaks FDT). precond_mode overrides the alpha->mode default.
@@ -120,6 +136,8 @@ def run(args) -> Path:
         if args.optimizer == "riccati" else "",
         shrink=args.shrink if args.optimizer == "riccati" else "",
         evolve_m=int(args.evolve_m) if args.optimizer == "riccati" else "",
+        demo_temp=(args.demographic_temperature
+                   if (args.demographic_noise and args.demographic_temperature > 0) else ""),
     )
 
     result = train_eval(
@@ -128,6 +146,8 @@ def run(args) -> Path:
         log_every=args.log_every, eval_every=args.eval_every,
         eval_max_batches=args.eval_max_batches, grad_clip=args.grad_clip,
         amp=args.amp, lr=lr_actual, extra_record_fields=static,
+        early_stop_patience=args.early_stop_patience,
+        early_stop_min_delta=args.early_stop_min_delta,
     )
     static["val_metric_name"] = result.val_metric_name
 
@@ -149,8 +169,21 @@ def build_parser():
                    help="vit_s|vit_b|nanogpt|nanogpt_m|tiny_vision")
     p.add_argument("--dataset", required=True,
                    help="cifar100|tiny_imagenet|tinystories|synthetic_vision|synthetic_lm")
-    p.add_argument("--optimizer", default="adamw", choices=["adamw", "soap", "riccati"])
+    p.add_argument("--optimizer", default="adamw",
+                   choices=["adamw", "sgd", "soap", "stable_evo", "riccati"])
     p.add_argument("--alpha", type=float, default=0.5, help="precond_power for soap (ignored for adamw)")
+    # --- stable_evo-only knobs (selection-driven exponent; logs realized mean_exponent per step) ---
+    p.add_argument("--selection-off", action="store_true",
+                   help="stable_evo: pin alpha=alpha_max (the biological-recapitulation mode)")
+    p.add_argument("--alpha-max", type=float, default=0.9,
+                   help="stable_evo: per-coordinate exponent ceiling (1.0 for recapitulation)")
+    # --- demographic-noise (pSGLD) injection; soap/stable_evo only ---
+    p.add_argument("--demographic-noise", action="store_true",
+                   help="inject FDT-correct pSGLD noise (covariance ∝ applied preconditioner)")
+    p.add_argument("--demographic-temperature", type=float, default=0.0,
+                   help="pSGLD temperature T (T∝lr; T=1/(2 Ne_eff) in the biological reading)")
+    p.add_argument("--demographic-warmup", type=int, default=0,
+                   help="skip noise injection for the first N steps (preconditioner warmup)")
     # --- riccati-only knobs (matrix-free Newton-Schulz preconditioner) ---
     p.add_argument("--precond-mode", default="", choices=["", "whiten", "inverse"],
                    help="riccati base mode; default derived from alpha (<=0.5 whiten, else inverse)")
@@ -170,6 +203,11 @@ def build_parser():
     p.add_argument("--log-every", type=int, default=10)
     p.add_argument("--eval-every", type=int, default=0, help="val eval every N steps (0 = end only)")
     p.add_argument("--eval-max-batches", type=int, default=0, help="cap val batches (0 = full)")
+    p.add_argument("--early-stop-patience", type=int, default=0,
+                   help="stop if val loss has not improved for N consecutive evals (0=off). Bounds "
+                        "to-convergence runs so large batches don't over-train.")
+    p.add_argument("--early-stop-min-delta", type=float, default=0.0,
+                   help="minimum val-loss improvement to reset the early-stop patience counter")
     p.add_argument("--grad-clip", type=float, default=1.0)
     p.add_argument("--max-update-norm", type=float, default=0.0,
                    help="SOAP update-space trust region (clips preconditioned step); 0=off. "

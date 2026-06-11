@@ -381,6 +381,13 @@ def default_lr(optimizer: str, alpha: float, base_lr: float = 1e-3) -> float:
     """
     if optimizer == "adamw":
         return base_lr
+    if optimizer == "sgd":
+        # SGD+momentum tolerates a markedly larger lr than the adaptive methods; the benchmark
+        # lr-grid tunes around this. (No alpha; whitening/Newton schedule below does not apply.)
+        return base_lr * 10.0
+    if optimizer == "stable_evo":
+        # selection-driven exponent sits near whitening; share the whitening lr.
+        return base_lr
     # soap and riccati both behave Newton-like as alpha -> 1, so share the schedule.
     # linear-in-alpha interpolation of the log10 lr from base (α=0.5) to base/10 (α=1.0).
     if alpha <= 0.5:
@@ -415,6 +422,11 @@ def make_optimizer(
         lr = default_lr(name, alpha, base_lr)
     if name == "adamw":
         return torch.optim.AdamW(params, lr=lr, betas=betas, weight_decay=weight_decay), lr
+    if name == "sgd":
+        # plain SGD with Nesterov momentum — the first-order, no-preconditioner baseline.
+        return torch.optim.SGD(params, lr=lr, momentum=kw.pop("momentum", 0.9),
+                               nesterov=kw.pop("nesterov", True),
+                               weight_decay=weight_decay), lr
     if name == "soap":
         from optim.soap_full_power import SOAPFullPower
         soap_kw = dict(
@@ -549,6 +561,8 @@ def train_eval(
     lr: float = 0.0,
     callbacks: Optional[Dict[str, Tuple[Callable, int]]] = None,
     extra_record_fields: Optional[dict] = None,
+    early_stop_patience: int = 0,
+    early_stop_min_delta: float = 0.0,
 ) -> TrainResult:
     """Train for max_steps OPTIMIZER steps (or `epochs` epochs) and return tidy records + metrics.
 
@@ -601,6 +615,8 @@ def train_eval(
     optimizer.zero_grad(set_to_none=True)
     step = 0
     last_step_t = time.time()
+    best_val = float("inf")            # early-stopping trackers (opt-in via early_stop_patience>0)
+    no_improve = 0
     while step < total_opt_steps:
         # Accumulate `accum_steps` micro-batches.
         micro_loss = 0.0
@@ -653,6 +669,12 @@ def train_eval(
                 row["val_metric"] = vm
                 row["val_loss"] = vl
                 model.train()
+                if early_stop_patience > 0:
+                    if vl < best_val - early_stop_min_delta:
+                        best_val = vl
+                        no_improve = 0
+                    else:
+                        no_improve += 1
             result.records.append(row)
 
         for cb_name, (cb_fn, cb_freq) in callbacks.items():
@@ -660,6 +682,13 @@ def train_eval(
                 model.eval()
                 cb_fn(model, step, micro_loss)
                 model.train()
+
+        # early stop: val loss has not improved by min_delta for `patience` consecutive evals.
+        # Bounds the to-convergence runs (large batch converges in fewer opt-steps and stops here
+        # rather than over-training at high per-step cost).
+        if early_stop_patience > 0 and no_improve >= early_stop_patience:
+            print(f"[train_eval] early stop at step {step} (val plateau, best={best_val:.4f})")
+            break
 
     # Final eval.
     vm, vl, vn = evaluate(model, val_loader, device, is_lm, eval_max_batches)

@@ -121,3 +121,33 @@ def test_max_update_norm_clamps():
     moved_loose, _ = run(5.0)
     assert dmax_tight <= 0.1 * 0.1 + 1e-5                   # ||Δp|| <= lr * clip
     assert moved_tight < moved_loose                       # tighter clip => less total movement
+
+
+# ------------------------------------------------ demographic-noise (pSGLD) injection
+def _demo_run(demo, T):
+    torch.manual_seed(0)
+    W = nn.Linear(12, 8, bias=False)
+    opt = StableEvolutionSOAP(W.parameters(), lr=1e-2, demographic_noise=demo,
+                              demographic_temperature=T,
+                              demographic_generator=torch.Generator().manual_seed(7),
+                              precondition_frequency=5, weight_decay=0.0)
+    g = torch.Generator().manual_seed(5)
+    X = torch.randn(64, 12, generator=g); Y = X @ torch.randn(8, 12, generator=g).t()
+    for _ in range(40):
+        opt.zero_grad(); ((W(X) - Y) ** 2).mean().backward(); opt.step()
+    return W.weight.detach().clone()
+
+
+def test_demographic_noise_off_is_identical():
+    """demographic_noise=False (default) and T=0-with-flag-on are both bit-identical to no noise."""
+    base = _demo_run(False, 0.0)
+    flag_T0 = _demo_run(True, 0.0)                          # flag on but T=0 -> guard keeps it off
+    assert torch.equal(base, flag_T0)
+
+
+def test_demographic_noise_on_perturbs_and_is_finite():
+    """T>0 injects noise: trajectory changes but stays finite (bounded pSGLD step)."""
+    base = _demo_run(False, 0.0)
+    noisy = _demo_run(True, 1e-2)
+    assert torch.isfinite(noisy).all()
+    assert (base - noisy).abs().max() > 1e-4               # the injected noise genuinely moves params

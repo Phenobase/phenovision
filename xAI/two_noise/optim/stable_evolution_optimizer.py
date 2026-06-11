@@ -57,6 +57,8 @@ from typing import Iterable, Tuple
 import torch
 from torch import Tensor
 
+from optim.demographic_noise import langevin_noise_std
+
 
 def _eigh_basis(mat: Tensor) -> Tensor:
     ridge = 1e-30 * torch.eye(mat.shape[0], device=mat.device, dtype=mat.dtype)
@@ -112,6 +114,11 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         selection_off: bool = False,
         max_update_norm: float = 1.0,
         correct_bias: bool = True,
+        demographic_noise: bool = False,
+        demographic_temperature: float = 0.0,
+        demographic_generator: "torch.Generator | None" = None,
+        demographic_warmup: int = 0,
+        demographic_precond_clamp: float = 0.0,
     ):
         defaults = dict(
             lr=lr, betas=betas, shampoo_beta=shampoo_beta,
@@ -121,8 +128,18 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
             max_precond_dim=max_precond_dim, precondition_1d=precondition_1d,
             use_qr_refresh=use_qr_refresh, selection_off=selection_off,
             max_update_norm=max_update_norm, correct_bias=correct_bias,
+            # --- demographic-noise (pSGLD) injection; OFF by default. The applied per-coordinate
+            #     preconditioner here is P (the GENERATED eigenvalue), so FDT-correct noise has
+            #     covariance ∝ P: std = sqrt(2*T*lr*P) = langevin_noise_std(1/P, T, lr). Restoring
+            #     this term turns convergence into posterior SAMPLING (framing ii / FDT). ---
+            demographic_noise=demographic_noise,
+            demographic_temperature=demographic_temperature,
+            demographic_generator=demographic_generator,
+            demographic_warmup=demographic_warmup,
+            demographic_precond_clamp=demographic_precond_clamp,
         )
         super().__init__(params, defaults)
+        self._demo_gen_cache = {}
 
     @staticmethod
     def _project(g, qL, qR):
@@ -176,6 +193,20 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         if state.get("R") is not None:
             state["QR"] = _qr_power_step(state["R"], state["QR"]) if (use_qr and state["QR"] is not None) else _eigh_basis(state["R"])
 
+    def _device_generator(self, user_gen, device):
+        """Return a generator on `device`, lazily seeding a device-matched one from a CPU generator
+        (so seeding is honored and CUDA params don't crash on a CPU generator)."""
+        if user_gen is None:
+            return None
+        if user_gen.device == device:
+            return user_gen
+        if device not in self._demo_gen_cache:
+            seed = int(torch.randint(0, 2 ** 31 - 1, (1,), generator=user_gen).item())
+            g = torch.Generator(device=device)
+            g.manual_seed(seed)
+            self._demo_gen_cache[device] = g
+        return self._demo_gen_cache[device]
+
     def mean_exponent(self):
         """Size-weighted mean of the last realized per-coordinate exponent across all
         preconditioned params (the optimizer's OWN-terms operative alpha). NaN before the
@@ -226,6 +257,7 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                 ea.mul_(beta1).add_(g_rot, alpha=1.0 - beta1)
                 eas.mul_(beta2).add_(g_rot.square(), alpha=1.0 - beta2)
 
+                demo_noise_param = None
                 if state["use_precond"]:
                     if group["correct_bias"]:
                         v_hat = eas / (1.0 - beta2 ** state["step"])
@@ -259,8 +291,28 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                     state["precond"] = P if two_d else P.squeeze(1)
 
                     update_rot = m_hat * P
-                    update = self._project_back(update_rot, qL, qR)
                     step_size = group["lr"]
+
+                    # demographic-noise (pSGLD) injection in the eigenbasis. Applied preconditioner
+                    # H_coord = P, so FDT-correct param noise ~ N(0, 2*T*lr*P); std =
+                    # langevin_noise_std(1/P, T, lr). Turns convergence into posterior sampling.
+                    inject = (group["demographic_noise"]
+                              and group["demographic_temperature"] > 0.0
+                              and state["step"] > group["demographic_warmup"])
+                    if inject:
+                        std = langevin_noise_std(P.reciprocal(),
+                                                 group["demographic_temperature"], step_size)
+                        clamp = group["demographic_precond_clamp"]
+                        if clamp and clamp > 0:
+                            std = std.clamp_max((2.0 * group["demographic_temperature"]
+                                                 * step_size * clamp) ** 0.5)
+                        gen = self._device_generator(group["demographic_generator"], update_rot.device)
+                        z = torch.randn(update_rot.shape, generator=gen,
+                                        device=update_rot.device, dtype=update_rot.dtype)
+                        demo_noise_param = self._project_back(std * z, qL, qR)
+                        demo_noise_param = demo_noise_param if two_d else demo_noise_param.squeeze(1)
+
+                    update = self._project_back(update_rot, qL, qR)
                 else:
                     denom = eas.sqrt().add_(eps)
                     update = ea / denom
@@ -278,6 +330,8 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                         update = update * (p_clip / (un + 1e-12))
 
                 p.add_(update, alpha=-step_size)
+                if demo_noise_param is not None:
+                    p.add_(demo_noise_param)           # pSGLD noise (not scaled by step_size)
                 if group["weight_decay"] > 0.0:
                     p.add_(p, alpha=-group["lr"] * group["weight_decay"])
 
