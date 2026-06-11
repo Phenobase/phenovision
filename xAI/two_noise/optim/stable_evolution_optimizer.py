@@ -210,16 +210,22 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
     def mean_exponent(self):
         """Size-weighted mean of the last realized per-coordinate exponent across all
         preconditioned params (the optimizer's OWN-terms operative alpha). NaN before the
-        first preconditioned step. Used by the cross-substrate alpha*(noise) overlay."""
-        tot, w = 0.0, 0.0
+        first preconditioned step. Used by the cross-substrate alpha*(noise) overlay.
+
+        alpha_mean is stored as a 0-dim DEVICE tensor (step() does no host sync); the single
+        host sync happens here, at read time only."""
+        tot, w = None, 0
         for group in self.param_groups:
             for p in group["params"]:
                 st = self.state.get(p, {})
                 if "alpha_mean" in st:
                     n = st.get("alpha_numel", 1)
-                    tot += st["alpha_mean"] * n
+                    term = st["alpha_mean"] * n
+                    tot = term if tot is None else tot + term
                     w += n
-        return tot / w if w > 0 else float("nan")
+        if not w or tot is None:
+            return float("nan")
+        return float(tot / w)            # one host sync, only when read
 
     @torch.no_grad()
     def step(self, closure=None):
@@ -274,8 +280,11 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
 
                     # surface the realized per-coordinate exponent (the optimizer's OWN-terms
                     # operative alpha) for cross-substrate logging; aggregate via mean_exponent().
-                    state["alpha_mean"] = float(alpha.mean())
-                    state["alpha_numel"] = int(alpha.numel())
+                    # Keep it ON-DEVICE (no host sync per step) so the instrumentation does not slow
+                    # the step — the single host sync happens only when mean_exponent() is read
+                    # (every log_every steps), keeping step time competitive with plain SOAP.
+                    state["alpha_mean"] = alpha.mean().detach()     # 0-dim device tensor, no sync
+                    state["alpha_numel"] = alpha.numel()            # python int (shape meta, no sync)
 
                     # (3) BOUNDED RESPONSE: relative spectral floor / LM damping in the target.
                     v_damp = v_hat + damping * v_hat.amax().clamp_min(eps)
