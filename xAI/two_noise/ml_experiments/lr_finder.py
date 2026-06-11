@@ -99,9 +99,22 @@ def lr_range_test(model, optimizer, train_loader, device, *, lr_min, lr_max, n_i
     return records
 
 
-def suggest_lr(records, fallback):
-    """fastai-style: lr at STEEPEST descent of smoothed loss vs log(lr), capped at the loss min.
-    Falls back to `fallback` if the test never produced a clean descent."""
+def _choose_lr(steepest_lr, min_loss_lr, lr_min, fallback=None):
+    """Robust hybrid pick. The steepest-descent point is trustworthy ONLY when it is clear of the
+    ramp floor (it otherwise latches onto the early warmup transient) and at/below the loss
+    minimum; otherwise use the classic conservative `min_loss/10` (one order below the minimum)."""
+    if not (np.isfinite(min_loss_lr) and min_loss_lr > 0):
+        return float(fallback) if fallback else float("nan")
+    conservative = min_loss_lr / 10.0
+    if (np.isfinite(steepest_lr) and steepest_lr > 3.0 * lr_min
+            and steepest_lr <= min_loss_lr):
+        return float(steepest_lr)
+    return float(conservative)
+
+
+def suggest_lr(records, fallback, lr_min=1e-6):
+    """fastai-style LR suggestion via the robust hybrid (_choose_lr). Returns
+    (suggested, steepest_lr, min_loss_lr)."""
     if len(records) < 12:
         return fallback, float("nan"), float("nan")
     lrs = np.array([r["lr"] for r in records])
@@ -115,8 +128,25 @@ def suggest_lr(records, fallback):
     min_loss_lr = float(lrs[int(np.argmin(s))])
     if np.min(grad) >= 0:                           # never descended -> fall back
         return fallback, steepest_lr, min_loss_lr
-    suggested = float(min(steepest_lr, min_loss_lr))  # don't exceed the loss-minimizing lr
-    return suggested, steepest_lr, min_loss_lr
+    return _choose_lr(steepest_lr, min_loss_lr, lr_min, fallback), steepest_lr, min_loss_lr
+
+
+def recompute_suggested(csv_path, lr_min=1e-6):
+    """Rewrite the suggested_lr column of a lr_finder suggested.csv from its recorded
+    steepest_lr/min_loss_lr columns using the robust hybrid — repairs a CSV written by an older
+    heuristic with NO GPU re-run."""
+    import csv as _csv
+    rows = list(_csv.DictReader(open(csv_path)))
+    if not rows:
+        return
+    for r in rows:
+        st = float(r.get("steepest_lr", "nan") or "nan")
+        ml = float(r.get("min_loss_lr", "nan") or "nan")
+        r["suggested_lr"] = f"{_choose_lr(st, ml, lr_min):g}"
+    with open(csv_path, "w", newline="") as f:
+        w = _csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w.writeheader(); w.writerows(rows)
+    print(f"[lr_finder] recomputed suggested_lr (hybrid) in {csv_path}")
 
 
 def run_cell(model_name, dataset, tag, batch_size, micro_batch, args, device):
@@ -136,7 +166,7 @@ def run_cell(model_name, dataset, tag, batch_size, micro_batch, args, device):
                          lr_max=args.lr_max, n_iter=args.n_iter, accum_steps=accum,
                          amp=args.amp, grad_clip=args.grad_clip)
     fallback = default_lr(name, alpha if alpha is not None else 0.5, args.base_lr)
-    suggested, steepest, min_loss = suggest_lr(recs, fallback)
+    suggested, steepest, min_loss = suggest_lr(recs, fallback, lr_min=args.lr_min)
 
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "lr_finder")
     out_dir.mkdir(parents=True, exist_ok=True)
