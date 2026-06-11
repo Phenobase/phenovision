@@ -38,5 +38,13 @@ ARGS=$(sed -n "${LINE}p" "$GRID")
 if [[ -z "$ARGS" ]]; then
     echo "No config at line ${LINE} of $GRID (array index ${SLURM_ARRAY_TASK_ID})"; exit 1
 fi
+# Stage the dataset ONCE across concurrent array tasks: flock serializes, and _harness only
+# downloads/extracts if absent (read-only otherwise), so tasks never race on extraction.
+DS=$(echo "$ARGS" | grep -oE '\-\-dataset[= ]\S+' | awk -F'[ =]' '{print $2}')
+if [[ "$DS" == "cifar100" ]]; then
+    flock /tmp/tn_prestage_${DS}.lock mamba run -n two_noise \
+        python -m ml_experiments._harness --prestage "$DS" || true
+fi
+
 echo "[cmp task ${SLURM_ARRAY_TASK_ID}] config: $ARGS"
 mamba run -n two_noise python -m ml_experiments.benchmarks $ARGS

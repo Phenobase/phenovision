@@ -213,11 +213,27 @@ def _loader(ds, batch_size, shuffle, num_workers, generator, pin_memory, drop_la
     )
 
 
+def ensure_dataset(dataset: str, data_dir: str = "data") -> None:
+    """Stage a dataset ONCE (download+extract if absent), single-process. Call this before
+    launching parallel SLURM-array tasks so they find the data present and read it read-only,
+    instead of each racing to (re-)extract into the same directory."""
+    make_data(dataset, batch_size=2, num_workers=0, data_dir=data_dir, download=True)
+
+
+def _cifar100_present(data_dir) -> bool:
+    base = Path(data_dir) / "cifar-100-python"
+    return (base / "train").exists() and (base / "test").exists()
+
+
 def _make_cifar100(batch_size, num_workers, img_size, generator, data_dir, download, pin_memory):
     from torchvision.datasets import CIFAR100
-    train = CIFAR100(root=str(data_dir), train=True, download=download,
+    # Download/extract ONLY if the data is genuinely absent. Otherwise read-only — so parallel
+    # SLURM-array tasks never re-extract into the same dir and race (the Errno-5 corruption).
+    # Stage once up front with ensure_dataset() before launching an array.
+    dl = bool(download) and not _cifar100_present(data_dir)
+    train = CIFAR100(root=str(data_dir), train=True, download=dl,
                      transform=_vision_transforms(True, img_size))
-    val = CIFAR100(root=str(data_dir), train=False, download=download,
+    val = CIFAR100(root=str(data_dir), train=False, download=dl,
                    transform=_vision_transforms(False, img_size))
     meta = DataMeta("cifar100", "vision", num_classes=100,
                     n_train=len(train), n_val=len(val))
@@ -725,3 +741,16 @@ def train_eval(
         result.records[-1]["val_metric"] = vm
         result.records[-1]["val_loss"] = vl
     return result
+
+
+if __name__ == "__main__":
+    # CLI: stage a dataset once before launching parallel array tasks, e.g.
+    #   python -m ml_experiments._harness --prestage cifar100
+    import argparse
+    _p = argparse.ArgumentParser(description="harness data utilities")
+    _p.add_argument("--prestage", help="dataset to download+extract once (e.g. cifar100)")
+    _p.add_argument("--data-dir", default="data")
+    _a = _p.parse_args()
+    if _a.prestage:
+        ensure_dataset(_a.prestage, _a.data_dir)
+        print(f"[_harness] staged dataset '{_a.prestage}' under {_a.data_dir}/")
