@@ -46,10 +46,14 @@ def optimizer_panel() -> pd.DataFrame | None:
     d = RUNS / "alpha_vs_batch"
     if not d.exists():
         return None
-    frames = [pd.read_csv(f) for f in d.glob("*.csv")]
+    # only the fixed-alpha SOAP grid feeds the alpha-pivot; the stable_evo overlay (single alpha,
+    # realized mean_exponent) is a SEPARATE panel (stable_evo_panel) so it can't pollute the pivot.
+    frames = [pd.read_csv(f) for f in d.glob("*.csv") if not f.name.endswith("_stable_evo.csv")]
     if not frames:
         return None
     df = pd.concat(frames, ignore_index=True)
+    if "optimizer" in df.columns:
+        df = df[df["optimizer"] == "soap"]
     piv = df.pivot_table(index="batch_size", columns="alpha", values="val_loss", aggfunc="first")
     if 1.0 not in piv.columns or 0.5 not in piv.columns:
         return df  # fall back to raw if the needed alphas are absent
@@ -87,6 +91,34 @@ def alpha1_panel() -> pd.DataFrame | None:
     return pd.read_csv(f) if f.exists() else None
 
 
+def stable_evo_panel() -> pd.DataFrame | None:
+    """StableEvolutionSOAP overlay: the REALIZED operative exponent (mean_exponent) vs batch size
+    — the selection-driven optimizer's own alpha*(batch), which should rise with batch (the
+    cross-substrate prediction, realized by the optimizer for free)."""
+    d = RUNS / "alpha_vs_batch"
+    if not d.exists():
+        return None
+    frames = [pd.read_csv(f) for f in d.glob("*_stable_evo.csv")]
+    if not frames:
+        return None
+    df = pd.concat(frames, ignore_index=True)
+    keep = [c for c in ("model", "dataset", "batch_size", "mean_exponent", "val_loss") if c in df.columns]
+    return df[keep].sort_values("batch_size").reset_index(drop=True)
+
+
+def anisotropy_flip_panel() -> pd.DataFrame | None:
+    """Biology severity panel (T1/T2): the evolved-M exponent vs disaster severity / N / tail.
+    Maps the measured ratio to the shared y-axis 'realized alpha' via M∝A^{−α}  =>
+    slope(log m vs log a) = −α, so alpha_evolved = −slope_logm_vs_loga. ratio>1 (A⁻¹) -> alpha→1
+    (catastrophe/hedge); ratio<1 (A⁺) -> alpha<0 (arithmetic/track)."""
+    f = RUNS / "anisotropy_flip" / "results.csv"
+    if not f.exists():
+        return None
+    df = pd.read_csv(f).copy()
+    df["alpha_evolved"] = -df["slope_logm_vs_loga"]
+    return df
+
+
 def build(outdir: Path = OUT):
     outdir.mkdir(parents=True, exist_ok=True)
     written = []
@@ -107,6 +139,16 @@ def build(outdir: Path = OUT):
         a1.to_csv(outdir / "alpha1_panel.csv", index=False); written.append("alpha1_panel.csv")
     else:
         print("[note] no alpha1_stability results yet -> alpha1 panel skipped")
+    se = stable_evo_panel()
+    if se is not None:
+        se.to_csv(outdir / "stable_evo_panel.csv", index=False); written.append("stable_evo_panel.csv")
+    else:
+        print("[note] no stable_evo run yet -> stable_evo panel skipped")
+    flip = anisotropy_flip_panel()
+    if flip is not None:
+        flip.to_csv(outdir / "anisotropy_flip_panel.csv", index=False); written.append("anisotropy_flip_panel.csv")
+    else:
+        print("[note] no anisotropy_flip results yet -> flip panel skipped")
     print("wrote:", ", ".join(written), "to", outdir)
     return written
 

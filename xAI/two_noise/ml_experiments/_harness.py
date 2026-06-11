@@ -428,6 +428,26 @@ def make_optimizer(
         )
         soap_kw.update(kw)
         return SOAPFullPower(params, **soap_kw), lr
+    if name == "stable_evo":
+        # StableEvolutionSOAP: GENERATE-don't-INVERT preconditioner with a selection-driven
+        # per-coordinate exponent (alpha = 1/2 + 1/2*shrink). No precond_power; the operative
+        # exponent is dynamic and read back via optimizer.mean_exponent(). `alpha` here only
+        # influences default_lr (treated Newton-like as alpha->1, shared with soap/riccati).
+        from optim.stable_evolution_optimizer import StableEvolutionSOAP
+        se_kw = dict(
+            lr=lr,
+            betas=(0.95, 0.95),
+            alpha_max=kw.pop("alpha_max", 0.9),
+            alpha_min=kw.pop("alpha_min", 0.5),
+            kappa=kw.pop("kappa", 0.4),
+            damping=kw.pop("damping", 1e-2),
+            weight_decay=weight_decay,
+            precondition_frequency=kw.pop("precondition_frequency", 10),
+            selection_off=kw.pop("selection_off", False),
+            max_update_norm=kw.pop("max_update_norm", 1.0),
+        )
+        se_kw.update(kw)
+        return StableEvolutionSOAP(params, **se_kw), lr
     if name == "riccati":
         from optim.riccati_precond import RiccatiPrecond
         # alpha selects the base mode (whiten=1/2, inverse=1); --precond-mode overrides.
@@ -624,6 +644,10 @@ def train_eval(
                 val_metric=float("nan"),
                 val_loss=float("nan"),
             )
+            # surface the optimizer's realized operative exponent if it exposes one
+            # (StableEvolutionSOAP) — for the cross-substrate alpha*(noise) overlay.
+            if hasattr(optimizer, "mean_exponent"):
+                row["mean_exponent"] = optimizer.mean_exponent()
             if do_eval:
                 vm, vl, _ = evaluate(model, val_loader, device, is_lm, eval_max_batches)
                 row["val_metric"] = vm

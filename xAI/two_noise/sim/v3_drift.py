@@ -64,7 +64,9 @@ def measure_drift(M0, A, *, design="eig_diag", regime="static", N=600, L=12, mu=
                   burn_in=400, tau=60, n_replicates=64, Lm=8, mu_mod=0.25, mut_var_mod=0.02,
                   N_star=1e6, env_sigma=0.0, seed=0, lam=1.0, Omega=None,
                   diversity_lambda=0.0, mut_load_coef=0.0,
-                  challenge_strength=0.0, challenge_sigma=0.0, challenge_aniso=None):
+                  challenge_strength=0.0, challenge_sigma=0.0, challenge_aniso=None,
+                  challenge_tail="gaussian", challenge_df=4.0,
+                  challenge_mode="fecundity", challenge_radius=0.0):
     n = 2
     A = np.asarray(A, float)
     config = make_config(N=N, L=L, n_traits=n, mu=mu, A=jnp.asarray(A, jnp.float32), Ne=N)
@@ -88,7 +90,9 @@ def measure_drift(M0, A, *, design="eig_diag", regime="static", N=600, L=12, mu=
     hyper_active = make_hyper(design=design, n_traits=n, Lm=Lm, mu_mod=mu_mod,
                               mut_var_mod=mut_var_mod, diversity_lambda=diversity_lambda,
                               mut_load_coef=mut_load_coef, challenge_strength=challenge_strength,
-                              challenge_sigma=challenge_sigma, challenge_aniso=challenge_aniso)
+                              challenge_sigma=challenge_sigma, challenge_aniso=challenge_aniso,
+                              challenge_tail=challenge_tail, challenge_df=challenge_df,
+                              challenge_mode=challenge_mode, challenge_radius=challenge_radius)
     k0, k1, k2 = jax.random.split(jax.random.PRNGKey(seed), 3)
     # phase 1: frozen burn-in -> fast variables equilibrated at M0
     _, final = run_evo_sim(k1, config, hyper_frozen, design, burn_in, n_replicates,

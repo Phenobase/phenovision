@@ -46,7 +46,7 @@ CSV_COLUMNS = [
     "model", "dataset", "optimizer", "alpha", "lr", "batch_size", "micro_batch",
     "accum_steps", "budget_microbatches", "opt_steps", "val_loss", "val_metric",
     "val_metric_name", "best_train_loss", "peak_mem_mb", "mean_step_time_ms",
-    "is_alpha_star", "seed",
+    "mean_exponent", "is_alpha_star", "seed",
 ]
 
 
@@ -79,14 +79,19 @@ def run_cell(model_name, dataset, alpha, batch_size, micro_batch, budget_microba
     else:
         model = make_model(model_name, num_classes=meta.num_classes)
 
-    lr = args.lr if args.lr is not None else default_lr("soap", alpha, args.base_lr)
+    opt_name = args.optimizer
+    lr = args.lr if args.lr is not None else default_lr(opt_name, alpha, args.base_lr)
     # Full-inverse (alpha->1) over-steps at small batch (high gradient noise) and can diverge;
     # an update-norm trust region keeps it finite so the cell yields a real datapoint. Harmless
-    # at small alpha (updates are already small).
+    # at small alpha (updates are already small). stable_evo is selection-driven (alpha only sets
+    # lr); its REALIZED exponent is read back via optimizer.mean_exponent() and logged per cell.
+    extra_opt_kw = dict(max_update_norm=2.0)
+    if opt_name == "stable_evo":
+        extra_opt_kw.update(selection_off=args.selection_off, alpha_max=args.alpha_max)
     optimizer, lr_actual = make_optimizer(
-        "soap", model.parameters(), alpha=alpha, lr=lr,
+        opt_name, model.parameters(), alpha=alpha, lr=lr,
         weight_decay=args.weight_decay, base_lr=args.base_lr,
-        max_update_norm=2.0,
+        **extra_opt_kw,
     )
 
     try:
@@ -102,22 +107,24 @@ def run_cell(model_name, dataset, alpha, batch_size, micro_batch, budget_microba
         # so alpha* is still found from the finite cells (run() already filters non-finite).
         print(f"[alpha_vs_batch] DIVERGED B={batch_size} alpha={alpha:g}: {e}")
         return dict(
-            model=model_name, dataset=dataset, optimizer="soap", alpha=alpha, lr=lr_actual,
+            model=model_name, dataset=dataset, optimizer=opt_name, alpha=alpha, lr=lr_actual,
             batch_size=batch_size, micro_batch=micro_batch, accum_steps=accum_steps,
             budget_microbatches=budget_microbatches, opt_steps=opt_steps,
             val_loss=float("inf"), val_metric=float("nan"), val_metric_name="diverged",
             best_train_loss=float("inf"), peak_mem_mb=float("nan"),
-            mean_step_time_ms=float("nan"), is_alpha_star=False, seed=args.seed,
+            mean_step_time_ms=float("nan"), mean_exponent=float("nan"),
+            is_alpha_star=False, seed=args.seed,
         )
     best_train = min((r["train_loss"] for r in result.records), default=float("nan"))
+    realized = optimizer.mean_exponent() if hasattr(optimizer, "mean_exponent") else float("nan")
     return dict(
-        model=model_name, dataset=dataset, optimizer="soap", alpha=alpha, lr=lr_actual,
+        model=model_name, dataset=dataset, optimizer=opt_name, alpha=alpha, lr=lr_actual,
         batch_size=batch_size, micro_batch=micro_batch, accum_steps=accum_steps,
         budget_microbatches=budget_microbatches, opt_steps=opt_steps,
         val_loss=result.final_val_loss, val_metric=result.final_val_metric,
         val_metric_name=result.val_metric_name, best_train_loss=best_train,
         peak_mem_mb=result.peak_mem_mb, mean_step_time_ms=result.mean_step_time_ms,
-        is_alpha_star=False, seed=args.seed,
+        mean_exponent=realized, is_alpha_star=False, seed=args.seed,
     )
 
 
@@ -141,7 +148,10 @@ def run(args):
         rows.extend(cells)
 
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "alpha_vs_batch")
-    csv_path = out_dir / f"{args.model}_{args.dataset}.csv"
+    # keep soap as the canonical <model>_<dataset>.csv; tag other optimizers so the stable_evo
+    # overlay does not clobber the fixed-alpha grid.
+    suffix = "" if args.optimizer == "soap" else f"_{args.optimizer}"
+    csv_path = out_dir / f"{args.model}_{args.dataset}{suffix}.csv"
     write_csv(csv_path, rows)
     print(f"[alpha_vs_batch] wrote {csv_path} ({len(rows)} cells)")
     return csv_path
@@ -153,6 +163,14 @@ def build_parser():
     p.add_argument("--model", required=True, help="vit_s|vit_b|nanogpt|nanogpt_m|tiny_vision")
     p.add_argument("--dataset", required=True,
                    help="cifar100|tiny_imagenet|tinystories|synthetic_vision|synthetic_lm")
+    p.add_argument("--optimizer", default="soap",
+                   help="soap (the fixed-alpha grid) | stable_evo (selection-driven; logs the "
+                        "REALIZED mean_exponent per batch). For stable_evo pass a single --alphas "
+                        "value (it only sets lr).")
+    p.add_argument("--selection-off", action="store_true",
+                   help="stable_evo only: pin alpha=alpha_max (the recapitulation framing).")
+    p.add_argument("--alpha-max", type=float, default=0.9,
+                   help="stable_evo only: ceiling on the per-coordinate exponent (1.0 for recap).")
     p.add_argument("--alphas", type=float, nargs="+", default=[0.0, 0.25, 0.5, 0.75, 1.0])
     p.add_argument("--batch-sizes", type=int, nargs="+", default=[16, 64, 256, 1024, 4096])
     p.add_argument("--micro-batch", type=int, default=16,

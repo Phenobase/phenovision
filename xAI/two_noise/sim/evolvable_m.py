@@ -81,6 +81,18 @@ class EvoHyper(NamedTuple):
     challenge_aniso: jnp.ndarray = None  # (n,) per-trait relative std of θ_chal; Cov(θ_chal)=
                                          # diag((σ·aniso)²)=Ω_chal. None => isotropic (ones). Used
                                          # to test Channel 1 (M∝Ω) vs Channel 2 (M∝A⁻¹).
+    # --- T1/T2 (notes_landscape_disaster_benefit.md §3.4): the SEVERITY/TAIL axis that selects the
+    #     arithmetic regime (M∝A⁺, §3.1) vs the catastrophe regime (M∝A⁻¹, §3.3). Defaults reproduce
+    #     the original soft-Gaussian-fecundity challenge exactly.
+    challenge_tail: str = "gaussian"   # "gaussian" | "student_t": θ_chal magnitude tail. Heavy tail
+                                       # (student_t, low df) => rare huge disasters dominate the
+                                       # geometric mean => the log-det/catastrophe regime.
+    challenge_df: float = 4.0          # Student-t degrees of freedom (only used when tail=student_t;
+                                       # smaller = heavier; df→∞ recovers gaussian).
+    challenge_mode: str = "fecundity"  # "fecundity" (soft exp-weight) | "viability" (hard survival
+                                       # floor: outside challenge_radius the disaster kills, the
+                                       # §3.3 unrecoverable-bad-generation mechanism).
+    challenge_radius: float = 0.0      # viability survival radius (0 => default to challenge_sigma).
 
 
 def n_modifier_params(design: str, n: int) -> int:
@@ -214,9 +226,25 @@ def step_generation_evolvable(key, state: EvoState, config: Config, hyper: EvoHy
     # the multiplicative-across-generations structure -- no imposed cost/benefit term.
     if hyper.challenge_strength > 0.0:
         aniso = jnp.ones((n,)) if hyper.challenge_aniso is None else hyper.challenge_aniso
-        theta_chal = hyper.challenge_sigma * aniso * jax.random.normal(k_chal, (n,))  # Ω_chal=diag((σ·aniso)²)
-        d = z - theta_chal[None, :]
-        W = W * jnp.exp(-0.5 * hyper.challenge_strength * jnp.sum(d * d, axis=1))
+        # draw the disaster optimum θ_chal. gaussian: Ω_chal=diag((σ·aniso)²). student_t: a scale
+        # mixture (isotropic direction, heavy-tailed magnitude) -> rare huge displacements (note §3.3).
+        if hyper.challenge_tail == "student_t":
+            k_chal, k_scale = jax.random.split(k_chal)
+            zc = jax.random.normal(k_chal, (n,))
+            chi = jax.random.chisquare(k_scale, hyper.challenge_df)         # shared scale mixer
+            s_mix = jnp.sqrt(hyper.challenge_df / jnp.maximum(chi, 1e-6))
+            theta_chal = hyper.challenge_sigma * aniso * zc * s_mix
+        else:  # gaussian (default; reproduces the original challenge exactly)
+            theta_chal = hyper.challenge_sigma * aniso * jax.random.normal(k_chal, (n,))
+        d2 = jnp.sum((z - theta_chal[None, :]) ** 2, axis=1)               # |z-θ_chal|² per individual
+        if hyper.challenge_mode == "viability":
+            # hard survival floor: outside the radius the disaster kills (W->~0); in finite N a
+            # single near-total-wipeout generation is unrecoverable (the §3.3 catastrophe mechanism).
+            radius2 = (hyper.challenge_radius if hyper.challenge_radius > 0.0
+                       else hyper.challenge_sigma) ** 2
+            W = W * jnp.where(d2 <= radius2, 1.0, 1e-6)
+        else:  # fecundity: soft Gaussian selection (the arithmetic-regime-friendly default)
+            W = W * jnp.exp(-0.5 * hyper.challenge_strength * d2)
 
     # EXPLORATION regime: the net second-order load  ½c·tr(A S) - ½λ·logdet S  applied as a
     # per-individual selection differential. The benefit ½λ logdet S (bet-hedging / non-collapse)
@@ -350,11 +378,15 @@ def continue_evo_sim(states_batched, config: Config, hyper: EvoHyper, design: st
 
 def make_hyper(*, design="eig_diag", n_traits=2, Lm=6, mu_mod=0.0, mut_var_mod=0.01,
                diversity_lambda=0.0, mut_load_coef=0.0,
-               challenge_strength=0.0, challenge_sigma=0.0, challenge_aniso=None) -> EvoHyper:
+               challenge_strength=0.0, challenge_sigma=0.0, challenge_aniso=None,
+               challenge_tail="gaussian", challenge_df=4.0,
+               challenge_mode="fecundity", challenge_radius=0.0) -> EvoHyper:
     """Build an EvoHyper, computing P from the design and n_traits."""
     aniso = None if challenge_aniso is None else jnp.asarray(challenge_aniso, jnp.float32)
     return EvoHyper(Lm=int(Lm), P=int(n_modifier_params(design, n_traits)),
                     mu_mod=float(mu_mod), mut_var_mod=float(mut_var_mod),
                     diversity_lambda=float(diversity_lambda), mut_load_coef=float(mut_load_coef),
                     challenge_strength=float(challenge_strength),
-                    challenge_sigma=float(challenge_sigma), challenge_aniso=aniso)
+                    challenge_sigma=float(challenge_sigma), challenge_aniso=aniso,
+                    challenge_tail=str(challenge_tail), challenge_df=float(challenge_df),
+                    challenge_mode=str(challenge_mode), challenge_radius=float(challenge_radius))
