@@ -120,6 +120,7 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         demographic_warmup: int = 0,
         demographic_precond_clamp: float = 0.0,
         demographic_shape_exp: "float | None" = None,
+        demographic_anneal: bool = False,
     ):
         defaults = dict(
             lr=lr, betas=betas, shampoo_beta=shampoo_beta,
@@ -142,6 +143,9 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
             #     variance ∝ v̂**β, trace-matched to P so only the SHAPE varies at matched
             #     temperature: β=+1 ~ Fisher/curvature-aligned (like minibatch noise), β=0 isotropic.
             demographic_shape_exp=demographic_shape_exp,
+            # self-annealing knob: scale injected std by sqrt(shrink) so noise fades near
+            #     convergence (canalization) — separates ANNEALING from shape.
+            demographic_anneal=demographic_anneal,
         )
         super().__init__(params, defaults)
         self._demo_gen_cache = {}
@@ -258,9 +262,16 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         """Size-weighted mean realized exponent (NaN before the first preconditioned step)."""
         return self.exponent_stats()["mean"]
 
+    def loss_tax(self):
+        """Diagonal loss-tax ½·tr(H·Σ_noise) ≈ ½Σ v̂·variance from the LAST step's injection
+        (0 when not injecting). The rate the injected noise raises the loss — the transient
+        observable whose equilibrium integral is trace-only but whose path is shape-dependent."""
+        return float(getattr(self, "_loss_tax", 0.0))
+
     @torch.no_grad()
     def step(self, closure=None):
         loss = closure() if closure is not None else None
+        self._loss_tax = 0.0      # diagonal noise loss-tax this step (0 unless injecting)
 
         for group in self.param_groups:
             p_clip = group["max_update_norm"]
@@ -303,10 +314,12 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                         v_hat, m_hat = eas, ea
 
                     # (2) SELECTION: per-coordinate exponent from the gradient signal fraction.
+                    #     shrink (signal fraction m̂²/v̂ ∈[0,1]) is always computed — it drives the
+                    #     exponent AND the optional self-annealing injection (canalization).
+                    shrink = (m_hat.square() / (v_hat + eps)).clamp_(0.0, 1.0)
                     if group["selection_off"]:
                         alpha = torch.full_like(v_hat, a_max)
                     else:
-                        shrink = (m_hat.square() / (v_hat + eps)).clamp_(0.0, 1.0)
                         alpha = a_min + (a_max - a_min) * shrink      # in [alpha_min, alpha_max]
 
                     # surface the realized per-coordinate exponent (the optimizer's OWN-terms
@@ -357,6 +370,18 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                         clamp = group["demographic_precond_clamp"]
                         if clamp and clamp > 0:
                             std = std.clamp_max((2.0 * T * step_size * clamp) ** 0.5)
+                        if group["demographic_anneal"]:
+                            # SELF-ANNEALING / canalization: scale the injected std by sqrt(shrink)
+                            # so the noise FADES where/when the gradient becomes noise-dominated
+                            # (shrink->0 near convergence) — mimicking minibatch noise vanishing
+                            # toward interpolation. Tests whether ANNEALING, not shape, is what makes
+                            # noise benign. (Not trace-matched to pSGLD by design — annealing is a
+                            # deliberate reduction of the late-stage noise.)
+                            std = std * shrink.sqrt()
+                        # diagonal loss-tax: rate the injected noise raises the loss,
+                        # ½ tr(H·Σ_noise) ≈ ½ Σ v_damp·variance (v_damp ~ diagonal curvature in the
+                        # eigenbasis). Accumulated across param groups; read via loss_tax().
+                        self._loss_tax += 0.5 * float((v_damp * std.square()).sum())
                         gen = self._device_generator(group["demographic_generator"], update_rot.device)
                         z = torch.randn(update_rot.shape, generator=gen,
                                         device=update_rot.device, dtype=update_rot.dtype)

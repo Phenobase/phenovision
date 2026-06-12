@@ -766,6 +766,11 @@ def train_eval(
                 row["exp_frac_floor"] = es["frac_floor"]
             elif hasattr(optimizer, "mean_exponent"):
                 row["mean_exponent"] = optimizer.mean_exponent()
+            # diagonal noise loss-tax ½·tr(H·Σ_noise) from the injection (0 when not injecting) —
+            # the transient observable that varies with noise SHAPE even though its equilibrium
+            # integral is trace-only (experiment B).
+            if hasattr(optimizer, "loss_tax"):
+                row["loss_tax"] = optimizer.loss_tax()
             # gradient noise scale B_simple = tr(Σ)/|g|² at the current weights (critical batch
             # size) — tells us where the injected demographic temperature sits vs the natural
             # minibatch-sampling temperature, and how that ratio evolves over training.

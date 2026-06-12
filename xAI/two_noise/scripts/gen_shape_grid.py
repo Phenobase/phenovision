@@ -29,6 +29,9 @@ SHAPES = {
     "psgld":  ("", "psgld"),
     "iso":    ("--demographic-shape-exp 0", "iso"),
     "fisher": ("--demographic-shape-exp 1", "fisher"),
+    # self-annealing (canalization): pSGLD shape but noise fades near convergence (sqrt(shrink)).
+    # Tests whether ANNEALING, not shape, is what makes minibatch noise benign.
+    "anneal": ("--demographic-anneal", "anneal"),
 }
 
 
@@ -39,7 +42,8 @@ def main():
     ap.add_argument("--lr", type=float, default=2.5e-3, help="fixed lr (match the disentangle sweep)")
     ap.add_argument("--batch-sizes", type=int, nargs="+", default=[4096, 64],
                     help="4096 = breeder's testbed (gradient noise ~0); 64 = high-grad-noise contrast")
-    ap.add_argument("--shapes", nargs="+", default=["psgld", "fisher", "iso"], choices=list(SHAPES))
+    ap.add_argument("--shapes", nargs="+", default=["psgld", "fisher", "iso", "anneal"],
+                    choices=list(SHAPES))
     ap.add_argument("--with-base", action="store_true", default=True,
                     help="also emit the no-demo baseline per batch (reference)")
     ap.add_argument("--epochs", type=int, default=30)
@@ -50,6 +54,11 @@ def main():
     ap.add_argument("--noise-scale-k", type=int, default=8)
     ap.add_argument("--runs-dir", default=str(ROOT / "runs" / "benchmarks_shape"))
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--min-steps", type=int, default=1500,
+                    help="floor on optimizer steps per cell. Large batch -> few steps/epoch "
+                         "(bs4096=13/epoch), and demo noise SLOWS convergence, so an epoch budget "
+                         "alone leaves the large-batch (breeder's-testbed) cells step-starved and "
+                         "the shape comparison undertraining-confounded. Floor keeps them comparable.")
     ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args()
 
@@ -58,7 +67,7 @@ def main():
         micro = min(bs, args.micro_batch)
         accum = max(1, bs // micro)
         spe = max(1, math.ceil(args.dataset_size / bs))
-        ms = args.epochs * spe
+        ms = max(args.epochs * spe, args.min_steps)    # step floor: don't starve large-batch cells
         ee = max(20, ms // 50)
         head = (f"--model vit_s --dataset cifar100 --optimizer stable_evo --lr {args.lr:g} "
                 f"--max-update-norm 2.0 --batch-size {micro} --accum-steps {accum} "

@@ -45,6 +45,7 @@ CSV_COLUMNS = [
     "exp_std", "exp_max", "exp_frac_high", "exp_frac_floor", "demo_temp", "variant",
     # SWA / iterate-averaging eval (MAP estimate) + gradient noise scale (McCandlish B_simple)
     "val_metric_swa", "val_loss_swa", "noise_scale", "grad_norm_sq", "tr_sigma",
+    "loss_tax",   # diagonal noise loss-tax ½·tr(H·Σ_noise) (experiment B shape diagnostic)
 ]
 
 
@@ -114,6 +115,8 @@ def run(args) -> Path:
         opt_kw["demographic_generator"] = torch.Generator().manual_seed(args.seed + 9973)
         if args.optimizer == "stable_evo" and args.demographic_shape_exp is not None:
             opt_kw["demographic_shape_exp"] = args.demographic_shape_exp   # experiment B noise shape
+        if args.optimizer == "stable_evo" and args.demographic_anneal:
+            opt_kw["demographic_anneal"] = True                            # self-annealing variant
     if args.optimizer == "riccati":
         # Riccati uses shrink/safeguard as the stabilizer, NOT max_update_norm (which
         # clips the step and breaks FDT). precond_mode overrides the alpha->mode default.
@@ -201,6 +204,10 @@ def build_parser():
                         "the pSGLD preconditioner shape so only the SHAPE varies at matched "
                         "temperature. Default (unset)=pSGLD/FDT (∝P). β=1 ~ Fisher/curvature-aligned "
                         "(like minibatch noise); β=0 isotropic.")
+    p.add_argument("--demographic-anneal", action="store_true",
+                   help="stable_evo SELF-ANNEALING injection: scale the noise by sqrt(shrink) so it "
+                        "fades as gradients become noise-dominated near convergence (canalization). "
+                        "Tests whether ANNEALING, not shape, is what makes noise benign.")
     p.add_argument("--label-suffix", default="",
                    help="tag appended to the config name + a 'variant' column, to distinguish "
                         "otherwise-identical optimizers (e.g. 'soaplr' = stable_evo run at soap's lr)")
