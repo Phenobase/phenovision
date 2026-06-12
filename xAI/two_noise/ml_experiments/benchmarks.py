@@ -43,6 +43,8 @@ CSV_COLUMNS = [
     "val_metric_name", "val_loss", "peak_mem_mb", "step_time_ms", "seed",
     "precond_mode", "shrink", "evolve_m", "mean_exponent",
     "exp_std", "exp_max", "exp_frac_high", "exp_frac_floor", "demo_temp", "variant",
+    # SWA / iterate-averaging eval (MAP estimate) + gradient noise scale (McCandlish B_simple)
+    "val_metric_swa", "val_loss_swa", "noise_scale", "grad_norm_sq", "tr_sigma",
 ]
 
 
@@ -110,6 +112,8 @@ def run(args) -> Path:
         opt_kw["demographic_temperature"] = args.demographic_temperature
         opt_kw["demographic_warmup"] = args.demographic_warmup
         opt_kw["demographic_generator"] = torch.Generator().manual_seed(args.seed + 9973)
+        if args.optimizer == "stable_evo" and args.demographic_shape_exp is not None:
+            opt_kw["demographic_shape_exp"] = args.demographic_shape_exp   # experiment B noise shape
     if args.optimizer == "riccati":
         # Riccati uses shrink/safeguard as the stabilizer, NOT max_update_norm (which
         # clips the step and breaks FDT). precond_mode overrides the alpha->mode default.
@@ -156,6 +160,9 @@ def run(args) -> Path:
         early_stop_patience=args.early_stop_patience,
         early_stop_min_delta=args.early_stop_min_delta,
         eval_hook=lambda res: write_csv(csv_path, res.records, static),
+        swa_start_frac=args.swa_start_frac,
+        noise_scale_every=args.noise_scale_every,
+        noise_scale_k=args.noise_scale_k,
     )
     static["val_metric_name"] = result.val_metric_name
     write_csv(csv_path, result.records, static)
@@ -189,9 +196,22 @@ def build_parser():
                    help="pSGLD temperature T (T∝lr; T=1/(2 Ne_eff) in the biological reading)")
     p.add_argument("--demographic-warmup", type=int, default=0,
                    help="skip noise injection for the first N steps (preconditioner warmup)")
+    p.add_argument("--demographic-shape-exp", type=float, default=None,
+                   help="stable_evo noise SHAPE (experiment B): variance ∝ v̂**β, trace-matched to "
+                        "the pSGLD preconditioner shape so only the SHAPE varies at matched "
+                        "temperature. Default (unset)=pSGLD/FDT (∝P). β=1 ~ Fisher/curvature-aligned "
+                        "(like minibatch noise); β=0 isotropic.")
     p.add_argument("--label-suffix", default="",
                    help="tag appended to the config name + a 'variant' column, to distinguish "
                         "otherwise-identical optimizers (e.g. 'soaplr' = stable_evo run at soap's lr)")
+    # --- SWA / iterate-averaging eval (MAP estimate) + gradient-noise-scale probe ---
+    p.add_argument("--swa-start-frac", type=float, default=0.0,
+                   help="average params over the final (1-frac) of training and eval that "
+                        "'posterior-mean' model alongside the raw iterate (0 = off; try 0.75)")
+    p.add_argument("--noise-scale-every", type=int, default=0,
+                   help="measure the gradient noise scale tr(Σ)/|g|² every N opt-steps (0 = off)")
+    p.add_argument("--noise-scale-k", type=int, default=4,
+                   help="number of independent micro-batch grads per noise-scale estimate")
     # --- riccati-only knobs (matrix-free Newton-Schulz preconditioner) ---
     p.add_argument("--precond-mode", default="", choices=["", "whiten", "inverse"],
                    help="riccati base mode; default derived from alpha (<=0.5 whiten, else inverse)")

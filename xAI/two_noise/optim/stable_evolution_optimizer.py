@@ -119,6 +119,7 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         demographic_generator: "torch.Generator | None" = None,
         demographic_warmup: int = 0,
         demographic_precond_clamp: float = 0.0,
+        demographic_shape_exp: "float | None" = None,
     ):
         defaults = dict(
             lr=lr, betas=betas, shampoo_beta=shampoo_beta,
@@ -137,6 +138,10 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
             demographic_generator=demographic_generator,
             demographic_warmup=demographic_warmup,
             demographic_precond_clamp=demographic_precond_clamp,
+            # noise SHAPE knob (experiment B): None => pSGLD/FDT (variance ∝ P). A finite β sets
+            #     variance ∝ v̂**β, trace-matched to P so only the SHAPE varies at matched
+            #     temperature: β=+1 ~ Fisher/curvature-aligned (like minibatch noise), β=0 isotropic.
+            demographic_shape_exp=demographic_shape_exp,
         )
         super().__init__(params, defaults)
         self._demo_gen_cache = {}
@@ -334,12 +339,24 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                               and group["demographic_temperature"] > 0.0
                               and state["step"] > group["demographic_warmup"])
                     if inject:
-                        std = langevin_noise_std(P.reciprocal(),
-                                                 group["demographic_temperature"], step_size)
+                        T = group["demographic_temperature"]
+                        # noise SHAPE (experiment B): per-coordinate variance ∝ `shape`.
+                        #   beta is None  -> shape = P  (pSGLD/FDT; std = sqrt(2*T*lr*P), the
+                        #                    langevin_noise_std(1/P,...) form — byte-identical).
+                        #   beta finite   -> shape = v_damp**beta, renormalized to P's per-tensor
+                        #                    mean so the TRACE (total injected temperature) matches
+                        #                    and only the SHAPE differs. beta=+1 ~ Fisher/curvature-
+                        #                    aligned (like minibatch noise); beta=0 isotropic.
+                        beta = group["demographic_shape_exp"]
+                        if beta is None:
+                            std = langevin_noise_std(P.reciprocal(), T, step_size)
+                        else:
+                            shape = v_damp.pow(beta)
+                            shape = shape * (P.mean() / shape.mean().clamp_min(eps))
+                            std = (2.0 * T * step_size * shape).sqrt()
                         clamp = group["demographic_precond_clamp"]
                         if clamp and clamp > 0:
-                            std = std.clamp_max((2.0 * group["demographic_temperature"]
-                                                 * step_size * clamp) ** 0.5)
+                            std = std.clamp_max((2.0 * T * step_size * clamp) ** 0.5)
                         gen = self._device_generator(group["demographic_generator"], update_rot.device)
                         z = torch.randn(update_rot.shape, generator=gen,
                                         device=update_rot.device, dtype=update_rot.dtype)

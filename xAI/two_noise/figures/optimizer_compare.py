@@ -85,6 +85,10 @@ def load_configs(model="vit_s", dataset="cifar100") -> list[dict]:
             lr=float(df["lr_actual"].iloc[0]), frame=df, evals=evals,
             stationary_val_loss=stationary,
             final_val_metric=float(pd.to_numeric(evals["val_metric"], errors="coerce").iloc[-1]),
+            # best-over-run (the trajectory ceiling): endpoint drifts off-peak after early-stop,
+            # and injected-noise runs sit at finite temperature — so report BOTH end and best.
+            best_val_metric=float(pd.to_numeric(evals["val_metric"], errors="coerce").max()),
+            best_val_loss=float(pd.to_numeric(evals["val_loss"], errors="coerce").min()),
             val_metric_name=str(df["val_metric_name"].iloc[-1]),
             mean_step_time_ms=float(pd.to_numeric(df["step_time_ms"], errors="coerce").replace(0, np.nan).mean()),
             peak_mem_mb=float(pd.to_numeric(df["peak_mem_mb"], errors="coerce").max()),
@@ -107,7 +111,8 @@ def best_per_cell(configs: list[dict]) -> pd.DataFrame:
             seen[key] = c
     for (label, eb), c in sorted(seen.items()):
         rows.append({k: c[k] for k in ("label", "eff_batch", "lr", "stationary_val_loss",
-                                       "final_val_metric", "val_metric_name",
+                                       "final_val_metric", "best_val_metric", "best_val_loss",
+                                       "val_metric_name",
                                        "mean_step_time_ms", "peak_mem_mb", "wallclock_s", "steps",
                                        "exp_mean", "exp_std", "exp_max",
                                        "exp_frac_high", "exp_frac_floor")})

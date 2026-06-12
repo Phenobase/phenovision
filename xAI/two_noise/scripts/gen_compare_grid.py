@@ -89,12 +89,26 @@ def main():
     ap.add_argument("--stable-evo-at-soap-lr", action="store_true",
                     help="also run stable_evo at soap@0.5's (much higher) lr, tagged 'soaplr' — "
                          "tests whether the finder's stable_evo lr is just too low.")
+    ap.add_argument("--fixed-lr", type=float, default=None,
+                    help="override the per-cell lr with ONE value across ALL batches (tagged 'fixedlr'). "
+                         "Holds lr — and thus injected noise std sqrt(T*lr) — constant so only gradient "
+                         "noise (proportional to lr/batch) varies: disentangles whether the demo-noise "
+                         "penalty depends on the gradient-noise level (magnitude) or not (shape/floor).")
     ap.add_argument("--group", default="all", choices=["all", "stable_evo", "baselines"],
                     help="split the run into separate jobs: 'stable_evo' (stable_evo + its demo "
                          "variants) | 'baselines' (sgd/adamw/soap) | 'all'. Writes "
                          "compare_grid_<group>.txt for non-all groups.")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--no-amp", action="store_true")
+    # mechanism probes: SWA/iterate-averaging eval (MAP estimate) + gradient-noise-scale tracking
+    ap.add_argument("--swa-start-frac", type=float, default=0.0,
+                    help="eval an iterate-average over the final (1-frac) of training (0=off). "
+                         "NOTE: pair with --early-stop-patience 0 so the budget (hence the SWA "
+                         "start step) is actually reached.")
+    ap.add_argument("--noise-scale", action="store_true",
+                    help="measure the gradient noise scale tr(Σ)/|g|² at each eval cadence")
+    ap.add_argument("--noise-scale-k", type=int, default=8,
+                    help="independent micro-batch grads per noise-scale estimate")
     ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args()
 
@@ -129,7 +143,8 @@ def main():
 
     tail = (f"--log-every {args.log_every} --early-stop-patience {args.early_stop_patience} "
             f"--early-stop-min-delta {args.early_stop_min_delta:g} --seed {args.seed} "
-            f"--out-dir {args.runs_dir}" + ("" if args.no_amp else " --amp"))
+            f"--out-dir {args.runs_dir}" + ("" if args.no_amp else " --amp")
+            + (f" --swa-start-frac {args.swa_start_frac:g}" if args.swa_start_frac > 0 else ""))
 
     lines, fellback = [], 0
     for bs in args.batch_sizes:
@@ -137,9 +152,15 @@ def main():
         accum = max(1, bs // micro)
         ms, ee = _budget(bs)
         bsargs = f"--batch-size {micro} --accum-steps {accum} --max-steps {ms} --eval-every {ee}"
+        if args.noise_scale:    # probe at the per-batch eval cadence so rows align with the val rows
+            bsargs += f" --noise-scale-every {ee} --noise-scale-k {args.noise_scale_k}"
         for tag in args.optimizers:
             sfx = ""
-            if tag == "stable_evo" and args.stable_evo_at_soap_lr:
+            if args.fixed_lr is not None:
+                # hold lr (hence injected noise sqrt(T*lr)) constant across batches; only
+                # gradient noise (lr/batch) varies — read the WITHIN-cell demo-base delta.
+                lr, fb = args.fixed_lr, False; sfx = " --label-suffix fixedlr"
+            elif tag == "stable_evo" and args.stable_evo_at_soap_lr:
                 # stable_evo's own finder lr is far too low (the generative-lag confound in the LR
                 # range test), so run it at soap@0.5's lr instead, tagged 'soaplr'. The demo variant
                 # is then applied to THIS (the good lr) — a fair posterior-sampling test.

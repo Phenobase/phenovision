@@ -560,6 +560,47 @@ def evaluate(model, val_loader, device, is_lm, max_batches: int = 0) -> Tuple[fl
     return (correct / max(total, 1)), val_loss, "accuracy"
 
 
+def _grad_noise_scale(model, meas_iter, device, is_lm, k, amp, use_cuda):
+    """McCandlish gradient noise scale B_simple = tr(Σ)/|g|² at the model's CURRENT weights.
+
+    Estimated from K independent micro-batch gradients (each a b-sample estimate of the true
+    gradient g, covariance Σ/b). With Ḡ = mean of the K micro-grads and sumsq = Σ_i|G_i|²:
+      sample-var-trace  = (sumsq − K|Ḡ|²)/(K−1)  ≈ tr(Σ)/b
+      tr(Σ)  = b · sample-var-trace
+      |g|²   = |Ḡ|² − tr(Σ)/(bK)                 (debiased at the full KB-sample batch)
+      B_simple = tr(Σ)/|g|²                       (the critical-batch-size scale)
+    Train mode + autocast so it reflects the noise the optimizer actually sees (.grad is fp32
+    because params are fp32). Leaves optimizer state untouched: no .step(), grads zeroed after,
+    and a dedicated `meas_iter` so the training data stream is not perturbed.
+    """
+    params = [p for p in model.parameters() if p.requires_grad]
+    accum = [torch.zeros_like(p, dtype=torch.float32) for p in params]
+    sumsq, b = 0.0, 0
+    for p in params:
+        p.grad = None
+    for _ in range(k):
+        batch = next(meas_iter)
+        with torch.amp.autocast("cuda", enabled=(amp and use_cuda)):
+            loss, _, tgt = _forward_loss(model, batch, device, is_lm)
+        loss.backward()
+        b = int(tgt.shape[0]) if hasattr(tgt, "shape") and tgt.dim() > 0 else int(tgt.numel())
+        gsq = 0.0
+        for a, p in zip(accum, params):
+            g = p.grad.detach().float()
+            a.add_(g)
+            gsq += float(g.pow(2).sum())
+            p.grad = None
+        sumsq += gsq
+    if k < 2 or b == 0:
+        return dict(noise_scale=float("nan"), grad_norm_sq=float("nan"), tr_sigma=float("nan"))
+    gbar_sq = sum(float((a / k).pow(2).sum()) for a in accum)        # |Ḡ|²
+    svt = (sumsq - k * gbar_sq) / (k - 1)                            # ≈ tr(Σ)/b
+    tr_sigma = b * svt
+    g2 = gbar_sq - tr_sigma / (b * k)                               # debiased |g|²
+    noise = (tr_sigma / g2) if g2 > 1e-12 else float("nan")
+    return dict(noise_scale=noise, grad_norm_sq=g2, tr_sigma=tr_sigma)
+
+
 def train_eval(
     model: nn.Module,
     optimizer,
@@ -580,6 +621,9 @@ def train_eval(
     early_stop_patience: int = 0,
     early_stop_min_delta: float = 0.0,
     eval_hook: Optional[Callable] = None,
+    swa_start_frac: float = 0.0,
+    noise_scale_every: int = 0,
+    noise_scale_k: int = 4,
 ) -> TrainResult:
     """Train for max_steps OPTIMIZER steps (or `epochs` epochs) and return tidy records + metrics.
 
@@ -629,6 +673,28 @@ def train_eval(
         total_opt_steps = steps_per_epoch * max(epochs, 1)
         batch_iter = infinite_loader(train_loader)
 
+    # SWA / iterate averaging (opt-in): equal-weight running mean of params over the tail of
+    # training — the principled MAP estimate under injected noise (the posterior MEAN ≈ the mode;
+    # best-of-sample can't reach the mode in high-D by concentration of measure). LayerNorm net
+    # => no BatchNorm running-stats to recalibrate, so the averaged weights eval directly.
+    swa_enabled = swa_start_frac > 0.0
+    swa_start_step = int(swa_start_frac * total_opt_steps)
+    swa_avg, swa_n = None, 0
+    # dedicated iterator for the gradient-noise-scale probe (so it never perturbs the train stream)
+    meas_iter = infinite_loader(train_loader) if noise_scale_every > 0 else None
+
+    def _eval_swa():
+        backup = [p.detach().clone() for p in model.parameters()]
+        with torch.no_grad():
+            for p, s in zip(model.parameters(), swa_avg):
+                p.copy_(s.to(p.dtype))
+        vm, vl, _ = evaluate(model, val_loader, device, is_lm, eval_max_batches)
+        with torch.no_grad():
+            for p, bkp in zip(model.parameters(), backup):
+                p.copy_(bkp)
+        model.train()
+        return vm, vl
+
     optimizer.zero_grad(set_to_none=True)
     step = 0
     last_step_t = time.time()
@@ -659,12 +725,23 @@ def train_eval(
         last_step_t = now
         step += 1
 
+        # SWA: accumulate the equal-weight running mean once past the start fraction.
+        if swa_enabled and step >= swa_start_step:
+            if swa_avg is None:
+                swa_avg = [p.detach().clone().float() for p in model.parameters()]
+                swa_n = 1
+            else:
+                swa_n += 1
+                for s, p in zip(swa_avg, model.parameters()):
+                    s.add_((p.detach().float() - s) / swa_n)
+
         if not math.isfinite(micro_loss):
             raise FloatingPointError(f"non-finite train loss at step {step}: {micro_loss}")
 
         do_log = (step % log_every == 0) or (step == total_opt_steps)
         do_eval = eval_every > 0 and (step % eval_every == 0)
-        if do_log or do_eval:
+        do_ns = noise_scale_every > 0 and (step % noise_scale_every == 0)
+        if do_log or do_eval or do_ns:
             peak_mb = (torch.cuda.max_memory_allocated(device) / 1e6) if use_cuda else 0.0
             row = dict(extra)
             row.update(
@@ -689,11 +766,26 @@ def train_eval(
                 row["exp_frac_floor"] = es["frac_floor"]
             elif hasattr(optimizer, "mean_exponent"):
                 row["mean_exponent"] = optimizer.mean_exponent()
+            # gradient noise scale B_simple = tr(Σ)/|g|² at the current weights (critical batch
+            # size) — tells us where the injected demographic temperature sits vs the natural
+            # minibatch-sampling temperature, and how that ratio evolves over training.
+            if do_ns:
+                ns = _grad_noise_scale(model, meas_iter, device, is_lm,
+                                       noise_scale_k, amp, use_cuda)
+                row["noise_scale"] = ns["noise_scale"]
+                row["grad_norm_sq"] = ns["grad_norm_sq"]
+                row["tr_sigma"] = ns["tr_sigma"]
+                model.train()
             if do_eval:
                 vm, vl, _ = evaluate(model, val_loader, device, is_lm, eval_max_batches)
                 row["val_metric"] = vm
                 row["val_loss"] = vl
                 model.train()
+                # SWA: also score the averaged ("posterior-mean") weights — the MAP estimate.
+                if swa_enabled and swa_avg is not None:
+                    vm_s, vl_s = _eval_swa()
+                    row["val_metric_swa"] = vm_s
+                    row["val_loss_swa"] = vl_s
                 if early_stop_patience > 0:
                     if vl < best_val - early_stop_min_delta:
                         best_val = vl
@@ -740,6 +832,10 @@ def train_eval(
     if result.records:
         result.records[-1]["val_metric"] = vm
         result.records[-1]["val_loss"] = vl
+        if swa_enabled and swa_avg is not None:
+            vm_s, vl_s = _eval_swa()
+            result.records[-1]["val_metric_swa"] = vm_s
+            result.records[-1]["val_loss_swa"] = vl_s
     return result
 
 
