@@ -138,18 +138,21 @@ def main():
         ms, ee = _budget(bs)
         bsargs = f"--batch-size {micro} --accum-steps {accum} --max-steps {ms} --eval-every {ee}"
         for tag in args.optimizers:
-            lr, fb = _lr_for(sug, tag, bs, default_lr_fn); fellback += fb
-            base = f"--model {args.model} --dataset {args.dataset} {_base_parts(tag, lr)} {bsargs} {tail}"
+            sfx = ""
+            if tag == "stable_evo" and args.stable_evo_at_soap_lr:
+                # stable_evo's own finder lr is far too low (the generative-lag confound in the LR
+                # range test), so run it at soap@0.5's lr instead, tagged 'soaplr'. The demo variant
+                # is then applied to THIS (the good lr) — a fair posterior-sampling test.
+                lr, fb = _lr_for(sug, "soap@0.5", bs, default_lr_fn); sfx = " --label-suffix soaplr"
+            else:
+                lr, fb = _lr_for(sug, tag, bs, default_lr_fn)
+            fellback += fb
+            base = f"--model {args.model} --dataset {args.dataset} {_base_parts(tag, lr)} {bsargs} {tail}{sfx}"
             lines.append(base)
             if tag in args.demo_on:
                 for T in args.demo_temps:
                     lines.append(base + f" --demographic-noise --demographic-temperature {T:g} "
                                         f"--demographic-warmup {args.demo_warmup}")
-            if tag == "stable_evo" and args.stable_evo_at_soap_lr:
-                soap_lr, _ = _lr_for(sug, "soap@0.5", bs, default_lr_fn)
-                base_sl = (f"--model {args.model} --dataset {args.dataset} "
-                           f"{_base_parts('stable_evo', soap_lr)} {bsargs} {tail}")
-                lines.append(base_sl + " --label-suffix soaplr")
 
     out = out_path
     out.write_text("\n".join(lines) + "\n")
