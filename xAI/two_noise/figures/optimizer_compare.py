@@ -43,6 +43,11 @@ def _opt_label(df: pd.DataFrame) -> str:
         dt = pd.to_numeric(df["demo_temp"], errors="coerce").dropna()
         if len(dt) and dt.iloc[0] > 0:
             opt += f"+demoT{dt.iloc[0]:g}"
+    # distinguish label-suffix variants (e.g. stable_evo run at soap's lr)
+    if "variant" in df.columns:
+        vs = [str(x) for x in df["variant"].dropna() if str(x).strip()]
+        if vs:
+            opt += f"+{vs[0]}"
     return opt
 
 

@@ -42,7 +42,7 @@ CSV_COLUMNS = [
     "eff_batch_size", "step", "train_loss", "wallclock_s", "lr_actual", "val_metric",
     "val_metric_name", "val_loss", "peak_mem_mb", "step_time_ms", "seed",
     "precond_mode", "shrink", "evolve_m", "mean_exponent",
-    "exp_std", "exp_max", "exp_frac_high", "exp_frac_floor", "demo_temp",
+    "exp_std", "exp_max", "exp_frac_high", "exp_frac_floor", "demo_temp", "variant",
 ]
 
 
@@ -59,6 +59,8 @@ def config_name(args, lr_actual) -> str:
         opt = f"riccati_{mode}_rho{args.shrink:g}" + ("_evM" if args.evolve_m else "")
     if getattr(args, "demographic_noise", False) and args.demographic_temperature > 0:
         opt += f"_demoT{args.demographic_temperature:g}"      # pSGLD posterior-sampling variant
+    if getattr(args, "label_suffix", ""):
+        opt += f"_{args.label_suffix}"                        # e.g. soaplr (stable_evo at soap's lr)
     return (f"{args.model}__{args.dataset}__{opt}__lr{lr_actual:g}"
             f"__bs{args.batch_size}x{args.accum_steps}__s{args.seed}")
 
@@ -139,6 +141,7 @@ def run(args) -> Path:
         evolve_m=int(args.evolve_m) if args.optimizer == "riccati" else "",
         demo_temp=(args.demographic_temperature
                    if (args.demographic_noise and args.demographic_temperature > 0) else ""),
+        variant=getattr(args, "label_suffix", "") or "",
     )
 
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "benchmarks")
@@ -186,6 +189,9 @@ def build_parser():
                    help="pSGLD temperature T (T∝lr; T=1/(2 Ne_eff) in the biological reading)")
     p.add_argument("--demographic-warmup", type=int, default=0,
                    help="skip noise injection for the first N steps (preconditioner warmup)")
+    p.add_argument("--label-suffix", default="",
+                   help="tag appended to the config name + a 'variant' column, to distinguish "
+                        "otherwise-identical optimizers (e.g. 'soaplr' = stable_evo run at soap's lr)")
     # --- riccati-only knobs (matrix-free Newton-Schulz preconditioner) ---
     p.add_argument("--precond-mode", default="", choices=["", "whiten", "inverse"],
                    help="riccati base mode; default derived from alpha (<=0.5 whiten, else inverse)")

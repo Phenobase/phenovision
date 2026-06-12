@@ -86,6 +86,9 @@ def main():
     ap.add_argument("--demo-temps", type=float, nargs="*", default=[1e-3],
                     help="pSGLD temperatures T for the demo variants")
     ap.add_argument("--demo-warmup", type=int, default=200)
+    ap.add_argument("--stable-evo-at-soap-lr", action="store_true",
+                    help="also run stable_evo at soap@0.5's (much higher) lr, tagged 'soaplr' — "
+                         "tests whether the finder's stable_evo lr is just too low.")
     ap.add_argument("--group", default="all", choices=["all", "stable_evo", "baselines"],
                     help="split the run into separate jobs: 'stable_evo' (stable_evo + its demo "
                          "variants) | 'baselines' (sgd/adamw/soap) | 'all'. Writes "
@@ -142,6 +145,11 @@ def main():
                 for T in args.demo_temps:
                     lines.append(base + f" --demographic-noise --demographic-temperature {T:g} "
                                         f"--demographic-warmup {args.demo_warmup}")
+            if tag == "stable_evo" and args.stable_evo_at_soap_lr:
+                soap_lr, _ = _lr_for(sug, "soap@0.5", bs, default_lr_fn)
+                base_sl = (f"--model {args.model} --dataset {args.dataset} "
+                           f"{_base_parts('stable_evo', soap_lr)} {bsargs} {tail}")
+                lines.append(base_sl + " --label-suffix soaplr")
 
     out = out_path
     out.write_text("\n".join(lines) + "\n")
