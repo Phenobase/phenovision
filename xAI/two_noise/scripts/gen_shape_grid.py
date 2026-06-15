@@ -32,6 +32,9 @@ SHAPES = {
     # self-annealing (canalization): pSGLD shape but noise fades near convergence (sqrt(shrink)).
     # Tests whether ANNEALING, not shape, is what makes minibatch noise benign.
     "anneal": ("--demographic-anneal", "anneal"),
+    # loss-scaled annealing v2: variance *= train_loss (Sigma~loss*H), high early -> declining.
+    # The CLEAN annealing test (sqrt(shrink) was confounded by under-injection in the alpha-floored regime).
+    "annealL": ("--demographic-anneal-loss", "annealL"),
 }
 
 

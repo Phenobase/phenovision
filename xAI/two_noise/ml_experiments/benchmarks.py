@@ -33,7 +33,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from ml_experiments._harness import (RUNS_DIR, default_lr, make_data, make_model,
-                                     make_optimizer, train_eval)
+                                     make_optimizer, make_train_eval_loader, train_eval)
 
 # Tidy CSV schema (one row per logged step). Stable column order across all configs so the
 # per-config CSVs concatenate cleanly for the §2.1 figures.
@@ -46,6 +46,8 @@ CSV_COLUMNS = [
     # SWA / iterate-averaging eval (MAP estimate) + gradient noise scale (McCandlish B_simple)
     "val_metric_swa", "val_loss_swa", "noise_scale", "grad_norm_sq", "tr_sigma",
     "loss_tax",   # diagonal noise loss-tax ½·tr(H·Σ_noise) (experiment B shape diagnostic)
+    "demo_trace", "demo_T",   # TOTAL injected noise variance + temperature used (the real AMOUNT)
+    "train_metric", "train_loss_eval",   # TRAIN-set acc/loss (interpolating vs underfitting; opt-in)
 ]
 
 
@@ -88,6 +90,11 @@ def run(args) -> Path:
         args.dataset, batch_size=args.batch_size, num_workers=args.num_workers,
         block_size=args.block_size, generator=gen, synthetic_n=args.synthetic_n,
     )
+    # opt-in clean (un-augmented) TRAIN-set eval loader: separates interpolation (train acc -> 1)
+    # from underfitting — the noisy per-step train_loss alone can't tell them apart.
+    train_eval_loader = (make_train_eval_loader(
+        args.dataset, batch_size=args.batch_size, num_workers=args.num_workers)
+        if getattr(args, "train_eval", False) else None)
 
     if meta.task == "lm":
         model = make_model(args.model, vocab_size=meta.vocab_size)
@@ -117,6 +124,13 @@ def run(args) -> Path:
             opt_kw["demographic_shape_exp"] = args.demographic_shape_exp   # experiment B noise shape
         if args.optimizer == "stable_evo" and args.demographic_anneal:
             opt_kw["demographic_anneal"] = True                            # self-annealing variant
+        if args.optimizer == "stable_evo" and args.demographic_anneal_loss:
+            opt_kw["demographic_anneal_loss"] = True                       # loss-scaled annealing v2
+        if args.optimizer == "stable_evo" and args.demographic_match_grad:
+            opt_kw["demographic_match_grad"] = True                        # gradient-noise-matched T
+            opt_kw["demographic_kappa"] = args.demographic_kappa
+            opt_kw["demographic_batch"] = args.batch_size * args.accum_steps   # N_e = effective batch
+            opt_kw["demographic_match_raw"] = args.demographic_match_raw   # RAW (self-annealing) vs preconditioned
     if args.optimizer == "riccati":
         # Riccati uses shrink/safeguard as the stabilizer, NOT max_update_norm (which
         # clips the step and breaks FDT). precond_mode overrides the alpha->mode default.
@@ -162,13 +176,24 @@ def run(args) -> Path:
         amp=args.amp, lr=lr_actual, extra_record_fields=static,
         early_stop_patience=args.early_stop_patience,
         early_stop_min_delta=args.early_stop_min_delta,
+        train_plateau_patience=args.train_plateau_patience,
+        train_plateau_min_delta=args.train_plateau_min_delta,
+        two_phase_noise_off=args.two_phase_noise_off,
         eval_hook=lambda res: write_csv(csv_path, res.records, static),
         swa_start_frac=args.swa_start_frac,
         noise_scale_every=args.noise_scale_every,
         noise_scale_k=args.noise_scale_k,
+        train_eval_loader=train_eval_loader,
     )
     static["val_metric_name"] = result.val_metric_name
     write_csv(csv_path, result.records, static)
+
+    # opt-in: save final weights for downstream weight-space analysis (e.g. linear mode
+    # connectivity between basins). state_dict only — reload via make_model + load_state_dict.
+    if getattr(args, "save_weights", False):
+        ckpt_path = csv_path.with_suffix(".pt")
+        torch.save(model.state_dict(), ckpt_path)
+        print(f"[benchmarks] saved weights -> {ckpt_path}")
 
     print(f"[benchmarks] {csv_path}")
     print(f"[benchmarks] final {result.val_metric_name}={result.final_val_metric:.4f} "
@@ -208,6 +233,26 @@ def build_parser():
                    help="stable_evo SELF-ANNEALING injection: scale the noise by sqrt(shrink) so it "
                         "fades as gradients become noise-dominated near convergence (canalization). "
                         "Tests whether ANNEALING, not shape, is what makes noise benign.")
+    p.add_argument("--demographic-anneal-loss", action="store_true",
+                   help="stable_evo LOSS-SCALED annealing (v2): scale injected variance by the "
+                        "current training loss (Sigma~loss*H law) — high early, declining over "
+                        "training, the clean annealing test (vs the already-floored sqrt(shrink)).")
+    p.add_argument("--demographic-match-grad", action="store_true",
+                   help="stable_evo PRINCIPLED, tuning-free T: match the injected (∝P) noise trace to "
+                        "the minibatch-gradient-noise trace (T=kappa·lr·tr(P²v̂)/(2·B·tr(P))). N_e=batch. "
+                        "Auto-scales 1/batch AND self-anneals (v̂->0). Set with --demographic-noise; "
+                        "no --demographic-temperature needed.")
+    p.add_argument("--demographic-kappa", type=float, default=1.0,
+                   help="demographic-to-sampling noise ratio for --demographic-match-grad "
+                        "(1.0 = N_e equals the sampling population; biologically natural).")
+    p.add_argument("--demographic-match-raw", action="store_true",
+                   help="with --demographic-match-grad: match the RAW grad-noise trace (tr v̂ ∝ loss, "
+                        "SELF-ANNEALING) instead of the preconditioned/whitened one (tr(P²v̂), ~constant). "
+                        "This is the self-annealing variant that should reach base.")
+    p.add_argument("--two-phase-noise-off", action="store_true",
+                   help="two-phase test: run with demographic noise to a train-loss plateau, then "
+                        "turn the noise OFF and continue to a second plateau (does it settle to the "
+                        "basin bottom?). Use with --train-plateau-patience.")
     p.add_argument("--label-suffix", default="",
                    help="tag appended to the config name + a 'variant' column, to distinguish "
                         "otherwise-identical optimizers (e.g. 'soaplr' = stable_evo run at soap's lr)")
@@ -243,6 +288,12 @@ def build_parser():
                         "to-convergence runs so large batches don't over-train.")
     p.add_argument("--early-stop-min-delta", type=float, default=0.0,
                    help="minimum val-loss improvement to reset the early-stop patience counter")
+    p.add_argument("--train-plateau-patience", type=int, default=0,
+                   help="stop when TRAIN loss (fitting) has not improved for N consecutive evals "
+                        "(0=off). Run-to-TRUE-convergence — the right stop for the annealing runs "
+                        "(annealL descends slowly with a positive-feedback tail; fixed budgets undershoot).")
+    p.add_argument("--train-plateau-min-delta", type=float, default=1e-3,
+                   help="minimum train-loss improvement to reset the train-plateau counter")
     p.add_argument("--grad-clip", type=float, default=1.0)
     p.add_argument("--max-update-norm", type=float, default=0.0,
                    help="SOAP update-space trust region (clips preconditioned step); 0=off. "
@@ -254,6 +305,12 @@ def build_parser():
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--device", default="", help="cpu|cuda (default: cuda if available)")
     p.add_argument("--out-dir", default="", help="override CSV output dir (default runs/benchmarks)")
+    p.add_argument("--train-eval", action="store_true",
+                   help="also eval CLEAN (un-augmented) TRAIN-set acc/loss each eval — separates "
+                        "interpolation (train acc->1) from underfitting. Vision datasets only.")
+    p.add_argument("--save-weights", action="store_true",
+                   help="save final model state_dict next to the CSV (.pt) for weight-space "
+                        "analysis (e.g. linear mode connectivity).")
     return p
 
 

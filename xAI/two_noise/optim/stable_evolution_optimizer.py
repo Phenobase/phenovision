@@ -121,6 +121,11 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         demographic_precond_clamp: float = 0.0,
         demographic_shape_exp: "float | None" = None,
         demographic_anneal: bool = False,
+        demographic_anneal_loss: bool = False,
+        demographic_match_grad: bool = False,
+        demographic_kappa: float = 1.0,
+        demographic_batch: int = 0,
+        demographic_match_raw: bool = False,
     ):
         defaults = dict(
             lr=lr, betas=betas, shampoo_beta=shampoo_beta,
@@ -146,9 +151,25 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
             # self-annealing knob: scale injected std by sqrt(shrink) so noise fades near
             #     convergence (canalization) — separates ANNEALING from shape.
             demographic_anneal=demographic_anneal,
+            # loss-scaled self-annealing (v2): scale injected VARIANCE by the current training
+            #     loss (fed via set_loss_scale) — the true Sigma ~ (loss)*H law, genuinely
+            #     high-early / declining, unlike the already-floored sqrt(shrink). The clean
+            #     test of whether annealing (not shape) relieves the drift load.
+            demographic_anneal_loss=demographic_anneal_loss,
+            # gradient-noise-matched temperature (the principled, tuning-free setting): set the
+            #     injected ∝P noise's trace to kappa × the minibatch-gradient-noise trace, using v̂
+            #     (≈ per-example grad 2nd moment ≈ Σ) as the estimate and the batch as N_e.
+            #     kappa=1 => N_e == sampling population. Auto-scales 1/batch AND self-anneals (v̂->0).
+            demographic_match_grad=demographic_match_grad,
+            demographic_kappa=demographic_kappa,
+            demographic_batch=demographic_batch,
+            # match the RAW grad-noise trace (tr v̂ ∝ loss, SELF-ANNEALING) instead of the
+            #     preconditioned/whitened one (tr(P²v̂), ~constant/growing as P blows up).
+            demographic_match_raw=demographic_match_raw,
         )
         super().__init__(params, defaults)
         self._demo_gen_cache = {}
+        self._loss_scale = 1.0   # normalized current loss (1 early -> 0 at interpolation); see set_loss_scale
 
     @staticmethod
     def _project(g, qL, qR):
@@ -262,16 +283,34 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
         """Size-weighted mean realized exponent (NaN before the first preconditioned step)."""
         return self.exponent_stats()["mean"]
 
+    def demo_trace(self):
+        """Total injected demographic-noise variance (Σ varᵢ) from the last step — the actual
+        AMOUNT of noise (vs loss_tax, which is its curvature-weighted loss cost)."""
+        return float(getattr(self, "_demo_trace", 0.0))
+
+    def demo_T(self):
+        """The demographic temperature actually used last step (matched value if match_grad)."""
+        return float(getattr(self, "_demo_T", 0.0))
+
     def loss_tax(self):
         """Diagonal loss-tax ½·tr(H·Σ_noise) ≈ ½Σ v̂·variance from the LAST step's injection
         (0 when not injecting). The rate the injected noise raises the loss — the transient
         observable whose equilibrium integral is trace-only but whose path is shape-dependent."""
         return float(getattr(self, "_loss_tax", 0.0))
 
+    def set_loss_scale(self, s):
+        """Feed the optimizer the current normalized training loss (≈ loss/loss_ref, ~1 early and
+        →0 toward interpolation). Used only by the loss-scaled annealing variant
+        (demographic_anneal_loss): the injected VARIANCE is multiplied by this, reproducing the
+        Σ ~ (loss)·H self-annealing of minibatch noise. No-op otherwise."""
+        self._loss_scale = float(s)
+
     @torch.no_grad()
     def step(self, closure=None):
         loss = closure() if closure is not None else None
         self._loss_tax = 0.0      # diagonal noise loss-tax this step (0 unless injecting)
+        self._demo_trace = 0.0    # TOTAL injected noise variance this step (Σ varᵢ — the real amount)
+        self._demo_T = 0.0        # the demographic temperature actually used (matched or fixed)
 
         for group in self.param_groups:
             p_clip = group["max_update_norm"]
@@ -349,10 +388,25 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                     # H_coord = P, so FDT-correct param noise ~ N(0, 2*T*lr*P); std =
                     # langevin_noise_std(1/P, T, lr). Turns convergence into posterior sampling.
                     inject = (group["demographic_noise"]
-                              and group["demographic_temperature"] > 0.0
+                              and (group["demographic_temperature"] > 0.0
+                                   or group["demographic_match_grad"])
                               and state["step"] > group["demographic_warmup"])
                     if inject:
                         T = group["demographic_temperature"]
+                        if group["demographic_match_grad"]:
+                            # GRADIENT-NOISE-MATCHED T (kappa=1 => N_e = batch). Match the injected
+                            # (∝P) noise TRACE to the per-step minibatch-gradient-noise trace in
+                            # update space: grad-noise update var_i ≈ lr²·P_i²·Σ_ii/B, Σ≈v̂. Setting
+                            # the ∝P injection's trace equal gives, per parameter,
+                            #   T = kappa·lr·tr(P²v̂)/(2·B·tr(P)).
+                            # FDT shape (∝P) is kept; only the magnitude tracks the gradient noise.
+                            B = max(1, group["demographic_batch"])
+                            trP = P.sum().clamp_min(eps)
+                            # numerator = the grad-noise trace to match. RAW (tr v̂ ∝ loss) self-
+                            # anneals; preconditioned (tr P²v̂ ≈ const, whitened) does not.
+                            num = (v_hat.sum() if group["demographic_match_raw"]
+                                   else (P.square() * v_hat).sum())
+                            T = float(group["demographic_kappa"] * step_size * num / (2.0 * B * trP))
                         # noise SHAPE (experiment B): per-coordinate variance ∝ `shape`.
                         #   beta is None  -> shape = P  (pSGLD/FDT; std = sqrt(2*T*lr*P), the
                         #                    langevin_noise_std(1/P,...) form — byte-identical).
@@ -378,10 +432,18 @@ class StableEvolutionSOAP(torch.optim.Optimizer):
                             # noise benign. (Not trace-matched to pSGLD by design — annealing is a
                             # deliberate reduction of the late-stage noise.)
                             std = std * shrink.sqrt()
+                        if group["demographic_anneal_loss"]:
+                            # LOSS-SCALED self-annealing (v2): variance *= loss_scale (set per step
+                            # by the harness, ~1 early -> 0 at interpolation), i.e. std *= sqrt(loss
+                            # _scale). The true Σ ~ (loss)·H law — high early, declining over training,
+                            # unlike the already-floored sqrt(shrink). NOT batch-dependent.
+                            std = std * (self._loss_scale ** 0.5)
                         # diagonal loss-tax: rate the injected noise raises the loss,
                         # ½ tr(H·Σ_noise) ≈ ½ Σ v_damp·variance (v_damp ~ diagonal curvature in the
                         # eigenbasis). Accumulated across param groups; read via loss_tax().
                         self._loss_tax += 0.5 * float((v_damp * std.square()).sum())
+                        self._demo_trace += float(std.square().sum())   # total injected variance (amount)
+                        self._demo_T = float(T)
                         gen = self._device_generator(group["demographic_generator"], update_rot.device)
                         z = torch.randn(update_rot.shape, generator=gen,
                                         device=update_rot.device, dtype=update_rot.dtype)

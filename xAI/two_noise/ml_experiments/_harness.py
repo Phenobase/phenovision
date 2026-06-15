@@ -205,6 +205,27 @@ def make_data(
     raise ValueError(f"unknown dataset {dataset!r}")
 
 
+def make_train_eval_loader(dataset, batch_size, num_workers=4, img_size=224,
+                           data_dir=None, pin_memory=True):
+    """A NON-augmented, NON-shuffled loader over the TRAIN split (EVAL transforms) — for measuring
+    *clean* train accuracy (interpolation/memorization) rather than augmented-stream accuracy.
+    Vision datasets only; returns None for LM/synthetic (caller skips the train-metric eval)."""
+    data_dir = Path(data_dir) if data_dir is not None else DATA_DIR
+    dataset = dataset.lower()
+    if dataset == "cifar100":
+        from torchvision.datasets import CIFAR100
+        ds = CIFAR100(root=str(data_dir), train=True, download=False,
+                      transform=_vision_transforms(False, img_size))
+        return _loader(ds, batch_size, False, num_workers, None, pin_memory, False)
+    if dataset in ("tiny_imagenet", "tiny-imagenet", "tinyimagenet"):
+        from torchvision.datasets import ImageFolder
+        train_dir = Path(data_dir) / "tiny-imagenet-200" / "train"
+        if train_dir.exists():
+            ds = ImageFolder(str(train_dir), transform=_vision_transforms(False, img_size))
+            return _loader(ds, batch_size, False, num_workers, None, pin_memory, False)
+    return None
+
+
 def _loader(ds, batch_size, shuffle, num_workers, generator, pin_memory, drop_last):
     return torch.utils.data.DataLoader(
         ds, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers,
@@ -620,10 +641,14 @@ def train_eval(
     extra_record_fields: Optional[dict] = None,
     early_stop_patience: int = 0,
     early_stop_min_delta: float = 0.0,
+    train_plateau_patience: int = 0,
+    two_phase_noise_off: bool = False,
+    train_plateau_min_delta: float = 1e-3,
     eval_hook: Optional[Callable] = None,
     swa_start_frac: float = 0.0,
     noise_scale_every: int = 0,
     noise_scale_k: int = 4,
+    train_eval_loader=None,
 ) -> TrainResult:
     """Train for max_steps OPTIMIZER steps (or `epochs` epochs) and return tidy records + metrics.
 
@@ -700,6 +725,10 @@ def train_eval(
     last_step_t = time.time()
     best_val = float("inf")            # early-stopping trackers (opt-in via early_stop_patience>0)
     no_improve = 0
+    best_train = float("inf")          # train-loss-plateau trackers (run to TRUE convergence/fit)
+    no_improve_train = 0
+    loss_ref = None                    # first-step loss; normalizes the loss-scaled annealing knob
+    noise_phase = "on"                 # two-phase test: 'on' (with demo noise) -> 'off' (settle)
     while step < total_opt_steps:
         # Accumulate `accum_steps` micro-batches.
         micro_loss = 0.0
@@ -710,6 +739,13 @@ def train_eval(
                 loss = loss / accum_steps
             scaler.scale(loss).backward()
             micro_loss += float(loss.item())
+
+        # feed loss-scaled annealing optimizers the normalized current loss (~1 early -> 0 toward
+        # interpolation); no-op for optimizers without set_loss_scale / without the anneal_loss knob.
+        if hasattr(optimizer, "set_loss_scale"):
+            if loss_ref is None:
+                loss_ref = max(micro_loss, 1e-8)
+            optimizer.set_loss_scale(min(1.0, micro_loss / loss_ref))
 
         if grad_clip and grad_clip > 0:
             scaler.unscale_(optimizer)
@@ -771,6 +807,9 @@ def train_eval(
             # integral is trace-only (experiment B).
             if hasattr(optimizer, "loss_tax"):
                 row["loss_tax"] = optimizer.loss_tax()
+            if hasattr(optimizer, "demo_trace"):
+                row["demo_trace"] = optimizer.demo_trace()   # total injected variance (the AMOUNT)
+                row["demo_T"] = optimizer.demo_T()            # temperature actually used (matched/fixed)
             # gradient noise scale B_simple = tr(Σ)/|g|² at the current weights (critical batch
             # size) — tells us where the injected demographic temperature sits vs the natural
             # minibatch-sampling temperature, and how that ratio evolves over training.
@@ -791,12 +830,29 @@ def train_eval(
                     vm_s, vl_s = _eval_swa()
                     row["val_metric_swa"] = vm_s
                     row["val_loss_swa"] = vl_s
+                # train-set metric (opt-in): same eval pass on (a subset of) the TRAIN data — tells
+                # apart "interpolating" (train acc -> 1) from "still underfitting". Without it the
+                # noisy per-step train_loss alone can't say whether train fit truly converged.
+                if train_eval_loader is not None:
+                    tm, tl, _ = evaluate(model, train_eval_loader, device, is_lm, eval_max_batches)
+                    row["train_metric"] = tm
+                    row["train_loss_eval"] = tl
+                    model.train()
                 if early_stop_patience > 0:
                     if vl < best_val - early_stop_min_delta:
                         best_val = vl
                         no_improve = 0
                     else:
                         no_improve += 1
+            # train-loss-plateau tracker (run to TRUE convergence of FITTING): best_train is the
+            # running-min train loss; stop when it hasn't improved for `patience` evals. Robust to
+            # per-step noise (a noisy uptick doesn't reset). Used for the annealing convergence runs.
+            if train_plateau_patience > 0 and do_eval:
+                if micro_loss < best_train - train_plateau_min_delta:
+                    best_train = micro_loss
+                    no_improve_train = 0
+                else:
+                    no_improve_train += 1
             result.records.append(row)
             # within-run visibility: stream a progress line to stdout (-> SLURM .out, tail-able)
             # and flush partial results to disk each eval (also preemption-safe).
@@ -804,6 +860,8 @@ def train_eval(
                 print(f"[train_eval] step {step}/{total_opt_steps} "
                       f"train_loss={micro_loss:.4f} val_loss={vl:.4f} "
                       f"{result.val_metric_name}={vm:.4f}"
+                      + (f" train_{result.val_metric_name}={row['train_metric']:.4f}"
+                         if "train_metric" in row else "")
                       + (f" early_stop[{no_improve}/{early_stop_patience}]"
                          if early_stop_patience > 0 else ""), flush=True)
                 if eval_hook is not None:
@@ -821,6 +879,24 @@ def train_eval(
         if early_stop_patience > 0 and no_improve >= early_stop_patience:
             print(f"[train_eval] early stop at step {step} (val plateau, best={best_val:.4f})")
             break
+        # train-loss plateau: fitting has converged (run-to-true-convergence for the annealing runs).
+        if train_plateau_patience > 0 and no_improve_train >= train_plateau_patience:
+            # TWO-PHASE noise-off test: on the first (noise-on) plateau, turn the demographic
+            # noise OFF and keep going — does it then settle to the bottom of the basin it's in?
+            # (Tests whether the floor is a noise-held position in the SAME basin vs a worse basin.)
+            if two_phase_noise_off and noise_phase == "on":
+                phase1_floor = best_train
+                for g in optimizer.param_groups:
+                    if "demographic_noise" in g:
+                        g["demographic_noise"] = False
+                noise_phase = "off"
+                best_train, no_improve_train = float("inf"), 0
+                print(f"[train_eval] PHASE 2 — demographic noise OFF at step {step} "
+                      f"(phase-1 plateau best_train={phase1_floor:.4f}); settling...", flush=True)
+                # fall through (no break): keep training with noise off so phase 2 can settle.
+            else:
+                print(f"[train_eval] train-loss plateau stop at step {step} (best_train={best_train:.4f})")
+                break
 
     # Final eval.
     vm, vl, vn = evaluate(model, val_loader, device, is_lm, eval_max_batches)
