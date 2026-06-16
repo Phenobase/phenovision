@@ -142,6 +142,35 @@ DISK_PAUSE_MAX_WAIT_S = 30 * 60  # 30 minutes
 #: Poll interval (seconds) while waiting for the PAUSE sentinel to clear.
 DISK_PAUSE_POLL_S = 30
 
+# =============================================================================
+# Collector backpressure (REDESIGN: collector throughput is the limiter)
+# =============================================================================
+#
+# In the redesigned pipeline the two L4 collectors are the bottleneck, not the B200
+# trainer. The trainer emits checkpoints on the dense motion sampler; if it emitted
+# freely the work queue (<output_dir>/checkpoints, a PURE WORK QUEUE — kept checkpoints
+# are MOVED to <run>/kept/ by the collector) would grow without bound and fill /blue.
+#
+# BACKPRESSURE: after each emit the trainer checks the PENDING depth
+# (preadapt_common.count_pending: ready+unclaimed *.pt in the watch dir). If it EXCEEDS
+# the high-water mark it PAUSES — it stops training/emitting and sleep-polls until the
+# depth drops BELOW the low-water mark, then resumes. The hysteresis (high>low) avoids
+# thrashing. This is what makes COLLECTOR THROUGHPUT the limiter: early Phase-2 training,
+# where weights change fast and the sampler emits densely (>=25 ckpts in epoch 1), will
+# CRAWL because the trainer constantly waits for collectors to drain the queue; late
+# training, where weight change slows and emissions are rare, runs at full B200 speed
+# (the queue stays well below the high mark, so backpressure never engages).
+#
+# This is orthogonal to the disk-watchdog pause: BOTH can pause emission. The disk pause
+# is a hard safety brake (group quota); backpressure is the steady-state flow control.
+
+#: Default PENDING high-water mark: pause when count_pending(watch_dir) EXCEEDS this.
+BACKPRESSURE_HIGH_DEFAULT = 6
+#: Default PENDING low-water mark: resume once count_pending(watch_dir) drops BELOW this.
+BACKPRESSURE_LOW_DEFAULT = 2
+#: Poll interval (seconds) while paused on backpressure waiting for the queue to drain.
+BACKPRESSURE_POLL_S = 15
+
 
 # =============================================================================
 # RNG-state capture / restore (resume support)
@@ -402,6 +431,16 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     # --- projection (manifest-recorded; shared coordinate system) ---
     p.add_argument("--projection_dim", type=int, default=PROJECTION_DIM)
     p.add_argument("--retention_latest_keep", type=int, default=2)
+
+    # --- collector backpressure (REDESIGN: collector is the bottleneck) ---
+    p.add_argument("--backpressure-high", dest="backpressure_high", type=int,
+                   default=BACKPRESSURE_HIGH_DEFAULT,
+                   help="pause emission/training when PENDING checkpoints in the watch dir EXCEED "
+                        "this (the high-water mark). Pairs with --backpressure-low (hysteresis).")
+    p.add_argument("--backpressure-low", dest="backpressure_low", type=int,
+                   default=BACKPRESSURE_LOW_DEFAULT,
+                   help="resume training once PENDING checkpoints drop BELOW this (the low-water "
+                        "mark). Must be < --backpressure-high.")
 
     return p.parse_args(argv)
 
@@ -756,6 +795,50 @@ def await_disk_pause_clear(
         sleep_fn(min(poll_s, max(0.0, remaining)))
     print("  DISK_PAUSE cleared — resuming checkpoint emission.")
     return True
+
+
+# =============================================================================
+# Collector backpressure hook (REDESIGN flow control)
+# =============================================================================
+
+def await_backpressure(
+    watch_dir: str,
+    high: int = BACKPRESSURE_HIGH_DEFAULT,
+    low: int = BACKPRESSURE_LOW_DEFAULT,
+    *,
+    poll_s: float = BACKPRESSURE_POLL_S,
+    sleep_fn=time.sleep,
+    count_fn=pc.count_pending,
+) -> None:
+    """Block training while the collector work queue is full (REDESIGN flow control).
+
+    Reads the PENDING depth of ``watch_dir`` via :func:`preadapt_common.count_pending`
+    (ready, unclaimed ``*.pt`` checkpoints awaiting a collector). If that depth is
+    ``> high`` the trainer has out-run its collectors: log once, then sleep-poll every
+    ``poll_s`` seconds until the depth falls ``< low``, and log on resume. Returns
+    immediately (a single ``count_pending`` call) when the queue is below the high mark —
+    the common case in late training.
+
+    The high/low hysteresis (``high > low``) prevents thrashing: we only pause once the
+    queue is genuinely backed up and only resume once it has drained with real headroom.
+    Unlike the disk-pause gate this has NO timeout and never SKIPS the emission — the
+    whole point is to throttle the trainer to collector throughput, so it waits as long
+    as it takes. Training itself is what blocks here (this is called between emits in the
+    Phase-2 loop), which deliberately makes early, dense-emission training crawl and lets
+    late, sparse-emission training run at full speed.
+
+    ``sleep_fn`` / ``count_fn`` are injectable seams for unit testing without a real
+    filesystem or clock.
+    """
+    pending = count_fn(watch_dir)
+    if pending <= high:
+        return
+    print(f"  BACKPRESSURE: {pending} pending > high ({high}), pausing training "
+          f"(waiting for collectors to drain below {low}; polling every {poll_s:.0f}s).")
+    while count_fn(watch_dir) >= low:
+        sleep_fn(poll_s)
+    print(f"  BACKPRESSURE cleared — {count_fn(watch_dir)} pending < low ({low}); "
+          f"resuming training.")
 
 
 # =============================================================================
@@ -1143,8 +1226,17 @@ def run_phase2(
         last_emit_step = step
         scalar.add(args.condition, run_id, step, wall_, "checkpoint_emitted", 1.0)
         scalar.add(args.condition, run_id, step, wall_, "checkpoint_on_ladder", float(keep))
+        scalar.add(args.condition, run_id, step, wall_, "pending_after_emit",
+                   float(pc.count_pending(ckpt_dir)))
         scalar.flush()
         print(f"  EMIT ckpt step={step} reason={reason} on_ladder={keep} -> {os.path.basename(path)}")
+        # --- collector backpressure gate (REDESIGN): pause TRAINING if the watch dir
+        # (a PURE WORK QUEUE — kept ckpts are moved to <run>/kept/) has backed up past the
+        # high-water mark, until collectors drain it below the low mark. This is what makes
+        # COLLECTOR THROUGHPUT the limiter: dense early-epoch emissions force the trainer to
+        # wait; sparse late emissions never trip it. Orthogonal to the disk pause above —
+        # both can pause emission/training.
+        await_backpressure(ckpt_dir, args.backpressure_high, args.backpressure_low)
 
     # --- step-0 anchors (briefing §5): pre-update loss, ecological-fitting still in scalars ---
     model.train()

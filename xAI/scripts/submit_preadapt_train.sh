@@ -34,7 +34,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=16G   # 8x16=128G; trainer peak ~87-100G measured. 2 trainers + 1 collector = 384G < 437G QOS cap.
+#SBATCH --mem-per-cpu=14G   # 8x14=112G; trainer peak ~90G. REDESIGN: 1 trainer + 2 collectors = 3x112=336G; +~84G other group jobs = ~420G < 437G QOS cap (128G each would be 384+84=468>437 -> QOSGrpMemLimit).
 #SBATCH --time=96:00:00
 #SBATCH --output xAI/logs/%x-%A_%a.out
 #SBATCH --error  xAI/logs/%x-%A_%a.err
@@ -61,29 +61,44 @@ echo "pwd=$(pwd)"
 
 export PYTHONPATH="${PWD}/PlantCLEF2022:${PWD}:${PWD}/xAI/py:${PWD}/xAI/two_noise:${PYTHONPATH:-}"
 
-# Grid file for THIS variant comes from the environment (set by run_preadapt_wave.sh or sbatch
-# --export). Allow an optional positional arg override: `sbatch ... submit_preadapt_train.sh <grid>`.
-GRID="${PREADAPT_GRID:-${1:-}}"
-if [[ -z "$GRID" ]]; then
-    echo "ERROR: no grid file. Set PREADAPT_GRID=... (or pass it as arg 1)." >&2
-    echo "       e.g. PREADAPT_GRID=xAI/two_noise/configs/experiment/preadapt_grid_adamw.txt" >&2
-    exit 1
+# Two ways to supply the trainer arg-line:
+#
+#  (A) REDESIGN single-run path (run_preadapt_run.sh): PREADAPT_ARGS holds the FULL arg-line for
+#      ONE (condition x variant) run. This is the non-array path -- ONE trainer GPU per run, the 6
+#      runs launched SEQUENTIALLY so GPU usage never exceeds 1 trainer + 2 collector workers = 3.
+#      PREADAPT_ARGS takes PRECEDENCE; when set we do NOT touch the grid or SLURM_ARRAY_TASK_ID.
+#
+#  (B) Legacy array path (run_preadapt_wave.sh, kept for the plumbing-check): PREADAPT_GRID names a
+#      per-variant grid file and SLURM_ARRAY_TASK_ID selects the line. Used only when PREADAPT_ARGS
+#      is unset.
+ARGS="${PREADAPT_ARGS:-}"
+if [[ -n "$ARGS" ]]; then
+    echo "[single] PREADAPT_ARGS supplied (REDESIGN single-run path)."
+    echo "[single] args: $ARGS"
+else
+    # Legacy array path. Grid file for THIS variant comes from the environment (set by
+    # run_preadapt_wave.sh or sbatch --export). Optional positional override: arg 1 = grid path.
+    GRID="${PREADAPT_GRID:-${1:-}}"
+    if [[ -z "$GRID" ]]; then
+        echo "ERROR: no trainer args. Set PREADAPT_ARGS=<full arg-line> (REDESIGN single-run), or" >&2
+        echo "       PREADAPT_GRID=... with a --array index (legacy wave path)." >&2
+        echo "       e.g. PREADAPT_GRID=xAI/two_noise/configs/experiment/preadapt_grid_adamw.txt" >&2
+        exit 1
+    fi
+    if [[ ! -f "$GRID" ]]; then
+        echo "ERROR: grid file '$GRID' not found. Run: mamba run -n reticulate-gpu2 python xAI/scripts/gen_preadapt_grid.py" >&2
+        exit 1
+    fi
+    # Pick the config line for this array index (0-based -> 1-based sed line).
+    LINE=$(( SLURM_ARRAY_TASK_ID + 1 ))
+    ARGS=$(sed -n "${LINE}p" "$GRID")
+    if [[ -z "$ARGS" ]]; then
+        echo "ERROR: no config at line ${LINE} of $GRID (array index ${SLURM_ARRAY_TASK_ID})." >&2
+        exit 1
+    fi
+    echo "[task ${SLURM_ARRAY_TASK_ID}] grid=$GRID"
+    echo "[task ${SLURM_ARRAY_TASK_ID}] args: $ARGS"
 fi
-if [[ ! -f "$GRID" ]]; then
-    echo "ERROR: grid file '$GRID' not found. Run: mamba run -n reticulate-gpu2 python xAI/scripts/gen_preadapt_grid.py" >&2
-    exit 1
-fi
-
-# Pick the config line for this array index (0-based -> 1-based sed line).
-LINE=$(( SLURM_ARRAY_TASK_ID + 1 ))
-ARGS=$(sed -n "${LINE}p" "$GRID")
-if [[ -z "$ARGS" ]]; then
-    echo "ERROR: no config at line ${LINE} of $GRID (array index ${SLURM_ARRAY_TASK_ID})." >&2
-    exit 1
-fi
-
-echo "[task ${SLURM_ARRAY_TASK_ID}] grid=$GRID"
-echo "[task ${SLURM_ARRAY_TASK_ID}] args: $ARGS"
 
 # B200 note (user CLAUDE.md): a "CUDA capability sm_100 not compatible" warning is a harmless
 # red herring — the GPU still runs at full utilization.

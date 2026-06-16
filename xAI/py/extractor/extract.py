@@ -3,24 +3,39 @@
 extractor/extract.py — the extraction DRIVER (§6 block orchestration; CONTRACT item #4).
 
 This is the integration backbone that turns a single checkpoint on disk into a complete
-set of §6.1–§6.8 records. It owns the per-run shared, run-invariant resources (the fixed
+set of §6.1–§6.8 records. It owns the per-run shared, run-invariant RESOURCES (the fixed
 seeded probe-train / probe-eval split loaders, the one fixed Hessian/Fisher batch, the
-seeded :class:`SparseRandomProjection`, and the ScalarStore / ArrayStore for the out store),
-and it maintains the per-run carried cross-checkpoint state (``Q0``, ``prev_model_sd``,
-``prev_opt``) across calls. ``build_ctx`` (in ``_ctx.py``) is the only place that knows how a
-``.pt`` becomes an :class:`ExtractCtx`; this module reuses it per checkpoint and then runs
-every block in order.
+seeded :class:`SparseRandomProjection`, the ScalarStore / ArrayStore, and the FIXED INIT
+reference E(0) loaded ONCE from disk). ``build_ctx`` (in ``_ctx.py``) is the only place that
+knows how a ``.pt`` becomes an :class:`ExtractCtx`; this module reuses it per checkpoint and
+then runs every block in order.
+
+STATELESS per-checkpoint extraction (CONTRACT (B)/(C), REDESIGN 2026-06-16). The single most
+important property of this driver: :meth:`Extractor.extract_checkpoint` holds **NO
+cross-checkpoint in-memory state**. There is no ``self.prev_model_sd`` / ``self.prev_opt`` /
+``self.Q0`` carry-over and no in-memory processed counter. Every per-checkpoint block reads
+ONLY (a) the checkpoint itself, (b) the fixed read-only shared resources, and (c) the fixed
+INIT reference loaded from disk. As a consequence two collector processes can run
+``extract_checkpoint`` on DIFFERENT checkpoints CONCURRENTLY and OUT OF ORDER; the atomic
+``claim_for_processing`` rename guarantees exactly one collector processes each checkpoint, and
+nothing here races on shared mutable state. The inherently cross-checkpoint diagnostics — §6.1
+QL/QR rotation (vs prev / vs init) and the whole of §6.3 trajectory geometry (MSD / straightness
+/ velocity-autocorr / motion flat-steep) — have MOVED OUT of the live path to a POST-HOC pass
+(CONTRACT (D)) that reads the stored top-k QL/QR eigvecs + projected coords from the per-run
+store plus the trainer's inline velocity/path-length log.
 
 Design (mirrors the briefing §2 / plan C4):
 
-* **One :class:`Extractor` per run_id.** Q0/prev_model_sd/prev_opt are per-run and only mean
-  anything within a single trajectory; the collector therefore keeps one Extractor per
-  run_id (briefing §2.3: records and the retention ladder are per-run). The shared
-  comparability invariants (probe set, Hessian batch, projection — briefing §4) are
-  identical across runs *by construction* because they are built from the same seeds and the
-  manifest-recorded projection seed/dim/method, so two Extractors for two runs produce a
-  byte-identical coordinate system. We still build them once per Extractor so each run is
-  self-contained and crash-resumable.
+* **One :class:`Extractor` per run_id (resource cache only).** The collector keeps one
+  Extractor per run_id so the probe set, Hessian batch, projection, out store, and the fixed
+  INIT reference are built/loaded once per trajectory and reused read-only (briefing §2.3:
+  records and the retention ladder are per-run). The shared comparability invariants (probe set,
+  Hessian batch, projection — briefing §4) are identical across runs *by construction* because
+  they are built from the same seeds and the manifest-recorded projection seed/dim/method, so two
+  Extractors for two runs produce a byte-identical coordinate system. NOTE: because the Extractor
+  now holds no per-checkpoint mutable state, two Extractor instances for the SAME run (one per
+  collector process) are also safe — they just each build their own copy of the read-only
+  resources.
 
 * **Block isolation.** Each §6 block's ``extract(ctx) -> dict`` is wrapped in try/except: a
   failing block logs a full traceback and the loop continues, recording per-block ok/err in
@@ -79,7 +94,12 @@ from preadapt_common import (  # noqa: E402
     trainable_param_numel,
     read_manifest,
 )
-from extractor._ctx import ExtractCtx, build_ctx  # noqa: E402
+from extractor._ctx import (  # noqa: E402
+    ExtractCtx,
+    build_ctx,
+    resolve_init_reference_path,
+    load_init_model_sd,
+)
 
 # Reproductive head: 2 sigmoid outputs (fruit, flower). BCE-with-logits is the training loss.
 NUM_CLASSES: int = 2
@@ -93,13 +113,19 @@ DEFAULT_PROJECTION_METHOD: str = "achlioptas"
 
 #: §6 block run order. weights/trajectory/probes are the three modules a sibling agent may not
 #: have written yet — guarded imports below let this driver run with whatever is present.
+#: REDESIGN 2026-06-16 (CONTRACT (C)): block_optim no longer computes the live QL/QR rotation
+#: (it STORES the top-k eigvecs for the post-hoc pass), and block_trajectory's cross-checkpoint
+#: diagnostics (§6.3 MSD / straightness / velocity-autocorr / motion-split) have ALL moved to the
+#: POST-HOC pass — block_trajectory stays in the order (kept importable) but writes only a small
+#: per-checkpoint-independent summary on the live path. Everything else is per-checkpoint
+#: independent (vs the fixed INIT only).
 BLOCK_ORDER: Tuple[str, ...] = (
-    "block_optim",        # §6.1 optimizer geometric state (headline; metric evolution)
+    "block_optim",        # §6.1 optimizer geometric state (headline; eigvecs stored for post-hoc)
     "block_curvature",    # §6.4 curvature / loss-landscape (Hessian spectra)
-    "block_weights",      # §6.2 dimension-reduced weights / displacement
-    "block_trajectory",   # §6.3 trajectory geometry
+    "block_weights",      # §6.2 dimension-reduced weights / displacement (vs fixed INIT)
+    "block_trajectory",   # §6.3 trajectory geometry (cross-ckpt parts are POST-HOC; near no-op live)
     "block_circuits",     # §6.5 QK/OV circuits (weight-only)
-    "block_interp",       # §6.6 ViT interpretability / CKA
+    "block_interp",       # §6.6 ViT interpretability / CKA (vs fixed INIT)
     "block_probes",       # §6.7 per-patch + per-layer linear probes
     "block_fitness",      # §6.8 held-out fitness
 )
@@ -420,11 +446,17 @@ class Extractor:
             scalar_store / array_store: optional shared stores (collector may pass a single
                 pair so all runs write into one out store, keyed by run_id).
             heavy_every: TIER the HEAVY interpretability blocks (:data:`HEAVY_BLOCK_TAGS` —
-                §6.5/§6.6/§6.7) to run only on every Nth processed checkpoint of this run.
-                The cheap blocks run on EVERY checkpoint. Gating is on a per-run processed-
-                checkpoint counter: counters 0, heavy_every, 2*heavy_every, ... get the heavy
-                blocks, so the FIRST/init checkpoint (counter 0) is always a full reference.
-                ``<= 1`` runs the heavy blocks every checkpoint (no tiering). Default 3.
+                §6.5/§6.6/§6.7) to run only on every Nth checkpoint of this run. The cheap blocks
+                run on EVERY checkpoint. REDESIGN 2026-06-16 (CONTRACT (B)): the heavy-due decision
+                is now DETERMINISTIC IN THE CHECKPOINT'S OWN EMIT-ORDINAL (or step), NOT an
+                in-memory counter, so two collectors processing out of order AGREE on which
+                checkpoints are heavy. The checkpoint's emit-ordinal (``emit_ordinal`` /
+                ``ckpt_index`` in the checkpoint dict, written by the trainer) modulo
+                ``heavy_every`` == 0 => heavy; the init/Phase-2-start reference (ordinal 0 / step
+                0) is therefore always a full heavy reference. If no ordinal is recorded we fall
+                back to a deterministic rule on the step value (see :meth:`_emit_ordinal_for` /
+                :meth:`_heavy_due_for_ckpt`). ``<= 1`` runs the heavy blocks every checkpoint.
+                Default 3.
         """
         self.run_dir = os.path.abspath(run_dir)
         self.device = torch.device(device) if not isinstance(device, torch.device) else device
@@ -489,19 +521,24 @@ class Extractor:
             self.scalar = ScalarStore(os.path.join(store_root, "scalars.parquet"))
             self.array = ArrayStore(os.path.join(store_root, "arrays.zarr"))
 
-        # --- per-run carried cross-checkpoint state (briefing §6.1 init-relative signals) ---
-        self.init_model_sd: Optional[Dict[str, Any]] = None
-        self.prev_model_sd: Optional[Dict[str, Any]] = None
-        self.prev_opt: Optional[Dict[str, Any]] = None
-        self.Q0: Optional[Dict[str, Any]] = None
-        self._init_set = False  # have we captured init from the first checkpoint?
+        # --- FIXED INIT (E(0)) reference: loaded ONCE from disk; READ-ONLY (CONTRACT (C)) -----
+        # This replaces the old "capture init from the first processed checkpoint" carry-over,
+        # which depended on processing order. The reference is the run's on-disk
+        # ``<run>/kept/init_model.pt`` (or ``init_model.pt`` / ``phase1_final.pt``); §6.2 "vs
+        # init" and §6.6 CKA-vs-init read it via ``ctx.init_model_sd`` identically for EVERY
+        # checkpoint. None if no init reference is on disk yet (those pieces then skip cleanly).
+        self.init_ref_path = resolve_init_reference_path(self.run_dir)
+        self.init_model_sd: Optional[Dict[str, Any]] = load_init_model_sd(self.init_ref_path)
+        if self.init_model_sd is None:
+            print(f"[Extractor] no INIT reference resolved under {self.run_dir!r} "
+                  f"(looked for init_model.pt / phase1_final.pt in kept/ and the run dir); "
+                  f"§6.2 'vs init' / §6.6 CKA-vs-init will skip.", file=sys.stderr, flush=True)
 
-        # --- HEAVY-block tiering: per-run processed-checkpoint counter + cadence -------------
-        # The counter is incremented ONCE per ``extract_checkpoint`` call (the init / first
-        # checkpoint is counter 0 and therefore a full heavy reference). The heavy blocks run iff
-        # ``_heavy_count % heavy_every == 0``; everything else only writes the cheap blocks.
+        # --- HEAVY-block tiering: cadence (DETERMINISTIC per-checkpoint; CONTRACT (B)) --------
+        # NO in-memory counter. The heavy-due decision is a pure function of the checkpoint's own
+        # recorded emit-ordinal (or, as a documented fallback, its step) so two collectors
+        # processing checkpoints out of order AGREE which are heavy. See _heavy_due_for_ckpt.
         self.heavy_every = max(1, int(heavy_every))
-        self._heavy_count = 0  # processed-checkpoint counter for this run (0-based)
 
         # --- per-run base generator (CONVENTIONS.md §5; no global RNG) ---
         seed = int(self.manifest.get("seed", 0) or 0)
@@ -585,17 +622,70 @@ class Extractor:
 
     @staticmethod
     def _heavy_due(counter: int, heavy_every: int) -> bool:
-        """Gating predicate for the HEAVY interpretability blocks. Returns True iff the
-        per-run processed-checkpoint ``counter`` is a heavy checkpoint, i.e.
-        ``counter % heavy_every == 0`` — so counters 0, heavy_every, 2*heavy_every, ... get the
-        heavy blocks (counter 0 = the first/init checkpoint = a full reference). ``heavy_every``
-        ``<= 1`` makes every checkpoint heavy. Pure function so the cadence can be unit-tested
-        without a ViT-L model."""
+        """Gating predicate for the HEAVY interpretability blocks given an ORDINAL ``counter``.
+        Returns True iff ``counter % heavy_every == 0`` — so ordinals 0, heavy_every,
+        2*heavy_every, ... get the heavy blocks (ordinal 0 = the init/first checkpoint = a full
+        reference). ``heavy_every <= 1`` makes every checkpoint heavy. Pure function so the
+        cadence is unit-testable without a ViT-L model. REDESIGN 2026-06-16: ``counter`` is now
+        the checkpoint's OWN deterministic emit-ordinal (see :meth:`_emit_ordinal_for`), not an
+        in-memory processed counter, so the decision is order-independent across collectors."""
         he = max(1, int(heavy_every))
         return (int(counter) % he) == 0
 
+    @staticmethod
+    def _emit_ordinal_for(ckpt_meta: Dict[str, Any]) -> Optional[int]:
+        """Return the checkpoint's deterministic EMIT-ORDINAL (0-based index in this run's emitted
+        sequence) from its own recorded metadata, or None if no ordinal field is present.
+
+        The trainer records the emit ordinal under one of these keys when it writes a checkpoint
+        (init/Phase-2-start = ordinal 0). Reading it from the checkpoint — rather than counting
+        processed checkpoints in memory — is what makes the heavy-tier decision agree across two
+        collectors that process out of order (CONTRACT (B))."""
+        for key in ("emit_ordinal", "ckpt_index", "emit_index", "sample_index"):
+            v = ckpt_meta.get(key)
+            if v is not None:
+                try:
+                    return int(v)
+                except (TypeError, ValueError):
+                    continue
+        return None
+
+    @classmethod
+    def _heavy_due_for_ckpt(cls, ckpt_meta: Dict[str, Any], heavy_every: int) -> Tuple[bool, int, str]:
+        """Deterministic heavy-due decision for ONE checkpoint from its own metadata (CONTRACT
+        (B)). Returns ``(heavy_due, ordinal_used, basis)``.
+
+        Resolution order (all order-independent — a pure function of the checkpoint's own dict):
+          1. **emit-ordinal** (preferred): ``ordinal % heavy_every == 0``. The trainer's recorded
+             0-based emit index; init/Phase-2-start = 0 so it is always heavy.
+          2. **step==0** (init / Phase-2-start / phase1_final): always heavy (the full reference).
+          3. **step fallback (DOCUMENTED)**: when no ordinal is recorded, derive a stable ordinal
+             from the step value as ``step // max(1, step_quantum)`` and gate that — i.e. a
+             coarse, deterministic stand-in. ``step_quantum`` defaults to the sampler floor
+             (``sampler_min_step``, 5) so consecutive sampled steps map to distinct ordinals; the
+             decision is still a pure function of the step and therefore identical across
+             collectors. Documented because it is an approximation of the true emit ordinal when
+             the trainer did not stamp one.
+        """
+        he = max(1, int(heavy_every))
+        ordinal = cls._emit_ordinal_for(ckpt_meta)
+        if ordinal is not None:
+            return ((ordinal % he) == 0), int(ordinal), "emit_ordinal"
+        try:
+            step = int(ckpt_meta.get("step", ckpt_meta.get("global_step", 0)) or 0)
+        except (TypeError, ValueError):
+            step = 0
+        if step <= 0:
+            return True, 0, "step0_reference"
+        # Documented step fallback: stable ordinal = step // step_quantum.
+        step_quantum = int(ckpt_meta.get("sampler_min_step", 5) or 5)
+        derived = step // max(1, step_quantum)
+        return ((derived % he) == 0), int(derived), "step_fallback"
+
     def _ctx_resources(self) -> Dict[str, Any]:
-        """Assemble the ``ctx_resources`` mapping ``build_ctx`` consumes."""
+        """Assemble the ``ctx_resources`` mapping ``build_ctx`` consumes. All entries are
+        read-only shared resources (CONTRACT (B)); ``init_model_sd`` is the FIXED INIT reference
+        loaded once from disk and threaded into every ctx unchanged."""
         return {
             "device": self.device,
             "criterion": self.criterion,
@@ -606,59 +696,54 @@ class Extractor:
             "probe_eval_loader": self.probe_eval_loader,
             "probe_train_loader": self.probe_train_loader,
             "hessian_batch": self.hessian_batch,
+            "init_model_sd": self.init_model_sd,
         }
 
     # ------------------------------------------------------------------ main entry
 
     def extract_checkpoint(self, ckpt_path: str) -> Dict[str, Any]:
-        """Build the ctx for ``ckpt_path`` and run every §6 block in order.
+        """STATELESS per-checkpoint extraction (CONTRACT (B)): build the ctx for ``ckpt_path``
+        from the checkpoint + the FIXED shared resources + the FIXED INIT reference, run every §6
+        block in order, flush. Holds NO cross-checkpoint in-memory state — two collectors can run
+        this on different checkpoints concurrently and out of order.
 
         Sequence:
-          1. ``build_ctx`` loads the model + remaps the optimizer state by ``param_names``.
-          2. On the FIRST checkpoint of the run, capture ``init_model_sd`` (E(0)) and ``Q0``
-             (the ancestral metric basis from the init optimizer state, if any).
-          3. Build the shared projection (sized to the model's trainable params) on first use.
-          4. Decide whether this is a HEAVY checkpoint (per-run counter % heavy_every == 0).
-          5. Run each block's ``extract(ctx)`` wrapped in try/except (one failure does not stop
+          1. ``build_ctx`` loads the model + remaps the optimizer state by ``param_names`` and
+             threads in the FIXED INIT reference (E(0), from disk) and the shared resources.
+          2. Build / reuse the shared projection (sized to the model's trainable params).
+          3. Decide whether this is a HEAVY checkpoint DETERMINISTICALLY from the checkpoint's own
+             emit-ordinal (or step), NOT an in-memory counter — so two collectors agree.
+          4. Run each block's ``extract(ctx)`` wrapped in try/except (one failure does not stop
              the others); CHEAP blocks every checkpoint, HEAVY blocks only when due (skipped
              heavy blocks log a ``block_skipped`` scalar and write no arrays/scalars this ckpt);
              TIME each block (``block_seconds`` scalar). Record per-block ok/err in the summary.
-          6. Flush the ScalarStore (the collector fsyncs/finalizes after this returns).
-          7. Update the carried state (prev_model_sd / prev_opt; Q0 if not yet set).
-          8. Increment the per-run processed-checkpoint counter (after this ckpt is done).
+          5. Flush the ScalarStore (the collector fsyncs/finalizes after this returns).
+          6. Drop the per-checkpoint tensors. NO carried state is advanced (init is fixed from
+             disk; prev/Q0 rotation + §6.3 trajectory are POST-HOC — CONTRACT (C)/(D)).
 
-        Returns a summary dict ``{run_id, step, condition, variant, heavy, heavy_count,
-        blocks:{name:summary|err}, ok, n_blocks_ok, n_blocks_err, t_seconds}`` for the
-        collector's log.
+        Returns a summary dict ``{run_id, step, condition, variant, heavy, heavy_ordinal,
+        heavy_basis, blocks:{name:summary|err}, ok, n_blocks_ok, n_blocks_err, t_seconds}`` for
+        the collector's log.
         """
         t0 = time.time()
-        # HEAVY-block tiering decision for THIS checkpoint (per-run counter; counter 0 = init =
-        # heavy reference). The counter is advanced at the END of this call so the first call
-        # (counter 0) is always heavy.
-        heavy_count = self._heavy_count
-        heavy_due = self._heavy_due(heavy_count, self.heavy_every)
 
+        # build_ctx loads the checkpoint ONCE and threads in the FIXED INIT reference + shared,
+        # read-only resources. prev_model_sd / prev_opt / Q0 are intentionally NOT passed (they are
+        # always None now — the diagnostics that used them are POST-HOC).
         ctx = build_ctx(
             ckpt_path,
             self._ctx_resources(),
-            init_model_sd=self.init_model_sd,
-            prev_model_sd=self.prev_model_sd,
-            prev_opt=self.prev_opt,
-            Q0=self.Q0,
             num_classes=NUM_CLASSES,
         )
 
-        # First checkpoint of the run: capture the ancestral references (E(0), Q0).
-        if not self._init_set:
-            self.init_model_sd = {k: v.detach().cpu().clone()
-                                  for k, v in ctx.model.state_dict().items()}
-            ctx.init_model_sd = self.init_model_sd
-            # Q0: the per-layer Kronecker eigenbasis from the init optimizer state, if present
-            # (StableEvo at/after its first preconditioned step; None for AdamW / step 0).
-            from extractor._ctx import _extract_Q0
-            self.Q0 = _extract_Q0(ctx.opt)
-            ctx.Q0 = self.Q0
-            self._init_set = True
+        # HEAVY-block tiering decision for THIS checkpoint — DETERMINISTIC in the checkpoint's own
+        # metadata (emit-ordinal, else step), so two collectors processing out of order agree
+        # (CONTRACT (B)). ctx.cache carries the per-checkpoint emit_ordinal / sampler_min_step that
+        # build_ctx surfaced from the checkpoint dict; ctx.step is the fallback.
+        ckpt_meta = dict(getattr(ctx, "cache", None) or {})
+        ckpt_meta.setdefault("step", ctx.step)
+        heavy_due, heavy_ordinal, heavy_basis = self._heavy_due_for_ckpt(
+            ckpt_meta, self.heavy_every)
 
         # Build / reuse the shared projection now that the model is loaded.
         try:
@@ -678,7 +763,8 @@ class Extractor:
             "variant": ctx.variant,
             "M_present": bool((ctx.opt or {}).get("M_present", False)),
             "heavy": bool(heavy_due),
-            "heavy_count": int(heavy_count),
+            "heavy_ordinal": int(heavy_ordinal),
+            "heavy_basis": heavy_basis,
             "blocks": {},
         }
         n_ok = 0
@@ -699,8 +785,8 @@ class Extractor:
                         pass
                 summary["blocks"][block_name] = {"skipped": "heavy-tier (not due)"}
                 print(f"[extract] step={ctx.step} SKIP heavy block {block_name} "
-                      f"(counter={heavy_count} heavy_every={self.heavy_every})",
-                      flush=True)
+                      f"(ordinal={heavy_ordinal} basis={heavy_basis} "
+                      f"heavy_every={self.heavy_every})", flush=True)
                 continue
 
             mod = _load_block(block_name)
@@ -738,29 +824,17 @@ class Extractor:
             print(f"[Extractor] scalar flush failed at step={ctx.step}: {e!r}",
                   file=sys.stderr, flush=True)
 
-        # Advance carried cross-checkpoint state for the NEXT checkpoint.
-        self.prev_model_sd = {k: v.detach().cpu().clone()
-                              for k, v in ctx.model.state_dict().items()}
-        # Retain ONLY the trimmed (QL/QR-only, CPU, cloned) view as prev_opt — NOT ctx.opt's full
-        # per-param L/R/precond/exp_avg* state. block_optim's §6.1 rotation-vs-prev only reads
-        # QL/QR from prev_opt, so this is behavior-preserving and removes ~one full copy of the
-        # (up to 15 GB) optimizer state from host RAM across checkpoints. The clone also breaks the
-        # alias to ctx.opt so deleting ctx.opt below actually frees the loaded checkpoint tensors.
-        from extractor._ctx import _trim_opt_to_bases, _extract_Q0
-        self.prev_opt = _trim_opt_to_bases(ctx.opt)
-        # If Q0 was not available at init (AdamW / step-0 before preconditioning) but this
-        # checkpoint now carries a Kronecker basis, adopt it as the earliest available basis
-        # (_extract_Q0 detaches/clones, so this holds no reference to the loaded checkpoint).
-        if self.Q0 is None:
-            maybe_q0 = _extract_Q0(ctx.opt)
-            if maybe_q0 is not None:
-                self.Q0 = maybe_q0
+        # REDESIGN 2026-06-16 (CONTRACT (B)/(C)): NO carried cross-checkpoint state is advanced.
+        # There is no prev_model_sd / prev_opt / Q0 to snapshot — the §6.1 rotation-vs-prev/init
+        # and the §6.3 trajectory diagnostics are computed POST-HOC from the stored top-k QL/QR
+        # eigvecs + projected coords. The init reference is fixed-from-disk in self.init_model_sd
+        # and never changes. This is exactly what makes extract_checkpoint order-independent.
 
         # --- per-checkpoint host/GPU memory cleanup (briefing §2.2: bounded footprint) -------
         # Explicitly drop the big per-checkpoint tensors so the next checkpoint's torch.load does
         # not transiently hold two full optimizer states. ctx.opt aliases the loaded checkpoint's
-        # optimizer storage (build_ctx references, never copies it); nothing else references it now
-        # that prev_opt/Q0 are independent clones, so deleting it frees the loaded blob.
+        # optimizer storage (build_ctx references, never copies it); nothing else references it
+        # (no prev_opt/Q0 clone any more), so deleting it frees the loaded blob.
         try:
             del ctx.model
         except Exception:
@@ -777,9 +851,8 @@ class Extractor:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
-        # Advance the per-run processed-checkpoint counter (this checkpoint is now done). The
-        # NEXT call sees the incremented counter for its heavy-due decision.
-        self._heavy_count = heavy_count + 1
+        # NO per-run counter to advance (CONTRACT (B)): the heavy-due decision was a pure function
+        # of this checkpoint's own metadata, so nothing carries over to the next call.
 
         total_s = time.time() - t0
         summary["ok"] = n_err == 0
@@ -812,10 +885,12 @@ def extract_checkpoint(
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """One-shot convenience: build a throwaway :class:`Extractor` for ``run_dir`` and extract a
-    single checkpoint. For multi-checkpoint runs use a persistent :class:`Extractor` so the
-    init / prev / Q0 carried state is maintained across calls (this one-shot has no prior
-    checkpoint, so init==this and prev==None — fine for smoke tests / re-extraction of a single
-    ckpt, but not the production path, which the collector drives)."""
+    single checkpoint. REDESIGN 2026-06-16: extraction is now STATELESS per checkpoint (CONTRACT
+    (B)), so this one-shot is FULLY EQUIVALENT to the collector's per-checkpoint call — the only
+    reason to reuse a persistent :class:`Extractor` is to amortize the one-time resource build
+    (probe loaders, Hessian batch, projection, INIT reference) across many checkpoints of a run.
+    The init reference is read from disk (``<run>/kept/init_model.pt`` etc.), not from a prior
+    checkpoint, so 'vs init' diagnostics work even on a single-checkpoint call."""
     ex = Extractor(run_dir=run_dir, out_store_dir=out_store_dir, device=device, **kwargs)
     try:
         return ex.extract_checkpoint(ckpt_path)

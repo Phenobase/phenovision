@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Generate the preadapt trainer arg-grids for the SLURM array (plan component C5).
+"""Generate the preadapt trainer arg-grids (REDESIGN: one trainer per run, runs sequential).
 
 LOCKED DESIGN (do not change without group OK):
   * 3 CONDITIONS only:  mae, plantclef (=VT), naive.   ImageNet is DROPPED.
@@ -15,29 +15,33 @@ Each emitted line is the full argument string for ONE
 The trainer derives run_id = "{condition}__{variant}__s{seed}" and the output dir
 xAI/output/preadapt/<run_id> from these args, so we do NOT pass --output_dir here.
 
-GRID-FILE LAYOUT (chosen for the cleanest two-wave-per-variant schedule)
-------------------------------------------------------------------------
+GRID-FILE LAYOUT (one line per condition x variant)
+----------------------------------------------------
 We emit ONE grid file PER VARIANT:
 
     configs/experiment/preadapt_grid_adamw.txt        (3 lines: mae, plantclef, naive)
     configs/experiment/preadapt_grid_stable_evo.txt   (3 lines: mae, plantclef, naive)
 
-Why per-variant (not one combined file)? The orchestration runs ONE variant at a time
-(submit_preadapt_train.sh dispatches a single grid file as a `--array=0-2%2` array of 3
-condition-trainers, throttled to 2 concurrent GPUs; one collector watches that variant's 3 run
-dirs). A per-variant file maps 1:1 onto "one array == one variant == 3 conditions throttled %2"
-with no variant column to filter on, and the collector's --watch-dirs are exactly the run dirs of
-the lines in that one file. Variant 2 is launched AFTER variant 1 (sequentially or with
-`sbatch --dependency=afterany:<jobid>`), so GPU usage never exceeds 2 trainers + 1 collector = 3.
+REDESIGN ORCHESTRATION (collector-throughput-limited; do NOT use the old %2 array): each RUN is
+launched INDIVIDUALLY by run_preadapt_run.sh as 1 trainer (B200) + 2 collector workers (2x L4) = 3
+GPUs, and the 6 runs (3 conditions x 2 variants) run STRICTLY SEQUENTIALLY (run_preadapt_all.sh
+chains them with afterany dependencies) so only one run -- and thus at most 3 GPUs -- is ever
+active. The grid files are the SOURCE of the per-run trainer arg-line: run_preadapt_run.sh selects
+the line for <condition> from preadapt_grid_<variant>.txt (1-based line = condition index + 1 in
+the order mae, plantclef, naive) and launches a SINGLE trainer with it (NOT an array). The old
+per-variant `--array=0-2%2` wave model is superseded; these grids are still per-variant only so the
+selection (variant -> file, condition -> line) stays trivial.
 
-The shared hyperparameters below are the trainer's own defaults (read from preadapt_train.py
-parse_args) — we pass them EXPLICITLY so the launched command is self-documenting and a later
-change to a trainer default cannot silently move the experiment. Override only the few knobs that
-the locked design requires (--shared-tokenizer mae, --seed 42).
+The shared hyperparameters below are passed EXPLICITLY so the launched command is self-documenting
+and a later change to a trainer default cannot silently move the experiment. Override only the knobs
+the locked + REDESIGN design requires (--shared-tokenizer mae, --seed 42, the dense-early sampler
+cadence --sampler_min_step 5 / --sampler_delta 0.02 / --sampler_max_step 200, and the backpressure
+marks --backpressure-high 6 / --backpressure-low 2). NOTE: --heavy-every is a COLLECTOR arg (set in
+run_preadapt_run.sh / submit_preadapt_collector2.sh), NOT a trainer arg, so it is NOT emitted here.
 
 Usage:
     python xAI/scripts/gen_preadapt_grid.py
-    # -> writes both grid files and prints the exact "--array=0-2%2" spec to use.
+    # -> writes both grid files (3 lines each) carrying the dense-early + backpressure flags.
 """
 from __future__ import annotations
 
@@ -57,18 +61,28 @@ SEED = 42
 # --- shared hyperparameters (trainer defaults, passed explicitly; see preadapt_train.parse_args) ---
 # Keep these aligned with preadapt_train.py defaults unless the design clearly needs an override.
 #
-# Three knobs below DELIBERATELY OVERRIDE the trainer defaults (locked design + collector tuning):
+# REDESIGN (collector-throughput-limited, dense-early): the COLLECTOR is now the bottleneck, NOT
+# the trainer. Instead of widening the sampler so a single collector keeps up, we run TWO collectors
+# per run and let the trainer PAUSE emission/training (backpressure) whenever the work queue gets
+# deep. The sampler is therefore tuned for DENSE-EARLY sampling — many checkpoints in Phase-2 epoch
+# 1 while weights move fast, slowing as displacement slows — and the backpressure high/low marks
+# bound the on-disk work-queue depth so the collectors never fall irrecoverably behind.
+#
+# Knobs below that DELIBERATELY OVERRIDE the trainer defaults:
 #   * max_train_samples = 214000  -> per-run train set is the fixed 214k subset (trainer default is
 #     None == full set). Both variants carry it. With phase2_batch_size 384 this is ~557 Phase-2
 #     steps/epoch x ~14 Phase-2 epochs ~= 7.8k Phase-2 steps total.
-#   * sampler_min_step / sampler_max_step = 300 / 800  -> PROVISIONAL conservative sampler cadence
-#     (trainer defaults are 20 / 500). Widened so the checkpoint collector can keep up with the
-#     214k-subset runs: at min_step 300 the trainer emits at most one ladder checkpoint every 300
-#     Phase-2 steps (~26 emissions over the ~7.8k-step run), and at most every 800 if the
-#     displacement trigger is quiet. These two values are PROVISIONAL pending the §2.3 collector
-#     utilization pilot: the FINAL min_step is set from the measured collector per-checkpoint
-#     extraction time T_ex, with the per-trainer emission interval required to be >= 2 * T_ex so a
-#     single collector never falls behind two concurrent trainers.
+#   * sampler_min_step = 5, sampler_delta = 0.02, sampler_max_step = 200  (trainer defaults 20 /
+#     0.10 / 500). DENSE-EARLY cadence: a low floor (5) + a small displacement trigger (0.02) emit
+#     MANY checkpoints early (target >= 25 in Phase-2 epoch 1 while weights change fast), tapering
+#     naturally as the per-layer relative displacement shrinks; the 200-step max-step cap guarantees
+#     a regular backbone for the time series even once motion stalls. The collector keep-up problem
+#     this would otherwise create is handled by TWO collectors + trainer backpressure, NOT by
+#     widening the cadence.
+#   * backpressure_high = 6, backpressure_low = 2  -> the trainer PAUSES checkpoint emission (and
+#     training) once PENDING checkpoints in the watch dir exceed 6, resuming only when the queue
+#     drains below 2 (hysteresis). This makes COLLECTOR THROUGHPUT the limiter: training waits for
+#     the 2 collectors to catch up rather than letting the work queue / disk grow unbounded.
 SHARED_HPARAMS = {
     "num_epochs": 15,
     "batch_size": 768,            # Phase-1 (frozen backbone)
@@ -76,16 +90,24 @@ SHARED_HPARAMS = {
     "blr": 5e-4,                  # base lr (effective Phase-2 lr = blr * eff_batch / 256)
     "weight_decay": 0.05,
     "max_train_samples": 214000,  # OVERRIDE: fixed 214k-subset train set per run (default None)
-    "sampler_delta": 0.10,
-    "sampler_min_step": 500,      # OVERRIDE (default 20): collector-keep-up floor. Set from measured T_ex: collector
-                                  #   ~3min/ckpt amortized (cheap ~2min, heavy ~5min L4, heavy_every=3); min_step 500 over a
-                                  #   214k run (~7.8k Phase-2 steps) => ~16 emissions/trainer so 1 collector keeps up with 2 trainers.
-    "sampler_max_step": 1000,     # OVERRIDE (default 500): forced-emission cap (regular backbone for time-series).
+    "sampler_delta": 0.02,        # OVERRIDE (default 0.10): small trigger => dense-early sampling.
+    "sampler_min_step": 5,        # OVERRIDE (default 20): low floor => >= 25 ckpts in P2 epoch 1.
+    "sampler_max_step": 200,      # OVERRIDE (default 500): forced-emission cap (regular backbone).
+    "backpressure_high": 6,       # trainer PAUSES emission+training when PENDING > 6 (high-water).
+    "backpressure_low": 2,        # ...resumes when PENDING < 2 (low-water; hysteresis).
     "demo_kappa": 1.0,
     "demo_warmup": 200,
     "val_every_n": 100,
     "projection_dim": 8192,
     "retention_latest_keep": 2,
+}
+
+# Hyperparameter keys whose argparse flag uses DASHES rather than underscores. Most trainer flags
+# are ``--snake_case``, but the REDESIGN backpressure flags are ``--backpressure-high`` /
+# ``--backpressure-low`` (see preadapt_train.parse_args). We map those keys when emitting the line.
+DASH_FLAG_KEYS = {
+    "backpressure_high": "backpressure-high",
+    "backpressure_low": "backpressure-low",
 }
 
 # --- stable_evo-only hyperparameters ------------------------------------------------------
@@ -118,7 +140,8 @@ def line_for(condition: str, variant: str) -> str:
     if variant == "stable_evo":
         hparams.update(STABLE_EVO_HPARAMS)
     for k, v in hparams.items():
-        parts.append(f"--{k} {v:g}" if isinstance(v, float) else f"--{k} {v}")
+        flag = DASH_FLAG_KEYS.get(k, k)  # backpressure flags use dashes; the rest are snake_case
+        parts.append(f"--{flag} {v:g}" if isinstance(v, float) else f"--{flag} {v}")
     return " ".join(parts)
 
 
@@ -142,11 +165,16 @@ def main() -> None:
         path.write_text("\n".join(lines) + "\n")
         total += len(lines)
         print(f"Wrote {len(lines)} configs ({', '.join(CONDITIONS)}) to {path}")
-        print(f"  --array=0-{len(lines) - 1}%2   # 3 conditions, throttled to 2 concurrent trainers")
+        for i, cond in enumerate(CONDITIONS):
+            print(f"  line {i + 1}: {cond:<10s} (run_preadapt_run.sh {cond} {variant})")
 
     print()
     print(f"TOTAL: {total} runs ({len(CONDITIONS)} conditions x {len(VARIANTS)} variants).")
-    print("Per variant: sbatch --array=0-2%2 (2 trainers) + 1 collector = 3 GPUs (NEVER raise without group OK).")
+    print("REDESIGN orchestration (collector-throughput-limited): each run = 1 trainer (B200) + 2 "
+          "collector workers (2x L4) = 3 GPUs; the 6 runs are launched SEQUENTIALLY by "
+          "run_preadapt_all.sh (afterany chain) so <= 3 concurrent GPUs at all times.")
+    print("Dense-early cadence: --sampler_min_step 5 --sampler_delta 0.02 --sampler_max_step 200; "
+          "backpressure: --backpressure-high 6 --backpressure-low 2; heavy_every=3 (collector arg).")
 
 
 if __name__ == "__main__":

@@ -183,6 +183,41 @@ def is_ready(path: str) -> bool:
     )
 
 
+def count_pending(watch_dir: str) -> int:
+    """Count PENDING checkpoints in ``watch_dir`` — the trainer's backpressure signal
+    (REDESIGN contract A).
+
+    A checkpoint is PENDING iff it is fully written and not yet claimed by a collector:
+    a ``"<base>.pt"`` file exists, its ``"<base>.pt.done"`` sentinel exists, and it is
+    NOT currently being processed (no ``"<base>.pt.processing"``). This is exactly the
+    set :func:`is_ready` would accept — i.e. the work queue depth.
+
+    The watch dir is a PURE WORK QUEUE: kept ladder checkpoints live in ``<run>/kept/``,
+    not here, so every ``*.pt`` present is a to-be-processed item. We count by scanning
+    the ``*.pt.done`` sentinels (one per emitted checkpoint) and requiring the base
+    ``*.pt`` to still exist and to be unclaimed.
+
+    Robust to a missing / not-yet-created ``watch_dir`` (returns 0). Pure: no side
+    effects, no claims, safe to call from the trainer between training steps.
+    """
+    if not watch_dir or not os.path.isdir(watch_dir):
+        return 0
+    n = 0
+    for entry in os.listdir(watch_dir):
+        if not entry.endswith(DONE_SUFFIX):
+            continue
+        base = entry[: -len(DONE_SUFFIX)]  # strip ".done" -> "<...>.pt"
+        if not base.endswith(".pt"):
+            continue
+        base_path = os.path.join(watch_dir, base)
+        if not os.path.exists(base_path):
+            continue  # base .pt gone (consumed) — not pending
+        if os.path.exists(base_path + PROCESSING_SUFFIX):
+            continue  # claimed by a collector — not pending
+        n += 1
+    return n
+
+
 def claim_for_processing(path: str) -> Optional[str]:
     """Atomically claim ``path`` for extraction by renaming it to ``path + '.processing'``.
 
@@ -950,6 +985,28 @@ def _selftest() -> None:  # pragma: no cover - exercised manually / in smoke tes
         proc2 = claim_for_processing(ckpt)
         finalize_processed(proc2, keep=False)
         assert not os.path.exists(ckpt) and not os.path.exists(ckpt + DONE_SUFFIX)
+
+        # --- count_pending (backpressure work-queue depth) ---
+        wq = os.path.join(tmpdir, "watch_queue")
+        assert count_pending(wq) == 0, "missing dir -> 0"
+        os.makedirs(wq, exist_ok=True)
+        assert count_pending(wq) == 0, "empty dir -> 0"
+        # two ready+unclaimed -> pending 2
+        for s in (5, 6):
+            save_checkpoint_atomic({"model_state_dict": {}, "step": s},
+                                   os.path.join(wq, f"step{s:08d}.pt"))
+        assert count_pending(wq) == 2, count_pending(wq)
+        # claim one -> pending 1 (claimed not counted)
+        claimed = claim_for_processing(os.path.join(wq, "step00000005.pt"))
+        assert claimed is not None
+        assert count_pending(wq) == 1, count_pending(wq)
+        # a .pt with no .done sentinel is NOT pending (half-written)
+        with open(os.path.join(wq, "step00000007.pt"), "wb") as _f:
+            _f.write(b"partial")
+        assert count_pending(wq) == 1, count_pending(wq)
+        # finalize the claimed one as deleted -> pending stays 1 (only step6 ready)
+        finalize_processed(claimed, keep=False)
+        assert count_pending(wq) == 1, count_pending(wq)
 
         # --- ladder ---
         assert on_ladder(1) and on_ladder(2) and on_ladder(8)

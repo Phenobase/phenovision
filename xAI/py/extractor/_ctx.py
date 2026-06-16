@@ -14,8 +14,22 @@ loaders, the fixed Hessian batch, the seeded random projection, and the scalar/a
 
 The shared resources are owned by the :class:`~extractor.extract.Extractor` (one per collector
 process); ``build_ctx`` receives them via a ``ctx_resources`` mapping so this module stays
-free of any polling / lifecycle logic. The per-run carried state (``Q0``, ``prev_model_sd``,
-``prev_opt``) is also passed in by the Extractor, which maintains it across calls.
+free of any polling / lifecycle logic.
+
+STATELESS per-checkpoint extraction (CONTRACT (B)/(C), REDESIGN 2026-06-16): ``build_ctx`` no
+longer carries any cross-checkpoint in-memory state. The only init-relative reference a block
+needs (E(0), the ancestral weights, for §6.2 "vs init" / §6.6 CKA-vs-init) is loaded ONCE from a
+FIXED FILE ON DISK (``<run>/kept/init_model.pt`` or the run's ``init_model.pt``) into the shared
+resources and threaded READ-ONLY into every ctx as ``init_model_sd`` — it is identical for every
+checkpoint of the run and depends on no previously-processed checkpoint. The previous-checkpoint
+fields (``prev_model_sd``, ``prev_opt``) and the prev-derived metric basis (``Q0``) are RETAINED
+on :class:`ExtractCtx` as ALWAYS-``None`` optional fields for back-compat (so blocks that still
+read them via ``getattr(ctx, 'prev_model_sd', None)`` degrade cleanly to "skipped"); the
+inherently cross-checkpoint diagnostics that used them (§6.1 QL/QR rotation-vs-prev/init, §6.3
+trajectory MSD/straightness/velocity-autocorr/motion-split) have MOVED OUT of the live path to a
+POST-HOC pass that reads the stored QL/QR eigvecs + projected coords from the per-run store. Two
+collector processes can therefore run :func:`build_ctx` + the per-checkpoint blocks on DIFFERENT
+checkpoints concurrently and out of order — there is no shared mutable state to race on.
 
 Architecture facts baked in here: ViT-L/16, num_classes=2 (reproductive: flowers, fruits),
 D=1024, 24 blocks, 16 heads, head_dim 64 (briefing §4 invariant 4 / plan ARCH line).
@@ -90,11 +104,19 @@ class ExtractCtx:
                             demographic_* ... }   # representative param-group config
         }
 
-    Carried cross-checkpoint state (maintained by the Extractor; None on the first ckpt):
-        init_model_sd : dict — step-0 model_state_dict (E(0); the init weights)
-        prev_model_sd : dict|None — the previous processed checkpoint's model_state_dict
-        prev_opt      : dict|None — the previous checkpoint's ``opt`` (same shape as ``opt``)
-        Q0            : dict|None — { param_name: {'QL':tensor,'QR':tensor} } at init, or None
+    Fixed init reference (loaded ONCE from disk; READ-ONLY; identical every ckpt):
+        init_model_sd : dict|None — the run's INIT (E(0)) model_state_dict, loaded from the
+                        fixed ``<run>/kept/init_model.pt`` / ``init_model.pt`` file (NOT from a
+                        previously-processed checkpoint). Threaded in unchanged on every ckpt so
+                        §6.2 "vs init" / §6.6 CKA-vs-init are per-checkpoint independent.
+
+    DEPRECATED cross-checkpoint fields (REDESIGN 2026-06-16; ALWAYS ``None`` now):
+        prev_model_sd : None — the previous-checkpoint comparison moved to the POST-HOC pass.
+        prev_opt      : None — the QL/QR rotation-vs-prev moved to the POST-HOC pass.
+        Q0            : None — the init metric basis is reconstructed POST-HOC from the stored
+                        ``ql_eigvecs``/``qr_eigvecs`` arrays, not carried in memory.
+        These remain on the dataclass so the unchanged blocks (block_weights / block_interp) that
+        read them via ``getattr(ctx, ..., None)`` skip their cross-checkpoint piece cleanly.
 
     Fixed comparability resources (briefing §4 invariants; identical every ckpt/condition):
         probe_eval_loader  : DataLoader — fixed held-out probe-eval split (fitness, §6.8)
@@ -128,8 +150,11 @@ class ExtractCtx:
     # --- optimizer state view ------------------------------------------------------------
     opt: Dict[str, Any]
 
-    # --- carried cross-checkpoint state --------------------------------------------------
+    # --- fixed init reference (loaded once from disk; read-only) -------------------------
     init_model_sd: Optional[Dict[str, Any]] = None
+    # --- DEPRECATED cross-checkpoint fields (REDESIGN 2026-06-16; always None) ------------
+    # Kept as optional fields for back-compat so the unchanged blocks that read them skip
+    # cleanly. The diagnostics that used them are now computed POST-HOC (CONTRACT (C)/(D)).
     prev_model_sd: Optional[Dict[str, Any]] = None
     prev_opt: Optional[Dict[str, Any]] = None
     Q0: Optional[Dict[str, Any]] = None
@@ -261,13 +286,13 @@ def _cpu_detach_clone(t: Any) -> Any:
 def _trim_opt_to_bases(opt: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """Return a SAME-STRUCTURED ``opt`` view (``{'variant','M_present','state','group'}``) whose
     per-param ``state`` keeps ONLY the eigenbasis tensors in ``_BASIS_STATE_KEYS`` (QL/QR), each
-    detached + CPU + cloned. This is what the Extractor retains as ``prev_opt`` across checkpoints
-    so it does not hold the previous checkpoint's full L/R/precond/exp_avg* (the host-RAM blow-up).
+    detached + CPU + cloned.
 
-    block_optim's §6.1 prev-checkpoint comparison only reads ``prev_st.get('QL'/'QR')`` (the
-    principal-angle rotation-vs-prev), so dropping the other keys is behavior-preserving. Returns
-    None for a None / stateless input. The result is still a well-formed ``opt`` view (the same
-    keys present), just with trimmed per-param state dicts."""
+    REDESIGN 2026-06-16: the Extractor no longer carries a previous-checkpoint ``prev_opt`` (the
+    §6.1 rotation-vs-prev is POST-HOC now), so this is no longer called on the live path. It is
+    kept importable because a future POST-HOC pass / test may want a QL/QR-only view of an opt
+    dict. Returns None for a None / stateless input; the result is still a well-formed ``opt``
+    view (the same keys present), just with trimmed per-param state dicts."""
     if opt is None:
         return None
     trimmed_state: Dict[str, Any] = {}
@@ -295,9 +320,12 @@ def _extract_Q0(opt: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     (briefing §6.1 init-relative rotation). Returns None if no preconditioned param carries a
     basis yet (e.g. AdamW, or step 0 before the first preconditioned step).
 
+    REDESIGN 2026-06-16: the live path no longer carries ``Q0`` in memory (the §6.1 init-relative
+    rotation is POST-HOC, reconstructed from the per-step ``ql_eigvecs``/``qr_eigvecs`` arrays
+    block_optim now stores). This helper is kept importable for the POST-HOC pass / tests.
+
     The retained tensors are detached + CPU + CLONED so ``Q0`` holds no reference to the loaded
-    checkpoint's storage (it is kept for the whole run; a lingering view would pin the init
-    checkpoint's full blob in RAM)."""
+    checkpoint's storage."""
     state = opt.get("state", {})
     q0: Dict[str, Any] = {}
     for name, st in state.items():
@@ -312,6 +340,74 @@ def _extract_Q0(opt: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 entry["QR"] = _cpu_detach_clone(qr)
             q0[name] = entry
     return q0 or None
+
+
+# =============================================================================
+# Fixed INIT reference loading (CONTRACT (C): "vs init" loads from a fixed file on disk)
+# =============================================================================
+
+#: Candidate file names for the run's fixed INIT (E(0)) reference, most-preferred first. The
+#: kept-storage redesign MOVES kept ladder checkpoints to ``<run>/kept/``; the init/Phase-2-start
+#: reference is ``init_model.pt`` (the trainer's Phase-2 init) or ``phase1_final.pt`` (the
+#: equalization endpoint). We look in ``<run>/kept/`` first, then the run output dir itself.
+_INIT_REFERENCE_NAMES: Tuple[str, ...] = ("init_model.pt", "phase1_final.pt")
+
+
+def resolve_init_reference_path(run_dir: str) -> Optional[str]:
+    """Resolve the FIXED on-disk INIT (E(0)) reference for a run (CONTRACT (C)).
+
+    ``run_dir`` is the run's watch dir (``<output_dir>/checkpoints``) or the run output dir. We
+    search, in order: ``<run>/kept/{init_model.pt,phase1_final.pt}`` (kept-storage redesign
+    location), then ``<output_dir>/kept/...`` and ``<output_dir>/{init_model.pt,phase1_final.pt}``.
+    Returns the first existing path, or None if no init reference is on disk yet (the extractor
+    then runs with ``init_model_sd=None`` and the "vs init" pieces skip cleanly).
+    """
+    run_dir = os.path.abspath(run_dir.rstrip("/"))
+    output_dir = (os.path.dirname(run_dir)
+                  if os.path.basename(run_dir) == "checkpoints" else run_dir)
+    search_dirs = [
+        os.path.join(run_dir, "kept"),
+        os.path.join(output_dir, "kept"),
+        run_dir,
+        output_dir,
+    ]
+    seen: set = set()
+    for d in search_dirs:
+        if d in seen:
+            continue
+        seen.add(d)
+        for name in _INIT_REFERENCE_NAMES:
+            cand = os.path.join(d, name)
+            if os.path.exists(cand):
+                return cand
+    return None
+
+
+def load_init_model_sd(init_ref_path: Optional[str],
+                       map_location: str = "cpu") -> Optional[Dict[str, Any]]:
+    """Load the FIXED INIT (E(0)) model_state_dict from ``init_ref_path`` ONCE (the Extractor
+    calls this when building shared resources, then threads the result READ-ONLY into every ctx).
+
+    The tensors are detached + CPU + cloned so the returned dict holds no reference to a loaded
+    checkpoint container. Returns None if the path is None / missing / unreadable / carries no
+    ``model_state_dict`` (the "vs init" blocks then skip cleanly). NEVER raises — a bad init
+    reference must not take down the whole extractor."""
+    if not init_ref_path or not os.path.exists(init_ref_path):
+        return None
+    try:
+        ckpt = torch.load(init_ref_path, map_location=map_location, weights_only=False)
+    except Exception as e:
+        print(f"[build_ctx] init reference {init_ref_path!r} unreadable ({e!r}); "
+              f"'vs init' blocks will skip.", file=sys.stderr, flush=True)
+        return None
+    sd = ckpt.get("model_state_dict", ckpt) if isinstance(ckpt, dict) else None
+    if not isinstance(sd, dict):
+        print(f"[build_ctx] init reference {init_ref_path!r} has no model_state_dict; "
+              f"'vs init' blocks will skip.", file=sys.stderr, flush=True)
+        return None
+    out = {k: _cpu_detach_clone(v) for k, v in sd.items()}
+    del ckpt
+    return out
 
 
 def build_ctx(
@@ -339,8 +435,14 @@ def build_ctx(
             (SparseRandomProjection), ``scalar`` (ScalarStore), ``array`` (ArrayStore),
             ``manifest`` (dict). Optional: ``probe_eval_loader``, ``probe_train_loader``,
             ``hessian_batch`` (a ``(images, targets)`` tuple; moved to ``device`` here if on CPU).
-        init_model_sd / prev_model_sd / prev_opt / Q0: carried cross-checkpoint state (the
-            Extractor maintains and passes these). ``Q0`` is set from the first/init checkpoint.
+            Optional ``init_model_sd``: the FIXED INIT (E(0)) reference loaded ONCE from disk and
+            threaded read-only into every ctx (CONTRACT (C)); if present it is used directly,
+            otherwise build_ctx leaves ``ctx.init_model_sd`` None and the "vs init" blocks skip.
+        init_model_sd / prev_model_sd / prev_opt / Q0: REDESIGN 2026-06-16 — these are no longer
+            carried cross-checkpoint. ``init_model_sd`` may be passed (it equals
+            ``ctx_resources['init_model_sd']`` when present); ``prev_model_sd`` / ``prev_opt`` /
+            ``Q0`` are always None on the live path (the diagnostics that used them are POST-HOC)
+            and are accepted only for back-compat with older callers / tests.
         num_classes: model output dim (2 for reproductive).
         map_location: where ``torch.load`` puts tensors. Default "cpu" — the model weights are
             moved to ``device`` after loading, while large optimizer tensors stay on CPU until a
@@ -414,6 +516,11 @@ def build_ctx(
     if inline_proj_meta is not None and not isinstance(inline_proj_meta, dict):
         inline_proj_meta = None
 
+    # --- fixed INIT (E(0)) reference (CONTRACT (C)): prefer the explicit kwarg, else the
+    # shared resource the Extractor loaded ONCE from disk. Read-only; identical every ckpt.
+    if init_model_sd is None:
+        init_model_sd = ctx_resources.get("init_model_sd")
+
     ctx = ExtractCtx(
         condition=condition,
         variant=variant,
@@ -439,6 +546,15 @@ def build_ctx(
         array=ctx_resources.get("array"),
         manifest=manifest,
     )
+    # Surface the checkpoint's OWN deterministic emit-ordinal + sampler floor into the
+    # per-checkpoint scratch cache (CONTRACT (B)): the driver uses them for the order-independent
+    # heavy-tier decision without re-loading the checkpoint and without a new dataclass field.
+    # Absent fields stay absent and the driver falls back to the step rule. ``cache`` is reset
+    # per checkpoint, so this is pure per-checkpoint metadata (no cross-checkpoint state).
+    for _meta_key in ("emit_ordinal", "ckpt_index", "emit_index", "sample_index",
+                      "sampler_min_step"):
+        if isinstance(ckpt, dict) and _meta_key in ckpt and ckpt[_meta_key] is not None:
+            ctx.cache[_meta_key] = ckpt[_meta_key]
     # Drop the local checkpoint-dict reference: the only big tensors we still need (the optimizer
     # state) are reachable via ctx.opt['state'], and the model weights are now in the model. This
     # lets the loaded ``ckpt`` container (its metadata + the now-None model_state_dict slot) be

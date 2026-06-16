@@ -33,12 +33,23 @@ For the **AdamW** baseline variant only diagonal ``exp_avg`` / ``exp_avg_sq`` ex
 spectrum / trace / participation ratio and skip everything Kronecker gracefully. Both
 paths produce well-formed records that differ only in which quantities exist.
 
-We work directly off the **saved tensors** in ``ctx.opt['state']`` (and the previous
-checkpoint's ``ctx.prev_opt`` and the init basis ``ctx.Q0``); we never reconstruct the
+We work directly off the **saved tensors** in ``ctx.opt['state']``; we never reconstruct the
 live optimizer. Heavy reductions (eigh) run on CPU/float64 — the same defensive choice as
 ``curvature/operative_exponent.py``, because cuSOLVER's GPU ``eigh`` raises on the
 ill-conditioned Kronecker factors that show up mid-training, and these factors are small
 (Kronecker dims ≤ ``max_precond_dim``).
+
+STATELESS REDESIGN 2026-06-16 (CONTRACT (B)/(C)/(D)). This block is now FULLY per-checkpoint
+independent — it reads ONLY ``ctx.opt['state']`` (this checkpoint's own optimizer state) and the
+fixed param group. The LIVE principal-angle rotation diagnostics (QL/QR rotation vs the previous
+checkpoint and vs the init basis ``Q0``) are REMOVED from this block; instead we STORE the top-k
+QL/QR eigenVECTORS to the array store (groups ``ql_eigvecs`` / ``qr_eigvecs``, per layer, keyed by
+step) so the POST-HOC §6.1 pass (CONTRACT (D)) can compute the rotations (principal angles vs the
+previous step and vs the earliest/init reference) from the stored bases. Everything else stays
+LIVE and per-checkpoint: the Kronecker L/R eigenVALUE spectra, the rotated ``exp_avg_sq`` curvature
+spectrum, the generated ``precond`` spectrum, the realized exponent ``alpha_last``, and the
+canalization-floor scalars. Removing the live angle SVD also speeds the block up. ``ctx.prev_opt``
+/ ``ctx.Q0`` are no longer read (they are always None now).
 
 Conventions (xAI/two_noise/CONVENTIONS.md §5): no global RNG; this block is deterministic
 (eigendecompositions only), so no generator is threaded here — the curvature block, which
@@ -58,12 +69,13 @@ import torch
 # the collector can dial cost without touching code.
 TOP_K: int = 32
 
-# Number of leading EIGENVECTORS (QL/QR columns) retained for the principal-angle rotation
-# diagnostics (vs previous checkpoint and vs init Q0). Halved from TOP_K (32 -> 16) as the
-# approved §6.1 collector speed cut: the principal-angle SVD then runs on 16-dim subspaces,
-# roughly quartering that work, while every eigenVALUE spectrum / trace / participation /
-# precond / realized-exponent / canalization-floor quantity is untouched (none depend on
-# this count). Briefing §6.1: "k of order 16-64 is enough" — 16 is the low end of that band.
+# Number of leading EIGENVECTORS (QL/QR columns) STORED per Kronecker factor for the POST-HOC
+# §6.1 rotation pass (principal angles vs previous step + vs the earliest/init reference). The
+# post-hoc pass computes the principal-angle SVD on these stored 16-dim subspaces; storing only
+# the top-16 columns (vs the full m×m / n×n basis) keeps the array store small while preserving
+# the rotation signal. Briefing §6.1: "k of order 16-64 is enough" — 16 is the low end of that
+# band. Every eigenVALUE spectrum / trace / participation / precond / realized-exponent /
+# canalization-floor quantity is independent of this count.
 TOPK_EIGVECS: int = 16
 
 # Floors / guards for log-space and division stability.
@@ -127,40 +139,14 @@ def _participation_ratio(spectrum: np.ndarray) -> float:
 def _top_columns(Q: Optional[torch.Tensor], k: int) -> Optional[torch.Tensor]:
     """Return the leading ``k`` columns of an eigenbasis ``Q`` (the basis stores
     eigenvectors in descending-eigenvalue order — ``_eigh_basis`` in the optimizer flips
-    them so column 0 is the top direction). CPU/float32 for the principal-angle SVD."""
+    them so column 0 is the top direction), CPU/float32. These are the top-k eigenVECTORS
+    STORED to the array store for the POST-HOC rotation pass (CONTRACT (D))."""
     if Q is None:
         return None
     Qc = Q.detach().to("cpu", dtype=torch.float32)
     if Qc.dim() != 2 or Qc.shape[1] == 0:
         return None
     return Qc[:, : min(k, Qc.shape[1])]
-
-
-def _principal_angle_summary(U: Optional[torch.Tensor], V: Optional[torch.Tensor]):
-    """Mean cosine of the principal angles between the column spaces of ``U`` and ``V``
-    (1 = perfectly aligned, 0 = orthogonal), plus the full angle vector in radians.
-
-    Reuses ``curvature.lanczos.principal_angles`` (which QR-orthonormalizes internally, so
-    passing the top-k columns of the already-orthonormal bases is fine). Returns
-    ``(mean_cos, angles_rad_ndarray)`` or ``(nan, None)`` if either basis is missing /
-    the dimensions are incompatible."""
-    if U is None or V is None:
-        return float("nan"), None
-    if U.shape[0] != V.shape[0]:
-        return float("nan"), None
-    try:
-        from curvature.lanczos import principal_angles
-    except Exception:
-        return float("nan"), None
-    try:
-        ang = principal_angles(U, V)  # ascending radians, length min(k1,k2)
-    except Exception:
-        return float("nan"), None
-    ang_np = ang.detach().to("cpu", dtype=torch.float64).numpy()
-    if ang_np.size == 0:
-        return float("nan"), None
-    mean_cos = float(np.mean(np.cos(ang_np)))
-    return mean_cos, ang_np
 
 
 def _diag_spectrum_desc(t: Optional[torch.Tensor]) -> Optional[np.ndarray]:
@@ -189,13 +175,14 @@ def _topk_array(spectrum: np.ndarray, k: int) -> np.ndarray:
 # per-layer extraction
 # =============================================================================
 
-def _extract_preconditioned_layer(ctx, name: str, st: Dict[str, Any],
-                                   prev_st: Optional[Dict[str, Any]],
-                                   q0: Optional[Dict[str, Any]]) -> Dict[str, float]:
+def _extract_preconditioned_layer(ctx, name: str, st: Dict[str, Any]) -> Dict[str, float]:
     """Extract the §6.1 quantities for one preconditioned 2-D layer (StableEvo path).
 
-    Writes scalars via ``ctx.scalar.add(layer=name)`` and full spectra / angle vectors via
-    ``ctx.array.put(layer=name)``. Returns a small per-layer summary dict."""
+    STATELESS (CONTRACT (B)/(C)): reads ONLY this checkpoint's own state ``st``. Writes scalars
+    via ``ctx.scalar.add(layer=name)`` and full spectra / STORED eigenvectors via
+    ``ctx.array.put(layer=name)``. The QL/QR rotation diagnostics are NOT computed here — the
+    POST-HOC pass computes them from the ``ql_eigvecs`` / ``qr_eigvecs`` arrays stored below.
+    Returns a small per-layer summary dict."""
     c, r, step, wt = ctx.condition, ctx.run_id, ctx.step, ctx.wall_time
     summary: Dict[str, float] = {}
 
@@ -215,38 +202,21 @@ def _extract_preconditioned_layer(ctx, name: str, st: Dict[str, Any],
         s(f"kron_{fac}_participation", _participation_ratio(spec))
         summary[f"{fac}_top_eig"] = float(spec[0])
 
-    # --- basis rotation rate: vs previous checkpoint and vs init Q0 ----------------------
-    # Rotation diagnostics use only the leading TOPK_EIGVECS (16) columns of each basis, so
-    # the principal-angle SVD runs on 16-dim subspaces (the §6.1 cost cut). Eigenvalue
-    # spectra above/below use TOP_K independently.
-    QL_now = _top_columns(st.get("QL"), TOPK_EIGVECS)
-    QR_now = _top_columns(st.get("QR"), TOPK_EIGVECS)
-
-    prev_QL = _top_columns(prev_st.get("QL"), TOPK_EIGVECS) if prev_st else None
-    prev_QR = _top_columns(prev_st.get("QR"), TOPK_EIGVECS) if prev_st else None
-    q0_QL = _top_columns(q0.get("QL"), TOPK_EIGVECS) if q0 else None
-    q0_QR = _top_columns(q0.get("QR"), TOPK_EIGVECS) if q0 else None
-
-    # The scalar "rotation" we log is mean principal-angle COSINE (alignment): 1 = the
-    # metric basis has not moved, lower = it has rotated. We log it for QL (and QR) against
-    # both the previous checkpoint and the ancestral init basis (the phylogenetic
-    # "metric divergence from ancestor" signal). Full angle vectors go to the array store.
-    for tag, U_now, U_prev, U_init in (("ql", QL_now, prev_QL, q0_QL),
-                                       ("qr", QR_now, prev_QR, q0_QR)):
-        mc_prev, ang_prev = _principal_angle_summary(U_now, U_prev)
-        mc_init, ang_init = _principal_angle_summary(U_now, U_init)
-        if not np.isnan(mc_prev):
-            s(f"{tag}_rotation_vs_prev", mc_prev)
-            summary[f"{tag}_rotation_vs_prev"] = mc_prev
-        if ang_prev is not None:
-            ctx.array.put(group=f"{tag}_principal_angles_vs_prev", step=step,
-                          array=ang_prev.astype(np.float32), layer=name)
-        if not np.isnan(mc_init):
-            s(f"{tag}_rotation_vs_init", mc_init)
-            summary[f"{tag}_rotation_vs_init"] = mc_init
-        if ang_init is not None:
-            ctx.array.put(group=f"{tag}_principal_angles_vs_init", step=step,
-                          array=ang_init.astype(np.float32), layer=name)
+    # --- STORE top-k QL/QR eigenVECTORS for the POST-HOC §6.1 rotation pass (CONTRACT (D)) --
+    # The post-hoc pass reads these per-step stored bases and computes the principal angles vs
+    # the previous step and vs the earliest/init reference. Storing only the top TOPK_EIGVECS (16)
+    # columns keeps the array store small. NO live principal-angle SVD here (the speed cut).
+    n_eigvecs_stored = 0
+    for tag, fac in (("ql", "QL"), ("qr", "QR")):
+        cols = _top_columns(st.get(fac), TOPK_EIGVECS)
+        if cols is None:
+            continue
+        # array shape [m, k_stored]; the post-hoc pass aligns by column = eigenrank.
+        ctx.array.put(group=f"{tag}_eigvecs", step=step,
+                      array=cols.numpy().astype(np.float32), layer=name)
+        n_eigvecs_stored += 1
+    if n_eigvecs_stored:
+        summary["eigvecs_stored"] = int(n_eigvecs_stored)
 
     # --- curvature-eigenvalue spectrum: rotated exp_avg_sq (free Hessian/Fisher est.) ----
     eas = _diag_spectrum_desc(st.get("exp_avg_sq"))
@@ -346,6 +316,10 @@ def extract(ctx) -> dict:
     Gates the matrix-valued M block on ``ctx.opt['M_present']`` (False here) and records
     the canalization-floor scalars instead.
 
+    STATELESS (CONTRACT (B)/(C)): reads ONLY this checkpoint's ``ctx.opt`` and the param group;
+    does NOT read ``ctx.prev_opt`` / ``ctx.Q0`` (rotation is POST-HOC). The top-k QL/QR eigvecs
+    are STORED per layer (``ql_eigvecs`` / ``qr_eigvecs``) for the post-hoc rotation pass.
+
     Returns a compact summary dict for the collector log.
     """
     # Lazy import so the module is importable before the driver lands _ctx.py.
@@ -353,8 +327,6 @@ def extract(ctx) -> dict:
 
     variant = (ctx.opt or {}).get("variant", "unknown")
     state = (ctx.opt or {}).get("state", {}) or {}
-    prev_state = (ctx.prev_opt or {}).get("state", {}) if ctx.prev_opt else {}
-    q0 = ctx.Q0 or {}
 
     n_precond = 0
     n_diag = 0
@@ -370,9 +342,7 @@ def extract(ctx) -> dict:
 
         has_kron = (st.get("QL") is not None) or (st.get("QR") is not None)
         if has_kron:
-            prev_st = prev_state.get(name) if prev_state else None
-            q0_layer = q0.get(name) if q0 else None
-            summ = _extract_preconditioned_layer(ctx, name, st, prev_st, q0_layer)
+            summ = _extract_preconditioned_layer(ctx, name, st)
             n_precond += 1
             layer_summaries[name] = summ
             alpha_sum += summ.get("_alpha_sum", 0.0)
@@ -410,8 +380,9 @@ def extract(ctx) -> dict:
         "realized_exponent_mean": global_alpha,
         "canalization_floor": floor,
         # Diagnostic widths recorded for reproducibility / cross-checkpoint comparability:
-        # TOP_K = eigenVALUE spectrum summary width; TOPK_EIGVECS = #eigvecs (QL/QR columns)
-        # used for the principal-angle rotation diagnostics (the halved §6.1 cost cut).
+        # TOP_K = eigenVALUE spectrum summary width; TOPK_EIGVECS = #QL/QR eigenVECTOR columns
+        # STORED per layer (ql_eigvecs/qr_eigvecs) for the POST-HOC §6.1 rotation pass.
         "topk_eigvals": TOP_K,
         "topk_eigvecs": TOPK_EIGVECS,
+        "rotation": "post_hoc",
     }
