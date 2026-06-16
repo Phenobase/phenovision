@@ -133,6 +133,20 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--perf_init", type=float, default=None,
                    help="held-out metric (auc_pr_mean) at this condition's init (pre-finetune).")
 
+    # --- backfill mode (idle-GPU work; run-to-convergence, compute d90 POST-HOC) -------------
+    # The hybrid collector workers run d90 configs whenever live extraction is idle. At that
+    # point the condition's MAIN run has usually NOT finished, so perf_full is unknown and the
+    # 90%-of-gain target cannot be formed. --backfill therefore: (1) requires only condition/
+    # d/out, (2) MEASURES perf_init by validating the init model at step 0, (3) skips the
+    # criterion-a (perf>=target) early-stop, running purely to plateau/step_cap, and (4) records
+    # the full (perf, steps, max-perf, plateau curve) so d90 thresholds are computed POST-HOC
+    # once perf_full is known (target left null in the row). Convergence == the run's own
+    # plateau, which is exactly what d90 needs to localize the intrinsic dimension.
+    p.add_argument("--backfill", action="store_true",
+                   help="idle-GPU mode: require only --condition/--d/--out; measure perf_init by "
+                        "validating the init model; skip the 90%%-gain early-stop and run to "
+                        "plateau/step_cap; compute d90 thresholds post-hoc once perf_full known.")
+
     # --- stopping rule ---
     p.add_argument("--step_cap", type=int, default=4000,
                    help="(c) hard step cap matched to the main run's budget.")
@@ -157,6 +171,25 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     # --- v-optimizer (ONE fixed choice for ALL d90 runs) ---
     p.add_argument("--lr", type=float, default=1e-3,
                    help="Adam lr for v; the SAME for every d90 run (do not vary).")
+
+    # --- time-box + resume (HYBRID-worker backfill: yield the GPU back to collection) ----------
+    # A d90 config can take 25 min-2 h on an L4 (step_cap x ~seconds/step). When run as idle-GPU
+    # backfill by the hybrid collector workers, a single long blocking d90 call would hold a worker
+    # off collection for that whole time — so if Phase 2 starts emitting while both workers are deep
+    # in d90 runs, the watch dir fills to the backpressure high-water and the B200 TRAINER STALLS
+    # until a d90 run finishes. --max_wall_seconds bounds ONE claim's training time: on hitting it
+    # before convergence the run SAVES its state (v + optimizer + counters) under --state_dir and
+    # exits with code 2 (INCOMPLETE), so the worker re-queues it to pending/ and returns to the
+    # collect-first loop. The NEXT claim of that config RESUMES from the saved state (no perf_init
+    # re-measure, no v reset), so progress accumulates across short boxes. Both default to off
+    # (the array-based live d90 sweep runs each config to completion in one shot).
+    p.add_argument("--max_wall_seconds", type=float, default=None,
+                   help="per-claim training wall-time budget (s); on timeout SAVE state to "
+                        "--state_dir and exit 2 (INCOMPLETE, resumable). Default: no limit.")
+    p.add_argument("--state_dir", type=str, default=None,
+                   help="dir for resumable per-config state (v/opt/counters), keyed "
+                        "(condition,d,seed). Enables resume across time-boxed --max_wall_seconds "
+                        "claims; deleted on completion. Default: no resume (single-shot).")
 
     # --- output ---
     p.add_argument("--out", type=str, default=None,
@@ -301,34 +334,52 @@ def build_loaders(args: argparse.Namespace):
 # The subspace run
 # =============================================================================
 
-def run_subspace(args: argparse.Namespace) -> Dict[str, object]:
-    """Run one (condition, d, seed) subspace fine-tune and return the result row dict.
+def _state_path(args: argparse.Namespace) -> Optional[str]:
+    """Resumable-state file path for this (condition,d,seed), or None if --state_dir unset."""
+    if not args.state_dir:
+        return None
+    os.makedirs(args.state_dir, exist_ok=True)
+    return os.path.join(args.state_dir, f"{args.condition}_d{args.d}_s{args.seed}.pt")
 
-    Implements the briefing §9.1 runner exactly: theta = theta0 + P v, train only v with a
-    single fixed Adam, stop on target / plateau / step-cap.
+
+def run_subspace(args: argparse.Namespace) -> Tuple[Dict[str, object], bool]:
+    """Run one (condition, d, seed) subspace fine-tune; return ``(row, complete)``.
+
+    Implements the briefing §9.1 runner: theta = theta0 + P v, train only v with a single fixed
+    Adam, stop on target / plateau / step-cap. With --max_wall_seconds set, a claim that hits the
+    wall before convergence SAVES resumable state (to --state_dir) and returns ``complete=False``
+    (the caller re-queues it; the next claim resumes). ``complete=True`` means a terminal stop
+    (criterion_met / plateau / step_cap / nonfinite); the row should be appended and state cleared.
     """
     import preadapt_common as pc                          # noqa: E402
     import torch.nn as nn                                 # noqa: E402
     from xai_train import validate                        # noqa: E402
 
     # Validate the experiment-required args here (they are not argparse-``required`` so that
-    # ``--selftest`` can run standalone).
-    missing = [k for k in ("condition", "d", "perf_full", "perf_init", "out")
-               if getattr(args, k) is None]
+    # ``--selftest`` can run standalone). In --backfill mode perf_full/perf_init are UNKNOWN at
+    # launch (the main run hasn't converged), so only condition/d/out are required; perf_init is
+    # measured below and the 90%-gain target is skipped.
+    required = ("condition", "d", "out") if args.backfill \
+        else ("condition", "d", "perf_full", "perf_init", "out")
+    missing = [k for k in required if getattr(args, k) is None]
     if missing:
+        hint = ("Generate a backfill config via xAI/scripts/gen_d90_backfill_queue.py."
+                if args.backfill
+                else "Generate a grid line via xAI/py/d90/gen_d90_grid.py.")
         raise SystemExit(
-            f"run_subspace requires {missing} (omit only with --selftest). "
-            "Generate a grid line via xAI/py/d90/gen_d90_grid.py.")
+            f"run_subspace requires {missing} (omit only with --selftest). {hint}")
 
     device = torch.device(
         args.device if args.device else ("cuda:0" if torch.cuda.is_available() else "cpu"))
     print("=" * 60)
-    print("d90 subspace run (theta = theta0 + P v)")
+    print("d90 subspace run (theta = theta0 + P v)" + (" [BACKFILL]" if args.backfill else ""))
     print(f"  condition        : {args.condition}")
     print(f"  d                : {args.d}")
     print(f"  seed             : {args.seed}")
     print(f"  shared-tokenizer : {args.shared_tokenizer}")
-    print(f"  perf_init/full   : {args.perf_init:.4f} / {args.perf_full:.4f}")
+    _pi = f"{args.perf_init:.4f}" if args.perf_init is not None else "<measure>"
+    _pf = f"{args.perf_full:.4f}" if args.perf_full is not None else "<post-hoc>"
+    print(f"  perf_init/full   : {_pi} / {_pf}")
     print(f"  device           : {device}")
     print("=" * 60)
 
@@ -353,20 +404,62 @@ def run_subspace(args: argparse.Namespace) -> Dict[str, object]:
     v = torch.zeros(args.d, device=device, dtype=torch.float32, requires_grad=True)
     opt = torch.optim.Adam([v], lr=args.lr)
 
-    target = args.perf_init + 0.9 * (args.perf_full - args.perf_init)
-    print(f"  target (90%-gain): {target:.4f}")
+    # --- RESUME a time-boxed claim, if state exists (skips the perf_init re-measure + v reset) ----
+    state_path = _state_path(args)
+    resumed = False
+    if state_path and os.path.exists(state_path):
+        try:
+            st = torch.load(state_path, map_location=device, weights_only=False)
+            with torch.no_grad():
+                v.copy_(st["v"].to(device=device, dtype=torch.float32))
+            opt.load_state_dict(st["opt"])
+            perf_init = st["perf_init"]; best = st["best"]; since_improve = st["since_improve"]
+            perf = st["perf"]; step = st["step"]
+            resumed = True
+            print(f"  [resume] state from {state_path}: step={step} best={best:.4f} "
+                  f"since_improve={since_improve} perf_init={perf_init:.4f}")
+        except Exception as e:  # corrupt/incompatible state -> start fresh (do not lose the config)
+            print(f"  [resume] WARNING: could not load {state_path} ({e}); starting fresh.")
 
-    best = args.perf_init
-    since_improve = 0
-    perf = args.perf_init
+    # --- perf_init: in --backfill MEASURE it (validate init model at v=0); else use the arg.
+    #     On resume it is already loaded from state, so skip the (expensive) measurement. ---
+    if not resumed:
+        if args.backfill and args.perf_init is None:
+            write_subspace_params(model, theta0, P, v, layout, param_by_name)  # v==0 -> theta0
+            model.eval()
+            perf_init = float(validate(model, val_dl, criterion, device)["auc_pr_mean"])
+            model.train()
+            print(f"  perf_init (measured at v=0): {perf_init:.4f}")
+        else:
+            perf_init = args.perf_init
+        best = perf_init
+        since_improve = 0
+        perf = perf_init
+        step = 0
+
+    # --- target: only formed when perf_full is known. In --backfill it is computed POST-HOC, so
+    #     target=None disables criterion-a (perf>=target) and the run goes purely to plateau/cap. ---
+    if args.backfill or args.perf_full is None:
+        target = None
+        print("  target (90%-gain): <post-hoc; running to plateau/step_cap>")
+    else:
+        target = perf_init + 0.9 * (args.perf_full - perf_init)
+        print(f"  target (90%-gain): {target:.4f}")
+
     criterion_met = False
     stop_reason = "step_cap"
-    step = 0
+    # Per-claim training wall-time budget (s); measured from NOW (build/load/perf_init excluded).
     t0 = time.time()
+    deadline = (t0 + args.max_wall_seconds) if args.max_wall_seconds else None
 
     train_iter = iter(train_dl)
     model.train()
     while step < args.step_cap:
+        # Per-claim time-box: yield the GPU back to collection (resumable). Checked at the top of
+        # the step so overshoot is <= one step; perf/best/step carry the last-eval state we save.
+        if deadline is not None and time.time() >= deadline:
+            stop_reason = "wall_timeout"
+            break
         try:
             batch = next(train_iter)
         except StopIteration:
@@ -403,9 +496,10 @@ def run_subspace(args: argparse.Namespace) -> Dict[str, object]:
             perf = float(vm["auc_pr_mean"])
             model.train()
             elapsed = time.time() - t0
+            _tgt = f"{target:.4f}" if target is not None else "<post-hoc>"
             print(f"  step={step} loss={loss_value:.4f} auc_pr_mean={perf:.4f} "
-                  f"best={best:.4f} target={target:.4f} ({elapsed/60:.1f} min)")
-            if perf >= target:
+                  f"best={best:.4f} target={_tgt} ({elapsed/60:.1f} min)")
+            if target is not None and perf >= target:
                 criterion_met = True
                 stop_reason = "criterion_met"
                 break
@@ -418,7 +512,9 @@ def run_subspace(args: argparse.Namespace) -> Dict[str, object]:
                 break
 
     final_perf = max(perf, best)
-    criterion_met = bool(criterion_met or (final_perf >= target))
+    # criterion_met only meaningful when a target exists (live grid). In --backfill it stays
+    # False here and is decided POST-HOC once perf_full is known.
+    criterion_met = bool(criterion_met or (target is not None and final_perf >= target))
     wall = time.time() - t0
     row = {
         "condition": args.condition,
@@ -427,18 +523,43 @@ def run_subspace(args: argparse.Namespace) -> Dict[str, object]:
         "perf": float(final_perf),
         "steps": int(step),
         "criterion_met": bool(criterion_met),
-        "target": float(target),
-        "perf_init": float(args.perf_init),
-        "perf_full": float(args.perf_full),
+        "target": float(target) if target is not None else None,
+        "perf_init": float(perf_init) if perf_init is not None else None,
+        "perf_full": float(args.perf_full) if args.perf_full is not None else None,
         "variant": args.variant,
         "shared_tokenizer": args.shared_tokenizer,
         "stop_reason": stop_reason,
         "wall_seconds": float(wall),
     }
+    # complete == terminal stop (criterion_met / plateau / step_cap / nonfinite). wall_timeout is
+    # the ONLY non-terminal stop: save resumable state and report incomplete so the caller re-queues.
+    complete = stop_reason != "wall_timeout"
+    if not complete:
+        if state_path is None:
+            # No --state_dir but a wall budget hit: cannot resume -> treat as terminal (append row).
+            print("[d90] wall_timeout but no --state_dir: cannot resume; recording as terminal.")
+            complete = True
+        else:
+            torch.save(
+                {"v": v.detach().cpu(), "opt": opt.state_dict(), "step": int(step),
+                 "best": float(best), "since_improve": int(since_improve), "perf": float(perf),
+                 "perf_init": float(perf_init)},
+                state_path)
+            print(f"[d90] YIELD condition={args.condition} d={args.d} seed={args.seed} "
+                  f"step={step} best={best:.4f} -> state saved {state_path} ({wall/60:.1f} min "
+                  f"this claim); re-queue to resume.")
+            return row, False
+
+    # Terminal: clear any resume state so a re-run starts fresh, then report DONE.
+    if state_path and os.path.exists(state_path):
+        try:
+            os.remove(state_path)
+        except OSError:
+            pass
     print(f"[d90] DONE condition={args.condition} d={args.d} seed={args.seed} "
           f"perf={final_perf:.4f} criterion_met={criterion_met} steps={step} "
           f"reason={stop_reason} ({wall/60:.1f} min)")
-    return row
+    return row, True
 
 
 # =============================================================================
@@ -608,8 +729,14 @@ def main(argv: Optional[List[str]] = None) -> None:
     if args.selftest:
         _selftest()
         return
-    row = run_subspace(args)
-    append_row(args.out, row)
+    row, complete = run_subspace(args)
+    if complete:
+        append_row(args.out, row)
+        sys.exit(0)
+    # Time-boxed (wall_timeout): state saved, no row appended. Exit 2 so the hybrid worker
+    # re-queues this config to pending/ (resume on the next claim) rather than marking it done.
+    print("[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.")
+    sys.exit(2)
 
 
 if __name__ == "__main__":
