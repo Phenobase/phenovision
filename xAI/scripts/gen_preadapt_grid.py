@@ -90,7 +90,7 @@ SHARED_HPARAMS = {
     "blr": 5e-4,                  # base lr (effective Phase-2 lr = blr * eff_batch / 256)
     "weight_decay": 0.05,
     "max_train_samples": 214000,  # OVERRIDE: fixed 214k-subset train set per run (default None)
-    "sampler_delta": 0.02,        # OVERRIDE (default 0.10): small trigger => dense-early sampling.
+    "sampler_delta": 0.01,        # OVERRIDE (default 0.10): TUNED on full data (mae/stable_evo) -> ~1 emit/18 steps => ~31 in P2 epoch 1 (target 25-40).
     "sampler_min_step": 5,        # OVERRIDE (default 20): low floor => >= 25 ckpts in P2 epoch 1.
     "sampler_max_step": 200,      # OVERRIDE (default 500): forced-emission cap (regular backbone).
     "backpressure_high": 6,       # trainer PAUSES emission+training when PENDING > 6 (high-water).
