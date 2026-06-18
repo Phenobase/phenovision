@@ -19,7 +19,9 @@ evolution (framed for evolutionary biology). **6 runs = {naive, plantclef(VT), m
 ## Quick start (the runbook lives in migration_setup.sh)
 1. `git clone https://github.com/Phenobase/phenovision.git && cd phenovision && git checkout two_noise-build`
 2. **[HUMAN]** drop `v2_migration_csvs.zip` in the repo root (not in git, can't be re-fetched).
-3. `mamba env create -f xAI/environment.yml && mamba activate reticulate-gpu2`
+3. `CONDA_OVERRIDE_CUDA="11.8" mamba env create -f xAI/environment.yml && mamba activate reticulate-gpu2`
+   — slim Python-only env (no R/RStudio). The `CONDA_OVERRIDE_CUDA` prefix is only needed when
+   creating on a CPU login node (the CUDA torch build otherwise won't solve: "`__cuda` missing").
 4. `bash xAI/scripts/migration_setup.sh`  → unzips CSVs, gdowns PlantCLEF .pth, re-downloads the
    ~228k-image subset from iNat open-data S3 (resumable). timm MAE/ImageNet weights auto-download run 1.
 5. `bash xAI/scripts/launch_v2_round.sh 1 rdinnage.fiu rdinnage.fiu rdinnage.fiu-b`  (round 1 = s42).

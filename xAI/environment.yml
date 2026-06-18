@@ -1,81 +1,45 @@
+# =============================================================================
+# reticulate-gpu2 — SLIM conda env to RUN the preadapt-v2 experiment.
+#
+# This is the Python-only stack the trainer + extractor + d90 + posthoc actually
+# import (torch/torchvision/timm/numpy/pandas/pyarrow/scikit-learn/scipy/zarr/pillow).
+# The full dev env on the guralnick side ALSO carries an R + RStudio + tidymodels
+# stack and Claude tooling — NONE of that is needed to run the experiment, and the
+# pinned `rstudio-desktop` + `pkgs/r` channel + a phantom `cuda-toolkit=12.4` (the
+# real torch is the conda-forge cuda118 build) are what make the kitchen-sink export
+# UNSOLVABLE on a fresh allocation. Keep this file slim.
+#
+# CREATE IT:
+#     mamba env create -f xAI/environment.yml
+#     mamba activate reticulate-gpu2
+#
+# ⚠️ LOGIN-NODE GOTCHA: pytorch here is a CUDA build, so the solver demands the
+#    `__cuda` virtual package. On a CPU-only LOGIN node that package is missing and
+#    `mamba env create` fails with "__cuda ... missing on the system". Either build
+#    the env from inside a GPU job, OR tell conda to assume CUDA is present:
+#        CONDA_OVERRIDE_CUDA="11.8" mamba env create -f xAI/environment.yml
+#    (This is a solve-time override only; at runtime the real GPU is used.)
+#
+# Versions match the known-good guralnick env (torch 2.5.1 conda-forge cuda118 build);
+# minor packages (timm, scikit-learn) float within their series.
+# =============================================================================
 name: reticulate-gpu2
 channels:
   - conda-forge
-  - nvidia
-  - pkgs/r
-  - pytorch
 dependencies:
-  - conda-forge::bubblewrap
-  - cuda-toolkit=12.4
-  - gifsicle
-  - opencv
-  - python-rocksdb
-  - pytorch==2.5.1
-  - pytorch-cuda=12.4
-  - r-ape
-  - r-argparse
-  - r-arrow
-  - r-base
-  - r-colorspace
-  - r-coro
-  - r-crew
-  - r-devtools
-  - r-directlabels
-  - r-dotenv
-  - r-essentials
-  - r-ggforce
-  - r-gifski
-  - r-htmlwidgets
-  - r-imager
-  - r-metr
-  - r-probably
-  - r-qs
-  - r-qs2
-  - r-reticulate
-  - r-rgl
-  - r-santoku
-  - r-tarchetypes
-  - r-targets
-  - r-tidymodels
-  - r-unglue
-  - r-webshot2
-  - r-wesanderson
-  - r-zeallot
-  - conda-forge::rstudio-desktop==2024.4.2
-  - conda-forge::socat
-  - conda-forge::timm
-  - torchaudio==2.5.1
-  - torchvision==0.20.1
-  - conda-forge::transformers
+  - python=3.12
+  - pytorch=2.5.1=cuda118*       # conda-forge CUDA-11.8 build (the build the working env actually uses)
+  - torchvision=0.20.1
+  - timm
+  - numpy=2.2.*
+  - pandas
+  - pyarrow
+  - scikit-learn
+  - scipy
   - zarr
+  - pillow
+  - pip
   - pip:
-    - PyJWT==2.10.1
-    - annotated-types==0.7.0
-    - cffi==2.0.0
-    - click==8.3.0
-    - cryptography==46.0.3
-    - git-filter-repo==2.47.0
-    - hf-xet==1.2.0
-    - httpx-sse==0.4.3
-    - huggingface-hub==0.36.0
-    - joblib==1.5.3
-    - llvmlite==0.46.0
-    - mcp==1.20.0
-    - numba==0.64.0
-    - py-spy==0.4.2
-    - pydantic==2.12.4
-    - pydantic-settings==2.11.0
-    - pydantic_core==2.41.5
-    - pynndescent==0.6.0
-    - python-dotenv==1.2.1
-    - python-multipart==0.0.20
-    - scikit-learn==1.8.0
-    - scipy==1.17.1
-    - sse-starlette==3.0.3
-    - starlette==0.50.0
-    - threadpoolctl==3.6.0
-    - typing-inspection==0.4.2
-    - umap-learn==0.5.11
-    - uvicorn==0.38.0
-
-prefix: "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2"
+      - huggingface-hub          # timm uses it to pull MAE/ImageNet ViT-L weights from the Hub
+      - hf-xet                   # faster Hub downloads (optional)
+      - gdown                    # migration_setup.sh uses it to fetch the PlantCLEF .pth

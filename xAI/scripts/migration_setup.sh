@@ -19,7 +19,9 @@
 #   2. [HUMAN] drop v2_migration_csvs.zip in the repo root (download the zip this
 #      project produced, upload it to the new repo). An agent cannot fetch it
 #      (not in git, not re-downloadable).
-#   3. mamba env create -f xAI/environment.yml && mamba activate reticulate-gpu2
+#   3. CONDA_OVERRIDE_CUDA="11.8" mamba env create -f xAI/environment.yml
+#      mamba activate reticulate-gpu2
+#      (the CONDA_OVERRIDE_CUDA prefix lets the CUDA build solve on a CPU login node)
 #   4. bash xAI/scripts/migration_setup.sh
 #        -> auto: unzips CSVs + gdowns the PlantCLEF .pth + downloads the
 #           228k-image subset.  (timm MAE/ImageNet weights auto-download run 1.)
@@ -48,9 +50,11 @@
 #       and this script AUTO-UNZIPS it into data/inat/ (it also checks data/inat/
 #       and migration/). No manual unzip needed.
 #
-#   (2) Conda env
-#           mamba env create -f xAI/environment.yml     # recreates 'reticulate-gpu2'
+#   (2) Conda env  (SLIM Python-only stack; the R/RStudio dev stack is NOT needed)
+#           CONDA_OVERRIDE_CUDA="11.8" mamba env create -f xAI/environment.yml
 #           mamba activate reticulate-gpu2
+#       CONDA_OVERRIDE_CUDA is only needed when creating on a CPU login node (the CUDA
+#       torch build otherwise refuses to solve: "__cuda ... missing on the system").
 #       (torch 2.6 + CUDA, timm, zarr, numpy/pandas/pyarrow, scipy, sklearn, ...)
 #       PlantCLEF2022 is VENDORED in this repo with the torch-2.6 / numpy compat
 #       fixes already applied — no submodule init needed.
