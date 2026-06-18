@@ -36,13 +36,11 @@
 #
 #   (3) PlantCLEF pretrained weights  [REQUIRED for the 'plantclef' condition; 4.4 GB]
 #       models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth is NOT in git. This
-#       script ATTEMPTS to fetch it automatically via gdown from the Drive folder
-#       linked in the PlantCLEF2022 README (folder 1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA).
-#       gdown folder-downloads of multi-GB files often fail or are ambiguous (the
-#       folder holds 2 epoch-100 variants), so if it doesn't land, get it manually:
-#         https://drive.google.com/drive/folders/1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA
-#       and place the 'late submission epoch 100' .pth at the path above. VERIFY the
-#       auto-fetched file is the right variant. (Path hardcoded in preadapt_models.py.)
+#       script AUTO-FETCHES it via gdown from the direct Drive file id
+#       1djr0WkA1zn1nsjCPJPMcxX4Yt4yF4vYw. If gdown is blocked (no internet / Drive
+#       quota), get it manually:
+#         https://drive.google.com/file/d/1djr0WkA1zn1nsjCPJPMcxX4Yt4yF4vYw/view
+#       and place it at the path above. (Path hardcoded in preadapt_models.py.)
 #
 #   (4) timm ViT-L weights (MAE + ImageNet, ~1.2 GB each) AUTO-download from the
 #       HuggingFace Hub on the first training run (needs compute-node internet).
@@ -79,24 +77,24 @@ for f in "$TRAIN" "$VAL"; do
   [ -s "$f" ] || { echo "ERROR: $f missing and no v2_migration_csvs.zip found. Put v2_migration_csvs.zip in the REPO ROOT (see header step 1), then re-run."; exit 1; }
 done
 
-# --- (3) PlantCLEF weights: best-effort gdown from the Drive folder (manual fallback) ---
+# --- (3) PlantCLEF weights: gdown the direct file id (manual fallback) ---
 PCLEF=models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth
-GDRIVE_FOLDER="https://drive.google.com/drive/folders/1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA"
+GDRIVE_FILE_ID="1djr0WkA1zn1nsjCPJPMcxX4Yt4yF4vYw"   # direct .pth (epoch100) from the PlantCLEF2022 Drive
 if [ ! -s "$PCLEF" ]; then
-  echo "[migration] fetching PlantCLEF weights via gdown (Google-Drive folder) ..."
+  echo "[migration] fetching PlantCLEF weights via gdown (direct file id) ..."
   mkdir -p models
   python3 -c "import gdown" 2>/dev/null || pip install -q gdown 2>/dev/null || true
   if python3 -c "import gdown" 2>/dev/null; then
-    tmpd=$(mktemp -d)
-    gdown --folder "$GDRIVE_FOLDER" -O "$tmpd" 2>/dev/null || true
-    cand=$(find "$tmpd" -iname '*epoch*100*.pth' 2>/dev/null | head -1)
-    [ -z "$cand" ] && cand=$(find "$tmpd" -iname '*.pth' 2>/dev/null | head -1)
-    if [ -n "$cand" ]; then mv "$cand" "$PCLEF"; echo "[migration] placed PlantCLEF .pth -> $PCLEF (VERIFY it's the epoch100 variant)"; fi
-    rm -rf "$tmpd"
+    gdown "$GDRIVE_FILE_ID" -O "$PCLEF" 2>/dev/null \
+      || gdown "https://drive.google.com/uc?id=$GDRIVE_FILE_ID" -O "$PCLEF" 2>/dev/null || true
   fi
-  [ -s "$PCLEF" ] || echo "[migration] WARN: could not auto-fetch PlantCLEF weights (gdown folder downloads of
-    multi-GB files often fail). Download manually from $GDRIVE_FOLDER (the 'late submission epoch 100'
-    .pth) and place it at $PCLEF . Only the 'plantclef' condition needs it."
+  if [ -s "$PCLEF" ]; then
+    echo "[migration] PlantCLEF .pth -> $PCLEF ($(du -h "$PCLEF" | cut -f1))"
+  else
+    echo "[migration] WARN: gdown failed. Get it manually from
+    https://drive.google.com/file/d/$GDRIVE_FILE_ID/view  and place it at $PCLEF .
+    Only the 'plantclef' condition needs it."
+  fi
 fi
 
 echo "[migration] re-downloading the CSV-referenced iNat image subset (PARALLEL=$PARALLEL, resumable) ..."
