@@ -22,10 +22,12 @@ V2 trainer-config flags carried on EVERY line (the restart's distinguishing knob
   * ``--max_train_samples 107000``  (override; v1 used 214000 -- the v2 restart halves it)
   * ``--phase2_early_stop``    (bare flag; enable Phase-2 plateau early stop)
 
-ORDERING (REPLICATE-MAJOR, condition-minor): all FIRST replicates before any SECOND replicate:
-    round 1: (mae s42, plantclef s42, naive s42)
-    round 2: (mae s43, plantclef s43, naive s43)
-so the 6 lines are 1:mae/s42  2:plantclef/s42  3:naive/s42  4:mae/s43  5:plantclef/s43
+ORDERING (REPLICATE-MAJOR, condition-minor): all FIRST replicates before any SECOND replicate.
+Condition order naive -> plantclef -> mae (2026-06-18, user request: run the from-scratch naive
+baseline first, then VT, then mae):
+    round 1: (naive s42, plantclef s42, mae s42)
+    round 2: (naive s43, plantclef s43, mae s43)
+so the 6 lines are 1:naive/s42  2:plantclef/s42  3:mae/s42  4:naive/s43  5:plantclef/s43
 6:naive/s43. This lets orchestration finish one full replicate of every condition before
 investing GPU time in a second replicate.
 
@@ -53,7 +55,7 @@ GRID_DIR = XAI_ROOT / "two_noise" / "configs" / "experiment"
 GRID_FILE = GRID_DIR / "preadapt_v2_grid.txt"
 
 # --- LOCKED v2 design knobs --------------------------------------------------------------
-CONDITIONS = ("mae", "plantclef", "naive")   # ImageNet DROPPED; mae/plantclef(VT)/naive only
+CONDITIONS = ("naive", "plantclef", "mae")   # ImageNet DROPPED. Order: naive->plantclef(VT)->mae
 VARIANT = "stable_evo"                        # v2 is StableEvo-only (AdamW via gen_preadapt_grid.py)
 SHARED_TOKENIZER = "mae"                      # common frozen MAE input stage for ALL conditions
 SEEDS = (42, 43)                              # 2 replicates per condition
@@ -83,9 +85,12 @@ SHARED_HPARAMS = {
     "beta1": 0.0,                 # OVERRIDE (default None): v2 restart beta1 = 0.
     "weight_decay": 0.0,          # OVERRIDE (default 0.05): v2 disables weight decay.
     "max_train_samples": 107000,  # OVERRIDE (v1 214000): v2 per-run train subset.
-    "sampler_delta": 0.01,        # OVERRIDE (default 0.10): dense-early; ~31 emits/P2 epoch 1.
-    "sampler_min_step": 4,        # OVERRIDE (default 20): low floor => many early ckpts. 5->4
-                                  # (2026-06-17) for denser unfreeze/metric-reorganization capture.
+    "sampler_delta": 0.025,       # 0.01->0.025 (2026-06-18): coarser emit threshold. The every-4-
+                                  # step cadence (floored at min_step) flooded the collector ->
+                                  # ~99%-idle B200s + huge store. Paired with min_step 12.
+    "sampler_min_step": 12,       # 4->12 (2026-06-18): raise the floor so 1 trainer is far less
+                                  # collector-throttled and the kept/store shrink ~3x. log2 ladder
+                                  # works over 12-multiples via log2_crossing_rung.
     "sampler_max_step": 200,      # OVERRIDE (default 500): forced-emission cap (regular backbone).
     "backpressure_high": 6,       # trainer PAUSES emission+training when PENDING > 6 (high-water).
     "backpressure_low": 2,        # ...resumes when PENDING < 2 (low-water; hysteresis).
