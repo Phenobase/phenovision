@@ -133,14 +133,22 @@ echo "[run] submitted trainer        job=$TRAIN_JID  ($RUN_ID)"
 #    concurrent processing of different checkpoints safe. They start alongside the trainer (they
 #    tolerate a not-yet-created watch dir) and receive PREADAPT_TRAIN_JID so they can exit if the
 #    trainer fails without a sentinel. They depend on the SAME [dep] so the whole run starts together.
+# D90_QUEUE: the persistent, SHARED d90-backfill work-queue. Both workers do d90-backfill when
+# there is no extraction backlog (including the entire B200 queue-wait BEFORE the trainer starts
+# and idle gaps during the run). The queue is shared across all runs so successive runs' workers
+# keep chewing through the ~120-240 configs without redoing any. Generate it once with:
+#   mamba run -n reticulate-gpu2 python xAI/scripts/gen_d90_backfill_queue.py
+# (If the queue dir does not exist yet, a worker simply finds nothing to claim and idle-collects.)
+D90_QUEUE="${D90_QUEUE:-xAI/output/preadapt/_d90_queue}"
+
 CW_JIDS=()
 for W in 0 1; do
     CW_JID=$(submit --parsable "${DEP_ARGS[@]}" \
         --job-name="preadapt_cw${W}_${CONDITION}_${VARIANT}" \
-        --export=ALL,PREADAPT_RUN_DIR="$RUN_DIR",PREADAPT_WORKER_ID="$W",PREADAPT_VARIANT="$VARIANT",PREADAPT_SEED="$SEED",HEAVY_EVERY="$HEAVY_EVERY",PREADAPT_TRAIN_JID="$TRAIN_JID" \
+        --export=ALL,PREADAPT_RUN_DIR="$RUN_DIR",PREADAPT_WORKER_ID="$W",PREADAPT_VARIANT="$VARIANT",PREADAPT_SEED="$SEED",HEAVY_EVERY="$HEAVY_EVERY",PREADAPT_TRAIN_JID="$TRAIN_JID",D90_QUEUE="$D90_QUEUE" \
         xAI/scripts/submit_preadapt_collector2.sh)
     CW_JIDS+=("$CW_JID")
-    echo "[run] submitted collector w$W   job=$CW_JID  (watching $WATCH_DIR)"
+    echo "[run] submitted collector w$W   job=$CW_JID  (watching $WATCH_DIR; d90_queue=$D90_QUEUE)"
 done
 
 # 3) Post-hoc pass (L4), afterany on BOTH collector workers -> starts only after the run's GPUs free

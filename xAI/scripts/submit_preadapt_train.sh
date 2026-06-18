@@ -38,7 +38,9 @@
                             # (was ~155G at 8 workers -- DataLoader workers each fork a ~7.6G dataset
                             # copy). 104G req leaves QOS room for a 210G heavy-capable GPU collector:
                             # 2 trainers(104)+collector(210)=418 < 437. Raise back if a save OOMs.
-#SBATCH --time=96:00:00
+#SBATCH --time=24:00:00   # 96h->24h (2026-06-18): a 1-trainer v2 run is ~5-6h (resumable if it
+                          # hits the cap), and a shorter limit BACKFILLS onto contended B200s far
+                          # sooner -- a 96h job can't fit before higher-priority cluster reservations.
 #SBATCH --output xAI/logs/%x-%A_%a.out
 #SBATCH --error  xAI/logs/%x-%A_%a.err
 #SBATCH --mail-user=r.dinnage@gmail.com
