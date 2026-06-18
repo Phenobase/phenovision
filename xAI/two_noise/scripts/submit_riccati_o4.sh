@@ -31,11 +31,16 @@ mkdir -p logs runs/riccati_evolve_m
 
 # Defaults: ViT-S / CIFAR-100, batch 64 (small enough to stress gradient noise), AMP(bf16), 4000
 # steps, all three conditions. Override:  sbatch scripts/submit_riccati_o2.sh --batch 32 ...
+# Baselines (adamw/soap) use lr tuned by the benchmarks.py lr sweep (valid for them: GradScaler
+# is designed for adamw/soap). The riccati conditions (whiten/inverse/evolve) are NOT trustworthy
+# under benchmarks.py (fp16 GradScaler bypasses the loss closure -> overflow grads into the NS
+# factor math), so we tune their lr HERE over --riccati-lr-grid inside this bf16/NaN-surviving run.
 ARGS=("--device" "cuda" "--model" "vit_s" "--dataset" "cifar100" "--batch" "128"
       "--max-steps" "4000" "--amp" "--lanczos"
       "--conditions" "adamw" "soap" "whiten" "inverse" "evolve"
-      "--cond-lrs" "adamw=1e-3,soap=1e-3,whiten=3e-3,inverse=3e-4,evolve=3e-4"
-      "--eta-m-grid" "3e-4" "1e-3" "3e-3" "--meta-every-grid" "20")
+      "--cond-lrs" "adamw=3e-4,soap=1e-3"
+      "--riccati-lr-grid" "1e-4" "3e-4" "1e-3"
+      "--eta-m-grid" "3e-4" "1e-3" "--meta-every-grid" "20")
 if [[ $# -gt 0 ]]; then
     ARGS=("$@")
 fi
@@ -43,6 +48,8 @@ fi
 echo "[o4] args: ${ARGS[*]}"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
+# reduce CUDA fragmentation (helps the create_graph=True Hessian-probe peak under math SDPA)
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 mamba run -n two_noise python -m ml_experiments.riccati_evolve_m "${ARGS[@]}"
 
 echo "[o4] results tail:"

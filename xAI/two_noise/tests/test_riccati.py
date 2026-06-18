@@ -33,6 +33,24 @@ def test_ns_inv_sqrt_matches_C_to_minus_half():
     assert (G @ C @ G - eye).abs().max() < 1e-5
 
 
+def test_ns_inv_sqrt_high_dim_converges_in_few_steps():
+    # REGRESSION: on a high-dim factor (like a ViT's 384-dim Kronecker factor) trace(C) >> lambda_max,
+    # so trace-normalization left Y's eigenvalues << 1 and 10 Higham steps gave G ~ I (||GCG-I|| ~ 1,
+    # realized exponent ~0 -- the whiten mode silently never whitened on real models). Spectral-norm
+    # normalization must converge in the SAME small step budget the optimizer uses (precond ~10).
+    torch.manual_seed(0)
+    d = 256
+    Q, _ = torch.linalg.qr(torch.randn(d, d, dtype=torch.float64))
+    # cond ~1e6 (realistic ViT curvature): needs spectral-norm normalization AND enough Higham
+    # iters. Under trace-norm + 10-step cap this was ~1.0 (G≈I); the fix early-stops up to 60.
+    eigs = torch.logspace(0, 6, d, dtype=torch.float64)
+    C = (Q * eigs) @ Q.t()
+    eye = torch.eye(d, dtype=torch.float64)
+    G = _ns_inv_sqrt(C, steps=60, eps=1e-12)                      # optimizer's whiten cap
+    res = (G @ C @ G - eye).abs().max()
+    assert res < 1e-3, res
+
+
 def test_riccati_with_source_fixed_point():
     C = _diag_spd(np.logspace(-0.5, 0, 6))
     M = _diag_spd(np.linspace(0.2, 0.8, 6))
@@ -101,6 +119,32 @@ def test_alpha_sweep_no_nan():
     assert l1 < l0, ("inverse", 0.7, l0, l1)
 
 
+def test_relative_damping_inverts_small_scale_curvature():
+    # REGRESSION: real ViT curvature factors are SMALL-SCALE (eigenvalues ~1e-4..1e-2). ABSOLUTE
+    # damping (1e-2) then swamps them -> the damped inverse (C+eps I)^{-1} collapses to ~eps^{-1} I
+    # (realized exponent ~0, behaves like SGD). RELATIVE damping (eps*lambda_max) keeps the floor a
+    # fixed fraction of the spectrum, preserving the inverse. Test the damping math directly: the
+    # realized exponent (slope of log eig(G) vs log eig(C)) of each damped inverse.
+    torch.manual_seed(0)
+    d = 64
+    Q, _ = torch.linalg.qr(torch.randn(d, d, dtype=torch.float64))
+    eigs = torch.logspace(-4, -2, d, dtype=torch.float64)        # all below absolute damping 1e-2
+    C = (Q * eigs) @ Q.t()
+    w, V = torch.linalg.eigh(C)
+
+    def realized_exponent(G):
+        g = torch.diagonal(V.t() @ G @ V).clamp_min(1e-30).numpy()
+        return -np.polyfit(np.log(w.numpy()), np.log(g), 1)[0]
+
+    eye = torch.eye(d, dtype=torch.float64)
+    lam_max = eigs.max()
+    e_abs = realized_exponent(torch.linalg.inv(C + 1e-2 * eye))            # absolute: swamped
+    e_rel = realized_exponent(torch.linalg.inv(C + 1e-2 * lam_max * eye))  # relative: preserved
+    assert e_abs < 0.3, e_abs                          # absolute damping kills the inverse
+    assert e_rel > 0.7, e_rel                          # relative damping preserves it
+    assert e_rel > e_abs + 0.4, (e_abs, e_rel)
+
+
 def test_evolve_M_runs_and_M_evolves():
     # Unit test of the meta-loop MECHANICS on a tractable (mild, low-noise) problem;
     # the inverse-mode stabilization-at-scale claim is the O4 experiment, not this gate.
@@ -110,9 +154,11 @@ def test_evolve_M_runs_and_M_evolves():
     gen = torch.Generator().manual_seed(2)
     A = torch.logspace(-0.3, 0.3, 6).double()          # cond ~4
     W = nn.Parameter(torch.ones(8, 6, dtype=torch.float64))
+    # absolute damping here (relative_damping=False): this toy's stabilizers (shrink+damping+low lr)
+    # were tuned for an absolute 1e-2 floor; it tests the meta-loop MECHANICS, not the damping mode.
     opt = RiccatiPrecond([W], lr=0.008, precond="inverse", shrink=0.6,
                          evolve_M=True, evolve_M_weighted=True, eta_M=5e-2,
-                         meta_every=10, inner_steps=3, damping=1e-2)
+                         meta_every=10, inner_steps=3, damping=1e-2, relative_damping=False)
     losses = [_toy_step(opt, W, A, gen, batch=256) for _ in range(200)]
     st = opt.state[W]
     assert torch.isfinite(W).all()

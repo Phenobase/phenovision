@@ -46,7 +46,7 @@ from optim.riccati_precond import RiccatiPrecond
 from curvature.true_fisher import assign_precond_grad, sampled_label_gradient
 
 CSV_COLUMNS = [
-    "condition", "label", "model", "dataset", "precond_mode", "alpha", "lr", "shrink",
+    "condition", "label", "model", "dataset", "optimizer", "precond_mode", "alpha", "lr", "shrink",
     "use_true_fisher", "batch", "max_steps", "amp", "diverged", "finite_fraction",
     "n_steps_run", "step", "train_loss", "val_loss", "val_metric", "wallclock_s",
     "step_time_ms", "peak_mem_mb", "seed",
@@ -72,24 +72,35 @@ def _infinite(loader):
 
 
 def _make_condition(cond, args):
-    """Return (kwargs for make_optimizer, use_true_fisher, label)."""
-    if cond == "whiten":
-        return dict(precond_mode="whiten", shrink=0.0), False, "whiten_a05"
-    if cond == "inverse_fisher":
-        return (dict(precond_mode="inverse", shrink=0.0, damping=1e-2,
-                     precond_stats_from_hook=True),
-                True, "inverse_truefisher")
-    if cond == "schedule":
+    """Return (alpha, kwargs for make_optimizer, use_true_fisher, label) for args.optimizer
+    (riccati = matrix-free Newton-Schulz; soap = SOAPFullPower exact eigendecomposition). Both
+    realize the SAME science -- effective-exponent control via shrinkage; SOAP computes the power
+    exactly from the spectrum (no NS-convergence confound), riccati does it matrix-free.
+    The true-Fisher hook param differs: riccati precond_stats_from_hook vs soap precond_eigvals_from_hook
+    (both consume p._soap_precond_grad from assign_precond_grad)."""
+    is_soap = args.optimizer == "soap"
+    hook_kw = (lambda: dict(precond_eigvals_from_hook=True)) if is_soap \
+        else (lambda: dict(precond_mode="inverse", precond_stats_from_hook=True))
+    inv_kw = (lambda **e: dict(**e)) if is_soap \
+        else (lambda **e: dict(precond_mode="inverse", inner_steps=args.inner_steps, **e))
+    if cond == "whiten":                       # alpha=1/2 baseline (1x cost)
+        kw = dict() if is_soap else dict(precond_mode="whiten")
+        kw["shrink"] = 0.0
+        return 0.5, kw, False, "whiten_a05"
+    if cond == "full_inverse":                 # naive alpha=1, no fix (Phase-1's unstable baseline)
+        return 1.0, inv_kw(shrink=0.0, damping=1e-2), False, "inverse_naive"
+    if cond == "inverse_fisher":               # alpha=1 + TRUE-FISHER curvature (2x cost)
+        kw = hook_kw(); kw.update(shrink=0.0, damping=1e-2)
+        return 1.0, kw, True, "inverse_truefisher"
+    if cond == "schedule":                     # alpha=1 + noise-dependent shrink (1x cost)
         rho = RiccatiPrecond.shrink_from_batch(args.batch, ref_batch=args.ref_batch,
                                                rho_max=args.rho_max)
-        return (dict(precond_mode="inverse", shrink=rho, damping=1e-2, inner_steps=args.inner_steps),
-                False, f"inverse_shrink{rho:.2f}")
+        return 1.0, inv_kw(shrink=rho, damping=1e-2), False, f"inverse_shrink{rho:.2f}"
     raise ValueError(f"unknown condition {cond!r}")
 
 
 def run_condition(cond, args, device):
-    opt_kw, use_tf, label = _make_condition(cond, args)
-    alpha = 0.5 if opt_kw["precond_mode"] == "whiten" else 1.0
+    alpha, opt_kw, use_tf, label = _make_condition(cond, args)
 
     torch.manual_seed(args.seed)
     gen = torch.Generator().manual_seed(args.seed)
@@ -102,7 +113,7 @@ def run_condition(cond, args, device):
              else make_model(args.model, num_classes=meta.num_classes)).to(device)
     is_lm = is_lm_model(model)
 
-    optimizer, lr = make_optimizer("riccati", model.parameters(), alpha=alpha, lr=args.lr,
+    optimizer, lr = make_optimizer(args.optimizer, model.parameters(), alpha=alpha, lr=args.lr,
                                    weight_decay=args.weight_decay, base_lr=args.base_lr, **opt_kw)
 
     use_cuda = device.type == "cuda"
@@ -158,7 +169,8 @@ def run_condition(cond, args, device):
                 model.train()
             records.append(dict(
                 condition=cond, label=label, model=args.model, dataset=args.dataset,
-                precond_mode=opt_kw["precond_mode"], alpha=alpha, lr=lr,
+                optimizer=args.optimizer, precond_mode=opt_kw.get("precond_mode", args.optimizer),
+                alpha=alpha, lr=lr,
                 shrink=opt_kw.get("shrink", 0.0), use_true_fisher=use_tf,
                 batch=args.batch, max_steps=args.max_steps, amp=use_amp,
                 diverged=diverged, finite_fraction=n_finite / step, n_steps_run=step,
@@ -211,7 +223,9 @@ def run(args):
         by_cond[cond] = recs
         all_rows.extend(recs)
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "riccati_schedule_vs_fisher")
-    tag = f"{args.model}_{args.dataset}_b{args.batch}"
+    # include the optimizer so the soap run does not overwrite the riccati O2 CSV
+    opt_tag = "" if args.optimizer == "riccati" else f"_{args.optimizer}"
+    tag = f"{args.model}_{args.dataset}_b{args.batch}{opt_tag}"
     csv_path = out_dir / f"{tag}.csv"
     write_csv(csv_path, all_rows)
     print(f"[o2] wrote {csv_path} ({len(all_rows)} rows)")
@@ -224,8 +238,10 @@ def build_parser():
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--model", default="vit_s")
     p.add_argument("--dataset", default="cifar100")
+    p.add_argument("--optimizer", default="riccati", choices=["riccati", "soap"],
+                   help="riccati = matrix-free Newton-Schulz; soap = SOAPFullPower exact eigh")
     p.add_argument("--conditions", nargs="+",
-                   default=["whiten", "inverse_fisher", "schedule"])
+                   default=["whiten", "full_inverse", "inverse_fisher", "schedule"])
     p.add_argument("--batch", type=int, default=64)
     p.add_argument("--ref-batch", type=int, default=512, help="shrink_from_batch reference batch")
     p.add_argument("--rho-max", type=float, default=0.6, help="shrink_from_batch ceiling")

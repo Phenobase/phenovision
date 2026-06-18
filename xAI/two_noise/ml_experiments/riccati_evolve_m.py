@@ -39,12 +39,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from torch.nn.attention import sdpa_kernel, SDPBackend
+
 from ml_experiments._harness import (RUNS_DIR, evaluate, is_lm_model, make_data,
                                      make_model, make_optimizer)
-from curvature.operative_exponent import operative_exponent_factors, operative_exponent_lanczos
+from curvature.operative_exponent import (operative_exponent_factors, operative_exponent_lanczos,
+                                           operative_exponent_soap)
 
 CSV_COLUMNS = [
-    "condition", "label", "model", "dataset", "eta_M", "meta_every", "lr",
+    "condition", "label", "optimizer", "model", "dataset", "eta_M", "meta_every", "lr",
     "batch", "max_steps", "amp", "diverged", "finite_fraction", "n_steps_run",
     "step", "train_loss", "val_loss", "val_metric", "wallclock_s",
     "op_exponent_overall", "op_exponent_topk", "op_exponent_flat",
@@ -86,14 +89,28 @@ def _loglog_slope(c, g):
 #        from (i) when C != H (empirical vs true Fisher); computed once at the final step (costly).
 
 
-def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr):
-    # --- established baselines (NOT RiccatiPrecond; the operative-exponent diagnostic is NaN for
-    #     these -- they have no CL/GL factors -- but they anchor the loss/val comparison) ---
+def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr, opt_kind="riccati"):
+    # --- established baselines (NOT a preconditioner-factor optimizer; operative-exponent is NaN) ---
     if cond == "adamw":
         return make_optimizer("adamw", model.parameters(), lr=lr, weight_decay=wd, base_lr=base_lr)
     if cond == "soap":      # standard SOAP = eigendecomposition whitening (precond_power=0.5)
         return make_optimizer("soap", model.parameters(), alpha=0.5, lr=lr,
                               weight_decay=wd, base_lr=base_lr)
+    # --- whiten / inverse / evolve: matrix-free RiccatiPrecond OR exact-spectrum SOAPFullPower ---
+    if opt_kind == "soap":
+        # SOAP realizes the SAME geometry exactly (no NS-convergence confound). evolve-M lives in
+        # the eigenbasis as the per-axis gain m_L/m_R (precond_power=0.5 = whitening base).
+        if cond == "whiten":
+            return make_optimizer("soap", model.parameters(), alpha=0.5, lr=lr,
+                                  weight_decay=wd, base_lr=base_lr, shrink=0.0)
+        if cond == "inverse":
+            return make_optimizer("soap", model.parameters(), alpha=1.0, lr=lr,
+                                  weight_decay=wd, base_lr=base_lr, shrink=0.0, damping=1e-2)
+        if cond == "evolve":
+            return make_optimizer("soap", model.parameters(), alpha=0.5, lr=lr,
+                                  weight_decay=wd, base_lr=base_lr, evolve_m=True,
+                                  eta_m=eta_M, meta_every=meta_every)
+        raise ValueError(cond)
     # --- RiccatiPrecond variants (matrix-free) ---
     if cond == "whiten":
         return make_optimizer("riccati", model.parameters(), alpha=0.5, lr=lr,
@@ -111,7 +128,13 @@ def _make_opt(cond, eta_M, meta_every, model, lr, wd, base_lr):
 
 
 def run_condition(cond, args, device, eta_M=1e-3, meta_every=20, lr_override=None):
-    label = cond if cond != "evolve" else f"evolve_etaM{eta_M:g}_m{meta_every}"
+    use_lr = lr_override if lr_override is not None else args.lr
+    if cond == "evolve":
+        label = f"evolve_lr{use_lr or 0:g}_etaM{eta_M:g}_m{meta_every}"
+    elif cond in ("whiten", "inverse"):   # riccati comparators: tuned over an lr grid too
+        label = f"{cond}_lr{use_lr or 0:g}"
+    else:                                  # adamw/soap baselines: single tuned lr
+        label = cond
     torch.manual_seed(args.seed)
     gen = torch.Generator().manual_seed(args.seed)
     train_loader, val_loader, meta = make_data(
@@ -121,9 +144,9 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20, lr_override=Non
     model = (make_model(args.model, vocab_size=meta.vocab_size) if is_lm
              else make_model(args.model, num_classes=meta.num_classes)).to(device)
     is_lm = is_lm_model(model)
-    use_lr = lr_override if lr_override is not None else args.lr
     optimizer, lr = _make_opt(cond, eta_M, meta_every, model, use_lr,
-                              args.weight_decay, args.base_lr)
+                              args.weight_decay, args.base_lr, opt_kind=args.optimizer)
+    is_soap_precond = args.optimizer == "soap" and cond in ("whiten", "inverse", "evolve")
 
     use_cuda = device.type == "cuda"; use_amp = args.amp and use_cuda
     batch_iter = _infinite(train_loader)
@@ -146,26 +169,50 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20, lr_override=Non
             diverged = True
         if step == 1 or step % ckpt_every == 0 or step == args.max_steps:
             params_finite = all(torch.isfinite(p).all().item() for p in model.parameters())
-            # (i) DESIGN exponent vs the optimizer's own curvature C (cheap, every checkpoint)
-            op_over, op_top, op_flat = (operative_exponent_factors(optimizer)
-                                        if params_finite else (float("nan"),) * 3)
-            # (ii) TRUE-Hessian exponent at the final step only (HVP/Lanczos; costly)
+            # (i) DESIGN exponent vs the optimizer's own curvature (cheap, every checkpoint).
+            #     SOAP keeps eas (not CL/GL), so use the SOAP-aware probe for soap conditions.
+            if not params_finite:
+                op_over, op_top, op_flat = (float("nan"),) * 3
+            elif is_soap_precond:
+                op_over, op_top, op_flat = operative_exponent_soap(optimizer)
+            else:
+                op_over, op_top, op_flat = operative_exponent_factors(optimizer)
+            # (ii) TRUE-Hessian exponent at the final step only (HVP/Lanczos; costly). Only
+            # meaningful for the riccati conditions (adamw/soap have no CL/GL factors -> the probe
+            # reads identity, P=I -> alpha~0); skip them to save the HVP cost.
             op_true = float("nan")
-            if params_finite and step == args.max_steps and args.lanczos:
+            if (params_finite and step == args.max_steps and args.lanczos
+                    and cond in ("whiten", "inverse", "evolve") and not is_soap_precond):
+                # Small probe sub-batch: the math SDPA backend (needed for double-backward) drops
+                # flash's memory savings, and create_graph retains the full activation graph -> a
+                # full training batch OOMs on a 23GB L4. The Hessian-eigenvalue slope is fine on a
+                # small batch. Free the training-step cache first.
+                if device.type == "cuda":
+                    torch.cuda.empty_cache()
                 fb = next(batch_iter)
+                fb = tuple(t[:args.lanczos_batch] for t in fb)
+                # fp32 forward (NO autocast): the Lanczos HVP is a double-backward, more robust /
+                # accurate in fp32. The probe vector lives on the params' device -> CUDA generator.
                 def _lf():
-                    with torch.autocast("cuda", dtype=torch.bfloat16, enabled=use_amp):
-                        return _forward_loss(model, fb, device, is_lm)
-                op_true = operative_exponent_lanczos(
-                    _lf, optimizer, [p for p in model.parameters() if p.dim() == 2],
-                    k=args.lanczos_k, generator=torch.Generator(device="cpu").manual_seed(0))[0]
+                    return _forward_loss(model, fb, device, is_lm)
+                gen = torch.Generator(device=device).manual_seed(0)
+                try:
+                    # flash / mem-efficient SDPA kernels have NO double-backward; force the math
+                    # backend so the Hessian-vector product can differentiate attention twice.
+                    with sdpa_kernel(SDPBackend.MATH):
+                        op_true = operative_exponent_lanczos(
+                            _lf, optimizer, [p for p in model.parameters() if p.dim() == 2],
+                            k=args.lanczos_k, generator=gen)[0]
+                except Exception as e:   # never let the diagnostic kill the run
+                    print(f"[o4][{label}] lanczos probe skipped: {type(e).__name__}: {e}", flush=True)
             val_metric = val_loss = float("nan")
             if params_finite:
                 val_metric, val_loss, _ = evaluate(model, val_loader, device, is_lm,
                                                    max_batches=args.eval_max_batches)
                 model.train()
             records.append(dict(
-                condition=cond, label=label, model=args.model, dataset=args.dataset,
+                condition=cond, label=label, optimizer=args.optimizer,
+                model=args.model, dataset=args.dataset,
                 eta_M=eta_M if cond == "evolve" else "", meta_every=meta_every if cond == "evolve" else "",
                 lr=lr, batch=args.batch, max_steps=args.max_steps, amp=use_amp,
                 diverged=diverged, finite_fraction=n_finite / step, n_steps_run=step,
@@ -174,10 +221,11 @@ def run_condition(cond, args, device, eta_M=1e-3, meta_every=20, lr_override=Non
                 op_exponent_topk=op_top, op_exponent_flat=op_flat,
                 op_exponent_true_hessian=op_true, seed=args.seed))
             print(f"[o4][{label}] step {step}/{args.max_steps} loss={lv:.4f} val={val_loss:.4f} "
-                  f"op(i)=[{op_over:.2f},top{op_top:.2f},flat{op_flat:.2f}] op(ii)H={op_true:.2f} fin={finite}")
+                  f"op(i)=[{op_over:.2f},top{op_top:.2f},flat{op_flat:.2f}] op(ii)H={op_true:.2f} fin={finite}",
+                  flush=True)
         if diverged and not finite and step > args.max_steps // 5:
             break
-    print(f"[o4][{label}] DONE diverged={diverged} final_train={last:.4f}")
+    print(f"[o4][{label}] DONE diverged={diverged} final_train={last:.4f}", flush=True)
     return records
 
 
@@ -199,18 +247,38 @@ def run(args):
     if args.cond_lrs:
         for kv in args.cond_lrs.split(","):
             k, v = kv.split("="); cond_lr[k.strip()] = float(v)
-    for cond in args.conditions:
-        if cond == "evolve":
-            for em in args.eta_m_grid:
-                for me in args.meta_every_grid:
-                    rows += run_condition("evolve", args, device, eta_M=em, meta_every=me,
-                                          lr_override=cond_lr.get("evolve"))
-        else:
-            rows += run_condition(cond, args, device, lr_override=cond_lr.get(cond))
+    # Riccati conditions (whiten/inverse/evolve) are NOT trustworthy under benchmarks.py
+    # (fp16 GradScaler bypasses the loss closure and feeds overflow grads to the NS factor math),
+    # so we tune their lr HERE, inside this bf16 / NaN-surviving run, over --riccati-lr-grid.
+    # Only the adamw/soap baselines take their (validly benchmarks.py-tuned) lr from --cond-lrs.
+    ricc_lrs = args.riccati_lr_grid
     out_dir = Path(args.out_dir) if args.out_dir else (RUNS_DIR / "riccati_evolve_m")
-    csv_path = out_dir / f"{args.model}_{args.dataset}.csv"
-    write_csv(csv_path, rows)
-    print(f"[o4] wrote {csv_path} ({len(rows)} rows)")
+    opt_tag = "" if args.optimizer == "riccati" else f"_{args.optimizer}"
+    csv_path = out_dir / f"{args.model}_{args.dataset}{opt_tag}.csv"
+
+    def _do(cond, **kw):
+        # one condition: isolate its failure (a crash records what's done so far and moves on)
+        # and write the CSV incrementally so a later crash can't discard completed conditions.
+        nonlocal rows
+        try:
+            rows += run_condition(cond, args, device, **kw)
+        except Exception as e:
+            print(f"[o4] condition {cond} {kw} FAILED: {type(e).__name__}: {e}", flush=True)
+        write_csv(csv_path, rows)
+
+    for cond in args.conditions:
+        if cond in ("adamw", "soap"):
+            _do(cond, lr_override=cond_lr.get(cond))
+        elif cond == "evolve":
+            evolve_lrs = args.evolve_lr_grid if args.evolve_lr_grid else ricc_lrs
+            for elr in evolve_lrs:
+                for em in args.eta_m_grid:
+                    for me in args.meta_every_grid:
+                        _do("evolve", eta_M=em, meta_every=me, lr_override=elr)
+        else:                                  # whiten / inverse: sweep the riccati lr grid
+            for rlr in ricc_lrs:
+                _do(cond, lr_override=rlr)
+    print(f"[o4] wrote {csv_path} ({len(rows)} rows)", flush=True)
     return csv_path
 
 
@@ -219,6 +287,8 @@ def build_parser():
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--model", default="vit_s")
     p.add_argument("--dataset", default="cifar100")
+    p.add_argument("--optimizer", default="riccati", choices=["riccati", "soap"],
+                   help="backend for whiten/inverse/evolve: riccati (matrix-free) or soap (exact)")
     p.add_argument("--batch", type=int, default=128)
     p.add_argument("--max-steps", type=int, default=4000)
     p.add_argument("--lr", type=float, default=None)
@@ -232,7 +302,14 @@ def build_parser():
     p.add_argument("--grad-clip", type=float, default=1.0)
     p.add_argument("--lanczos", action="store_true", help="(ii) true-Hessian operative exponent at the final step")
     p.add_argument("--lanczos-k", type=int, default=16)
+    p.add_argument("--lanczos-batch", type=int, default=16,
+                   help="sub-batch for the true-Hessian HVP probe (math SDPA backend OOMs on full batch)")
     p.add_argument("--eta-m-grid", type=float, nargs="+", default=[3e-4, 1e-3, 3e-3])
+    p.add_argument("--riccati-lr-grid", type=float, nargs="+", default=[1e-4, 3e-4, 1e-3],
+                   help="lr grid swept (within this bf16 run) for ALL riccati conditions "
+                        "(whiten/inverse/evolve); baselines adamw/soap use --cond-lrs")
+    p.add_argument("--evolve-lr-grid", type=float, nargs="+", default=None,
+                   help="override lr grid for evolve only; None=use --riccati-lr-grid")
     p.add_argument("--meta-every-grid", type=int, nargs="+", default=[20])
     p.add_argument("--eval-max-batches", type=int, default=50)
     amp = p.add_mutually_exclusive_group()

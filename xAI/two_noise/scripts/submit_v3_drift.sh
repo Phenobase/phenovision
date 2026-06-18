@@ -6,7 +6,7 @@
 #SBATCH --job-name=tn_v3_drift
 #SBATCH --account=guralnick
 #SBATCH --qos=guralnick-b
-#SBATCH --partition=hpg-turin
+#SBATCH --partition=hpg-default
 #SBATCH --output logs/%x-%j.out
 #SBATCH --error  logs/%x-%j.err
 #SBATCH --nodes=1 --ntasks=1 --cpus-per-task=16 --mem-per-cpu=8G --time=12:00:00

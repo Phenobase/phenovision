@@ -32,6 +32,38 @@ binding for all code in `xAI/two_noise/`. When in doubt, this file wins; cite it
 - Same symbol, two substrates — that identity *is* the paper. The shared-prediction figure's x-axis
   is **effective sample size** (`N*` in biology / effective batch in ML); the y-axis is the realized
   `α` (or `M`-anisotropy).
+- **Shrinkage = effective-exponent reduction (`shrink`/`rho`).** Both optimizers take a `shrink`
+  knob: shrink the curvature spectrum toward isotropy (`v → (1-ρ)v + ρ·mean(v)`) *before* the
+  power. This yields a **spectrally non-uniform** effective exponent — ≈`α` in steep directions,
+  →0 in flat ones — which is exactly the noise-aware preconditioner the SDE predicts (the α=1
+  update-noise `aᵢ^(1-2α)` blows up in flat directions; shrinkage selectively tames it there).
+  `SOAPFullPower` applies it **exactly** on the eigenvalues; `RiccatiPrecond` matrix-free via NS.
+- **evolve-M lives in the eigenbasis as a diagonal (`evolve_m`).** Both optimizers learn the
+  preconditioner's target shape `M` by loss-weighted CMA-ES rank-μ accumulation of productive steps.
+  In SOAP the matrix `M` collapses to per-axis gains `m_L, m_R`: applied `h_ij = √(m_L,i m_R,j)·v_ij^{-power}`
+  (whitening base × learned gain, `m` unit-mean-normalized so only anisotropy acts). Use
+  `precond_power=0.5`. The operative exponent is read by `operative_exponent_soap` (validated:
+  whiten→0.5, inverse→1.0 *exactly*, unlike the matrix-free path). Run via
+  `riccati_evolve_m.py --optimizer soap`.
+- **Matrix-free vs exact (important, 2026-06-10).** The matrix-free Riccati whiten
+  *under-converged on real ViTs* (operative exponent ≈0, `‖GCG−I‖≈1`, G stuck near I). ROOT CAUSE
+  (diagnosed via `ml_experiments/riccati_precond_convergence.py`): `_ns_inv_sqrt` normalized the
+  Higham iteration by `trace(C)` instead of the spectral norm; for a ~384-dim ViT factor `trace`
+  is ~`d×` looser than `λ_max`, so 10 iterates left `Z≈I`. FIXED: normalize by `_spec_norm(C)`
+  (regression test `test_ns_inv_sqrt_high_dim_converges_in_few_steps`). The diagnostic was
+  budget-independent (k2=k5=k10, all clamped ≥10) — the tell that it was normalization, not steps.
+  → Still, for the shrinkage **science** (O2/O3) prefer `--optimizer soap` (`SOAPFullPower`, exact
+  spectrum, zero convergence risk); the matrix-free path is the "and it's cheap" follow-on, now
+  that whiten converges (re-verify inverse/evolve on GPU before trusting O4's matrix-free numbers).
+- **Relative damping is the default EVERYWHERE (`relative_damping=True`, 2026-06-10).** Both
+  optimizers floor the curvature as a FRACTION of its spectral norm (`eps·λ_max`), not an absolute
+  `eps`. Real ViT factors are small-scale (eigenvalues ~1e-4..1e-2), so an *absolute* `1e-2` floor
+  swamps them and the inverse collapses to `~eps⁻¹·I` (realized exponent ~0, behaves like SGD) —
+  this, NOT NS non-convergence, was why the matrix-free *inverse* read op≈0 (whiten's bug was the
+  separate trace-norm/iteration one). Diagnosis: `(C+εI)⁻¹` exponent 0.13 (abs) vs 0.87 (rel) on
+  eigenvalues 1e-4..1e-2. `damping=1e-2` now means `1e-2·λ_max`. Toy unit tests that tuned an
+  absolute floor pass `relative_damping=False` explicitly. SOAP already did this — which is why its
+  inverse partially worked while matrix-free didn't.
 
 ## 4. Analytic targets (from `notes/two_noise_framework_summary.md`)
 

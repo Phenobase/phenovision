@@ -78,6 +78,29 @@ class SOAPFullPower(torch.optim.Optimizer):
         shampoo_beta: EMA for the L,R preconditioner statistics. If < 0, uses betas[1].
         precond_power: exponent applied to the curvature eigenvalues.
             0.5 -> vanilla SOAP (whitening). 1.0 -> Newton / natural gradient.
+        shrink: Ledoit-Wolf shrinkage of the curvature spectrum toward isotropy in
+            [0, 1), applied to the in-basis second moment BEFORE the power:
+            v -> (1-shrink)*v + shrink*mean(v). Because the steep directions keep ~v
+            while the flat ones are pulled toward mean(v), this yields a SPECTRALLY
+            NON-UNIFORM effective exponent: ~precond_power where curvature is large,
+            -> 0 where it is small. That is exactly the noise-aware preconditioner the
+            two-noise SDE predicts (the alpha=1 update-noise ~ a^{1-2*power} blows up in
+            the flat directions, which shrinkage selectively tames). shrink=0 disables.
+            Same isotropy target as RiccatiPrecond's matrix-free _shrink, computed here
+            exactly from the spectrum instead of via Newton-Schulz.
+        evolve_m: the evolving-M meta-loop (the optimizer-side analog of M-evolution in
+            biology), the SOAP counterpart of RiccatiPrecond.evolve_M. In the curvature
+            eigenbasis the matrix source M collapses to a DIAGONAL, i.e. per-eigendirection
+            row/column gain vectors m_L (len m), m_R (len n): the applied preconditioner
+            becomes  h_ij = sqrt(m_L,i * m_R,j) * v_ij^{-power}  (whitening times a learned
+            per-direction gain). The gains are a slow, loss-weighted CMA-ES rank-mu EMA of the
+            PRODUCTIVE update's per-axis energy (only steps with dL>0 count). m is NORMALIZED to
+            unit mean before use, so it reshapes the preconditioner's ANISOTROPY without changing
+            the global step scale (that is the lr's job). Use with precond_power=0.5 (whitening
+            base, mirroring Riccati's M=eps*I start). 2D Kronecker layers only. OFF by default.
+        evolve_m_weighted: loss-weighted (w=max(0,dL), self-normalized per window) vs unweighted.
+        eta_m: meta learning-rate for the m_L/m_R EMA (eta_m << lr; slow timescale).
+        meta_every: accumulate productive-step energy into m every this many steps.
         damping: Levenberg–Marquardt term added to the (powered) denominator.
             With relative_damping=True it is scaled by the largest per-coordinate
             curvature, i.e. denom = V**p + damping * (V**p).amax(). This is the
@@ -101,6 +124,14 @@ class SOAPFullPower(torch.optim.Optimizer):
         betas: Tuple[float, float] = (0.95, 0.95),
         shampoo_beta: float = -1.0,
         precond_power: float = 1.0,
+        shrink: float = 0.0,
+        evolve_m: bool = False,
+        evolve_m_weighted: bool = True,
+        eta_m: float = 1e-3,
+        meta_every: int = 20,
+        m_noise: float = 0.0,
+        m_load: float = 0.0,
+        m_nstar: float = 1e9,
         damping: float = 1e-2,
         relative_damping: bool = True,
         eps: float = 1e-12,
@@ -121,7 +152,10 @@ class SOAPFullPower(torch.optim.Optimizer):
     ):
         defaults = dict(
             lr=lr, betas=betas, shampoo_beta=shampoo_beta,
-            precond_power=precond_power, damping=damping,
+            precond_power=precond_power, shrink=shrink,
+            evolve_m=evolve_m, evolve_m_weighted=evolve_m_weighted,
+            eta_m=eta_m, meta_every=meta_every, m_noise=m_noise, m_load=m_load,
+            m_nstar=m_nstar, damping=damping,
             relative_damping=relative_damping, eps=eps,
             weight_decay=weight_decay,
             precondition_frequency=precondition_frequency,
@@ -144,6 +178,9 @@ class SOAPFullPower(torch.optim.Optimizer):
         super().__init__(params, defaults)
         # per-device RNG cache so a user CPU generator can drive GPU param noise (M2 fix).
         self._demo_gen_cache: dict = {}
+        # evolve-M meta-loop: productivity weight w = max(0, dL) from the step closure.
+        self._prev_loss = None
+        self._meta_weight = 1.0
 
     def _device_generator(self, user_gen, device):
         """Return a generator on `device`. If the user passed a generator on another device,
@@ -211,6 +248,13 @@ class SOAPFullPower(torch.optim.Optimizer):
             state["R"] = torch.zeros(n, n, device=grad.device, dtype=grad.dtype) if n <= group["max_precond_dim"] else None
             state["QL"] = None
             state["QR"] = None
+            if group["evolve_m"]:
+                # per-eigendirection learned gains (the diagonal source M) + windowed accumulators
+                state["m_L"] = torch.ones(m, device=grad.device, dtype=torch.float32)
+                state["m_R"] = torch.ones(n, device=grad.device, dtype=torch.float32)
+                state["m_accL"] = torch.zeros(m, device=grad.device, dtype=torch.float32)
+                state["m_accR"] = torch.zeros(n, device=grad.device, dtype=torch.float32)
+                state["m_accW"] = 0.0
         elif grad.dim() == 1 and group["precondition_1d"] and grad.shape[0] <= group["max_precond_dim"]:
             state["use_precond"] = True
             d = grad.shape[0]
@@ -245,6 +289,15 @@ class SOAPFullPower(torch.optim.Optimizer):
     @torch.no_grad()
     def step(self, closure=None):
         loss = closure() if closure is not None else None
+
+        # evolve-M productivity weight: w = max(0, prev_loss - loss) (loss decrease this step),
+        # self-normalized per meta window below. No closure -> unweighted (w=1).
+        if loss is not None:
+            cur = float(loss)
+            self._meta_weight = max(0.0, self._prev_loss - cur) if self._prev_loss is not None else 0.0
+            self._prev_loss = cur
+        else:
+            self._meta_weight = 1.0
 
         for group in self.param_groups:
             p_clip = group["max_update_norm"]
@@ -319,6 +372,11 @@ class SOAPFullPower(torch.optim.Optimizer):
                             m_hat = ea / (1.0 - beta1 ** state["step"])
                         else:
                             v_hat, m_hat = eas, ea
+                        # Shrink the spectrum toward isotropy BEFORE the power (effective-exponent
+                        # reduction; steep directions keep ~v, flat ones pulled to mean(v)).
+                        rho = group["shrink"]
+                        if rho > 0.0:
+                            v_hat = (1.0 - rho) * v_hat + rho * v_hat.mean()
                         denom = v_hat.pow(power) if power != 1.0 else v_hat.clone()
                         if group["relative_damping"]:
                             denom = denom + group["damping"] * denom.amax().clamp_min(group["eps"])
@@ -327,6 +385,59 @@ class SOAPFullPower(torch.optim.Optimizer):
                         denom = denom.add_(group["eps"])
                         update_rot = m_hat / denom
                         step_size = group["lr"]
+
+                        # --- evolving-M meta-loop (the SOAP analog of RiccatiPrecond.evolve_M) ---
+                        # In the eigenbasis M is DIAGONAL: per-axis gains m_L, m_R. Apply
+                        # sqrt(m_L outer m_R) to the in-basis update (normalized to unit mean so
+                        # only the ANISOTROPY acts, not the global scale), then accumulate the
+                        # PRODUCTIVE move's per-axis energy (loss-weighted rank-mu, slow EMA).
+                        if group["evolve_m"] and two_d and "m_L" in state:
+                            mL, mR = state["m_L"], state["m_R"]
+                            gL = (mL / mL.mean().clamp_min(group["eps"])).sqrt()
+                            gR = (mR / mR.mean().clamp_min(group["eps"])).sqrt()
+                            # exploration noise on M (single-trajectory analog of population diversity
+                            # / the batch noise that lets C be estimated): perturb the per-direction
+                            # gain log-normally each step, then accumulate the PERTURBED productive
+                            # move -- so perturbations that reduced the loss (w>0) are reinforced.
+                            mn = group["m_noise"]
+                            if mn > 0.0:
+                                gL = gL * torch.exp(mn * torch.randn_like(gL))
+                                gR = gR * torch.exp(mn * torch.randn_like(gR))
+                            update_rot = update_rot * (gL.unsqueeze(1) * gR.unsqueeze(0))
+                            s = update_rot
+                            srow = (s * s).sum(dim=1)          # diag(s sᵀ), len m
+                            scol = (s * s).sum(dim=0)          # diag(sᵀ s), len n
+                            mm, nn = s.shape
+                            # accumulate the loss-weighted (w=max(0,dL)) productive energy over the window
+                            w = self._meta_weight if group["evolve_m_weighted"] else 1.0
+                            state["m_accL"].add_(srow, alpha=w / nn)
+                            state["m_accR"].add_(scol, alpha=w / mm)
+                            state["m_accW"] += w
+                            if state["step"] % group["meta_every"] == 0 and state["m_accW"] > 0:
+                                # LOG-SPACE M-update: evolve log(m) so m stays > 0 (SPD) under all
+                                # three additive terms -- benefit, mutation-load COST, noise:
+                                #   d log m_i = eta * ( benefit_i  -  kappa * load_i )
+                                # benefit_i = centered log(productive energy)  (drives M -> A^-1 at
+                                #   equilibrium, the climb); load_i = mutation-load gradient
+                                #   d/dlog(m)[tr(A M)] = v_i * m_i, which BLOWS UP exactly where M runs
+                                #   away (m huge in flat dirs) -> the restoring force that was missing.
+                                em = group["eta_m"]; eps = group["eps"]
+                                # theory's noise-aware load coefficient kappa(N*) = 0.5 + 1/(4 N*):
+                                # heavier cost at small N* (more gradient noise) -> lower exponent.
+                                kappa = group["m_load"] * (0.5 + 1.0 / (4.0 * group["m_nstar"]))
+                                Wn = state["m_accW"]
+                                vrow = v_hat.mean(dim=1).clamp_min(eps)   # per-row curvature scale (a_i)
+                                vcol = v_hat.mean(dim=0).clamp_min(eps)
+                                for key, acc, vsc in (("m_L", "m_accL", vrow), ("m_R", "m_accR", vcol)):
+                                    m = state[key]
+                                    b = (state[acc] / Wn).clamp_min(eps)
+                                    benefit = torch.log(b); benefit = benefit - benefit.mean()
+                                    # mutation-load gradient from L_eff = kappa*tr(A*Ghat): d/dlog(m) = (kappa/2)*sqrt(a_i*m_i)
+                                    load = (vsc * m).sqrt(); load = load / load.mean().clamp_min(eps)
+                                    ell = torch.log(m.clamp_min(eps)) + em * (benefit - kappa * (load - 1.0))
+                                    ell = ell - ell.mean()                # only the SHAPE matters (gain unit-mean-normed)
+                                    state[key] = torch.exp(ell)
+                                state["m_accL"].zero_(); state["m_accR"].zero_(); state["m_accW"] = 0.0
 
                     # --- §9.5 demographic-noise (pSGLD) injection, in the eigenbasis ---
                     # precond_diag = 1/denom is the APPLIED preconditioner H per-coordinate.

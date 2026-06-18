@@ -101,16 +101,27 @@ def _ns_inv_sqrt(C, steps, eps):
     """Coupled Newton-Schulz toward C^{-1/2}  (alpha = 1/2, whitening).
     Higham coupled iteration; fast (quadratic) and well-conditioned, so it is
     used fresh each step rather than warm-started. Same fixed point as the
-    eps*I-source Riccati, but far better numerics for the inverse-square-root."""
+    eps*I-source Riccati, but far better numerics for the inverse-square-root.
+    CRITICAL: normalize by the SPECTRAL NORM, not the trace. trace(C) = sum(lambda_i)
+    is a valid upper bound on ||C||, but for a high-dim factor (d~384 in a ViT) it is
+    looser than lambda_max by ~d, so Y = C/c has all eigenvalues << 1, T ~ 1.5*I, and the
+    iteration only creeps up ~1.5x/step -> 10 steps leaves Z ~ I (realized exponent ~0,
+    ||GCG - I|| ~ 1; the whiten mode silently never whitens on real models). Normalizing by
+    lambda_max puts Y_max = 1, where the iteration converges in ~log(cond) steps."""
     d = C.shape[0]
     eye = torch.eye(d, device=C.device, dtype=C.dtype)
-    c = torch.diagonal(C).sum() + eps          # safe upper bound on spectral norm
+    c = _spec_norm(C) + eps                    # lambda_max (tight); trace over-normalizes in high-d
     Y = C / c
     Z = eye.clone()
+    # Higham needs ~log2(cond) steps; real ViT factors have cond ~1e4-1e6 (=> ~20-40 steps), so a
+    # fixed 10 leaves Y far from I (G ~ I, no whitening). Iterate up to `steps` but EARLY-STOP once
+    # Y has converged to I (then Z = sqrt(c) C^{-1/2}); cheap factors still cost only a few matmuls.
     for _ in range(steps):
         T = 1.5 * eye - 0.5 * (Z @ Y)
         Y = Y @ T
         Z = T @ Z
+        if (Y - eye).abs().max() < 1e-6:
+            break
     return Z / torch.sqrt(c)                    # Z -> sqrt(c) * C^{-1/2}
 
 
@@ -136,11 +147,11 @@ def _precond_factor(C, G_prev, mode, steps, eta_p, rho, safeguard, eps):
     if mode == "inverse":
         return _ns_inverse(C, G_prev, steps, eta_p, rho, safeguard)
     elif mode == "whiten":
-        # The coupled (Higham) inverse-sqrt is run FRESH each refresh (not warm-started), so it
-        # needs enough iterations to converge: ~2 leaves G≈I (NOT whitening). It is cheap (matmuls
-        # only), so use >=8 iterations regardless of inner_steps (which is for the warm-started
-        # inverse mode). ||GCG-I||: 0.9 at 2 iters, 1e-4 at 10.
-        return _ns_inv_sqrt(C, max(steps, 10), eps)
+        # The coupled (Higham) inverse-sqrt is run FRESH each refresh (not warm-started), so it must
+        # fully converge in one shot. It needs ~log2(cond) iters; real ViT factors have cond
+        # ~1e4-1e6 (=> ~20-40), and a cap of 10 left G≈I (||GCG-I||~0.5; the whiten mode never
+        # whitened). Cap at 60 with early-stop (cheap matmuls; stops at ~10 for well-conditioned C).
+        return _ns_inv_sqrt(C, max(steps, 60), eps)
     else:
         raise ValueError(f"unknown precond mode {mode!r}")
 
@@ -185,6 +196,7 @@ class RiccatiPrecond(Optimizer):
 
     def __init__(self, params, lr=3e-3, precond="whiten", shrink=0.0,
                  beta_c=0.95, inner_steps=2, eta_p=1.0, damping=1e-6,
+                 relative_damping=True,
                  safeguard=8.0, precond_every=1, weight_decay=0.0, momentum=0.0,
                  precond_stats_from_hook=False,
                  evolve_M=False, evolve_M_weighted=True, eta_M=1e-3, meta_every=20,
@@ -195,6 +207,7 @@ class RiccatiPrecond(Optimizer):
                           "only enters the inverse branch); use precond='inverse'.")
         defaults = dict(lr=lr, precond=precond, shrink=shrink, beta_c=beta_c,
                         inner_steps=inner_steps, eta_p=eta_p, damping=damping,
+                        relative_damping=relative_damping,
                         safeguard=safeguard, precond_every=precond_every,
                         weight_decay=weight_decay, momentum=momentum,
                         precond_stats_from_hook=precond_stats_from_hook,
@@ -306,8 +319,17 @@ class RiccatiPrecond(Optimizer):
         CR.mul_(bc).add_((s32.t() @ s32) / m, alpha=1 - bc)
         eyeL = torch.eye(m, device=g.device, dtype=torch.float32)
         eyeR = torch.eye(n, device=g.device, dtype=torch.float32)
-        CLd = CL + eps * eyeL
-        CRd = CR + eps * eyeR
+        # Relative (Levenberg-Marquardt) damping: scale eps by each factor's spectral norm. Real ViT
+        # curvature factors are small-scale (eigenvalues ~1e-4..1e-2), so ABSOLUTE damping (e.g. 1e-2)
+        # swamps them -> the inverse collapses to ~eps^{-1} I (realized exponent ~0, looks like SGD).
+        # Scaling by lambda_max makes the floor a fixed FRACTION of the spectrum (as SOAPFullPower does).
+        if group["relative_damping"]:
+            epsL = eps * _spec_norm(CL).clamp_min(1e-30)
+            epsR = eps * _spec_norm(CR).clamp_min(1e-30)
+        else:
+            epsL = epsR = eps
+        CLd = CL + epsL * eyeL
+        CRd = CR + epsR * eyeR
 
         if (st["t"] - 1) % group["precond_every"] == 0:
             if group["evolve_M"] and group["precond"] == "inverse":
@@ -360,7 +382,9 @@ class RiccatiPrecond(Optimizer):
         alpha = 0.5 if group["precond"] == "whiten" else 1.0
         rho = group["shrink"]
         vs = (1 - rho) * v + rho * v.mean()            # scalar shrinkage
-        h = (vs + eps) ** (-alpha)
+        # relative damping: floor as a fraction of the largest curvature (see _kron_update)
+        eps_eff = eps * vs.max().clamp_min(1e-30) if group["relative_damping"] else eps
+        h = (vs + eps_eff) ** (-alpha)
         return (h * g.float()).to(st["param_dtype"])
 
     # ----- Langevin -----
