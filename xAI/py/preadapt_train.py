@@ -389,6 +389,21 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--weight_decay", type=float, default=0.05)
     p.add_argument("--min_lr", type=float, default=1e-6)
     p.add_argument("--warmup_epochs", type=int, default=5)
+    # v2 (evolutionary-realism) knobs. Defaults preserve legacy behavior so the OLD-config runs and
+    # the live collectors that re-invoke this code are unaffected; the v2 grid sets them explicitly.
+    p.add_argument("--lr_schedule", choices=["cosine", "fixed"], default="cosine",
+                   help="Phase-2 LR schedule. 'cosine' (legacy) = warmup then half-cycle cosine to "
+                        "--min_lr. 'fixed' = warmup then HOLD at the base LR (no decay) — removes the "
+                        "imposed-rate confound for the 'when does evolution stop' measurement.")
+    p.add_argument("--beta1", type=float, default=None,
+                   help="override optimizer momentum (exp_avg) beta1 for BOTH variants. None = variant "
+                        "default (stable_evo 0.95, adamw 0.9). v2 sets 0.0 (momentum off: breeder's-eq "
+                        "R=h2S has no cross-generation velocity memory; also de-confounds the velocity "
+                        "autocorrelation / straightness drift signal). beta2 (the preconditioner / "
+                        "G-matrix) is kept.")
+    p.add_argument("--beta2", type=float, default=None,
+                   help="override beta2 (2nd-moment EMA) for BOTH variants. None = variant default "
+                        "(stable_evo 0.95, adamw 0.999).")
     p.add_argument("--max_train_samples", type=int, default=None,
                    help="limit training data (for short pilots / smoke runs)")
     p.add_argument("--train_csv", type=str, default="data/inat/train_v1.1.0.csv")
@@ -403,6 +418,21 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--plateau_window", type=int, default=3)
     p.add_argument("--plateau_threshold", type=float, default=0.002)
     p.add_argument("--plateau_patience", type=int, default=2)
+
+    # --- Phase-2 TRAIN-LOSS plateau early stop (v2; default OFF = legacy run-all-epochs) ---
+    # "Evolution has stopped" = selection pressure (the train gradient) is exhausted. Mirrors the
+    # Phase-1 plateau logic but on a smoothed TRAIN loss at each val_every_n: stop when the loss
+    # improvement over the window is < threshold for `patience` consecutive checks. num_epochs stays
+    # a hard backstop. (Train-loss-plateau is the safer stop than weight-straightness — it protects
+    # held-out fitness, since fitness keeps creeping up while train loss still drops.)
+    p.add_argument("--phase2_early_stop", action="store_true",
+                   help="enable Phase-2 train-loss-plateau early stop (v2). Default off = legacy.")
+    p.add_argument("--phase2_plateau_window", type=int, default=8,
+                   help="number of val_every_n checkpoints in the train-loss plateau window.")
+    p.add_argument("--phase2_plateau_threshold", type=float, default=0.003,
+                   help="min train-loss improvement across the window to count as still-descending; "
+                        "below it for --phase2_plateau_patience consecutive windows => converged.")
+    p.add_argument("--phase2_plateau_patience", type=int, default=3)
 
     # --- adaptive sampler (briefing §3) ---
     p.add_argument("--sampler_delta", type=float, default=0.10,
@@ -1003,14 +1033,21 @@ def build_phase2_optimizer(
     """
     param_groups = pm.build_uniform_param_groups(model, weight_decay=args.weight_decay)
     if args.variant == "adamw":
-        return torch.optim.AdamW(param_groups, lr=lr), None
+        # default AdamW betas (0.9, 0.999); v2 sets --beta1 0.0 (momentum off).
+        b1 = 0.9 if args.beta1 is None else args.beta1
+        b2 = 0.999 if args.beta2 is None else args.beta2
+        return torch.optim.AdamW(param_groups, lr=lr, betas=(b1, b2)), None
 
     from optim.stable_evolution_optimizer import StableEvolutionSOAP
     demo_gen = torch.Generator().manual_seed(args.seed + DEMO_GEN_SEED_OFFSET)
+    # default StableEvo betas (0.95, 0.95); v2 sets --beta1 0.0 (drop momentum, keep the
+    # 2nd-moment/preconditioner = the metric/G-matrix).
+    b1 = 0.95 if args.beta1 is None else args.beta1
+    b2 = 0.95 if args.beta2 is None else args.beta2
     optimizer = StableEvolutionSOAP(
         param_groups,
         lr=lr,
-        betas=(0.95, 0.95),
+        betas=(b1, b2),
         weight_decay=args.weight_decay,
         alpha_max=0.9,
         alpha_min=0.5,
@@ -1029,6 +1066,48 @@ def build_phase2_optimizer(
     return optimizer, demo_gen
 
 
+@torch.no_grad()
+def probe_function_state(model: nn.Module, repr_dl, device: torch.device):
+    """Snapshot the model's FUNCTION on the fixed probe set (briefing §6 / v2 C3): per-(example,
+    class) sigmoid probabilities + per-example BCE loss. Used to measure FUNCTION-space change
+    between checkpoints (the phenotype), distinct from weight-space drift and from the scalar loss
+    — it catches iso-loss output rearrangement (re-weighting which examples are fit) that the mean
+    loss hides. Returns ``(probs[N,C], perex_loss[N])`` on CPU, or ``None`` if repr_dl is None."""
+    if repr_dl is None:
+        return None
+    was_training = model.training
+    model.eval()
+    bce = nn.BCEWithLogitsLoss(reduction="none")
+    probs_chunks, loss_chunks = [], []
+    for batch in repr_dl:
+        x = batch[0].to(device, non_blocking=True)
+        y = batch[-1].to(device, non_blocking=True).float()
+        with torch.autocast("cuda", dtype=torch.bfloat16):
+            logits = model(x).float()
+        probs_chunks.append(torch.sigmoid(logits).cpu())
+        loss_chunks.append(bce(logits, y).mean(dim=1).cpu())   # per-example mean over classes
+    if was_training:
+        model.train()
+    return torch.cat(probs_chunks), torch.cat(loss_chunks)
+
+
+def function_space_change(prev, cur) -> Dict[str, float]:
+    """Function-space change between two ``probe_function_state`` snapshots (prev->cur):
+      * ``fn_pred_churn`` — fraction of (example,class) decisions (prob>0.5) that flipped,
+      * ``fn_prob_l1`` — mean |Δ sigmoid prob| (smooth output drift),
+      * ``fn_perex_loss_rmsd`` — RMS change in the per-example loss vector (iso-loss rearrangement
+        is visible here even when MEAN loss is flat).
+    Returns {} if either snapshot is None (e.g. first eval, or repr_dl absent)."""
+    if prev is None or cur is None:
+        return {}
+    p_prev, l_prev = prev
+    p_cur, l_cur = cur
+    churn = float(((p_cur > 0.5) != (p_prev > 0.5)).float().mean().item())
+    prob_l1 = float((p_cur - p_prev).abs().mean().item())
+    loss_rmsd = float(((l_cur - l_prev) ** 2).mean().sqrt().item())
+    return {"fn_pred_churn": churn, "fn_prob_l1": prob_l1, "fn_perex_loss_rmsd": loss_rmsd}
+
+
 def run_phase2(
     model: nn.Module,
     train_dl,
@@ -1044,7 +1123,8 @@ def run_phase2(
     manifest_base: dict,
     t_start: float,
     resume_ckpt: Optional[Dict[str, Any]] = None,
-) -> int:
+    repr_dl=None,
+) -> Tuple[int, Dict[str, Any]]:
     """Phase 2: unfreeze all, re-freeze the input stage, build the variant optimizer, train in
     bf16 (no GradScaler), drive the adaptive sampler + inline §5 logging.
 
@@ -1094,11 +1174,16 @@ def run_phase2(
 
     lr = args.lr if args.lr is not None else (args.blr * eff_batch / 256.0)
     optimizer, demo_gen = build_phase2_optimizer(model, args, eff_batch, lr)
+    # FIXED schedule (v2): set min_lr == base lr so adjust_learning_rate's cosine term is constant
+    # after warmup (lr = min_lr + (lr-min_lr)*0.5*(1+cos(.)) = lr). Warmup is kept to avoid the
+    # Phase-1->2 unfreeze shock. COSINE (legacy) uses the configured --min_lr floor.
+    sched_min_lr = lr if args.lr_schedule == "fixed" else args.min_lr
     phase2_args = argparse.Namespace(
-        accum_iter=1, warmup_epochs=args.warmup_epochs, lr=lr, min_lr=args.min_lr,
+        accum_iter=1, warmup_epochs=args.warmup_epochs, lr=lr, min_lr=sched_min_lr,
         epochs=args.num_epochs,
     )
-    print(f"  Phase-2 uniform lr={lr:.6g}  eff_batch={eff_batch}  variant={args.variant}")
+    print(f"  Phase-2 uniform lr={lr:.6g}  eff_batch={eff_batch}  variant={args.variant}  "
+          f"lr_schedule={args.lr_schedule} (min_lr={sched_min_lr:.6g})")
 
     # --- RESUME: restore optimizer state + every RNG stream (model already loaded by main) ---
     if resume_ckpt is not None:
@@ -1241,6 +1326,14 @@ def run_phase2(
     # --- step-0 anchors (briefing §5): pre-update loss, ecological-fitting still in scalars ---
     model.train()
 
+    # --- v2 C2: Phase-2 TRAIN-LOSS plateau early stop state (default off) ---
+    p2_plateau_metrics: deque = deque(maxlen=args.phase2_plateau_window)
+    p2_plateau_count = 0
+    p2_window_loss_sum, p2_window_loss_n = 0.0, 0
+    early_stop_meta: Dict[str, Any] = {"early_stop": False, "reason": "", "epoch": None, "step": None}
+    # --- v2 C3: function-space change reference (probe-set predictions at the previous val eval) ---
+    prev_fn_state = probe_function_state(model, repr_dl, device)  # baseline at Phase-2 start
+
     for epoch in range(phase2_start_epoch, args.num_epochs):
         model.train()
         # Deterministic per-epoch data order: the loader's shuffle is reseeded from (seed, epoch),
@@ -1274,6 +1367,7 @@ def run_phase2(
 
             # --- inline §5 stream ---
             scalar.add(args.condition, run_id, global_step, wall, "train_loss", loss_value)
+            p2_window_loss_sum += loss_value; p2_window_loss_n += 1  # v2 C2 plateau window accumulator
             scalar.add(args.condition, run_id, global_step, wall, "global_update_norm", upd_norm)
             for gk, gv in grad_norms.items():
                 scalar.add(args.condition, run_id, global_step, wall, gk,
@@ -1337,7 +1431,37 @@ def run_phase2(
                            "val_auc_pr_mean", float(vm["auc_pr_mean"]))
                 print(f"  VAL step={global_step} (p2={phase2_steps}) "
                       f"val_loss={vm['val_loss']:.4f} auc_pr_mean={vm['auc_pr_mean']:.4f}")
+
+                # --- v2 C3: FUNCTION-space change on the probe set (phenotype drift) ---
+                cur_fn_state = probe_function_state(model, repr_dl, device)
+                for k, v in function_space_change(prev_fn_state, cur_fn_state).items():
+                    scalar.add(args.condition, run_id, global_step, wall, k, v)
+                if cur_fn_state is not None:
+                    prev_fn_state = cur_fn_state
                 model.train()
+
+                # --- v2 C2: TRAIN-LOSS plateau early stop (window-mean train loss at val cadence) ---
+                if p2_window_loss_n > 0:
+                    win_mean = p2_window_loss_sum / p2_window_loss_n
+                    p2_window_loss_sum, p2_window_loss_n = 0.0, 0
+                    p2_plateau_metrics.append(win_mean)
+                    if len(p2_plateau_metrics) == args.phase2_plateau_window:
+                        improvement = p2_plateau_metrics[0] - p2_plateau_metrics[-1]  # loss down => +
+                        scalar.add(args.condition, run_id, global_step, wall,
+                                   "phase2_trainloss_improvement", float(improvement))
+                        if improvement < args.phase2_plateau_threshold:
+                            p2_plateau_count += 1
+                            print(f"  Phase-2 plateau ({p2_plateau_count}/"
+                                  f"{args.phase2_plateau_patience}) improvement={improvement:.5f} "
+                                  f"< {args.phase2_plateau_threshold}")
+                        else:
+                            p2_plateau_count = 0
+                        if args.phase2_early_stop and p2_plateau_count >= args.phase2_plateau_patience:
+                            early_stop_meta = {"early_stop": True, "reason": "trainloss_plateau",
+                                               "epoch": epoch, "step": global_step}
+                            print(f"*** Phase-2 EARLY STOP (train-loss plateau) at epoch {epoch}, "
+                                  f"step {global_step} ***")
+                            break
 
             if batch_idx % 20 == 0:
                 scalar.flush()
@@ -1345,12 +1469,15 @@ def run_phase2(
                       f"upd_norm={upd_norm:.4f} disp={g_disp:.4f} sampler={sampler_signal:.4f} "
                       f"lr={optimizer.param_groups[0]['lr']:.6f}")
 
-        # End-of-epoch: force an emission so each epoch boundary is captured on the backbone.
-        emit_checkpoint(global_step, epoch, "epoch_end")
+        # End-of-epoch (or early-stop): force an emission so the boundary / converged state is captured.
+        emit_checkpoint(global_step, epoch,
+                        "early_stop" if early_stop_meta["early_stop"] else "epoch_end")
         scalar.flush()
+        if early_stop_meta["early_stop"]:
+            break
 
     scalar.flush()
-    return global_step
+    return global_step, early_stop_meta
 
 
 def _optimizer_config_for_manifest(args: argparse.Namespace, lr: float, eff_batch: int) -> dict:
@@ -1462,6 +1589,7 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     scalar = ScalarStore(os.path.join(args.output_dir, "metrics", "scalars.parquet"))
     t_start = time.time()
+    p2_meta: Dict[str, Any] = {}
     try:
         if resume_phase == "phase2":
             # Resume Phase 2 from the checkpoint's epoch boundary (skip Phase 1 entirely). The
@@ -1471,10 +1599,10 @@ def main(argv: Optional[List[str]] = None) -> None:
             p1_epoch = int(resume_ckpt.get("epoch", 0))
             print(f"[preadapt_train] RESUME Phase 2 from epoch {p1_epoch} (start of epoch "
                   f"{p1_epoch + 1}), global_step={gstep}.")
-            gstep = run_phase2(
+            gstep, p2_meta = run_phase2(
                 model, train_dl, val_dl, criterion, device, args, scalar, run_id,
                 gstep, p1_epoch, input_state0, manifest_base, t_start,
-                resume_ckpt=resume_ckpt)
+                resume_ckpt=resume_ckpt, repr_dl=repr_dl)
         elif resume_phase == "phase1_final":
             # phase1_final: skip Phase 1, start Phase 2 FRESH (mirrors the old --resume_phase2).
             gstep = int(resume_ckpt.get("global_step", resume_ckpt.get("step", 0)))
@@ -1488,24 +1616,27 @@ def main(argv: Optional[List[str]] = None) -> None:
             else:
                 print("[preadapt_train] RESUME from phase1_final (legacy, no rng_state): "
                       "skipping Phase 1, starting Phase 2 fresh.")
-            gstep = run_phase2(
+            gstep, p2_meta = run_phase2(
                 model, train_dl, val_dl, criterion, device, args, scalar, run_id,
-                gstep, p1_epoch, input_state0, manifest_base, t_start)
+                gstep, p1_epoch, input_state0, manifest_base, t_start, repr_dl=repr_dl)
         else:
             if resume_ckpt is not None:
                 print(f"[preadapt_train] WARNING: resume checkpoint phase={resume_phase!r} is not "
                       "a resumable Phase-2 / phase1_final checkpoint; running fresh from Phase 1.")
             gstep, p1_epoch, _eco = run_phase1(
                 model, train_dl, val_dl, criterion, device, args, scalar, run_id, t_start)
-            gstep = run_phase2(
+            gstep, p2_meta = run_phase2(
                 model, train_dl, val_dl, criterion, device, args, scalar, run_id,
-                gstep, p1_epoch, input_state0, manifest_base, t_start)
+                gstep, p1_epoch, input_state0, manifest_base, t_start, repr_dl=repr_dl)
     finally:
         scalar.close()
 
     # Drop a completion sentinel so the collector knows the run finished (after the last ckpt).
+    _es = p2_meta if isinstance(p2_meta, dict) else {}
     with open(os.path.join(args.output_dir, "RUN_COMPLETE"), "w") as f:
-        f.write(f"run_id={run_id}\nfinal_step={gstep}\n")
+        f.write(f"run_id={run_id}\nfinal_step={gstep}\n"
+                f"early_stop={_es.get('early_stop', False)}\n"
+                f"early_stop_reason={_es.get('reason', '')}\n")
     print(f"\nTRAINING COMPLETE: run_id={run_id} final_step={gstep} "
           f"elapsed={(time.time() - t_start) / 60:.1f} min")
 

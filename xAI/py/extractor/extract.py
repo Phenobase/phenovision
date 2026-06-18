@@ -70,7 +70,7 @@ import os
 import sys
 import time
 import traceback
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import torch
@@ -136,6 +136,14 @@ BLOCK_ORDER: Tuple[str, ...] = (
 #: block_curvature, block_weights, block_trajectory, block_fitness — run on EVERY checkpoint.
 #: Downstream analysis treats the heavy quantities as present only on heavy checkpoints by design.
 HEAVY_BLOCK_TAGS: frozenset = frozenset({"block_circuits", "block_interp", "block_probes"})
+
+#: v2 C4 CPU/GPU split. GPU-set blocks run a model forward/backward (HVP for curvature; forward
+#: passes for fitness/interp/probes) -> need a GPU worker. CPU-set blocks are pure linear algebra
+#: on the SAVED optimizer-state / weight tensors (no model eval) -> run on many CPU-only workers.
+#: With ``block_set="cpu"`` the Extractor skips the probe-loader / Hessian-batch build entirely
+#: (no CSV, no dataloaders, lower host RAM). ``block_set="all"`` (default) = legacy: every block.
+GPU_BLOCK_TAGS: frozenset = frozenset({"block_curvature", "block_fitness", "block_interp", "block_probes"})
+CPU_BLOCK_TAGS: frozenset = frozenset({"block_optim", "block_weights", "block_trajectory", "block_circuits"})
 
 #: Per-block generator attribute the driver attaches to ctx (CONVENTIONS.md §5). A block that
 #: looks for ``ctx.gen_<tag>`` finds a driver-supplied, deterministically-seeded generator.
@@ -418,6 +426,8 @@ class Extractor:
         scalar_store: Optional[ScalarStore] = None,
         array_store: Optional[ArrayStore] = None,
         heavy_every: int = 3,
+        block_set: str = "all",
+        blocks: Optional[Sequence[str]] = None,
     ):
         """Build the per-run shared resources once.
 
@@ -461,6 +471,21 @@ class Extractor:
         self.run_dir = os.path.abspath(run_dir)
         self.device = torch.device(device) if not isinstance(device, torch.device) else device
 
+        # --- v2 C4: resolve the ACTIVE block set (which blocks this worker runs) ---
+        if blocks:
+            chosen = {b for b in blocks if b in BLOCK_ORDER}
+        elif block_set == "gpu":
+            chosen = set(GPU_BLOCK_TAGS)
+        elif block_set == "cpu":
+            chosen = set(CPU_BLOCK_TAGS)
+        else:  # "all" (legacy)
+            chosen = set(BLOCK_ORDER)
+        self._active_blocks: Tuple[str, ...] = tuple(b for b in BLOCK_ORDER if b in chosen)
+        self.block_set = block_set
+        # Does this worker need the probe loaders / Hessian batch at all? Only the GPU/forward
+        # blocks do; a CPU-only worker (optim/weights/trajectory/circuits) skips that build.
+        self._needs_probe_resources = bool(set(self._active_blocks) & GPU_BLOCK_TAGS)
+
         # --- locate + read the run manifest (projection spec, identity, arch) ---
         self.manifest = self._load_run_manifest(self.run_dir)
         self.run_id = run_id or self.manifest.get("run_id")
@@ -475,7 +500,11 @@ class Extractor:
         self.hessian_batch = None
         probe_ids: Dict[str, Any] = {}
         hess_ids: Dict[str, Any] = {}
-        if chosen_csv and os.path.exists(chosen_csv):
+        if not self._needs_probe_resources:
+            print(f"[Extractor] block_set={block_set!r}: CPU-only block set "
+                  f"{list(self._active_blocks)} needs no model forward — skipping probe/Hessian "
+                  f"build (no CSV/dataloaders, lower host RAM).", flush=True)
+        elif chosen_csv and os.path.exists(chosen_csv):
             try:
                 (self.probe_train_loader, self.probe_eval_loader,
                  probe_ids) = _build_probe_loaders(
@@ -772,7 +801,7 @@ class Extractor:
         ctx_step = ctx.step  # captured here; ctx is deleted before the profile line is printed
         block_times: Dict[str, float] = {}  # per-block extract() wall-time for the profile line
 
-        for block_name in BLOCK_ORDER:
+        for block_name in self._active_blocks:
             # TIER: skip the HEAVY interpretability blocks on non-heavy checkpoints. A skipped
             # heavy block writes a ``block_skipped`` marker scalar (value=1, layer=block_tag) and
             # NO other arrays/scalars this ckpt — downstream analysis treats heavy quantities as

@@ -40,6 +40,7 @@ import json
 import math
 import os
 import tempfile
+import time
 from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
@@ -265,6 +266,141 @@ def finalize_processed(processing_path: str, keep: bool, original_path: Optional
         done = original_path + DONE_SUFFIX
         if os.path.exists(done):
             os.remove(done)
+
+
+# -----------------------------------------------------------------------------
+# 1b. TWO-PASS refcount (v2 C4): split each checkpoint's extraction into a GPU-block pass
+# and a CPU-block pass run by DIFFERENT workers, and dispose (delete / kept-move) ONLY after
+# BOTH passes finish. Purely filesystem sentinels (preserves the stateless, exactly-once
+# contract). Per checkpoint ``<base>.pt`` and a pass tag P in e.g. {"gpu","cpu"}:
+#   <base>.pt.<P>.claim     O_EXCL marker  -> a worker owns pass P (stale-reaped by mtime)
+#   <base>.pt.<P>.complete  durable marker -> pass P's record is written+fsync'd
+# Disposal is the EXISTING atomic rename (``claim_for_processing``: .pt -> .processing) used as a
+# one-winner finalize lock once all required passes' ``.complete`` exist. LEGACY single-pass
+# (require_passes == ["all"]) does NOT use any of this — it stays on claim_for_processing /
+# finalize_processed exactly as before (byte-identical), so the live collectors are unaffected.
+# NOTE: a checkpoint's ``.pt`` lingers (no ``.processing``) until the finalizer runs, so the
+# trainer's existing ``count_pending`` already counts it as pending until BOTH passes finish —
+# i.e. the slower pass governs backpressure with no trainer change.
+
+# A .claim older than this is treated as an abandoned worker and may be reaped. Set WELL above the
+# worst-case single-pass extraction time (measured GPU heavy pass ~331s; CPU 4-block pass a few min)
+# so a LIVE worker's pass is never reaped mid-flight (which would cause a concurrent double-extract
+# and duplicate store rows). 90 min gives a large safety margin even on a slow/contended node.
+# Override via the collector env if a pass ever legitimately runs longer.
+PASS_STALE_SECONDS_DEFAULT = 5400
+
+
+def _pass_claim_path(path: str, pass_tag: str) -> str:
+    return f"{path}.{pass_tag}.claim"
+
+
+def _pass_complete_path(path: str, pass_tag: str) -> str:
+    return f"{path}.{pass_tag}.complete"
+
+
+def is_ready_for_pass(path: str, pass_tag: str,
+                      stale_seconds: float = PASS_STALE_SECONDS_DEFAULT) -> bool:
+    """True iff ``path`` is ready for extraction PASS ``pass_tag``: the checkpoint is fully
+    written (``.pt`` + ``.done``), is not being finalized (no ``.processing``), this pass is not
+    already done (no ``.<P>.complete``), and is not currently owned by a live worker (no
+    ``.<P>.claim`` younger than ``stale_seconds``)."""
+    if not (os.path.exists(path) and os.path.exists(path + DONE_SUFFIX)):
+        return False
+    if os.path.exists(path + PROCESSING_SUFFIX):
+        return False
+    if os.path.exists(_pass_complete_path(path, pass_tag)):
+        return False
+    claim = _pass_claim_path(path, pass_tag)
+    if os.path.exists(claim):
+        try:
+            age = time.time() - os.path.getmtime(claim)
+        except OSError:
+            return False
+        if age < stale_seconds:
+            return False  # a live worker owns it
+    return True
+
+
+def claim_pass(path: str, pass_tag: str,
+               stale_seconds: float = PASS_STALE_SECONDS_DEFAULT) -> bool:
+    """Atomically claim extraction pass ``pass_tag`` for ``path`` by O_EXCL-creating
+    ``<path>.<P>.claim``. Returns True iff this caller won the claim. If a STALE claim exists
+    (older than ``stale_seconds`` -> abandoned worker), remove it and retry once; the O_EXCL
+    create still admits exactly one winner if two reapers race."""
+    if not is_ready_for_pass(path, pass_tag, stale_seconds):
+        return False
+    claim = _pass_claim_path(path, pass_tag)
+    try:
+        fd = os.open(claim, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+        os.close(fd)
+        return True
+    except FileExistsError:
+        # stale? (live-worker case already filtered by is_ready_for_pass)
+        try:
+            if time.time() - os.path.getmtime(claim) >= stale_seconds:
+                os.remove(claim)
+                fd = os.open(claim, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+                os.close(fd)
+                return True
+        except OSError:
+            return False
+        return False
+    except OSError:
+        return False
+
+
+def mark_pass_complete(path: str, pass_tag: str) -> None:
+    """Record pass ``pass_tag`` as durably finished: fsync-create ``<path>.<P>.complete`` then
+    remove this worker's ``<path>.<P>.claim``. Idempotent."""
+    comp = _pass_complete_path(path, pass_tag)
+    with open(comp, "wb") as f:
+        f.flush()
+        os.fsync(f.fileno())
+    # fsync the containing directory so the .complete entry survives a hard crash — the whole
+    # two-pass refcount hinges on this sentinel (a lost .complete only forces a benign re-extract,
+    # but cheap to make durable). Best-effort.
+    try:
+        dfd = os.open(os.path.dirname(comp) or ".", os.O_DIRECTORY)
+        try:
+            os.fsync(dfd)
+        finally:
+            os.close(dfd)
+    except OSError:
+        pass
+    claim = _pass_claim_path(path, pass_tag)
+    if os.path.exists(claim):
+        try:
+            os.remove(claim)
+        except OSError:
+            pass
+
+
+def all_passes_complete(path: str, required_passes: Iterable[str]) -> bool:
+    """True iff every pass in ``required_passes`` has a ``.complete`` sentinel for ``path``."""
+    return all(os.path.exists(_pass_complete_path(path, p)) for p in required_passes)
+
+
+def acquire_finalize(path: str, required_passes: Iterable[str]) -> Optional[str]:
+    """If ALL required passes are complete, win the one-and-only finalize lock by renaming
+    ``.pt`` -> ``.processing`` (the existing atomic primitive). Returns the ``.processing`` path
+    to the winner (who then disposes: delete or kept-move), or ``None`` if not all passes are
+    complete yet or another worker won the rename."""
+    if not all_passes_complete(path, required_passes):
+        return None
+    return claim_for_processing(path)  # atomic; exactly one winner
+
+
+def cleanup_pass_sentinels(original_path: str, required_passes: Iterable[str]) -> None:
+    """Remove all per-pass ``.claim`` / ``.complete`` sentinels for ``original_path`` (called by
+    the finalizer AFTER disposal). Best-effort / idempotent."""
+    for p in required_passes:
+        for s in (_pass_complete_path(original_path, p), _pass_claim_path(original_path, p)):
+            if os.path.exists(s):
+                try:
+                    os.remove(s)
+                except OSError:
+                    pass
 
 
 # =============================================================================

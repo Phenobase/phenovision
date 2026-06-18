@@ -92,6 +92,13 @@ from preadapt_common import (  # noqa: E402
     ArrayStore,
     SparseRandomProjection,
     trainable_param_numel,
+    # v2 C4 two-pass refcount primitives (only used when --require-passes has >1 pass)
+    is_ready_for_pass,
+    claim_pass,
+    mark_pass_complete,
+    all_passes_complete,
+    acquire_finalize,
+    cleanup_pass_sentinels,
 )
 import torch.nn as nn  # noqa: E402
 
@@ -283,6 +290,9 @@ class Collector:
         heavy_every: int = 3,
         worker_id: Optional[str] = None,
         split_seed: int = 20240601,
+        block_set: str = "all",
+        blocks: Optional[List[str]] = None,
+        require_passes: Optional[List[str]] = None,
     ):
         self.watch_dirs = [os.path.abspath(d) for d in watch_dirs]
         self.out_store = os.path.abspath(out_store)
@@ -300,6 +310,15 @@ class Collector:
         self.heavy_every = max(1, int(heavy_every))
         self.split_seed = int(split_seed)
         self.worker_id = _resolve_worker_id(worker_id)
+        # --- v2 C4 CPU/GPU split + two-pass refcount ---
+        self.block_set = block_set
+        self.blocks = blocks
+        # require_passes: the set of passes that must BOTH complete before a checkpoint is disposed.
+        # Default ["all"] == LEGACY single-pass (claim_for_processing/finalize, byte-unchanged).
+        self.require_passes: List[str] = list(require_passes) if require_passes else ["all"]
+        self.legacy_single_pass = (self.require_passes == ["all"])
+        # This worker's pass tag = its block_set ("gpu"/"cpu"), or "all" in legacy mode.
+        self.pass_tag = "all" if self.legacy_single_pass else block_set
 
         # Per-run shared resources (built ONCE per run_id; STATELESS extraction reuses them).
         self._resources: Dict[str, Dict[str, Any]] = {}
@@ -445,6 +464,8 @@ class Collector:
             scalar_store=scalar,
             array_store=array,
             heavy_every=self.heavy_every,
+            block_set=self.block_set,
+            blocks=self.blocks,
         )
         self._extractors[run_id] = ex
         return ex
@@ -568,10 +589,18 @@ class Collector:
             if not os.path.isdir(wd):
                 continue
             run_id = _run_id_for_dir(wd, self._dir_run_id)
-            processed = self._processed_steps(run_id)
+            # LEGACY single-pass: idempotency is per-STEP (any worker's scalars => done).
+            # TWO-PASS: idempotency is per-PASS (the .<pass>.complete sentinel via
+            # is_ready_for_pass) — a step the OTHER pass already wrote scalars for must NOT be
+            # skipped for MY pass, so we do NOT consult _processed_steps in two-pass mode.
+            processed = self._processed_steps(run_id) if self.legacy_single_pass else None
             for step, path, mtime in _discover_ready(wd):
-                if step in processed:
-                    continue
+                if self.legacy_single_pass:
+                    if step in processed:
+                        continue
+                else:
+                    if not is_ready_for_pass(path, self.pass_tag):
+                        continue
                 entries.append({"run_id": run_id, "step": step, "path": path,
                                 "mtime": mtime, "watch_dir": wd})
         entries.sort(key=lambda e: (e["mtime"], e["step"], e["run_id"]))
@@ -589,6 +618,12 @@ class Collector:
         path = entry["path"]
         watch_dir = entry["watch_dir"]
 
+        # v2 C4: in two-pass mode this worker runs only ITS pass's blocks; disposal is deferred to
+        # the finalize sweep (run_once) once BOTH passes' .complete sentinels exist.
+        if not self.legacy_single_pass:
+            return self._process_one_pass(entry)
+
+        # ===== LEGACY single-pass path (byte-unchanged; require_passes == ["all"]) =====
         # Idempotency double-check just before claiming (cheap; the authoritative guard is the
         # atomic claim below).
         if step in self._processed_steps(run_id):
@@ -635,6 +670,80 @@ class Collector:
               f"heavy={heavy} blocks_ok={nb_ok} blocks_err={nb_err} t={t}s -> {disp}",
               flush=True)
         return True
+
+    def _process_one_pass(self, entry: Dict[str, Any]) -> bool:
+        """v2 C4 two-pass: claim THIS worker's pass on the checkpoint, extract only this pass's
+        block set on the ORIGINAL ``.pt`` (NOT renamed to .processing, so the other pass can read
+        it concurrently), fsync the record, then drop the ``.<pass>.complete`` sentinel. Disposal
+        (delete / kept-move) is deferred to :meth:`_finalize_sweep`, which fires once BOTH passes'
+        ``.complete`` sentinels exist. Returns True iff this worker ran (and completed) its pass."""
+        run_id, step, path, watch_dir = (entry["run_id"], entry["step"], entry["path"],
+                                         entry["watch_dir"])
+        if not claim_pass(path, self.pass_tag):
+            return False  # lost the per-pass claim race, or pass already done
+        extractor = self._extractor_for(run_id, watch_dir)
+        try:
+            # Extract on the .pt path itself (the file stays put for the other pass). Stateless.
+            summary = extractor.extract_checkpoint(path)
+        except Exception:
+            tb = traceback.format_exc()
+            print(f"[collector w{self.worker_id}] {self.pass_tag}-pass extract FAILED "
+                  f"run_id={run_id} step={step}:\n{tb}", file=sys.stderr, flush=True)
+            # Release our claim so it can be retried; never delete the checkpoint (§2.1).
+            claim_marker = f"{path}.{self.pass_tag}.claim"
+            if os.path.exists(claim_marker):
+                try:
+                    os.remove(claim_marker)
+                except OSError:
+                    pass
+            return False
+        # Record durable BEFORE marking the pass complete (§2.1 ordering).
+        self._fsync_store(run_id)
+        mark_pass_complete(path, self.pass_tag)
+        nb_ok = summary.get("n_blocks_ok") if isinstance(summary, dict) else None
+        t = summary.get("t_seconds") if isinstance(summary, dict) else None
+        print(f"[collector w{self.worker_id}] {self.pass_tag}-pass DONE run_id={run_id} "
+              f"step={step} blocks_ok={nb_ok} t={t}s "
+              f"(all_passes_complete={all_passes_complete(path, self.require_passes)})", flush=True)
+        return True
+
+    def _finalize_sweep(self) -> int:
+        """v2 C4: dispose of every checkpoint whose required passes are ALL complete. Each such
+        checkpoint is claimed via the atomic ``.pt -> .processing`` rename (exactly one winner),
+        then kept-moved (model-only) or deleted, then its per-pass sentinels are cleaned. This also
+        recovers ORPHANS — both passes finished but the would-be finalizer died — since it runs
+        every cycle over all dirs. No-op in legacy single-pass mode. Returns #finalized here."""
+        if self.legacy_single_pass:
+            return 0
+        n = 0
+        for wd in self.watch_dirs:
+            if not os.path.isdir(wd):
+                continue
+            run_id = _run_id_for_dir(wd, self._dir_run_id)
+            for entry_name in list(os.listdir(wd)):
+                if not entry_name.endswith(".pt"):
+                    continue
+                path = os.path.join(wd, entry_name)
+                if not all_passes_complete(path, self.require_passes):
+                    continue
+                step = _parse_step_from_name(path)
+                if step is None:
+                    continue
+                proc = acquire_finalize(path, self.require_passes)  # atomic; one winner
+                if proc is None:
+                    continue  # lost the finalize race, or not all complete
+                keep = self._should_keep(step, wd)
+                try:
+                    if keep:
+                        disp = self._move_to_kept(run_id, step, proc, wd)
+                    else:
+                        disp = self._delete_from_queue(proc)
+                finally:
+                    cleanup_pass_sentinels(path, self.require_passes)
+                n += 1
+                print(f"[collector w{self.worker_id}] FINALIZED run_id={run_id} step={step} "
+                      f"-> {disp}", flush=True)
+        return n
 
     # ------------------------------------------------------------------ disposition
 
@@ -838,6 +947,8 @@ class Collector:
                   f"collector keeps DRAINING (extract+dispose frees disk). Trainer emission is "
                   f"the paused side.", flush=True)
         n_processed = 0
+        # v2 C4: finalize any checkpoints whose passes all completed (incl. orphans) before draining.
+        n_final = self._finalize_sweep()
         while True:
             queue = self._build_queue()
             if not queue:
@@ -854,7 +965,10 @@ class Collector:
                              if not (e["run_id"] == entry["run_id"] and e["step"] == entry["step"])]
                 if not remaining:
                     break
-        return n_processed
+        # v2 C4: finalize again to dispose of checkpoints THIS worker's pass just completed (when it
+        # was the second pass) without waiting for the next poll cycle.
+        n_final += self._finalize_sweep()
+        return n_processed + n_final
 
     def run_forever(self) -> None:
         """Poll the watch dirs forever, draining ready checkpoints each cycle and sleeping
@@ -946,11 +1060,27 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         "cheap blocks every checkpoint. The stateless extractor gates heavy blocks "
                         "on the checkpoint's own step (not an in-memory counter) so the cadence is "
                         "deterministic and worker-order-independent (default 3).")
+    # --- v2 C4: CPU/GPU split + two-pass refcount ---
+    p.add_argument("--block-set", choices=["all", "gpu", "cpu"], default="all",
+                   help="which extraction blocks THIS worker runs. all (default, legacy) = every "
+                        "block. gpu = curvature + fitness/interp/probes (model fwd/HVP). cpu = "
+                        "optim/weights/trajectory/circuits (pure linalg on saved tensors, no model "
+                        "forward; skips probe/Hessian build).")
+    p.add_argument("--blocks", default=None,
+                   help="comma-separated explicit block list (overrides --block-set).")
+    p.add_argument("--require-passes", default="all",
+                   help="comma-separated passes that must BOTH complete before a checkpoint is "
+                        "disposed (delete/kept-move). 'all' (default) = LEGACY single-pass. For the "
+                        "CPU/GPU split use 'gpu,cpu' on every worker (each worker's own pass = its "
+                        "--block-set); a checkpoint is finalized only once both .complete sentinels "
+                        "exist.")
     return p
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = build_arg_parser().parse_args(argv)
+    blocks = [b.strip() for b in args.blocks.split(",")] if args.blocks else None
+    require_passes = [p.strip() for p in args.require_passes.split(",") if p.strip()] or ["all"]
     collector = Collector(
         watch_dirs=args.watch_dirs,
         out_store=args.out_store,
@@ -966,6 +1096,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         num_workers=args.num_workers,
         heavy_every=args.heavy_every,
         worker_id=args.worker_id,
+        block_set=args.block_set,
+        blocks=blocks,
+        require_passes=require_passes,
     )
     if args.once:
         n = collector.run_once()
