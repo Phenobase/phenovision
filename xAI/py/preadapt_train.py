@@ -406,6 +406,11 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 
     # --- training schedule / data ---
     p.add_argument("--num_epochs", type=int, default=15)
+    p.add_argument("--phase2_epochs", type=int, default=None,
+                   help="Phase-2 (evolution) epoch budget, INDEPENDENT of how many epochs Phase 1 "
+                        "(ecological fitting) used — Phase-2 epochs are counted from 0. Defaults to "
+                        "--num_epochs. Previously Phase 2 ran range(phase1_end+1, num_epochs), so a "
+                        "long Phase 1 silently shrank the evolution budget.")
     p.add_argument("--batch_size", type=int, default=768,
                    help="Phase-1 batch size (frozen backbone)")
     p.add_argument("--phase2_batch_size", type=int, default=384,
@@ -1206,9 +1211,13 @@ def run_phase2(
     # after warmup (lr = min_lr + (lr-min_lr)*0.5*(1+cos(.)) = lr). Warmup is kept to avoid the
     # Phase-1->2 unfreeze shock. COSINE (legacy) uses the configured --min_lr floor.
     sched_min_lr = lr if args.lr_schedule == "fixed" else args.min_lr
+    # Phase-2 gets its OWN epoch budget, counted from 0 — decoupled from how many epochs Phase 1
+    # (ecological fitting) consumed. Previously Phase 2 ran range(phase1_end+1, num_epochs), so a
+    # long Phase 1 silently shrank the evolution budget. Now Phase 2 always runs `phase2_epochs`.
+    phase2_epochs = args.phase2_epochs if args.phase2_epochs is not None else args.num_epochs
     phase2_args = argparse.Namespace(
         accum_iter=1, warmup_epochs=args.warmup_epochs, lr=lr, min_lr=sched_min_lr,
-        epochs=args.num_epochs,
+        epochs=phase2_epochs,
     )
     print(f"  Phase-2 uniform lr={lr:.6g}  eff_batch={eff_batch}  variant={args.variant}  "
           f"lr_schedule={args.lr_schedule} (min_lr={sched_min_lr:.6g})")
@@ -1258,6 +1267,7 @@ def run_phase2(
     manifest.update({
         "phase2_lr": lr,
         "phase2_eff_batch": eff_batch,
+        "phase2_epochs": phase2_epochs,
         "optimizer_variant_detected": geom["variant"],
         "M_present": bool(geom["M_present"]),
         "optimizer_state_keys": geom["state_keys"],
@@ -1273,6 +1283,12 @@ def run_phase2(
     })
     write_manifest(os.path.join(args.output_dir, "manifest.json"), **manifest)
 
+    # Phase-2 epochs are numbered from 0 on a fresh start (the evolution budget is independent of
+    # Phase 1); on a mid-Phase-2 resume we continue from the checkpoint's (Phase-2-relative) epoch.
+    # NOTE: legacy checkpoints from the pre-fix code stored ABSOLUTE epochs; resuming one continues
+    # range(abs_epoch+1, phase2_epochs) — identical to the old behavior, so no in-flight regression.
+    phase2_start_epoch = (start_epoch + 1) if resume_ckpt is not None else 0
+
     # --- save the Phase-2 init checkpoint (step = start_global_step) ---
     # init_model.pt: model_state_dict at the Phase-2 start (plus the optimizer's state_dict — at a
     # fresh start it is empty, on resume it carries the loaded geometric state). On resume this
@@ -1282,7 +1298,7 @@ def run_phase2(
     init_proj_coords, init_proj_meta = compute_global_proj_coords(model, projection)
     init_state = build_train_ckpt_with_rng(
         model, optimizer=optimizer, demo_gen=demo_gen,
-        step=start_global_step, epoch=start_epoch,
+        step=start_global_step, epoch=phase2_start_epoch,
         phase="phase2_init", condition=args.condition, variant=args.variant, seed=args.seed,
         run_id=run_id,
         param_names=[name for name, _ in trainable_named_parameters(model)],
@@ -1297,7 +1313,6 @@ def run_phase2(
 
     global_step = start_global_step
     phase2_start_step = global_step
-    phase2_start_epoch = start_epoch + 1
     last_emit_step = global_step
     # n_batches is constant across epochs (same dataset / batch_size / drop_last), so read it
     # once from a representative per-epoch loader.
@@ -1369,12 +1384,12 @@ def run_phase2(
     # --- v2 C3: function-space change reference (probe-set predictions at the previous val eval) ---
     prev_fn_state = probe_function_state(model, repr_dl, device)  # baseline at Phase-2 start
 
-    for epoch in range(phase2_start_epoch, args.num_epochs):
+    for epoch in range(phase2_start_epoch, phase2_epochs):
         model.train()
         # Deterministic per-epoch data order: the loader's shuffle is reseeded from (seed, epoch),
         # so re-entering here at the start of epoch E (incl. on resume) reproduces E's exact order.
         epoch_train_dl = _epoch_train_loader(epoch)
-        print(f"\n--- Phase 2, Epoch {epoch} (P2 epoch {epoch - phase2_start_epoch}) ---")
+        print(f"\n--- Phase 2, Epoch {epoch}/{phase2_epochs} ---")
         for batch_idx, batch in enumerate(epoch_train_dl):
             samples = batch[0].to(device, non_blocking=True)
             targets = batch[-1].to(device, non_blocking=True)
@@ -1562,6 +1577,9 @@ def main(argv: Optional[List[str]] = None) -> None:
     print(f"  seed             : {args.seed}")
     print(f"  output_dir       : {args.output_dir}")
     print(f"  epochs           : {args.num_epochs}")
+    print(f"  phase2 epochs    : "
+          f"{args.phase2_epochs if args.phase2_epochs is not None else args.num_epochs} "
+          f"(evolution budget, counted from 0 — independent of Phase-1 length)")
     print()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

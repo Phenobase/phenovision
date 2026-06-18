@@ -31,7 +31,10 @@ evolution (framed for evolutionary biology). **6 runs = {naive, plantclef(VT), m
   leaving the B200 ~99% idle (collector-bound) and exploding the store.
 - `num_workers 4` (was 8) — 8 DataLoader workers each fork a ~7.6 GB copy of the dataset → trainer
   peaked ~155 GB host RSS. 4 workers ≈ 91 GB; we run trainers at `--mem-per-cpu=13G` (104 GB).
-- `num_epochs 25` is a backstop; `--phase2_early_stop` (train-loss plateau) ends runs ~earlier.
+- `num_epochs 25` is the backstop; `--phase2_early_stop` (train-loss plateau) ends runs ~earlier.
+  Phase 2 (evolution) gets its OWN budget counted from 0, independent of how many epochs Phase 1
+  (ecological fitting) used — set by `--phase2_epochs` (default = `num_epochs`). (Before this fix
+  Phase 2 ran `range(phase1_end+1, num_epochs)`, so a long Phase 1 silently shrank the budget.)
 - `max_precond_dim 2048`, `heavy_every 8` (collector).
 
 ## Collector architecture (two-pass)
