@@ -437,6 +437,29 @@ def _is_power_of_two(n: int) -> bool:
     return n > 0 and (n & (n - 1)) == 0
 
 
+def log2_crossing_rung(step: int, emitted: Iterable[int]) -> bool:
+    """True iff ``step`` is the FIRST emitted step to CROSS a power-of-two boundary — i.e. there
+    is a power of two ``T`` with ``prev < T <= step``, where ``prev`` is the largest emitted step
+    strictly below ``step``.
+
+    This yields a stable ~log2(T)-entry ladder over ARBITRARY emitted steps (e.g. multiples of
+    ``sampler_min_step`` that are never exact powers of two — the case :func:`on_ladder`'s exact
+    ``_is_power_of_two`` test misses, which would leave the ladder nearly empty). Exactly one rung
+    per octave; the verdict depends only on ``step`` and the emitted step just before it, so it is
+    MONOTONE (never changes as later steps are emitted) and worker-independent (decided from the
+    on-disk emitted set). ``step <= 0`` (ancestral anchors) are handled by the caller."""
+    s = int(step)
+    if s <= 0:
+        return True
+    prev = max((int(e) for e in emitted if 0 < int(e) < s), default=0)
+    t = 1
+    while t <= s:
+        if t > prev:
+            return True
+        t <<= 1
+    return False
+
+
 class RetentionLadder:
     """Stateful retention ladder that tracks the emitted steps of one run.
 
@@ -650,6 +673,11 @@ def read_scalars(path: str):
 # 5. Zarr array store (briefing Part II §7)
 # =============================================================================
 
+#: Target bytes per zarr chunk along the step axis — batches many tiny per-step slices into
+#: one chunk so they don't each pad to a 4K filesystem block (reclaims the on-disk inode tax).
+_STEP_CHUNK_TARGET_BYTES = 2_000_000
+
+
 class ArrayStore:
     """Array store for the heavy per-checkpoint outputs (eigen/singular spectra, MSD(τ)
     curves, projection coordinates, CKA matrices, circuit spectra, sparse patch maps).
@@ -692,11 +720,19 @@ class ArrayStore:
         return "/".join(parts)
 
     def put(self, group: str, step: int, array: Any,
-            layer: Optional[str] = None, head: Optional[int] = None) -> None:
+            layer: Optional[str] = None, head: Optional[int] = None,
+            dtype: Optional[Any] = None) -> None:
         """Append ``array`` as the step-slice for ``step`` under the logical
         ``(group, layer, head)`` array. ``array`` may be a numpy array or a torch tensor
-        (it is moved to CPU/numpy). The step axis is chunked for time-series reads."""
+        (it is moved to CPU/numpy). The step axis is chunked for time-series reads.
+
+        ``dtype`` (default None = keep the array's own dtype): blocks may OPT IN to a
+        narrower on-disk dtype (e.g. ``np.float16`` for bounded/normalized derived stats).
+        NEVER downcast wide-dynamic-range spectra (Hessian/Lanczos/Kronecker eigenvalues,
+        log-scale quantities) — those must stay float32 (see the per-block guardrails)."""
         arr = _to_numpy(array)
+        if dtype is not None and arr.dtype != np.dtype(dtype):
+            arr = arr.astype(dtype)
         key = self._array_key(group, layer, head)
         if self.backend == "zarr":
             self._put_zarr(key, step, arr)
@@ -706,14 +742,28 @@ class ArrayStore:
     def _put_zarr(self, key: str, step: int, arr: np.ndarray) -> None:
         slice_shape = arr.shape
         full_shape = (0,) + slice_shape
-        # Chunk along the step axis (size 1 row of the full slice) for time-series reads.
-        chunks = (1,) + slice_shape if slice_shape else (1,)
+        # Chunk along the step axis. Batch multiple steps per chunk so the many tiny
+        # per-step arrays don't each pad to a 4K filesystem block (the "inode tax" that
+        # bloated on-disk du). Target ~2 MB/chunk, capped at 64 steps for small arrays.
+        slice_bytes = arr.itemsize * int(np.prod(slice_shape)) if slice_shape else arr.itemsize
+        step_chunk = max(1, min(64, _STEP_CHUNK_TARGET_BYTES // max(1, int(slice_bytes))))
+        chunks = (step_chunk,) + slice_shape if slice_shape else (step_chunk,)
         if key in self._root:
             za = self._root[key]
         else:
-            za = self._root.create_array(
-                key, shape=full_shape, chunks=chunks, dtype=arr.dtype,
-            )
+            # Lossless zstd + byte-shuffle compressor (smooth spectra/summaries compress
+            # ~2-5x). Guarded: a codec/API mismatch can never break the live collector —
+            # we fall back to the zarr default compressor.
+            try:
+                za = self._root.create_array(
+                    key, shape=full_shape, chunks=chunks, dtype=arr.dtype,
+                    compressors=[zarr.codecs.BloscCodec(
+                        cname="zstd", clevel=5, shuffle=zarr.codecs.BloscShuffle.shuffle)],
+                )
+            except Exception:
+                za = self._root.create_array(
+                    key, shape=full_shape, chunks=chunks, dtype=arr.dtype,
+                )
             za.attrs["steps"] = []
         za.append(arr[np.newaxis, ...])
         steps = list(za.attrs["steps"])
@@ -760,6 +810,17 @@ class ArrayStore:
             for s in steps
         ]
         return (np.stack(slices, axis=0) if slices else np.empty((0,))), steps
+
+    def close(self) -> None:
+        """Consolidate zarr metadata into a single entry (idempotent). Call ONLY when a run
+        is fully finalized — never mid-run, since live readers must use the unconsolidated
+        root. Collapses ~1k per-array zarr.json files to one (inode + read-latency win).
+        Guarded: a failure here never affects already-durable data."""
+        if self.backend == "zarr":
+            try:
+                zarr.consolidate_metadata(self._root.store)
+            except Exception:
+                pass
 
     def keys(self) -> List[str]:
         """List the logical array keys present in the store."""

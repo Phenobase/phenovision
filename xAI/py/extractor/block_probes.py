@@ -320,7 +320,7 @@ def extract(ctx: "ExtractCtx") -> Dict[str, object]:
             for i in range(min(n_cls, len(per_class))):
                 ctx.scalar.add(c, r, step, wt, quantity=f"probe_acc_{cls_names[i]}",
                                value=float(per_class[i]), layer=f"blocks.{l}", head=None)
-    ctx.array.put(group="probe_acc_vs_depth", step=step, array=probe_acc_curve)
+    ctx.array.put(group="probe_acc_vs_depth", step=step, array=probe_acc_curve, dtype=np.float16)
     finite_probe = probe_acc_curve[np.isfinite(probe_acc_curve)]
     summary["probe_acc_max"] = float(finite_probe.max()) if finite_probe.size else float("nan")
 
@@ -368,7 +368,7 @@ def extract(ctx: "ExtractCtx") -> Dict[str, object]:
             if emergence_depth < 0 and mean_acc >= float(base_acc.mean()) + EMERGENCE_MARGIN:
                 emergence_depth = l
 
-    ctx.array.put(group="patch_acc_vs_depth", step=step, array=patch_acc_curve)
+    ctx.array.put(group="patch_acc_vs_depth", step=step, array=patch_acc_curve, dtype=np.float16)
     if emergence_depth >= 0:
         ctx.scalar.add(c, r, step, wt, quantity="emergence_depth",
                        value=float(emergence_depth))
@@ -409,7 +409,7 @@ def extract(ctx: "ExtractCtx") -> Dict[str, object]:
             fixed = np.full((PATCH_MAP_SUBSET, n_cls, GRID, GRID), np.nan, dtype=np.float32)
             fixed[:n_sub] = grid
             ctx.array.put(group="patch_class_maps", step=step, array=fixed,
-                          layer=f"blocks.{l}")
+                          layer=f"blocks.{l}", dtype=np.float16)
         summary["patch_map_subset"] = int(n_sub)
 
     finite_patch = patch_acc_curve[np.isfinite(patch_acc_curve)]

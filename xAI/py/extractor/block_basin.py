@@ -287,9 +287,11 @@ def _basin_radius_anisotropy(ctx, model, criterion, images, targets,
 
     # per-direction radii -> array store (the full distribution for post-hoc anisotropy analysis)
     if ctx.array is not None:
-        ctx.array.put(group="basin_radii", step=step, array=arr)
-        ctx.array.put(group="basin_radii_pos", step=step, array=np.asarray(radii_pos, dtype=np.float32))
-        ctx.array.put(group="basin_radii_neg", step=step, array=np.asarray(radii_neg, dtype=np.float32))
+        ctx.array.put(group="basin_radii", step=step, array=arr, dtype=np.float16)
+        ctx.array.put(group="basin_radii_pos", step=step,
+                      array=np.asarray(radii_pos, dtype=np.float32), dtype=np.float16)
+        ctx.array.put(group="basin_radii_neg", step=step,
+                      array=np.asarray(radii_neg, dtype=np.float32), dtype=np.float16)
 
     a64 = arr.astype(np.float64)
     mean = float(np.mean(a64))

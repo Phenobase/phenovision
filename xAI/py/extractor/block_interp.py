@@ -141,7 +141,7 @@ INTERP_LAYER_STRIDE = 3
 GRADCOV_MAX_IMAGES = 128
 
 # Cap features used for CKA to keep the N x N Gram matrices tractable.
-CKA_MAX_EXAMPLES = 2048
+CKA_MAX_EXAMPLES = 1024  # 2048->1024 (storage cut): CKA Gram is stable at n=1024 for d=1024.
 
 
 def _strided_blocks(n_blocks: int = N_BLOCKS, stride: int = INTERP_LAYER_STRIDE) -> List[int]:
@@ -653,9 +653,9 @@ def extract(ctx: "ExtractCtx") -> Dict[str, object]:
         for blk, s in stats.items():
             layer = f"blocks.{blk}.attn"
             ctx.array.put(group="attn_mean_distance_heads", step=step,
-                          array=s["mean_distance"], layer=layer)
+                          array=s["mean_distance"], layer=layer, dtype=np.float16)
             ctx.array.put(group="attn_entropy_heads", step=step,
-                          array=s["entropy"], layer=layer)
+                          array=s["entropy"], layer=layer, dtype=np.float16)
             for h in range(len(s["mean_distance"])):
                 ctx.scalar.add(cond, run_id, step, wt, quantity="attn_mean_distance",
                                value=float(s["mean_distance"][h]), layer=layer, head=h)
@@ -681,7 +681,7 @@ def extract(ctx: "ExtractCtx") -> Dict[str, object]:
         # Store the probe features so cross-condition CKA at matched fraction is possible
         # later (documented: a separate post-hoc step reads all conditions' stored features).
         ctx.array.put(group="probe_features", step=step,
-                      array=cur_feats.numpy().astype("float32"))
+                      array=cur_feats.numpy(), dtype=np.float16)
 
         if init_sd is not None:
             try:

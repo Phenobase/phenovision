@@ -58,6 +58,7 @@ does use Lanczos probes, threads ``ctx`` generators instead.
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -68,6 +69,32 @@ import torch
 # summary width and does NOT drive any matrix work, so it stays at 32. Module constant so
 # the collector can dial cost without touching code.
 TOP_K: int = 32
+
+# --- §6.1 CurvSummary: compact replacement for the full exp_avg_sq/precond spectra ----------
+# The full sorted per-coordinate spectra (each = full param numel, ~2.4 GB/ckpt summed over all
+# layers, ~80% of the extract store) had ZERO downstream readers. We instead store a fixed-width
+# summary that captures the SHAPE of local curvature: top eigenvalues + a log-spaced decay
+# profile + derived scalars (lambda_max/min, trace, log-det proxy, participation, effective rank,
+# condition number, anisotropy, power-law tail). ~385x smaller; every §6.1 shape quantity kept.
+K_TOP_SUMMARY: int = 64          # head eigenvalues
+N_QUANT_SUMMARY: int = 64        # log-spaced rank-fraction decay knots
+N_SUMMARY_SCALARS: int = 11      # derived shape scalars
+SUMMARY_WIDTH: int = K_TOP_SUMMARY + N_QUANT_SUMMARY + N_SUMMARY_SCALARS  # 139
+
+# Pilot safety net: when PREADAPT_PILOT_FULL_SPECTRA is set (to "1" for the default 512-step
+# grid, or to an int interval), ALSO write the raw full spectra on a sparse step grid so the
+# FIRST run can validate that CurvSummary reconstructs the spectrum shape. Default OFF.
+_PILOT_FULL_ENV: str = os.environ.get("PREADAPT_PILOT_FULL_SPECTRA", "").strip()
+_PILOT_FULL_INTERVAL: int = (
+    int(_PILOT_FULL_ENV) if _PILOT_FULL_ENV.isdigit() and int(_PILOT_FULL_ENV) > 1
+    else (512 if _PILOT_FULL_ENV else 0))
+_PILOT_FULL_WINDOW: int = 16
+
+
+def _pilot_full_for_step(step: int) -> bool:
+    """True when the pilot safety net should ALSO write the raw full spectrum for this step."""
+    return _PILOT_FULL_INTERVAL > 0 and (int(step) % _PILOT_FULL_INTERVAL) < _PILOT_FULL_WINDOW
+
 
 # Number of leading EIGENVECTORS (QL/QR columns) STORED per Kronecker factor for the POST-HOC
 # §6.1 rotation pass (principal angles vs previous step + vs the earliest/init reference). The
@@ -171,6 +198,68 @@ def _topk_array(spectrum: np.ndarray, k: int) -> np.ndarray:
     return out
 
 
+def _eff_rank_entropy(spectrum: np.ndarray) -> float:
+    """Entropy-based effective rank (Roy & Vetterli): exp(-Σ p_i ln p_i), p_i = λ_i/Σλ over the
+    clamped-nonneg spectrum. An entropy effective dimension, distinct from participation ratio."""
+    s = np.clip(np.asarray(spectrum, dtype=np.float64), 0.0, None)
+    tot = float(s.sum())
+    if tot <= 0.0:
+        return 0.0
+    p = s / tot
+    p = p[p > 0.0]
+    return float(np.exp(-np.sum(p * np.log(p))))
+
+
+def _spectrum_summary(spectrum: np.ndarray, k_top: int, n_quant: int) -> np.ndarray:
+    """Fixed-width CurvSummary of an ALREADY-descending-sorted 1-D spectrum (float32, length
+    ``k_top + n_quant + N_SUMMARY_SCALARS`` = 139):
+      [0:k_top]                 head eigenvalues (top-k, NaN-padded)
+      [k_top:k_top+n_quant]     spectrum at n_quant LOG-spaced rank fractions (decay profile)
+      [last N_SUMMARY_SCALARS]  derived shape scalars: lambda_max, lambda_floor (min positive),
+                                trace, sum_log (log-det proxy / volume), participation_ratio,
+                                eff_rank_entropy, condition_number, anisotropy (max/mean),
+                                tail_powerlaw_slope, tail_powerlaw_intercept, numel.
+    Captures the curvature SHAPE and its evolution without the millions of raw coordinates."""
+    spec = np.asarray(spectrum, dtype=np.float64)
+    n = int(spec.size)
+    eps = 1e-30
+    head = _topk_array(spec, k_top)
+    if n > 0:
+        fr = (np.logspace(0.0, 1.0, n_quant, base=10.0) - 1.0) / 9.0   # 0..1 log-spaced
+        idx = np.clip(np.round(fr * (n - 1)).astype(np.int64), 0, n - 1)
+        quant = spec[idx].astype(np.float32)
+    else:
+        quant = np.full((n_quant,), np.nan, dtype=np.float32)
+    nonneg = np.clip(spec, 0.0, None)
+    pos = spec[spec > 0.0]
+    lam_max = float(spec[0]) if n > 0 else float("nan")
+    lam_floor = float(pos.min()) if pos.size else eps
+    trace = float(nonneg.sum())
+    sum_log = float(np.sum(np.log(np.clip(spec, eps, None)))) if n > 0 else float("nan")
+    pr = _participation_ratio(spec)
+    eff_rank = _eff_rank_entropy(spec)
+    cond = lam_max / lam_floor if lam_floor > 0.0 else float("nan")
+    mean = float(nonneg.mean()) if n > 0 else float("nan")
+    aniso = lam_max / mean if (mean and mean > 0.0) else float("nan")
+    slope = float("nan")
+    intercept = float("nan")
+    if n >= 32:                                       # OLS power-law fit over the tail
+        lo = max(1, n // 16)
+        ranks = np.arange(lo, n + 1, dtype=np.float64)
+        vals = spec[lo - 1:]
+        m = vals > 0.0
+        if int(m.sum()) >= 2:
+            lr = np.log(ranks[m])
+            lv = np.log(vals[m])
+            A = np.vstack([lr, np.ones_like(lr)]).T
+            sol = np.linalg.lstsq(A, lv, rcond=None)[0]
+            slope = float(sol[0])
+            intercept = float(sol[1])
+    scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+                        slope, intercept, float(n)], dtype=np.float32)
+    return np.concatenate([head.astype(np.float32), quant, scalars]).astype(np.float32)
+
+
 # =============================================================================
 # per-layer extraction
 # =============================================================================
@@ -221,8 +310,12 @@ def _extract_preconditioned_layer(ctx, name: str, st: Dict[str, Any]) -> Dict[st
     # --- curvature-eigenvalue spectrum: rotated exp_avg_sq (free Hessian/Fisher est.) ----
     eas = _diag_spectrum_desc(st.get("exp_avg_sq"))
     if eas is not None:
-        ctx.array.put(group="exp_avg_sq_spectrum", step=step, array=eas.astype(np.float32),
-                      layer=name)
+        # §6.1: store the compact CurvSummary (shape of curvature) instead of the full spectrum.
+        ctx.array.put(group="exp_avg_sq_summary", step=step,
+                      array=_spectrum_summary(eas, K_TOP_SUMMARY, N_QUANT_SUMMARY), layer=name)
+        if _pilot_full_for_step(step):                      # pilot validation safety net
+            ctx.array.put(group="exp_avg_sq_spectrum", step=step,
+                          array=eas.astype(np.float32), layer=name)
         s("curvature_eig_top", float(eas[0]))
         s("curvature_eig_trace", float(np.sum(eas)))
         s("curvature_eig_participation", _participation_ratio(eas))
@@ -234,8 +327,11 @@ def _extract_preconditioned_layer(ctx, name: str, st: Dict[str, Any]) -> Dict[st
     # --- generated preconditioner P spectrum (StableEvo-specific) ------------------------
     pspec = _diag_spectrum_desc(st.get("precond"))
     if pspec is not None:
-        ctx.array.put(group="precond_spectrum", step=step, array=pspec.astype(np.float32),
-                      layer=name)
+        ctx.array.put(group="precond_summary", step=step,
+                      array=_spectrum_summary(pspec, K_TOP_SUMMARY, N_QUANT_SUMMARY), layer=name)
+        if _pilot_full_for_step(step):
+            ctx.array.put(group="precond_spectrum", step=step,
+                          array=pspec.astype(np.float32), layer=name)
         s("precond_top", float(pspec[0]))
         s("precond_trace", float(np.sum(np.clip(pspec, 0.0, None))))
         s("precond_participation", _participation_ratio(pspec))
@@ -264,8 +360,11 @@ def _extract_diagonal_layer(ctx, name: str, st: Dict[str, Any]) -> Dict[str, flo
     eas = _diag_spectrum_desc(st.get("exp_avg_sq"))
     if eas is None:
         return {}
-    ctx.array.put(group="exp_avg_sq_spectrum", step=step, array=eas.astype(np.float32),
-                  layer=name)
+    ctx.array.put(group="exp_avg_sq_summary", step=step,
+                  array=_spectrum_summary(eas, K_TOP_SUMMARY, N_QUANT_SUMMARY), layer=name)
+    if _pilot_full_for_step(step):
+        ctx.array.put(group="exp_avg_sq_spectrum", step=step, array=eas.astype(np.float32),
+                      layer=name)
     ctx.scalar.add(c, r, step, wt, quantity="curvature_eig_top", value=float(eas[0]),
                    layer=name)
     ctx.scalar.add(c, r, step, wt, quantity="curvature_eig_trace", value=float(np.sum(eas)),

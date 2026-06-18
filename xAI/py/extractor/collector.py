@@ -87,6 +87,7 @@ from preadapt_common import (  # noqa: E402
     claim_for_processing,
     save_checkpoint_atomic,
     on_ladder,
+    log2_crossing_rung,
     read_scalars,
     read_manifest,
     ScalarStore,
@@ -535,10 +536,15 @@ class Collector:
         watch dir (queued / claimed) + steps already moved to ``<run>/kept/`` + this step. Powers
         of two and step<=0 are absolute and need no history. This makes the keep/delete verdict
         identical across workers and independent of processing order (contract C)."""
+        if int(step) <= 0:
+            return True  # ancestral anchors (init_model / phase1_final / step 0)
         emitted = self._emitted_steps_on_disk(watch_dir)
         emitted.add(int(step))
-        return on_ladder(int(step), recent_steps=emitted,
-                         latest_keep=self.retention_latest_keep)
+        # PURE log2 ladder (no latest-N accumulation): keep the first emitted step to cross each
+        # power-of-two octave. The "latest" resume point is handled SEPARATELY by the single
+        # rotating kept/latest_full.pt slot (see _finalize_sweep / _move_to_kept), so we no longer
+        # keep latest-N here — that was the dense-ladder bug.
+        return log2_crossing_rung(int(step), emitted)
 
     @staticmethod
     def _emitted_steps_on_disk(watch_dir: str) -> Set[int]:
@@ -727,6 +733,10 @@ class Collector:
             if not os.path.isdir(wd):
                 continue
             run_id = _run_id_for_dir(wd, self._dir_run_id)
+            # The run's current newest emitted step (watch dir pending/claimed + kept). The single
+            # checkpoint at this step is the rotating resume anchor -> kept/latest_full.pt slot.
+            latest_emitted = max((s for s in self._emitted_steps_on_disk(wd) if s > 0),
+                                 default=None)
             for entry_name in list(os.listdir(wd)):
                 if not entry_name.endswith(".pt"):
                     continue
@@ -739,10 +749,13 @@ class Collector:
                 proc = acquire_finalize(path, self.require_passes)  # atomic; one winner
                 if proc is None:
                     continue  # lost the finalize race, or not all complete
-                keep = self._should_keep(step, wd)
+                is_latest = (latest_emitted is not None and int(step) == latest_emitted)
+                is_ladder = self._should_keep(step, wd)   # pure log2 rung or anchor
+                keep = is_latest or is_ladder
                 try:
                     if keep:
-                        disp = self._move_to_kept(run_id, step, proc, wd)
+                        disp = self._move_to_kept(run_id, step, proc, wd,
+                                                  is_latest=is_latest, is_ladder=is_ladder)
                     else:
                         disp = self._delete_from_queue(proc)
                 finally:
@@ -783,8 +796,9 @@ class Collector:
                       file=sys.stderr, flush=True)
         return "deleted"
 
-    def _move_to_kept(self, run_id: str, step: int, proc: str, watch_dir: str) -> str:
-        """KEPT ladder checkpoint: MOVE it out of the watch dir into ``<run>/kept/`` (contract A).
+    def _move_to_kept(self, run_id: str, step: int, proc: str, watch_dir: str,
+                      is_latest: bool = False, is_ladder: bool = True) -> str:
+        """KEPT checkpoint: MOVE it out of the watch dir into ``<run>/kept/`` (contract A).
 
         Form decision (contract C, on-disk so it works across 2 workers): the latest
         ``keep_full_latest`` ladder steps stay FULL (resume points); every other kept ladder
@@ -815,49 +829,72 @@ class Collector:
                                    if proc.endswith(PROCESSING_SUFFIX) else proc)
             return "KEPT(restore-after-load-fail)"
 
-        # Decide FULL vs model-only from the on-disk kept set unioned with this step. The latest-N
-        # window is over POSITIVE steps only (the regular sampled ladder); step<=0 (init_model /
-        # phase1_final / step00000000) are fixed ANCESTRAL ANCHORS that stay FULL forever (resume
-        # roots) and are excluded from the rotation — so they are never bumped out / re-slimmed.
+        # Single-slot retention (replaces the old latest-N rotation, which re-accumulated because
+        # re-slim never DELETED bumped-out steps). Two independent, non-accumulating destinations:
+        #   (1) the rotating resume anchor: ONE FULL kept/latest_full.pt, atomically OVERWRITTEN
+        #       each time the run's newest checkpoint finalizes (step-guarded so a concurrent worker
+        #       never rolls it backwards). No pile-up — the previous latest is overwritten away.
+        #   (2) the log2 ladder: a never-delete MODEL-ONLY <run>/kept/step{N}.pt for octave-crossing
+        #       steps (and FULL for step<=0 ancestral anchors).
+        # A step can be BOTH (latest AND a ladder rung) -> both written; or neither here (deleted by
+        # the caller). The extract record is already durable, so this only governs which .pt survive.
         is_anchor = int(step) <= 0
-        kept_steps = set(self._discover_kept_ladder(kept_dir).keys())  # positive steps only
-        if int(step) > 0:
-            kept_steps.add(int(step))
-        latest_full = set(sorted(kept_steps)[-self.keep_full_latest:]) \
-            if self.keep_full_latest > 0 else set()
-
         is_full_src = _is_full_checkpoint(state)
-        if is_anchor:
-            # Ancestral anchor: keep FULL (resume root), outside the latest-N rotation.
-            out_state = state
-            form = "FULL anchor"
-        elif int(step) in latest_full:
-            # Keep FULL (resume point) — among the latest-N positive ladder steps.
-            out_state = state
-            form = f"FULL latest{self.keep_full_latest}"
-        else:
-            out_state = _slim_state(state) if is_full_src else state
-            form = "model-only"
-        try:
-            save_checkpoint_atomic(out_state, dest)
-        except Exception as e:
-            print(f"[collector w{self.worker_id}] move-to-kept: write {dest!r} failed ({e!r}); "
-                  f"restoring to queue.", file=sys.stderr, flush=True)
+        forms: List[str] = []
+
+        # (2) Log2 ladder rung first — it is the trajectory keeper, so a failure must RESTORE (never
+        #     lose a never-delete rung).
+        if is_ladder:
+            out_state = state if is_anchor else (_slim_state(state) if is_full_src else state)
+            try:
+                save_checkpoint_atomic(out_state, dest)
+                forms.append("FULL anchor" if is_anchor else "ladder model-only")
+            except Exception as e:
+                print(f"[collector w{self.worker_id}] move-to-kept: write {dest!r} failed ({e!r}); "
+                      f"restoring to queue.", file=sys.stderr, flush=True)
+                del state
+                self._restore_to_queue(proc, proc[: -len(PROCESSING_SUFFIX)]
+                                       if proc.endswith(PROCESSING_SUFFIX) else proc)
+                return "KEPT(restore-after-write-fail)"
+
+        # (1) Rotating FULL resume slot for the newest checkpoint (best-effort; the live watch dir
+        #     and the ladder rungs are the other resume sources).
+        if is_latest and not is_anchor:
+            slot = os.path.join(kept_dir, "latest_full.pt")
+            slot_step = os.path.join(kept_dir, "latest_full.step")
+            cur = -1
+            try:
+                if os.path.exists(slot_step):
+                    cur = int((open(slot_step).read().strip() or "-1"))
+            except Exception:
+                cur = -1
+            if int(step) >= cur:
+                try:
+                    save_checkpoint_atomic(state, slot)            # FULL, atomic overwrite
+                    tmp = slot_step + TMP_SUFFIX
+                    with open(tmp, "w") as f:
+                        f.write(str(int(step)))
+                        f.flush()
+                        os.fsync(f.fileno())
+                    os.replace(tmp, slot_step)
+                    forms.append("FULL latest-slot")
+                except Exception as e:
+                    print(f"[collector w{self.worker_id}] move-to-kept: latest-slot write failed "
+                          f"({e!r})", file=sys.stderr, flush=True)
+
+        if not forms:
+            # Nothing durable was written (e.g. latest-only and the slot write failed) — retry next
+            # sweep rather than delete (never lose a checkpoint that has no other on-disk keeper).
             del state
             self._restore_to_queue(proc, proc[: -len(PROCESSING_SUFFIX)]
                                    if proc.endswith(PROCESSING_SUFFIX) else proc)
-            return "KEPT(restore-after-write-fail)"
-        del state, out_state
-        gc.collect()  # reclaim the loaded full checkpoint before the reslim sweep below
+            return "KEPT(restore-nothing-written)"
 
-        # The kept artifact is durable in kept/. Now remove the original from the watch dir.
+        del state
+        gc.collect()
+        # Kept artifact(s) durable in kept/. Remove the original from the watch dir (drains to 0).
         self._delete_from_queue(proc)
-
-        # Re-slim any older full kept checkpoint that this newer one bumped out of latest-N, so the
-        # run keeps only keep_full_latest full checkpoints on disk (self-healing across workers).
-        self._reslim_bumped_full(run_id, kept_dir, latest_full)
-
-        return f"KEPT(->kept/,{form})"
+        return f"KEPT(->kept/,{'+'.join(forms)})"
 
     @staticmethod
     def _discover_kept_ladder(kept_dir: str) -> Dict[int, str]:

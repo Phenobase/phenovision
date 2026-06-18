@@ -322,21 +322,49 @@ def resolve_resume_checkpoint(resume: Optional[str], ckpt_dir: str) -> Optional[
         if not os.path.exists(resume):
             raise FileNotFoundError(f"--resume checkpoint not found: {resume}")
         return resume
-    steps = []
-    for path in glob.glob(os.path.join(ckpt_dir, "step*.pt")):
-        m = re.search(r"step(\d+)\.pt$", os.path.basename(path))
-        if m:
-            steps.append((int(m.group(1)), path))
-    if steps:
-        steps.sort()
-        latest = steps[-1][1]
-        print(f"[preadapt_train] --resume auto -> latest Phase-2 checkpoint {os.path.basename(latest)}")
-        return latest
-    p1 = os.path.join(ckpt_dir, "phase1_final.pt")
-    if os.path.exists(p1):
-        print("[preadapt_train] --resume auto -> phase1_final.pt (no step*.pt found); "
-              "skipping Phase 1, starting Phase 2 fresh.")
-        return p1
+    # 'auto' resume order (new single-slot ladder, 2026-06-18):
+    #   (1) LIVE checkpoints/ — the newest (in-flight) FULL checkpoint, if any;
+    #   (2) kept/latest_full.pt — the rotating FULL resume slot;
+    #   (3) newest FULL kept/step*.pt rung (anchors stay FULL);
+    #   (4) phase1_final.pt (live or kept) -> Phase 2 fresh; else a FRESH run.
+    kept_dir = os.path.join(os.path.dirname(ckpt_dir.rstrip("/")), "kept")
+    FULL_MIN_BYTES = 2_500_000_000  # FULL (model+optimizer+rng) ~7 GB vs model-only ~1.2 GB
+
+    def _newest_step_pt(d: str, full_only: bool) -> Optional[str]:
+        cand = []
+        for path in glob.glob(os.path.join(d, "step*.pt")):
+            m = re.search(r"step(\d+)\.pt$", os.path.basename(path))
+            if not m:
+                continue
+            if full_only:
+                try:
+                    if os.path.getsize(path) < FULL_MIN_BYTES:
+                        continue
+                except OSError:
+                    continue
+            cand.append((int(m.group(1)), path))
+        if not cand:
+            return None
+        cand.sort()
+        return cand[-1][1]
+
+    live = _newest_step_pt(ckpt_dir, True) or _newest_step_pt(ckpt_dir, False)
+    if live is not None:
+        print(f"[preadapt_train] --resume auto -> live checkpoint {os.path.basename(live)}")
+        return live
+    slot = os.path.join(kept_dir, "latest_full.pt")
+    if os.path.exists(slot):
+        print("[preadapt_train] --resume auto -> kept/latest_full.pt (rotating resume slot)")
+        return slot
+    kept_full = _newest_step_pt(kept_dir, True)
+    if kept_full is not None:
+        print(f"[preadapt_train] --resume auto -> newest FULL kept rung {os.path.basename(kept_full)}")
+        return kept_full
+    for p1 in (os.path.join(ckpt_dir, "phase1_final.pt"),
+               os.path.join(kept_dir, "phase1_final.pt")):
+        if os.path.exists(p1):
+            print(f"[preadapt_train] --resume auto -> {p1} (no step checkpoint); Phase 2 fresh.")
+            return p1
     print("[preadapt_train] --resume auto -> no checkpoint found; starting a FRESH run.")
     return None
 
