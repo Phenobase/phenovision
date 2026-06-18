@@ -1189,7 +1189,14 @@ def run_phase2(
     if resume_ckpt is not None:
         if resume_ckpt.get("optimizer_state_dict") is not None:
             optimizer.load_state_dict(resume_ckpt["optimizer_state_dict"])
-            print("  [RESUME] optimizer_state_dict loaded.")
+            # The checkpoint was loaded on CPU (to dodge the Generator-on-CUDA bug), so the
+            # optimizer's state tensors (exp_avg/exp_avg_sq/QL/QR/L/R/precond/alpha_last/...) are on
+            # CPU while the params are on the device. Move them to the device or the first step errors.
+            for _st in optimizer.state.values():
+                for _k, _v in list(_st.items()):
+                    if isinstance(_v, torch.Tensor):
+                        _st[_k] = _v.to(device)
+            print("  [RESUME] optimizer_state_dict loaded + state moved to device.")
         rng = resume_ckpt.get("rng_state")
         if rng is not None:
             restore_rng_state(rng, demo_gen=demo_gen, optimizer=optimizer)
@@ -1550,7 +1557,14 @@ def main(argv: Optional[List[str]] = None) -> None:
     resume_phase: Optional[str] = None
     if resume_path is not None:
         print(f"[preadapt_train] loading resume checkpoint: {resume_path}")
-        resume_ckpt = torch.load(resume_path, map_location=device, weights_only=False)
+        # map_location="cpu" (NOT device): StableEvolutionSOAP stores a torch.Generator object in
+        # param_groups[*]['demographic_generator']. Mapping the checkpoint to CUDA routes that
+        # Generator's state through __setstate__ with a non-CPU tensor -> "RNG state must be a
+        # torch.ByteTensor" (surfaces as a SystemError) and the load crashes. Loading on CPU keeps
+        # the Generator state a CPU ByteTensor; the optimizer state tensors are moved to the device
+        # after optimizer.load_state_dict (in run_phase2). model.load_state_dict handles the
+        # CPU->CUDA copy for the weights.
+        resume_ckpt = torch.load(resume_path, map_location="cpu", weights_only=False)
         resume_phase = resume_ckpt.get("phase")
         # The model weights are common to every checkpoint type; load them now.
         model.load_state_dict(resume_ckpt["model_state_dict"])
