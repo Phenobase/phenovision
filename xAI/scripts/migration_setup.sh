@@ -21,10 +21,11 @@
 # MANUAL PREREQUISITES (NOT in git / cannot be auto-fetched) — do these FIRST:
 #
 #   (1) CSVs  [REQUIRED — this script reads them to know which images to fetch]
-#       data/inat/{train,val}_v1.1.0.csv are 352 MB / 117 MB, over GitHub's
-#       100 MB limit, so they are NOT in the repo. Download the provided
-#       v2_migration_csvs.zip and unzip into data/inat/ :
-#           mkdir -p data/inat && unzip v2_migration_csvs.zip -d data/inat/
+#       data/inat/{train,val}_v1.1.0.csv are 352 MB / 117 MB, over GitHub's 100 MB
+#       limit, so they are NOT in the repo. Just drop the provided zip at the
+#       REPO ROOT  ->  ./v2_migration_csvs.zip
+#       and this script AUTO-UNZIPS it into data/inat/ (it also checks data/inat/
+#       and migration/). No manual unzip needed.
 #
 #   (2) Conda env
 #           mamba env create -f xAI/environment.yml     # recreates 'reticulate-gpu2'
@@ -34,15 +35,14 @@
 #       fixes already applied — no submodule init needed.
 #
 #   (3) PlantCLEF pretrained weights  [REQUIRED for the 'plantclef' condition; 4.4 GB]
-#       models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth is NOT in git.
-#       Get it from the Google-Drive link on the PlantCLEF2022 GitHub README
-#       (https://github.com/rdinnager/PlantCLEF2022), e.g.:
-#           mkdir -p models
-#           pip install gdown
-#           gdown --id <FILE_ID_FROM_README> \
-#             -O models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth
-#       ...or just copy that one ~4.4 GB file over yourself. (Path is hardcoded in
-#       xAI/py/preadapt_models.py and xAI/py/xai_train.py.)
+#       models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth is NOT in git. This
+#       script ATTEMPTS to fetch it automatically via gdown from the Drive folder
+#       linked in the PlantCLEF2022 README (folder 1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA).
+#       gdown folder-downloads of multi-GB files often fail or are ambiguous (the
+#       folder holds 2 epoch-100 variants), so if it doesn't land, get it manually:
+#         https://drive.google.com/drive/folders/1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA
+#       and place the 'late submission epoch 100' .pth at the path above. VERIFY the
+#       auto-fetched file is the right variant. (Path hardcoded in preadapt_models.py.)
 #
 #   (4) timm ViT-L weights (MAE + ImageNet, ~1.2 GB each) AUTO-download from the
 #       HuggingFace Hub on the first training run (needs compute-node internet).
@@ -63,9 +63,41 @@ PARALLEL="${PARALLEL:-24}"          # concurrent downloads (override: PARALLEL=4
 
 TRAIN=data/inat/train_v1.1.0.csv
 VAL=data/inat/val_v1.1.0.csv
+
+# --- (1) CSVs: auto-unzip the provided v2_migration_csvs.zip if the CSVs aren't present ---
+if [ ! -s "$TRAIN" ] || [ ! -s "$VAL" ]; then
+  ZIP=""
+  for cand in v2_migration_csvs.zip data/inat/v2_migration_csvs.zip migration/v2_migration_csvs.zip; do
+    [ -s "$cand" ] && { ZIP="$cand"; break; }
+  done
+  if [ -n "$ZIP" ]; then
+    echo "[migration] unzipping CSVs from $ZIP -> data/inat/"
+    mkdir -p data/inat && unzip -o -q "$ZIP" -d data/inat/
+  fi
+fi
 for f in "$TRAIN" "$VAL"; do
-  [ -s "$f" ] || { echo "ERROR: missing $f — see PREREQUISITE (1): unzip v2_migration_csvs.zip into data/inat/"; exit 1; }
+  [ -s "$f" ] || { echo "ERROR: $f missing and no v2_migration_csvs.zip found. Put v2_migration_csvs.zip in the REPO ROOT (see header step 1), then re-run."; exit 1; }
 done
+
+# --- (3) PlantCLEF weights: best-effort gdown from the Drive folder (manual fallback) ---
+PCLEF=models/PlantCLEF2022_MAE_vit_large_patch16_epoch100.pth
+GDRIVE_FOLDER="https://drive.google.com/drive/folders/1JCVX58oVZFuIttPHaeAjs_zkMXkzzJeA"
+if [ ! -s "$PCLEF" ]; then
+  echo "[migration] fetching PlantCLEF weights via gdown (Google-Drive folder) ..."
+  mkdir -p models
+  python3 -c "import gdown" 2>/dev/null || pip install -q gdown 2>/dev/null || true
+  if python3 -c "import gdown" 2>/dev/null; then
+    tmpd=$(mktemp -d)
+    gdown --folder "$GDRIVE_FOLDER" -O "$tmpd" 2>/dev/null || true
+    cand=$(find "$tmpd" -iname '*epoch*100*.pth' 2>/dev/null | head -1)
+    [ -z "$cand" ] && cand=$(find "$tmpd" -iname '*.pth' 2>/dev/null | head -1)
+    if [ -n "$cand" ]; then mv "$cand" "$PCLEF"; echo "[migration] placed PlantCLEF .pth -> $PCLEF (VERIFY it's the epoch100 variant)"; fi
+    rm -rf "$tmpd"
+  fi
+  [ -s "$PCLEF" ] || echo "[migration] WARN: could not auto-fetch PlantCLEF weights (gdown folder downloads of
+    multi-GB files often fail). Download manually from $GDRIVE_FOLDER (the 'late submission epoch 100'
+    .pth) and place it at $PCLEF . Only the 'plantclef' condition needs it."
+fi
 
 echo "[migration] re-downloading the CSV-referenced iNat image subset (PARALLEL=$PARALLEL, resumable) ..."
 PARALLEL="$PARALLEL" python3 - "$TRAIN" "$VAL" <<'PY'
