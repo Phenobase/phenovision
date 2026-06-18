@@ -133,7 +133,12 @@ ATTN_CHUNK = 32
 #: Depth profiles are reported at this stride resolution; sampled blocks recorded in the summary.
 INTERP_LAYER_STRIDE = 3
 #: Cap on probe-train images feeding the (expensive) per-example gradient-covariance backward.
-GRADCOV_MAX_IMAGES = 256
+#: 256->128 (2026-06-18): at 256 the per-example gradient matrices (256 x layer-params, x8 layers
+#: + per-head) peak ~178 GB host RSS, exceeding the collector's allocation and thrashing the v2
+#: GPU collector (which watches 2 runs, less headroom than v1's 1-run collector). 128 halves both
+#: the memory and the backward-loop time; the effective-rank estimate is still well-resolved (rank
+#: ceiling 128 >> typical attention-grad ranks). Heavier coverage can be recomputed post-hoc.
+GRADCOV_MAX_IMAGES = 128
 
 # Cap features used for CKA to keep the N x N Gram matrices tractable.
 CKA_MAX_EXAMPLES = 2048

@@ -58,6 +58,7 @@ below the trainer's backpressure HIGH-water mark during the dense early burst.
 from __future__ import annotations
 
 import argparse
+import gc
 import glob
 import os
 import sys
@@ -148,6 +149,12 @@ SLIM_META_KEYS: Tuple[str, ...] = (
     "global_step", "rng_version", "wall_time", "reason", "param_names",
     "proj_coords", "proj_meta",
 )
+
+
+#: Size (bytes) below which a kept checkpoint is certainly ALREADY model-only and need not be
+#: re-loaded by _reslim_bumped_full. Full ViT-L + optimizer state ~7 GB; slimmed model-only ~1.2 GB;
+#: 2.5 GB cleanly separates them. (Prevents the O(K*N) reload bloat that hung the v2 collector.)
+_RESLIM_FULL_MIN_BYTES: int = 2_500_000_000
 
 
 def _is_full_checkpoint(state: Dict[str, Any]) -> bool:
@@ -841,6 +848,7 @@ class Collector:
                                    if proc.endswith(PROCESSING_SUFFIX) else proc)
             return "KEPT(restore-after-write-fail)"
         del state, out_state
+        gc.collect()  # reclaim the loaded full checkpoint before the reslim sweep below
 
         # The kept artifact is durable in kept/. Now remove the original from the watch dir.
         self._delete_from_queue(proc)
@@ -876,15 +884,26 @@ class Collector:
         for s, p in self._discover_kept_ladder(kept_dir).items():
             if s in latest_full:
                 continue
+            # CHEAP size guard (perf/memory critical): an ALREADY-slimmed checkpoint is ~1.2 GB; a
+            # FULL one is ~7 GB. Skip the slim ones WITHOUT torch.load-ing them. Without this, every
+            # kept-move re-loaded every non-latest kept checkpoint (incl. already-slim ones) just to
+            # re-check _is_full_checkpoint — O(K*N) loads of 7 GB that, in v2's BATCHED finalize
+            # sweep (no gc.collect between kept-moves, unlike v1's inline per-ckpt disposal), bloated
+            # host RSS to ~260 GB and hung the collector. (v1 never hit this: inline disposal + the
+            # extract path's gc.collect gave breathing room and the ladder was per-1-trainer.)
+            try:
+                if os.path.getsize(p) < _RESLIM_FULL_MIN_BYTES:
+                    continue  # already model-only; nothing to do, don't load it
+            except OSError:
+                continue
             try:
                 state = torch.load(p, map_location="cpu", weights_only=False)
             except Exception:
                 continue
-            if not isinstance(state, dict) or "model_state_dict" not in state:
+            if (not isinstance(state, dict) or "model_state_dict" not in state
+                    or not _is_full_checkpoint(state)):
                 del state
-                continue
-            if not _is_full_checkpoint(state):
-                del state
+                gc.collect()
                 continue
             slim = _slim_state(state)
             del state
@@ -895,6 +914,8 @@ class Collector:
             except Exception as e:
                 print(f"[collector w{self.worker_id}] re-slim {p!r} failed ({e!r}); left FULL.",
                       file=sys.stderr, flush=True)
+            del slim
+            gc.collect()  # reclaim the ~7 GB load before the next iteration (bounds RSS to one ckpt)
 
     # ------------------------------------------------------------------ durability
 

@@ -95,6 +95,17 @@ echo "pwd=$(pwd)"
 
 export PYTHONPATH="${PWD}/PlantCLEF2022:${PWD}:${PWD}/xAI/py:${PWD}/xAI/two_noise:${PYTHONPATH:-}"
 
+# CRITICAL: pin BLAS/OpenMP threads to the SLURM core allocation. Without this, numpy's BLAS
+# (MKL/OpenBLAS) defaults to ALL physical cores on the node while the cgroup grants only
+# cpus-per-task -> massive oversubscription thrash. That made block_interp's gradcov G@G.T matmul
+# (the §6.6 per-example gradient-covariance rank) crawl for ~18 min instead of ~80 s and stalled
+# the GPU collector. The CPU collector already does this; the GPU one was missing it (v1->v2 gap).
+NTHREADS="${SLURM_CPUS_PER_TASK:-8}"
+export OMP_NUM_THREADS="$NTHREADS"
+export MKL_NUM_THREADS="$NTHREADS"
+export OPENBLAS_NUM_THREADS="$NTHREADS"
+echo "BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=$NTHREADS"
+
 # --- which run(s) this worker collects ---
 # PREADAPT_RUN_DIRS (colon-separated, plural) is preferred for the v2 multi-run set; PREADAPT_RUN_DIR
 # (singular) is accepted for one run, matching the CPU script / arg-1 fallback.
@@ -161,11 +172,22 @@ echo "d90_queue=${D90_QUEUE:-<unset>}"
 # One --once drain pass over ALL watch dirs, GPU block set only, two-pass refcount (gpu,cpu).
 # --val-csv KEPT: the GPU block set builds the probe/Hessian batches. --device cuda.
 # --worker-id is prefixed "gpu" so its ScalarStore part dir never collides with a CPU worker's.
+# Optional explicit block list (overrides --block-set's default GPU set). Used to run a CHEAP live
+# GPU pass (e.g. PREADAPT_BLOCKS=block_curvature,block_fitness) and DEFER the memory-heavy
+# block_interp/block_probes to a post-hoc pass on the kept ladder. --block-set gpu is still passed
+# so the worker's pass_tag stays "gpu" (the .gpu.complete sentinel); --blocks just narrows the set.
+BLOCKS_ARG=""
+if [[ -n "${PREADAPT_BLOCKS:-}" ]]; then
+    BLOCKS_ARG="--blocks ${PREADAPT_BLOCKS}"
+    echo "PREADAPT_BLOCKS set -> live GPU pass runs ONLY: ${PREADAPT_BLOCKS} (heavy interp/probes deferred to post-hoc)"
+fi
+
 drain_once() {
     mamba run -n reticulate-gpu2 python xAI/py/extractor/collector.py \
         --once \
         --device cuda \
         --block-set gpu \
+        ${BLOCKS_ARG} \
         --require-passes "$REQUIRE_PASSES" \
         --worker-id "gpu${WORKER_ID}" \
         --watch-dirs ${WATCH_DIRS_ARGS} \
