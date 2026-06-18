@@ -34,7 +34,10 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=14G   # 8x14=112G; trainer peak ~90G. REDESIGN: 1 trainer + 2 collectors = 3x112=336G; +~84G other group jobs = ~420G < 437G QOS cap (128G each would be 384+84=468>437 -> QOSGrpMemLimit).
+#SBATCH --mem-per-cpu=13G   # 8x13=104G. 2026-06-18: with num_workers=4 (grid) the trainer peaks ~91G
+                            # (was ~155G at 8 workers -- DataLoader workers each fork a ~7.6G dataset
+                            # copy). 104G req leaves QOS room for a 210G heavy-capable GPU collector:
+                            # 2 trainers(104)+collector(210)=418 < 437. Raise back if a save OOMs.
 #SBATCH --time=96:00:00
 #SBATCH --output xAI/logs/%x-%A_%a.out
 #SBATCH --error  xAI/logs/%x-%A_%a.err

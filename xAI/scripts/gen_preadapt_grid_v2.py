@@ -95,6 +95,13 @@ SHARED_HPARAMS = {
     "projection_dim": 8192,
     "retention_latest_keep": 2,
     "max_precond_dim": 2048,      # stable_evo-only: caps Kronecker factor size (small ckpts).
+    "num_workers": 4,             # 8->4 (2026-06-18): the DataLoader workers each fork a ~7.6 GB
+                                  # copy of the dataset object; at 8 workers (x multiple loaders) the
+                                  # trainer peaked ~155 GB host RSS, blocking the GPU collector from
+                                  # getting the ~207 GB it needs for heavy checkpoints under the 437
+                                  # GB QOS. 4 workers drops the trainer to ~91 GB (req 104), freeing
+                                  # room so the collector fits heavy without thrash. GPU-bound
+                                  # training, so 4 workers keep the GPU fed.
 }
 
 # Bare store_true flags (no value) emitted AFTER the key=value hparams.
