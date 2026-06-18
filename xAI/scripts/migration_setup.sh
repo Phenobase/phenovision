@@ -10,6 +10,27 @@
 #     git checkout two_noise-build
 #     bash xAI/scripts/migration_setup.sh
 #
+# -----------------------------------------------------------------------------
+# AGENT END-TO-END RUNBOOK — an agent in a fresh rdinnage.fiu environment can run
+# ALL of this. The ONLY step a human must do is (2): place the CSV zip (it is not
+# in git and cannot be re-fetched). Everything else is scripted.
+#   1. git clone https://github.com/Phenobase/phenovision.git && cd phenovision
+#      git checkout two_noise-build
+#   2. [HUMAN] drop v2_migration_csvs.zip in the repo root (download the zip this
+#      project produced, upload it to the new repo). An agent cannot fetch it
+#      (not in git, not re-downloadable).
+#   3. mamba env create -f xAI/environment.yml && mamba activate reticulate-gpu2
+#   4. bash xAI/scripts/migration_setup.sh
+#        -> auto: unzips CSVs + gdowns the PlantCLEF .pth + downloads the
+#           228k-image subset.  (timm MAE/ImageNet weights auto-download run 1.)
+#   5. bash xAI/scripts/launch_v2_round.sh 1 rdinnage.fiu rdinnage.fiu rdinnage.fiu-b
+#        -> submits round 1 (naive->plantclef->mae s42) as an unattended chain.
+#           For round 2 (s43): same command with '2'. Run both for parallelism if
+#           the allocation's 4 GPU / 375 GB allow.
+#   6. monitor:  squeue -u $USER | grep preadapt
+#      results:  xAI/output/preadapt_v2/<run>/  and  .../_extract_store/
+# -----------------------------------------------------------------------------
+#
 # WHAT THIS SCRIPT AUTOMATES:
 #   Re-downloads ONLY the ~228k-image subset the v2 trainer actually reads
 #   (the union of both seeds' train+val picks, ~31 GB, ~0.3% of the full pool)
