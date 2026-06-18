@@ -84,7 +84,8 @@ SHARED_HPARAMS = {
     "weight_decay": 0.0,          # OVERRIDE (default 0.05): v2 disables weight decay.
     "max_train_samples": 107000,  # OVERRIDE (v1 214000): v2 per-run train subset.
     "sampler_delta": 0.01,        # OVERRIDE (default 0.10): dense-early; ~31 emits/P2 epoch 1.
-    "sampler_min_step": 5,        # OVERRIDE (default 20): low floor => many early ckpts.
+    "sampler_min_step": 4,        # OVERRIDE (default 20): low floor => many early ckpts. 5->4
+                                  # (2026-06-17) for denser unfreeze/metric-reorganization capture.
     "sampler_max_step": 200,      # OVERRIDE (default 500): forced-emission cap (regular backbone).
     "backpressure_high": 6,       # trainer PAUSES emission+training when PENDING > 6 (high-water).
     "backpressure_low": 2,        # ...resumes when PENDING < 2 (low-water; hysteresis).
@@ -178,7 +179,7 @@ def main() -> None:
     print("v2 override flags on every line: --variant stable_evo --shared-tokenizer mae "
           "--lr_schedule fixed --beta1 0.0 --weight_decay 0.0 --max_train_samples 107000 "
           "--phase2_early_stop.")
-    print("Dense-early cadence: --sampler_min_step 5 --sampler_delta 0.01 --sampler_max_step 200; "
+    print("Dense-early cadence: --sampler_min_step 4 --sampler_delta 0.01 --sampler_max_step 200; "
           "backpressure: --backpressure-high 6 --backpressure-low 2. "
           "--output_dir is NOT emitted (orchestration sets preadapt_v2/<run_id>).")
 
