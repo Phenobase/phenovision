@@ -34,11 +34,14 @@
 # -----------------------------------------------------------------------------
 #
 # WHAT THIS SCRIPT AUTOMATES:
-#   Re-downloads ONLY the ~228k-image subset the v2 trainer actually reads
-#   (the union of both seeds' train+val picks, ~31 GB, ~0.3% of the full pool)
-#   from the iNaturalist open-data S3 bucket, into the exact paths the CSVs
-#   reference: data/phenobase_inat_data/images/medium/batch_*/<photo_id>.<ext>.
-#   Re-running is safe/resumable (existing files are skipped).
+#   Downloads ONLY the 228,392-image subset the v2 trainer actually reads — from the
+#   EXPLICIT committed manifest xAI/data/v2_image_subset.csv.gz (file_name,photo_id,
+#   extension), the union of both seeds' train+val picks (~31 GB, ~8% of the 2.85M-row
+#   CSVs). The manifest is the SOURCE OF TRUTH (not an RNG re-derivation), so the set is
+#   byte-identical in every environment. Images land at the paths the CSVs reference:
+#   data/phenobase_inat_data/images/medium/batch_*/<photo_id>.<ext>.
+#   Re-running is safe/resumable (existing files are skipped). To regenerate the manifest
+#   on the guralnick side (full CSVs present): python xAI/scripts/gen_image_subset.py
 #
 # ---------------------------------------------------------------------------
 # MANUAL PREREQUISITES (NOT in git / cannot be auto-fetched) — do these FIRST:
@@ -86,6 +89,7 @@ PARALLEL="${PARALLEL:-24}"          # concurrent downloads (override: PARALLEL=4
 
 TRAIN=data/inat/train_v1.1.0.csv
 VAL=data/inat/val_v1.1.0.csv
+SUBSET=xAI/data/v2_image_subset.csv.gz   # committed, explicit image manifest (the source of truth)
 
 # --- (1) CSVs: auto-unzip the provided v2_migration_csvs.zip if the CSVs aren't present ---
 if [ ! -s "$TRAIN" ] || [ ! -s "$VAL" ]; then
@@ -122,20 +126,25 @@ if [ ! -s "$PCLEF" ]; then
   fi
 fi
 
-echo "[migration] re-downloading the CSV-referenced iNat image subset (PARALLEL=$PARALLEL, resumable) ..."
-PARALLEL="$PARALLEL" python3 - "$TRAIN" "$VAL" <<'PY'
-import csv, os, sys, socket, urllib.request, concurrent.futures
+echo "[migration] downloading the EXPERIMENT IMAGE SUBSET from the committed manifest $SUBSET (PARALLEL=$PARALLEL, resumable) ..."
+[ -s "$SUBSET" ] || { echo "ERROR: image manifest $SUBSET missing. It is committed in the repo — 'git pull' the two_noise-build branch, or regenerate on the guralnick side: python xAI/scripts/gen_image_subset.py"; exit 1; }
+PARALLEL="$PARALLEL" python3 - "$SUBSET" <<'PY'
+import csv, gzip, os, sys, socket, urllib.request, concurrent.futures
 socket.setdefaulttimeout(30)
 PAR = int(os.environ.get("PARALLEL", "24"))
 S3 = "https://inaturalist-open-data.s3.amazonaws.com/photos/{pid}/medium.{ext}"
+SUBSET = sys.argv[1]
 
+# Read the EXPLICIT committed manifest (file_name,photo_id,extension) — the SOURCE OF TRUTH. No RNG
+# and no full-CSV parse, so the downloaded set is byte-identical in every environment. (Provenance:
+# regenerable from the grid seeds + the trainer's RandomState via xAI/scripts/gen_image_subset.py.)
 need = {}                                   # dest_path -> (photo_id, extension)
-for csvf in sys.argv[1:]:
-    with open(csvf, newline="") as f:
-        for r in csv.DictReader(f):
-            need[r["file_name"]] = (r["photo_id"], r["extension"])
+_open = gzip.open if SUBSET.endswith(".gz") else open
+with _open(SUBSET, "rt", newline="") as f:
+    for r in csv.DictReader(f):
+        need[r["file_name"]] = (r["photo_id"], r["extension"])
 todo = [(d, v) for d, v in need.items() if not (os.path.exists(d) and os.path.getsize(d) > 0)]
-print(f"[migration] {len(need)} referenced images; {len(todo)} to fetch ({len(need)-len(todo)} already present)", flush=True)
+print(f"[migration] manifest = {len(need)} images (experiment subset); {len(todo)} to fetch ({len(need)-len(todo)} already present)", flush=True)
 
 def fetch(item):
     dest, (pid, ext) = item

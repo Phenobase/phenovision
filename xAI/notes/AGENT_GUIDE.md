@@ -99,8 +99,9 @@ Report per-condition init→converged AUC-PR for s42/s43, then the **d90 sweep**
   hard manual handoff. Also at `/blue/guralnick/share/r.dinnage/v2_migration_csvs.zip` on the guralnick side.
 - **Deferred (incremental, not needed):** `block_weights` proj_coords 292→24 aggregation; `block_interp`
   every-Kth probe-feature gating. Per-run is already ~15-20 GB without them.
-- The reproduction script `.claude_notes_and_utils/testing/payload_subset_size.py` (gitignored) emits the
-  exact 228k file list — but `migration_setup.sh` derives the same set directly from the CSVs.
+- The exact 228,392-image subset is committed as an EXPLICIT manifest `xAI/data/v2_image_subset.csv.gz`
+  (file_name,photo_id,extension); `migration_setup.sh` downloads from it (no RNG, env-independent).
+  Regenerate it from the grid seeds + trainer RNG with `python xAI/scripts/gen_image_subset.py`.
 - **No-transfer alternative to the whole migration:** if RC adds the `r.dinnage` login to the
   `rdinnage.fiu` SLURM account, jobs run as r.dinnage (in the guralnick UNIX group) and read
   `/blue/guralnick` in place — submit with `--account=rdinnage.fiu` and skip the data download entirely.
