@@ -20,8 +20,10 @@
 # =============================================================================
 set -eo pipefail
 cd "$(dirname "$0")/../.."                      # repo root
-ROUND="${1:?usage: launch_v2_round.sh ROUND ACCOUNT QOS QOSB}"
+ROUND="${1:?usage: launch_v2_round.sh ROUND ACCOUNT QOS QOSB [DEP_JOBID]}"
 ACCT="${2:?account}"; QOS="${3:?qos}"; QOSB="${4:?burst qos}"
+DEP="${5:-}"   # optional: seed the FIRST trainer with --dependency=afterany:<jobid>, e.g. to chain
+               # round 2 behind round 1's last trainer so total GPU use never exceeds one wave.
 GRID=xAI/two_noise/configs/experiment/preadapt_v2_grid.txt
 STORE=xAI/output/preadapt_v2/_extract_store
 D90=xAI/output/preadapt_v2/_d90_queue
@@ -32,7 +34,7 @@ case "$ROUND" in
 esac
 [ -s "$GRID" ] || { echo "ERROR: $GRID missing (regenerate with gen_preadapt_grid_v2.py)"; exit 1; }
 
-PREV=""
+PREV="$DEP"
 for L in $LINES; do
   args="$(sed -n "${L}p" "$GRID")"
   cond=$(echo "$args" | grep -oE -- '--condition [a-z]+' | awk '{print $2}')
