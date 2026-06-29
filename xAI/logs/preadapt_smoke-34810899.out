@@ -1,0 +1,66 @@
+================ TRAINER SMOKE ================
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : plantclef__stable_evo__s42
+  condition        : plantclef
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/preadapt_smoke/plantclef__stable_evo__s42
+  epochs           : 2
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 1500 samples
+  Training images: 1500
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/23] loss=0.6932 lr=0.001000
+  VAL step=8 val_loss=0.5612 auc_roc_mean=0.7627 auc_pr_mean=0.6015
+  VAL step=16 val_loss=0.5584 auc_roc_mean=0.7983 auc_pr_mean=0.6269
+  Plateau (1/1) auc_roc improvement=0.0356
+
+*** Phase 1 converged at epoch 0, step 16 ***
+
+PHASE_TRANSITION: step=16 epoch=0 val_loss=0.5584 auc_roc_mean=0.7983 auc_pr_mean=0.6269 (ECOLOGICAL_FITTING: auc_pr=0.6269, val_loss=0.5584)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+  Rebuilding train loader: batch_size -> 32 for Phase 2
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=6.25e-05  eff_batch=32  variant=stable_evo
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [0/46] loss=0.4057 upd_norm=2.0979 disp=0.0000 sampler=0.0000 lr=0.000013
+  VAL step=24 (p2=8) val_loss=0.5584 auc_pr_mean=0.6271
+  VAL step=32 (p2=16) val_loss=0.5583 auc_pr_mean=0.6272
+  [20/46] loss=0.5738 upd_norm=1.5678 disp=0.0625 sampler=0.0026 lr=0.000018
+  VAL step=40 (p2=24) val_loss=0.5581 auc_pr_mean=0.6274
+  VAL step=48 (p2=32) val_loss=0.5580 auc_pr_mean=0.6276
+  VAL step=56 (p2=40) val_loss=0.5578 auc_pr_mean=0.6279
+  [40/46] loss=0.4428 upd_norm=0.9364 disp=0.0933 sampler=0.0046 lr=0.000023
+  EMIT ckpt step=62 reason=epoch_end on_ladder=True -> step00000062.pt
+
+TRAINING COMPLETE: run_id=plantclef__stable_evo__s42 final_step=62 elapsed=16.3 min
+================ CHECKPOINTS ================
+total 17G
+-rw-r--r-- 1 r.dinnage guralnick 1.2G Jun 16 07:51 init_model.pt
+-rw-r--r-- 1 r.dinnage guralnick    0 Jun 16 07:51 init_model.pt.done
+-rw-r--r-- 1 r.dinnage guralnick 1.2G Jun 16 07:51 phase1_final.pt
+-rw-r--r-- 1 r.dinnage guralnick    0 Jun 16 07:51 phase1_final.pt.done
+-rw-r--r-- 1 r.dinnage guralnick  15G Jun 16 08:02 step00000062.pt
+-rw-r--r-- 1 r.dinnage guralnick    0 Jun 16 08:02 step00000062.pt.done
+-rw-r--r-- 1 r.dinnage guralnick 48 Jun 16 08:02 xAI/output/preadapt_smoke/plantclef__stable_evo__s42/RUN_COMPLETE
+================ COLLECTOR --once ================

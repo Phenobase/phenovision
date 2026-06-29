@@ -1,0 +1,549 @@
+Mon Mar 16 09:50:09 PM EDT 2026
+c1009a-s5.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI PlantCLEF training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: plantclef
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/plantclef_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: plantclef
+  Total parameters: 303,303,682
+  CKPT: xAI/output/plantclef_run/checkpoints/epoch0_init.pt
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization)
+============================================================
+  Trainable parameters: 2,050 (head only)
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/278] loss=0.6932 lr=0.001000
+  Epoch 0 [20/278] loss=0.5500 lr=0.001000
+  Epoch 0 [40/278] loss=0.5254 lr=0.001000
+  Epoch 0 [60/278] loss=0.4707 lr=0.001000
+  Epoch 0 [80/278] loss=0.4600 lr=0.000999
+  VAL step=100 val_loss=0.4283 auc_roc_mean=0.8798
+  Epoch 0 [100/278] loss=0.4342 lr=0.000999
+  Epoch 0 [120/278] loss=0.4339 lr=0.000998
+  Epoch 0 [140/278] loss=0.3936 lr=0.000997
+  Epoch 0 [160/278] loss=0.4233 lr=0.000997
+  Epoch 0 [180/278] loss=0.3709 lr=0.000996
+  VAL step=200 val_loss=0.3612 auc_roc_mean=0.8896
+  Epoch 0 [200/278] loss=0.3790 lr=0.000995
+  Epoch 0 [220/278] loss=0.3873 lr=0.000994
+  Epoch 0 [240/278] loss=0.3614 lr=0.000993
+  Epoch 0 [260/278] loss=0.3770 lr=0.000991
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch0.pt
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/278] loss=0.3262 lr=0.000990
+  Epoch 1 [20/278] loss=0.3485 lr=0.000989
+  VAL step=300 val_loss=0.3254 auc_roc_mean=0.8975
+  Epoch 1 [40/278] loss=0.3261 lr=0.000987
+  Epoch 1 [60/278] loss=0.3470 lr=0.000985
+  Epoch 1 [80/278] loss=0.3597 lr=0.000984
+  Epoch 1 [100/278] loss=0.3464 lr=0.000982
+  Epoch 1 [120/278] loss=0.3390 lr=0.000980
+  VAL step=400 val_loss=0.3054 auc_roc_mean=0.9032
+  Epoch 1 [140/278] loss=0.3336 lr=0.000978
+  Epoch 1 [160/278] loss=0.3185 lr=0.000976
+  Epoch 1 [180/278] loss=0.3241 lr=0.000973
+  Epoch 1 [200/278] loss=0.3354 lr=0.000971
+  Epoch 1 [220/278] loss=0.3285 lr=0.000969
+  VAL step=500 val_loss=0.2923 auc_roc_mean=0.9076
+  Epoch 1 [240/278] loss=0.3128 lr=0.000966
+  Epoch 1 [260/278] loss=0.3296 lr=0.000964
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch1.pt
+
+--- Phase 1, Epoch 2 ---
+  Epoch 2 [0/278] loss=0.3221 lr=0.000961
+  Epoch 2 [20/278] loss=0.3267 lr=0.000958
+  Epoch 2 [40/278] loss=0.3420 lr=0.000955
+  VAL step=600 val_loss=0.2832 auc_roc_mean=0.9108
+  Epoch 2 [60/278] loss=0.3068 lr=0.000952
+  Epoch 2 [80/278] loss=0.3189 lr=0.000949
+  Epoch 2 [100/278] loss=0.3194 lr=0.000946
+  Epoch 2 [120/278] loss=0.3122 lr=0.000943
+  Epoch 2 [140/278] loss=0.2954 lr=0.000940
+  VAL step=700 val_loss=0.2770 auc_roc_mean=0.9137
+  Epoch 2 [160/278] loss=0.3314 lr=0.000936
+  Epoch 2 [180/278] loss=0.3034 lr=0.000933
+  Epoch 2 [200/278] loss=0.2992 lr=0.000929
+  Epoch 2 [220/278] loss=0.3021 lr=0.000925
+  Epoch 2 [240/278] loss=0.3312 lr=0.000921
+  VAL step=800 val_loss=0.2706 auc_roc_mean=0.9157
+  Epoch 2 [260/278] loss=0.3051 lr=0.000918
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch2.pt
+
+--- Phase 1, Epoch 3 ---
+  Epoch 3 [0/278] loss=0.2732 lr=0.000914
+  Epoch 3 [20/278] loss=0.3026 lr=0.000910
+  Epoch 3 [40/278] loss=0.3017 lr=0.000906
+  Epoch 3 [60/278] loss=0.3065 lr=0.000902
+  VAL step=900 val_loss=0.2664 auc_roc_mean=0.9171
+  Epoch 3 [80/278] loss=0.2877 lr=0.000897
+  Epoch 3 [100/278] loss=0.3004 lr=0.000893
+  Epoch 3 [120/278] loss=0.3079 lr=0.000889
+  Epoch 3 [140/278] loss=0.3080 lr=0.000884
+  Epoch 3 [160/278] loss=0.3190 lr=0.000880
+  VAL step=1000 val_loss=0.2638 auc_roc_mean=0.9185
+  Epoch 3 [180/278] loss=0.3256 lr=0.000875
+  Epoch 3 [200/278] loss=0.2879 lr=0.000870
+  Epoch 3 [220/278] loss=0.2956 lr=0.000865
+  Epoch 3 [240/278] loss=0.3151 lr=0.000861
+  Epoch 3 [260/278] loss=0.2849 lr=0.000856
+  VAL step=1100 val_loss=0.2598 auc_roc_mean=0.9201
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch3.pt
+
+--- Phase 1, Epoch 4 ---
+  Epoch 4 [0/278] loss=0.2906 lr=0.000851
+  Epoch 4 [20/278] loss=0.3061 lr=0.000846
+  Epoch 4 [40/278] loss=0.2869 lr=0.000841
+  Epoch 4 [60/278] loss=0.2614 lr=0.000836
+  Epoch 4 [80/278] loss=0.3357 lr=0.000830
+  VAL step=1200 val_loss=0.2587 auc_roc_mean=0.9211
+  Epoch 4 [100/278] loss=0.3053 lr=0.000825
+  Epoch 4 [120/278] loss=0.2908 lr=0.000820
+  Epoch 4 [140/278] loss=0.2987 lr=0.000814
+  Epoch 4 [160/278] loss=0.2907 lr=0.000809
+  Epoch 4 [180/278] loss=0.3019 lr=0.000803
+  VAL step=1300 val_loss=0.2550 auc_roc_mean=0.9217
+  Plateau (1/2) auc_roc improvement=0.0016
+  Epoch 4 [200/278] loss=0.2950 lr=0.000797
+  Epoch 4 [220/278] loss=0.2890 lr=0.000792
+  Epoch 4 [240/278] loss=0.3025 lr=0.000786
+  Epoch 4 [260/278] loss=0.2897 lr=0.000780
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch4.pt
+
+--- Phase 1, Epoch 5 ---
+  Epoch 5 [0/278] loss=0.2737 lr=0.000775
+  VAL step=1400 val_loss=0.2538 auc_roc_mean=0.9225
+  Plateau (2/2) auc_roc improvement=0.0014
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch5.pt
+
+*** Phase 1 converged at epoch 5, step 1400 ***
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_final.pt
+
+PHASE_TRANSITION: step=1400 epoch=5 val_loss=0.2538 auc_roc_mean=0.9225
+
+Phase 1 took 91.0 minutes
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  Rebuilding train loader: batch_size 768 -> 384 for Phase 2
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 6 (P2 epoch 0) ---
+  [0/557] loss=0.2944 grad=1.2555 g_head=0.3222 g_last=0.2105 g_first=0.3166 lr=0.000000
+  VAL step=1420 (p2_batch=20, freq=20) val_loss=0.3398 auc_roc_mean=0.9218
+  [20/557] loss=0.5431 grad=5.2807 g_head=2.2094 g_last=0.7712 g_first=1.0695 lr=0.000000
+  VAL step=1440 (p2_batch=40, freq=20) val_loss=0.2293 auc_roc_mean=0.9375
+  [40/557] loss=0.2520 grad=1.4600 g_head=0.5826 g_last=0.1520 g_first=0.3163 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001450.pt shape=(1000, 1024)
+  VAL step=1460 (p2_batch=60, freq=20) val_loss=0.2056 auc_roc_mean=0.9447
+  [60/557] loss=0.2918 grad=1.6774 g_head=0.7325 g_last=0.1847 g_first=0.3615 lr=0.000000
+  VAL step=1480 (p2_batch=80, freq=20) val_loss=0.2005 auc_roc_mean=0.9515
+  [80/557] loss=0.2486 grad=2.7056 g_head=1.1965 g_last=0.3169 g_first=0.5217 lr=0.000000
+  VAL step=1500 (p2_batch=100, freq=20) val_loss=0.1914 auc_roc_mean=0.9526
+  REPR: xAI/output/plantclef_run/representations/features_step001500.pt shape=(1000, 1024)
+  [100/557] loss=0.2232 grad=1.3490 g_head=0.5124 g_last=0.1264 g_first=0.3185 lr=0.000000
+  VAL step=1520 (p2_batch=120, freq=20) val_loss=0.1902 auc_roc_mean=0.9548
+  [120/557] loss=0.2445 grad=1.2691 g_head=0.1132 g_last=0.0762 g_first=0.3396 lr=0.000000
+  VAL step=1540 (p2_batch=140, freq=20) val_loss=0.1895 auc_roc_mean=0.9562
+  [140/557] loss=0.2593 grad=1.2991 g_head=0.4555 g_last=0.1356 g_first=0.3307 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001550.pt shape=(1000, 1024)
+  VAL step=1560 (p2_batch=160, freq=20) val_loss=0.1805 auc_roc_mean=0.9578
+  [160/557] loss=0.2629 grad=1.6276 g_head=0.1016 g_last=0.0764 g_first=0.5073 lr=0.000000
+  VAL step=1580 (p2_batch=180, freq=20) val_loss=0.1806 auc_roc_mean=0.9584
+  [180/557] loss=0.2233 grad=1.2682 g_head=0.1532 g_last=0.0734 g_first=0.3939 lr=0.000000
+  VAL step=1600 (p2_batch=200, freq=20) val_loss=0.1788 auc_roc_mean=0.9586
+  REPR: xAI/output/plantclef_run/representations/features_step001600.pt shape=(1000, 1024)
+  [200/557] loss=0.2300 grad=1.2380 g_head=0.3832 g_last=0.1130 g_first=0.3356 lr=0.000000
+  VAL step=1620 (p2_batch=220, freq=20) val_loss=0.1828 auc_roc_mean=0.9591
+  [220/557] loss=0.2648 grad=1.5431 g_head=0.7296 g_last=0.1687 g_first=0.4028 lr=0.000000
+  VAL step=1640 (p2_batch=240, freq=20) val_loss=0.1820 auc_roc_mean=0.9609
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step001640.pt
+  [240/557] loss=0.2510 grad=2.2821 g_head=1.1836 g_last=0.3207 g_first=0.4990 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001650.pt shape=(1000, 1024)
+  VAL step=1660 (p2_batch=260, freq=20) val_loss=0.1758 auc_roc_mean=0.9610
+  [260/557] loss=0.2466 grad=1.3427 g_head=0.5095 g_last=0.1236 g_first=0.3419 lr=0.000000
+  VAL step=1680 (p2_batch=280, freq=20) val_loss=0.1741 auc_roc_mean=0.9621
+  [280/557] loss=0.2218 grad=1.1714 g_head=0.4681 g_last=0.1313 g_first=0.3088 lr=0.000000
+  VAL step=1700 (p2_batch=300, freq=20) val_loss=0.1728 auc_roc_mean=0.9623
+  REPR: xAI/output/plantclef_run/representations/features_step001700.pt shape=(1000, 1024)
+  [300/557] loss=0.2428 grad=1.6979 g_head=0.7058 g_last=0.2023 g_first=0.4399 lr=0.000000
+  VAL step=1720 (p2_batch=320, freq=20) val_loss=0.1806 auc_roc_mean=0.9627
+  [320/557] loss=0.2355 grad=1.7898 g_head=0.9712 g_last=0.2686 g_first=0.3722 lr=0.000000
+  VAL step=1740 (p2_batch=340, freq=20) val_loss=0.1736 auc_roc_mean=0.9620
+  [340/557] loss=0.2583 grad=1.3519 g_head=0.3441 g_last=0.1541 g_first=0.3586 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001750.pt shape=(1000, 1024)
+  VAL step=1760 (p2_batch=360, freq=20) val_loss=0.1730 auc_roc_mean=0.9632
+  [360/557] loss=0.2197 grad=2.1340 g_head=1.1923 g_last=0.3112 g_first=0.4197 lr=0.000000
+  VAL step=1780 (p2_batch=380, freq=20) val_loss=0.1782 auc_roc_mean=0.9623
+  [380/557] loss=0.2129 grad=1.2390 g_head=0.1486 g_last=0.1115 g_first=0.3729 lr=0.000000
+  VAL step=1800 (p2_batch=400, freq=20) val_loss=0.1748 auc_roc_mean=0.9631
+  REPR: xAI/output/plantclef_run/representations/features_step001800.pt shape=(1000, 1024)
+  [400/557] loss=0.2230 grad=1.8027 g_head=0.6686 g_last=0.1616 g_first=0.4951 lr=0.000000
+  VAL step=1820 (p2_batch=420, freq=20) val_loss=0.1693 auc_roc_mean=0.9630
+  [420/557] loss=0.2565 grad=1.2683 g_head=0.3211 g_last=0.0916 g_first=0.3386 lr=0.000000
+  VAL step=1840 (p2_batch=440, freq=20) val_loss=0.1686 auc_roc_mean=0.9647
+  [440/557] loss=0.2150 grad=1.7426 g_head=0.6549 g_last=0.1944 g_first=0.4174 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001850.pt shape=(1000, 1024)
+  VAL step=1860 (p2_batch=460, freq=20) val_loss=0.1684 auc_roc_mean=0.9642
+  [460/557] loss=0.2141 grad=1.3928 g_head=0.3006 g_last=0.0966 g_first=0.3934 lr=0.000000
+  VAL step=1880 (p2_batch=480, freq=20) val_loss=0.1734 auc_roc_mean=0.9632
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step001880.pt
+  [480/557] loss=0.2721 grad=1.9501 g_head=1.0469 g_last=0.2798 g_first=0.4409 lr=0.000000
+  VAL step=1900 (p2_batch=500, freq=20) val_loss=0.1692 auc_roc_mean=0.9651
+  REPR: xAI/output/plantclef_run/representations/features_step001900.pt shape=(1000, 1024)
+  [500/557] loss=0.2325 grad=1.3909 g_head=0.4055 g_last=0.1223 g_first=0.3702 lr=0.000000
+  [520/557] loss=0.2637 grad=1.9570 g_head=0.2470 g_last=0.0957 g_first=0.5246 lr=0.000000
+  [540/557] loss=0.1947 grad=1.3043 g_head=0.2830 g_last=0.1319 g_first=0.3457 lr=0.000000
+  VAL step=1950 (p2_batch=550, freq=50) val_loss=0.1614 auc_roc_mean=0.9666
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch6.pt
+
+--- Phase 2, Epoch 7 (P2 epoch 1) ---
+  [0/557] loss=0.2385 grad=1.2372 g_head=0.5931 g_last=0.1412 g_first=0.3000 lr=0.000000
+  [20/557] loss=0.2291 grad=1.6149 g_head=0.4533 g_last=0.1148 g_first=0.4289 lr=0.000000
+  [40/557] loss=0.1991 grad=1.3537 g_head=0.0742 g_last=0.0653 g_first=0.3819 lr=0.000000
+  VAL step=2000 (p2_batch=600, freq=50) val_loss=0.1629 auc_roc_mean=0.9664
+  REPR: xAI/output/plantclef_run/representations/features_step002000.pt shape=(1000, 1024)
+  [60/557] loss=0.2691 grad=1.3608 g_head=0.1862 g_last=0.1676 g_first=0.3773 lr=0.000000
+  [80/557] loss=0.2415 grad=1.4841 g_head=0.3898 g_last=0.1115 g_first=0.3796 lr=0.000000
+  VAL step=2050 (p2_batch=650, freq=50) val_loss=0.1677 auc_roc_mean=0.9657
+  [100/557] loss=0.2543 grad=1.7006 g_head=0.5848 g_last=0.1699 g_first=0.4425 lr=0.000000
+  [120/557] loss=0.1916 grad=1.3905 g_head=0.3653 g_last=0.1200 g_first=0.4482 lr=0.000000
+  [140/557] loss=0.2119 grad=1.2691 g_head=0.5503 g_last=0.1607 g_first=0.3071 lr=0.000000
+  VAL step=2100 (p2_batch=700, freq=50) val_loss=0.1662 auc_roc_mean=0.9659
+  REPR: xAI/output/plantclef_run/representations/features_step002100.pt shape=(1000, 1024)
+  [160/557] loss=0.2022 grad=1.1499 g_head=0.4861 g_last=0.1232 g_first=0.2836 lr=0.000000
+  [180/557] loss=0.2109 grad=1.2392 g_head=0.3892 g_last=0.1159 g_first=0.3380 lr=0.000000
+  VAL step=2150 (p2_batch=750, freq=50) val_loss=0.1643 auc_roc_mean=0.9664
+  [200/557] loss=0.2396 grad=1.4111 g_head=0.3107 g_last=0.1017 g_first=0.3706 lr=0.000000
+  [220/557] loss=0.2036 grad=1.3767 g_head=0.3766 g_last=0.0988 g_first=0.3628 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step002197.pt
+  [240/557] loss=0.2237 grad=1.3489 g_head=0.3795 g_last=0.1179 g_first=0.3553 lr=0.000000
+  VAL step=2200 (p2_batch=800, freq=50) val_loss=0.1678 auc_roc_mean=0.9654
+  REPR: xAI/output/plantclef_run/representations/features_step002200.pt shape=(1000, 1024)
+  [260/557] loss=0.2522 grad=1.7557 g_head=0.8093 g_last=0.2136 g_first=0.4321 lr=0.000000
+  [280/557] loss=0.2335 grad=1.4633 g_head=0.4988 g_last=0.1324 g_first=0.3790 lr=0.000000
+  VAL step=2250 (p2_batch=850, freq=50) val_loss=0.1640 auc_roc_mean=0.9668
+  [300/557] loss=0.2409 grad=1.4520 g_head=0.7506 g_last=0.1919 g_first=0.3390 lr=0.000000
+  [320/557] loss=0.1918 grad=1.2973 g_head=0.5040 g_last=0.1499 g_first=0.3378 lr=0.000000
+  [340/557] loss=0.2220 grad=1.2805 g_head=0.3605 g_last=0.1008 g_first=0.3189 lr=0.000000
+  VAL step=2300 (p2_batch=900, freq=50) val_loss=0.1623 auc_roc_mean=0.9671
+  REPR: xAI/output/plantclef_run/representations/features_step002300.pt shape=(1000, 1024)
+  [360/557] loss=0.2409 grad=1.1792 g_head=0.1494 g_last=0.0731 g_first=0.3347 lr=0.000000
+  [380/557] loss=0.2152 grad=1.4253 g_head=0.2293 g_last=0.0892 g_first=0.3754 lr=0.000000
+  VAL step=2350 (p2_batch=950, freq=50) val_loss=0.1616 auc_roc_mean=0.9673
+  [400/557] loss=0.2208 grad=1.4491 g_head=0.6007 g_last=0.1738 g_first=0.3739 lr=0.000000
+  [420/557] loss=0.2284 grad=1.3902 g_head=0.4505 g_last=0.1226 g_first=0.3527 lr=0.000000
+  [440/557] loss=0.2326 grad=1.5576 g_head=0.3511 g_last=0.0880 g_first=0.3704 lr=0.000000
+  VAL step=2400 (p2_batch=1000, freq=50) val_loss=0.1613 auc_roc_mean=0.9676
+  REPR: xAI/output/plantclef_run/representations/features_step002400.pt shape=(1000, 1024)
+  [460/557] loss=0.2156 grad=0.9452 g_head=0.0523 g_last=0.0565 g_first=0.2751 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step002437.pt
+  [480/557] loss=0.1569 grad=1.4006 g_head=0.3709 g_last=0.1105 g_first=0.4000 lr=0.000000
+  [500/557] loss=0.2433 grad=1.5958 g_head=0.7867 g_last=0.1816 g_first=0.3834 lr=0.000000
+  [520/557] loss=0.1884 grad=0.9423 g_head=0.2346 g_last=0.0714 g_first=0.2679 lr=0.000000
+  [540/557] loss=0.2017 grad=1.3949 g_head=0.5897 g_last=0.1343 g_first=0.3833 lr=0.000000
+  VAL step=2500 (p2_batch=1100, freq=100) val_loss=0.1657 auc_roc_mean=0.9683
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch7.pt
+
+--- Phase 2, Epoch 8 (P2 epoch 2) ---
+  [0/557] loss=0.2074 grad=1.0530 g_head=0.4134 g_last=0.1031 g_first=0.2713 lr=0.000000
+  [20/557] loss=0.1978 grad=1.2860 g_head=0.4295 g_last=0.1166 g_first=0.3505 lr=0.000000
+  [40/557] loss=0.2058 grad=1.5008 g_head=0.3180 g_last=0.1008 g_first=0.4172 lr=0.000000
+  [60/557] loss=0.1610 grad=1.0148 g_head=0.2338 g_last=0.0837 g_first=0.2704 lr=0.000000
+  [80/557] loss=0.1956 grad=1.2042 g_head=0.3272 g_last=0.1012 g_first=0.3284 lr=0.000000
+  VAL step=2600 (p2_batch=1200, freq=100) val_loss=0.1634 auc_roc_mean=0.9678
+  [100/557] loss=0.2214 grad=1.5702 g_head=0.7225 g_last=0.1990 g_first=0.4232 lr=0.000000
+  [120/557] loss=0.2222 grad=1.4959 g_head=0.6304 g_last=0.1606 g_first=0.3889 lr=0.000000
+  [140/557] loss=0.1735 grad=1.6203 g_head=0.5572 g_last=0.1635 g_first=0.4137 lr=0.000000
+  [160/557] loss=0.2376 grad=1.9407 g_head=0.6877 g_last=0.1633 g_first=0.4594 lr=0.000000
+  [180/557] loss=0.2485 grad=1.4478 g_head=0.6015 g_last=0.1695 g_first=0.3481 lr=0.000000
+  VAL step=2700 (p2_batch=1300, freq=100) val_loss=0.1590 auc_roc_mean=0.9681
+  [200/557] loss=0.2242 grad=1.4703 g_head=0.4086 g_last=0.1313 g_first=0.3923 lr=0.000000
+  [220/557] loss=0.1816 grad=1.0953 g_head=0.2437 g_last=0.0945 g_first=0.2893 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step002754.pt
+  [240/557] loss=0.1803 grad=1.2670 g_head=0.3696 g_last=0.1133 g_first=0.2960 lr=0.000000
+  [260/557] loss=0.1870 grad=1.0184 g_head=0.0484 g_last=0.0890 g_first=0.2900 lr=0.000000
+  [280/557] loss=0.2117 grad=1.6256 g_head=0.4707 g_last=0.1286 g_first=0.4314 lr=0.000000
+  VAL step=2800 (p2_batch=1400, freq=100) val_loss=0.1563 auc_roc_mean=0.9695
+  [300/557] loss=0.2152 grad=1.5327 g_head=0.4168 g_last=0.1515 g_first=0.4190 lr=0.000000
+  [320/557] loss=0.2191 grad=1.8890 g_head=0.9293 g_last=0.2499 g_first=0.3982 lr=0.000000
+  [340/557] loss=0.1641 grad=1.2066 g_head=0.3029 g_last=0.0912 g_first=0.3665 lr=0.000000
+  [360/557] loss=0.2211 grad=1.6312 g_head=0.4634 g_last=0.1177 g_first=0.4616 lr=0.000000
+  [380/557] loss=0.2036 grad=2.0760 g_head=0.4671 g_last=0.1335 g_first=0.5260 lr=0.000000
+  VAL step=2900 (p2_batch=1500, freq=100) val_loss=0.1585 auc_roc_mean=0.9691
+  REPR: xAI/output/plantclef_run/representations/features_step002900.pt shape=(1000, 1024)
+  [400/557] loss=0.1847 grad=1.2724 g_head=0.4374 g_last=0.1222 g_first=0.3392 lr=0.000000
+  [420/557] loss=0.2711 grad=1.8422 g_head=0.5996 g_last=0.3017 g_first=0.4638 lr=0.000000
+  [440/557] loss=0.1744 grad=1.5012 g_head=0.3890 g_last=0.0933 g_first=0.3588 lr=0.000000
+  [460/557] loss=0.2609 grad=1.8124 g_head=1.0520 g_last=0.3036 g_first=0.3860 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step002994.pt
+  [480/557] loss=0.1780 grad=1.0561 g_head=0.0761 g_last=0.0610 g_first=0.3036 lr=0.000000
+  VAL step=3000 (p2_batch=1600, freq=100) val_loss=0.1572 auc_roc_mean=0.9701
+  [500/557] loss=0.2205 grad=1.4038 g_head=0.6421 g_last=0.1702 g_first=0.3268 lr=0.000000
+  [520/557] loss=0.1677 grad=1.1801 g_head=0.4663 g_last=0.1700 g_first=0.2987 lr=0.000000
+  [540/557] loss=0.2048 grad=1.2949 g_head=0.0418 g_last=0.0568 g_first=0.3741 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch8.pt
+
+--- Phase 2, Epoch 9 (P2 epoch 3) ---
+  [0/557] loss=0.2115 grad=1.3107 g_head=0.3253 g_last=0.0924 g_first=0.3689 lr=0.000000
+  [20/557] loss=0.1649 grad=1.3110 g_head=0.2192 g_last=0.0792 g_first=0.3851 lr=0.000000
+  VAL step=3100 (p2_batch=1700, freq=100) val_loss=0.1648 auc_roc_mean=0.9685
+  [40/557] loss=0.1754 grad=1.1850 g_head=0.4242 g_last=0.1240 g_first=0.3116 lr=0.000000
+  [60/557] loss=0.2017 grad=1.8830 g_head=0.7159 g_last=0.1985 g_first=0.4958 lr=0.000000
+  [80/557] loss=0.1870 grad=1.4932 g_head=0.3956 g_last=0.1080 g_first=0.3996 lr=0.000000
+  [100/557] loss=0.1934 grad=1.2085 g_head=0.2246 g_last=0.0822 g_first=0.3471 lr=0.000000
+  [120/557] loss=0.1842 grad=1.3957 g_head=0.4018 g_last=0.1319 g_first=0.3576 lr=0.000000
+  VAL step=3200 (p2_batch=1800, freq=100) val_loss=0.1635 auc_roc_mean=0.9686
+  [140/557] loss=0.1674 grad=1.2358 g_head=0.2977 g_last=0.1052 g_first=0.3208 lr=0.000000
+  [160/557] loss=0.1673 grad=1.3628 g_head=0.3259 g_last=0.1082 g_first=0.3406 lr=0.000000
+  [180/557] loss=0.1884 grad=1.1556 g_head=0.1930 g_last=0.0768 g_first=0.3468 lr=0.000000
+  [200/557] loss=0.1613 grad=1.3504 g_head=0.2753 g_last=0.1145 g_first=0.3820 lr=0.000000
+  [220/557] loss=0.2019 grad=1.3989 g_head=0.6517 g_last=0.1734 g_first=0.3503 lr=0.000000
+  VAL step=3300 (p2_batch=1900, freq=100) val_loss=0.1637 auc_roc_mean=0.9682
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step003311.pt
+  [240/557] loss=0.1839 grad=1.2520 g_head=0.0864 g_last=0.0563 g_first=0.3596 lr=0.000000
+  [260/557] loss=0.1876 grad=1.2199 g_head=0.2644 g_last=0.0933 g_first=0.3714 lr=0.000000
+  [280/557] loss=0.1848 grad=1.1851 g_head=0.0318 g_last=0.0858 g_first=0.3705 lr=0.000000
+  [300/557] loss=0.1639 grad=1.3909 g_head=0.1344 g_last=0.0852 g_first=0.3878 lr=0.000000
+  [320/557] loss=0.1827 grad=1.3195 g_head=0.4181 g_last=0.1363 g_first=0.3153 lr=0.000000
+  VAL step=3400 (p2_batch=2000, freq=100) val_loss=0.1623 auc_roc_mean=0.9693
+  REPR: xAI/output/plantclef_run/representations/features_step003400.pt shape=(1000, 1024)
+  [340/557] loss=0.2042 grad=1.4003 g_head=0.0855 g_last=0.0697 g_first=0.3600 lr=0.000000
+  [360/557] loss=0.2377 grad=1.5847 g_head=0.6253 g_last=0.1732 g_first=0.3891 lr=0.000000
+  [380/557] loss=0.2227 grad=1.6485 g_head=0.5744 g_last=0.1788 g_first=0.4028 lr=0.000000
+  [400/557] loss=0.1926 grad=1.1017 g_head=0.0997 g_last=0.0588 g_first=0.3161 lr=0.000000
+  [420/557] loss=0.1967 grad=1.3146 g_head=0.3908 g_last=0.1331 g_first=0.3440 lr=0.000000
+  VAL step=3500 (p2_batch=2100, freq=100) val_loss=0.1588 auc_roc_mean=0.9683
+  [440/557] loss=0.1816 grad=1.6484 g_head=0.1961 g_last=0.0916 g_first=0.5005 lr=0.000000
+  [460/557] loss=0.1840 grad=1.3630 g_head=0.4307 g_last=0.1051 g_first=0.4072 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step003551.pt
+  [480/557] loss=0.2122 grad=1.3762 g_head=0.4798 g_last=0.1359 g_first=0.4063 lr=0.000000
+  [500/557] loss=0.1855 grad=1.8559 g_head=0.1436 g_last=0.0694 g_first=0.4665 lr=0.000000
+  [520/557] loss=0.1983 grad=1.3097 g_head=0.0748 g_last=0.0729 g_first=0.3819 lr=0.000000
+  VAL step=3600 (p2_batch=2200, freq=100) val_loss=0.1616 auc_roc_mean=0.9687
+  [540/557] loss=0.2043 grad=1.3733 g_head=0.4135 g_last=0.1498 g_first=0.3465 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch9.pt
+
+--- Phase 2, Epoch 10 (P2 epoch 4) ---
+  [0/557] loss=0.1828 grad=1.6101 g_head=0.5163 g_last=0.1469 g_first=0.4177 lr=0.000000
+  [20/557] loss=0.1749 grad=1.4539 g_head=0.4823 g_last=0.1348 g_first=0.3724 lr=0.000000
+  [40/557] loss=0.1510 grad=1.1309 g_head=0.2129 g_last=0.0730 g_first=0.3203 lr=0.000000
+  [60/557] loss=0.1756 grad=1.4798 g_head=0.1676 g_last=0.0818 g_first=0.4117 lr=0.000000
+  VAL step=3700 (p2_batch=2300, freq=100) val_loss=0.1681 auc_roc_mean=0.9676
+  [80/557] loss=0.1699 grad=1.4530 g_head=0.1783 g_last=0.0941 g_first=0.4032 lr=0.000000
+  [100/557] loss=0.1747 grad=1.5759 g_head=0.0370 g_last=0.0911 g_first=0.4427 lr=0.000000
+  [120/557] loss=0.1616 grad=1.4763 g_head=0.2513 g_last=0.0967 g_first=0.4071 lr=0.000000
+  [140/557] loss=0.1430 grad=1.2877 g_head=0.3245 g_last=0.1031 g_first=0.3375 lr=0.000000
+  [160/557] loss=0.1709 grad=1.2446 g_head=0.3287 g_last=0.1369 g_first=0.3410 lr=0.000000
+  VAL step=3800 (p2_batch=2400, freq=100) val_loss=0.1628 auc_roc_mean=0.9678
+  [180/557] loss=0.1540 grad=1.2939 g_head=0.3304 g_last=0.1123 g_first=0.3347 lr=0.000000
+  [200/557] loss=0.1510 grad=1.3569 g_head=0.1949 g_last=0.0999 g_first=0.3431 lr=0.000000
+  [220/557] loss=0.1767 grad=1.3857 g_head=0.3565 g_last=0.1096 g_first=0.3695 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step003868.pt
+  [240/557] loss=0.1633 grad=1.3458 g_head=0.3430 g_last=0.1001 g_first=0.3817 lr=0.000000
+  [260/557] loss=0.1660 grad=1.2025 g_head=0.0775 g_last=0.0736 g_first=0.3136 lr=0.000000
+  VAL step=3900 (p2_batch=2500, freq=100) val_loss=0.1693 auc_roc_mean=0.9669
+  REPR: xAI/output/plantclef_run/representations/features_step003900.pt shape=(1000, 1024)
+  [280/557] loss=0.1531 grad=1.5828 g_head=0.0407 g_last=0.0839 g_first=0.3968 lr=0.000000
+  [300/557] loss=0.1819 grad=1.3611 g_head=0.3743 g_last=0.1181 g_first=0.3739 lr=0.000000
+  [320/557] loss=0.1452 grad=1.1550 g_head=0.3224 g_last=0.1135 g_first=0.3006 lr=0.000000
+  [340/557] loss=0.1783 grad=1.6157 g_head=0.1267 g_last=0.0808 g_first=0.4644 lr=0.000000
+  [360/557] loss=0.1907 grad=1.2447 g_head=0.1959 g_last=0.1168 g_first=0.3324 lr=0.000000
+  VAL step=4000 (p2_batch=2600, freq=100) val_loss=0.1696 auc_roc_mean=0.9671
+  [380/557] loss=0.1972 grad=1.7604 g_head=0.1605 g_last=0.1071 g_first=0.4935 lr=0.000000
+  [400/557] loss=0.1469 grad=1.2048 g_head=0.3677 g_last=0.1361 g_first=0.3331 lr=0.000000
+  [420/557] loss=0.1553 grad=1.3293 g_head=0.3960 g_last=0.1329 g_first=0.3512 lr=0.000000
+  [440/557] loss=0.1714 grad=1.3510 g_head=0.2594 g_last=0.0997 g_first=0.3681 lr=0.000000
+  [460/557] loss=0.1469 grad=1.4888 g_head=0.0739 g_last=0.0830 g_first=0.3905 lr=0.000000
+  VAL step=4100 (p2_batch=2700, freq=100) val_loss=0.1696 auc_roc_mean=0.9691
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step004108.pt
+  [480/557] loss=0.1719 grad=1.3169 g_head=0.2926 g_last=0.0998 g_first=0.3626 lr=0.000000
+  [500/557] loss=0.1442 grad=1.3249 g_head=0.1814 g_last=0.0697 g_first=0.3531 lr=0.000000
+  [520/557] loss=0.1624 grad=1.4348 g_head=0.4269 g_last=0.1281 g_first=0.3677 lr=0.000000
+  [540/557] loss=0.1426 grad=1.3600 g_head=0.2806 g_last=0.1462 g_first=0.3855 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch10.pt
+
+--- Phase 2, Epoch 11 (P2 epoch 5) ---
+  [0/557] loss=0.1422 grad=1.1332 g_head=0.2099 g_last=0.0900 g_first=0.3045 lr=0.000000
+  VAL step=4200 (p2_batch=2800, freq=100) val_loss=0.1799 auc_roc_mean=0.9672
+  [20/557] loss=0.1219 grad=1.2773 g_head=0.1231 g_last=0.1097 g_first=0.3587 lr=0.000000
+  [40/557] loss=0.1073 grad=1.3304 g_head=0.3328 g_last=0.1382 g_first=0.3407 lr=0.000000
+  [60/557] loss=0.2117 grad=1.8089 g_head=0.4691 g_last=0.2108 g_first=0.4794 lr=0.000000
+  [80/557] loss=0.1581 grad=1.6146 g_head=0.1365 g_last=0.0864 g_first=0.4131 lr=0.000000
+  [100/557] loss=0.1385 grad=1.4753 g_head=0.1861 g_last=0.0825 g_first=0.3921 lr=0.000000
+  VAL step=4300 (p2_batch=2900, freq=100) val_loss=0.1945 auc_roc_mean=0.9653
+  [120/557] loss=0.1528 grad=1.5034 g_head=0.1440 g_last=0.0927 g_first=0.4733 lr=0.000000
+  [140/557] loss=0.1601 grad=1.5727 g_head=0.4742 g_last=0.1432 g_first=0.4321 lr=0.000000
+  [160/557] loss=0.1171 grad=1.5585 g_head=0.3237 g_last=0.1154 g_first=0.3649 lr=0.000000
+  [180/557] loss=0.1279 grad=1.3726 g_head=0.1795 g_last=0.1042 g_first=0.3746 lr=0.000000
+  [200/557] loss=0.1633 grad=1.6987 g_head=0.4548 g_last=0.1595 g_first=0.4336 lr=0.000000
+  VAL step=4400 (p2_batch=3000, freq=100) val_loss=0.1845 auc_roc_mean=0.9672
+  REPR: xAI/output/plantclef_run/representations/features_step004400.pt shape=(1000, 1024)
+  [220/557] loss=0.1593 grad=1.4133 g_head=0.4653 g_last=0.1474 g_first=0.3553 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step004425.pt
+  [240/557] loss=0.1531 grad=1.6740 g_head=0.1118 g_last=0.0790 g_first=0.4493 lr=0.000000
+  [260/557] loss=0.1299 grad=1.3172 g_head=0.1752 g_last=0.0916 g_first=0.3694 lr=0.000000
+  [280/557] loss=0.1213 grad=1.2168 g_head=0.1201 g_last=0.0887 g_first=0.3271 lr=0.000000
+  [300/557] loss=0.1533 grad=1.6235 g_head=0.3827 g_last=0.1483 g_first=0.4750 lr=0.000000
+  VAL step=4500 (p2_batch=3100, freq=100) val_loss=0.1851 auc_roc_mean=0.9664
+  [320/557] loss=0.1147 grad=1.1516 g_head=0.4380 g_last=0.1298 g_first=0.2873 lr=0.000000
+  [340/557] loss=0.1780 grad=1.5019 g_head=0.5084 g_last=0.1833 g_first=0.3876 lr=0.000000
+  [360/557] loss=0.1371 grad=1.6462 g_head=0.1319 g_last=0.0838 g_first=0.4345 lr=0.000000
+  [380/557] loss=0.1618 grad=2.2083 g_head=0.2586 g_last=0.1809 g_first=0.5598 lr=0.000000
+  [400/557] loss=0.1330 grad=1.4094 g_head=0.2685 g_last=0.1136 g_first=0.3751 lr=0.000000
+  VAL step=4600 (p2_batch=3200, freq=100) val_loss=0.1841 auc_roc_mean=0.9661
+  [420/557] loss=0.1380 grad=1.6993 g_head=0.2616 g_last=0.1128 g_first=0.4000 lr=0.000000
+  [440/557] loss=0.1299 grad=1.2987 g_head=0.3819 g_last=0.1219 g_first=0.3351 lr=0.000000
+  [460/557] loss=0.1489 grad=1.5335 g_head=0.1479 g_last=0.1012 g_first=0.4042 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step004665.pt
+  [480/557] loss=0.1315 grad=1.2680 g_head=0.1962 g_last=0.1223 g_first=0.3898 lr=0.000000
+  [500/557] loss=0.1540 grad=2.0765 g_head=0.3059 g_last=0.1121 g_first=0.4898 lr=0.000000
+  VAL step=4700 (p2_batch=3300, freq=100) val_loss=0.1798 auc_roc_mean=0.9666
+  [520/557] loss=0.1367 grad=1.3902 g_head=0.2866 g_last=0.1195 g_first=0.3661 lr=0.000000
+  [540/557] loss=0.1323 grad=1.9446 g_head=0.1490 g_last=0.0732 g_first=0.4714 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch11.pt
+
+--- Phase 2, Epoch 12 (P2 epoch 6) ---
+  [0/557] loss=0.1574 grad=1.5040 g_head=0.1977 g_last=0.0925 g_first=0.4044 lr=0.000000
+  [20/557] loss=0.1254 grad=1.8681 g_head=0.5163 g_last=0.1787 g_first=0.5139 lr=0.000000
+  [40/557] loss=0.1197 grad=1.2399 g_head=0.2381 g_last=0.0952 g_first=0.3410 lr=0.000000
+  VAL step=4800 (p2_batch=3400, freq=100) val_loss=0.1986 auc_roc_mean=0.9653
+  [60/557] loss=0.1705 grad=1.7212 g_head=0.2442 g_last=0.1487 g_first=0.4551 lr=0.000000
+  [80/557] loss=0.1518 grad=2.1384 g_head=0.4904 g_last=0.2020 g_first=0.5451 lr=0.000000
+  [100/557] loss=0.1174 grad=1.4170 g_head=0.1924 g_last=0.0879 g_first=0.3957 lr=0.000000
+  [120/557] loss=0.1291 grad=1.5313 g_head=0.4079 g_last=0.1835 g_first=0.3763 lr=0.000000
+  [140/557] loss=0.1186 grad=1.6204 g_head=0.0592 g_last=0.0729 g_first=0.4434 lr=0.000000
+  VAL step=4900 (p2_batch=3500, freq=100) val_loss=0.1994 auc_roc_mean=0.9650
+  REPR: xAI/output/plantclef_run/representations/features_step004900.pt shape=(1000, 1024)
+  [160/557] loss=0.1371 grad=1.4921 g_head=0.2486 g_last=0.1020 g_first=0.4080 lr=0.000000
+  [180/557] loss=0.1152 grad=1.5517 g_head=0.1883 g_last=0.1025 g_first=0.3916 lr=0.000000
+  [200/557] loss=0.1205 grad=1.3043 g_head=0.0822 g_last=0.0782 g_first=0.3680 lr=0.000000
+  [220/557] loss=0.1037 grad=1.2631 g_head=0.0978 g_last=0.0823 g_first=0.3313 lr=0.000000
+  [240/557] loss=0.1392 grad=1.5275 g_head=0.3759 g_last=0.1703 g_first=0.3872 lr=0.000000
+  VAL step=5000 (p2_batch=3600, freq=100) val_loss=0.2032 auc_roc_mean=0.9644
+  [260/557] loss=0.1095 grad=1.5630 g_head=0.2008 g_last=0.0977 g_first=0.4561 lr=0.000000
+  [280/557] loss=0.1282 grad=1.4084 g_head=0.3828 g_last=0.1370 g_first=0.3748 lr=0.000000
+  [300/557] loss=0.1121 grad=1.2756 g_head=0.0457 g_last=0.0747 g_first=0.3676 lr=0.000000
+  [320/557] loss=0.1067 grad=1.2109 g_head=0.0704 g_last=0.0840 g_first=0.3464 lr=0.000000
+  [340/557] loss=0.1355 grad=1.7229 g_head=0.2803 g_last=0.1093 g_first=0.4508 lr=0.000000
+  VAL step=5100 (p2_batch=3700, freq=100) val_loss=0.2065 auc_roc_mean=0.9640
+  [360/557] loss=0.1507 grad=1.5128 g_head=0.1617 g_last=0.1191 g_first=0.4095 lr=0.000000
+  [380/557] loss=0.1127 grad=1.6976 g_head=0.2832 g_last=0.1360 g_first=0.4557 lr=0.000000
+  [400/557] loss=0.1269 grad=1.7191 g_head=0.3191 g_last=0.1373 g_first=0.4727 lr=0.000000
+  [420/557] loss=0.0943 grad=1.9693 g_head=0.1760 g_last=0.0974 g_first=0.6057 lr=0.000000
+  [440/557] loss=0.1329 grad=1.8408 g_head=0.3802 g_last=0.1453 g_first=0.4679 lr=0.000000
+  VAL step=5200 (p2_batch=3800, freq=100) val_loss=0.2089 auc_roc_mean=0.9647
+  [460/557] loss=0.1178 grad=1.5036 g_head=0.1213 g_last=0.0990 g_first=0.3903 lr=0.000000
+  [480/557] loss=0.1392 grad=1.4614 g_head=0.3285 g_last=0.1255 g_first=0.4123 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step005242.pt
+  [500/557] loss=0.1271 grad=1.5323 g_head=0.3211 g_last=0.1180 g_first=0.4163 lr=0.000000
+  [520/557] loss=0.1274 grad=1.3185 g_head=0.2363 g_last=0.1085 g_first=0.3458 lr=0.000000
+  [540/557] loss=0.1177 grad=2.1188 g_head=0.1410 g_last=0.0935 g_first=0.6097 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch12.pt
+
+--- Phase 2, Epoch 13 (P2 epoch 7) ---
+  VAL step=5300 (p2_batch=3900, freq=100) val_loss=0.2087 auc_roc_mean=0.9648
+  [0/557] loss=0.1129 grad=1.4731 g_head=0.1307 g_last=0.1102 g_first=0.4036 lr=0.000000
+  [20/557] loss=0.1060 grad=1.5201 g_head=0.0832 g_last=0.0693 g_first=0.4115 lr=0.000000
+  [40/557] loss=0.1116 grad=1.6798 g_head=0.0504 g_last=0.0790 g_first=0.4312 lr=0.000000
+  [60/557] loss=0.0988 grad=1.5084 g_head=0.4320 g_last=0.1609 g_first=0.3863 lr=0.000000
+  [80/557] loss=0.1210 grad=1.6628 g_head=0.1550 g_last=0.1000 g_first=0.4577 lr=0.000000
+  VAL step=5400 (p2_batch=4000, freq=100) val_loss=0.2186 auc_roc_mean=0.9632
+  REPR: xAI/output/plantclef_run/representations/features_step005400.pt shape=(1000, 1024)
+  [100/557] loss=0.1226 grad=1.4821 g_head=0.1656 g_last=0.0928 g_first=0.3970 lr=0.000000
+  [120/557] loss=0.1397 grad=1.9661 g_head=0.3785 g_last=0.1585 g_first=0.5818 lr=0.000000
+  [140/557] loss=0.1003 grad=1.7136 g_head=0.3096 g_last=0.1204 g_first=0.4806 lr=0.000000
+  [160/557] loss=0.0992 grad=1.5080 g_head=0.0454 g_last=0.0830 g_first=0.4415 lr=0.000000
+  [180/557] loss=0.0952 grad=1.2382 g_head=0.0453 g_last=0.0738 g_first=0.3188 lr=0.000000
+  VAL step=5500 (p2_batch=4100, freq=100) val_loss=0.2216 auc_roc_mean=0.9630
+  [200/557] loss=0.1007 grad=1.3101 g_head=0.0738 g_last=0.0686 g_first=0.3627 lr=0.000000
+  [220/557] loss=0.1270 grad=1.7690 g_head=0.3042 g_last=0.1548 g_first=0.4289 lr=0.000000
+  [240/557] loss=0.1004 grad=1.2075 g_head=0.1869 g_last=0.1156 g_first=0.3372 lr=0.000000
+  [260/557] loss=0.1292 grad=1.6053 g_head=0.1242 g_last=0.1348 g_first=0.4289 lr=0.000000
+  [280/557] loss=0.0931 grad=1.1896 g_head=0.0803 g_last=0.0774 g_first=0.3247 lr=0.000000
+  VAL step=5600 (p2_batch=4200, freq=100) val_loss=0.2233 auc_roc_mean=0.9632
+  [300/557] loss=0.0895 grad=1.5349 g_head=0.0336 g_last=0.1028 g_first=0.4667 lr=0.000000
+  [320/557] loss=0.1088 grad=1.4958 g_head=0.2011 g_last=0.1042 g_first=0.3937 lr=0.000000
+  [340/557] loss=0.1001 grad=1.5325 g_head=0.1309 g_last=0.0970 g_first=0.3883 lr=0.000000
+  [360/557] loss=0.1018 grad=1.2471 g_head=0.1343 g_last=0.0970 g_first=0.3574 lr=0.000000
+  [380/557] loss=0.1473 grad=2.6511 g_head=0.1164 g_last=0.1352 g_first=0.6086 lr=0.000000
+  VAL step=5700 (p2_batch=4300, freq=100) val_loss=0.2241 auc_roc_mean=0.9633
+  [400/557] loss=0.1155 grad=1.5307 g_head=0.5303 g_last=0.2113 g_first=0.3683 lr=0.000000
+  [420/557] loss=0.1112 grad=1.8182 g_head=0.2300 g_last=0.1172 g_first=0.4890 lr=0.000000
+  [440/557] loss=0.0985 grad=1.4911 g_head=0.3304 g_last=0.1447 g_first=0.4064 lr=0.000000
+  [460/557] loss=0.1036 grad=1.3423 g_head=0.1966 g_last=0.1095 g_first=0.3541 lr=0.000000
+  [480/557] loss=0.1056 grad=1.3670 g_head=0.1042 g_last=0.0822 g_first=0.3708 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step005799.pt
+  VAL step=5800 (p2_batch=4400, freq=100) val_loss=0.2270 auc_roc_mean=0.9630
+  [500/557] loss=0.0890 grad=1.3575 g_head=0.3104 g_last=0.1343 g_first=0.4070 lr=0.000000
+  [520/557] loss=0.1252 grad=1.8217 g_head=0.3420 g_last=0.1489 g_first=0.5033 lr=0.000000
+  [540/557] loss=0.1159 grad=1.5653 g_head=0.1138 g_last=0.0831 g_first=0.4413 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch13.pt
+
+--- Phase 2, Epoch 14 (P2 epoch 8) ---
+  [0/557] loss=0.0731 grad=1.0642 g_head=0.1616 g_last=0.1083 g_first=0.2659 lr=0.000000
+  [20/557] loss=0.1004 grad=2.0591 g_head=0.2705 g_last=0.1203 g_first=0.5462 lr=0.000000
+  [40/557] loss=0.1075 grad=1.5759 g_head=0.1177 g_last=0.0828 g_first=0.4254 lr=0.000000
+  VAL step=5900 (p2_batch=4500, freq=100) val_loss=0.2292 auc_roc_mean=0.9629
+  REPR: xAI/output/plantclef_run/representations/features_step005900.pt shape=(1000, 1024)
+  [60/557] loss=0.1004 grad=1.3182 g_head=0.1429 g_last=0.0902 g_first=0.3486 lr=0.000000
+  [80/557] loss=0.1470 grad=1.7213 g_head=0.4069 g_last=0.1818 g_first=0.4576 lr=0.000000
+  [100/557] loss=0.0926 grad=1.2959 g_head=0.0322 g_last=0.1291 g_first=0.3525 lr=0.000000
+  [120/557] loss=0.1193 grad=1.4813 g_head=0.0992 g_last=0.0753 g_first=0.4397 lr=0.000000
+  [140/557] loss=0.0887 grad=1.4144 g_head=0.0491 g_last=0.0911 g_first=0.3750 lr=0.000000
+  VAL step=6000 (p2_batch=4600, freq=100) val_loss=0.2308 auc_roc_mean=0.9631
+  [160/557] loss=0.0993 grad=1.4190 g_head=0.1703 g_last=0.0886 g_first=0.4015 lr=0.000000
+  [180/557] loss=0.1239 grad=1.6040 g_head=0.2686 g_last=0.1465 g_first=0.4197 lr=0.000000
+  [200/557] loss=0.1261 grad=2.0169 g_head=0.1046 g_last=0.1139 g_first=0.5280 lr=0.000000
+  [220/557] loss=0.1040 grad=1.5846 g_head=0.2707 g_last=0.1160 g_first=0.4690 lr=0.000000
+  [240/557] loss=0.1021 grad=1.3057 g_head=0.3335 g_last=0.1335 g_first=0.3503 lr=0.000000
+  VAL step=6100 (p2_batch=4700, freq=100) val_loss=0.2313 auc_roc_mean=0.9631
+  [260/557] loss=0.1082 grad=1.4451 g_head=0.1130 g_last=0.0840 g_first=0.3953 lr=0.000000
+  [280/557] loss=0.1203 grad=2.1796 g_head=0.2971 g_last=0.1379 g_first=0.6487 lr=0.000000
+  [300/557] loss=0.0887 grad=1.3032 g_head=0.1656 g_last=0.0958 g_first=0.3911 lr=0.000000
+  [320/557] loss=0.0771 grad=1.2197 g_head=0.0969 g_last=0.1027 g_first=0.3967 lr=0.000000
+  [340/557] loss=0.1269 grad=1.8363 g_head=0.1717 g_last=0.1120 g_first=0.4801 lr=0.000000
+  VAL step=6200 (p2_batch=4800, freq=100) val_loss=0.2314 auc_roc_mean=0.9629
+  [360/557] loss=0.1213 grad=1.8100 g_head=0.1751 g_last=0.1073 g_first=0.5215 lr=0.000000
+  [380/557] loss=0.1052 grad=1.5325 g_head=0.0617 g_last=0.0829 g_first=0.3914 lr=0.000000
+  [400/557] loss=0.1535 grad=1.8580 g_head=0.2449 g_last=0.1856 g_first=0.5218 lr=0.000000
+  [420/557] loss=0.0980 grad=1.3106 g_head=0.1688 g_last=0.0923 g_first=0.3508 lr=0.000000
+  [440/557] loss=0.1034 grad=1.3267 g_head=0.0960 g_last=0.0841 g_first=0.4013 lr=0.000000
+  VAL step=6300 (p2_batch=4900, freq=100) val_loss=0.2318 auc_roc_mean=0.9629
+  [460/557] loss=0.0769 grad=1.8153 g_head=0.1399 g_last=0.0926 g_first=0.4887 lr=0.000000
+  [480/557] loss=0.0949 grad=1.5177 g_head=0.1354 g_last=0.0845 g_first=0.4360 lr=0.000000
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step006356.pt
+  [500/557] loss=0.1043 grad=1.5275 g_head=0.1460 g_last=0.0901 g_first=0.4578 lr=0.000000
+  [520/557] loss=0.1070 grad=1.9766 g_head=0.3568 g_last=0.1428 g_first=0.4760 lr=0.000000
+  [540/557] loss=0.1168 grad=1.5659 g_head=0.1530 g_last=0.0973 g_first=0.4263 lr=0.000000
+  VAL step=6400 (p2_batch=5000, freq=100) val_loss=0.2321 auc_roc_mean=0.9628
+  REPR: xAI/output/plantclef_run/representations/features_step006400.pt shape=(1000, 1024)
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch14.pt
+
+Phase 2 took 450.7 minutes
+
+============================================================
+TRAINING COMPLETE
+============================================================
+  Total time: 541.7 minutes
+  Total steps: 6413
+  Phase 1 ended at epoch 5
+  Output: xAI/output/plantclef_run
+Done: Tue Mar 17 06:52:18 AM EDT 2026

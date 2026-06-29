@@ -1,0 +1,47 @@
+Mon Mar 16 05:22:43 PM EDT 2026
+c1109a-s15.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI PlantCLEF training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: plantclef
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/plantclef_run
+
+Device: cuda:0
+Loading data...
+  Training images: 2141091
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: plantclef
+  Total parameters: 303,303,682
+  CKPT: xAI/output/plantclef_run/checkpoints/epoch0_init.pt
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization)
+============================================================
+  Trainable parameters: 2,050 (head only)
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/2787] loss=0.6932 lr=0.001000
+  Epoch 0 [20/2787] loss=0.5185 lr=0.001000
+  Epoch 0 [40/2787] loss=0.5001 lr=0.001000
+  Epoch 0 [60/2787] loss=0.4916 lr=0.001000
+  Epoch 0 [80/2787] loss=0.4866 lr=0.001000
+  VAL step=100 val_loss=0.4252 auc_roc_mean=0.8798
+  Epoch 0 [100/2787] loss=0.4508 lr=0.001000
+  Epoch 0 [120/2787] loss=0.3942 lr=0.001000
+  Epoch 0 [140/2787] loss=0.4038 lr=0.001000
+  Epoch 0 [160/2787] loss=0.4170 lr=0.001000
+  Epoch 0 [180/2787] loss=0.3817 lr=0.001000
+  VAL step=200 val_loss=0.3574 auc_roc_mean=0.8897
+  Epoch 0 [200/2787] loss=0.3708 lr=0.001000
+  Epoch 0 [220/2787] loss=0.3853 lr=0.001000
+  Epoch 0 [240/2787] loss=0.3610 lr=0.001000
+  Epoch 0 [260/2787] loss=0.3478 lr=0.001000
+  Epoch 0 [280/2787] loss=0.3424 lr=0.001000
+  VAL step=300 val_loss=0.3244 auc_roc_mean=0.8970
+  Epoch 0 [300/2787] loss=0.3470 lr=0.001000

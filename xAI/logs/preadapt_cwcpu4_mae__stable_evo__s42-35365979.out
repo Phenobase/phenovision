@@ -1,0 +1,1291 @@
+Sun Jun 21 10:19:32 AM EDT 2026
+host=c0702a-s2.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt CPU collector worker 4 ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+nthreads=8
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35365973
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4430 SKIP heavy block block_circuits (ordinal=886 basis=step_fallback heavy_every=8)
+[extract] step=4430 heavy=FALSE total=194.90s | block_optim=142.94 block_weights=38.10 block_trajectory=1.00
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4430 blocks_ok=3 t=194.904s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+warning  libmamba failed to open /home/r.dinnage/.cache/mamba/proc/12760.json
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4598 SKIP heavy block block_circuits (ordinal=919 basis=step_fallback heavy_every=8)
+[extract] step=4598 heavy=FALSE total=188.22s | block_optim=140.24 block_weights=33.72 block_trajectory=0.79
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4598 blocks_ok=3 t=188.216s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4634 SKIP heavy block block_circuits (ordinal=926 basis=step_fallback heavy_every=8)
+[extract] step=4634 heavy=FALSE total=193.14s | block_optim=142.36 block_weights=36.52 block_trajectory=0.86
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4634 blocks_ok=3 t=193.14s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4672 SKIP heavy block block_circuits (ordinal=934 basis=step_fallback heavy_every=8)
+[extract] step=4672 heavy=FALSE total=191.62s | block_optim=143.13 block_weights=34.60 block_trajectory=0.69
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4672 blocks_ok=3 t=191.618s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4696 SKIP heavy block block_circuits (ordinal=939 basis=step_fallback heavy_every=8)
+[extract] step=4696 heavy=FALSE total=189.97s | block_optim=142.13 block_weights=34.54 block_trajectory=0.71
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4696 blocks_ok=3 t=189.971s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4720 heavy=TRUE total=191.61s | block_optim=137.02 block_weights=35.76 block_trajectory=0.93 block_circuits=5.82
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4720 blocks_ok=4 t=191.606s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4744 SKIP heavy block block_circuits (ordinal=948 basis=step_fallback heavy_every=8)
+[extract] step=4744 heavy=FALSE total=190.13s | block_optim=142.21 block_weights=34.80 block_trajectory=0.89
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4744 blocks_ok=3 t=190.125s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4840 heavy=TRUE total=199.97s | block_optim=144.93 block_weights=36.42 block_trajectory=0.91 block_circuits=5.32
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4840 blocks_ok=4 t=199.967s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=4962 heavy=TRUE total=200.89s | block_optim=142.40 block_weights=37.91 block_trajectory=0.91 block_circuits=6.84
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=4962 blocks_ok=4 t=200.89s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5082 heavy=TRUE total=191.42s | block_optim=140.73 block_weights=33.30 block_trajectory=0.71 block_circuits=4.65
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5082 blocks_ok=4 t=191.423s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5118 SKIP heavy block block_circuits (ordinal=1023 basis=step_fallback heavy_every=8)
+[extract] step=5118 heavy=FALSE total=193.93s | block_optim=143.76 block_weights=36.63 block_trajectory=0.89
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5118 blocks_ok=3 t=193.926s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5240 heavy=TRUE total=202.94s | block_optim=146.57 block_weights=37.11 block_trajectory=0.83 block_circuits=5.31
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5240 blocks_ok=4 t=202.94s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5276 SKIP heavy block block_circuits (ordinal=1055 basis=step_fallback heavy_every=8)
+[extract] step=5276 heavy=FALSE total=202.04s | block_optim=150.28 block_weights=37.50 block_trajectory=1.20
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5276 blocks_ok=3 t=202.037s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5336 SKIP heavy block block_circuits (ordinal=1067 basis=step_fallback heavy_every=8)
+[extract] step=5336 heavy=FALSE total=191.56s | block_optim=145.88 block_weights=32.36 block_trajectory=0.77
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5336 blocks_ok=3 t=191.564s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5372 SKIP heavy block block_circuits (ordinal=1074 basis=step_fallback heavy_every=8)
+[extract] step=5372 heavy=FALSE total=199.91s | block_optim=149.40 block_weights=36.54 block_trajectory=0.97
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5372 blocks_ok=3 t=199.908s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5456 SKIP heavy block block_circuits (ordinal=1091 basis=step_fallback heavy_every=8)
+[extract] step=5456 heavy=FALSE total=207.12s | block_optim=159.49 block_weights=32.84 block_trajectory=0.92
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5456 blocks_ok=3 t=207.12s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5480 heavy=TRUE total=215.15s | block_optim=157.76 block_weights=35.37 block_trajectory=1.36 block_circuits=7.00
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5480 blocks_ok=4 t=215.15s (all_passes_complete=True)
+[collector wcpu4] FINALIZED run_id=mae__stable_evo__s42 step=5480 -> deleted
+[collector wcpu4] --once drained 2 checkpoint(s); exiting.
+[cwcpu4] drained 2 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5554 SKIP heavy block block_circuits (ordinal=1110 basis=step_fallback heavy_every=8)
+[extract] step=5554 heavy=FALSE total=200.65s | block_optim=148.84 block_weights=37.25 block_trajectory=1.01
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5554 blocks_ok=3 t=200.653s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5698 SKIP heavy block block_circuits (ordinal=1139 basis=step_fallback heavy_every=8)
+[extract] step=5698 heavy=FALSE total=202.29s | block_optim=150.50 block_weights=38.57 block_trajectory=0.99
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5698 blocks_ok=3 t=202.289s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5772 SKIP heavy block block_circuits (ordinal=1154 basis=step_fallback heavy_every=8)
+[extract] step=5772 heavy=FALSE total=189.34s | block_optim=139.62 block_weights=35.99 block_trajectory=0.76
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5772 blocks_ok=3 t=189.341s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5796 SKIP heavy block block_circuits (ordinal=1159 basis=step_fallback heavy_every=8)
+[extract] step=5796 heavy=FALSE total=193.65s | block_optim=143.55 block_weights=36.21 block_trajectory=0.94
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5796 blocks_ok=3 t=193.654s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=5832 SKIP heavy block block_circuits (ordinal=1166 basis=step_fallback heavy_every=8)
+[extract] step=5832 heavy=FALSE total=206.63s | block_optim=155.10 block_weights=37.17 block_trajectory=0.98
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=5832 blocks_ok=3 t=206.627s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6024 SKIP heavy block block_circuits (ordinal=1204 basis=step_fallback heavy_every=8)
+[extract] step=6024 heavy=FALSE total=200.42s | block_optim=151.01 block_weights=36.19 block_trajectory=1.01
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6024 blocks_ok=3 t=200.416s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6098 SKIP heavy block block_circuits (ordinal=1219 basis=step_fallback heavy_every=8)
+[extract] step=6098 heavy=FALSE total=197.87s | block_optim=145.94 block_weights=36.04 block_trajectory=0.92
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6098 blocks_ok=3 t=197.873s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6134 SKIP heavy block block_circuits (ordinal=1226 basis=step_fallback heavy_every=8)
+[extract] step=6134 heavy=FALSE total=206.49s | block_optim=155.53 block_weights=37.98 block_trajectory=1.29
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6134 blocks_ok=3 t=206.489s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6182 SKIP heavy block block_circuits (ordinal=1236 basis=step_fallback heavy_every=8)
+[extract] step=6182 heavy=FALSE total=211.72s | block_optim=158.05 block_weights=39.50 block_trajectory=1.02
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6182 blocks_ok=3 t=211.717s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6206 SKIP heavy block block_circuits (ordinal=1241 basis=step_fallback heavy_every=8)
+[extract] step=6206 heavy=FALSE total=202.38s | block_optim=152.06 block_weights=36.41 block_trajectory=0.86
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6206 blocks_ok=3 t=202.376s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6230 SKIP heavy block block_circuits (ordinal=1246 basis=step_fallback heavy_every=8)
+[extract] step=6230 heavy=FALSE total=204.28s | block_optim=152.58 block_weights=38.26 block_trajectory=0.96
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6230 blocks_ok=3 t=204.278s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6302 SKIP heavy block block_circuits (ordinal=1260 basis=step_fallback heavy_every=8)
+[extract] step=6302 heavy=FALSE total=202.47s | block_optim=154.33 block_weights=33.65 block_trajectory=0.82
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6302 blocks_ok=3 t=202.468s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6328 SKIP heavy block block_circuits (ordinal=1265 basis=step_fallback heavy_every=8)
+[extract] step=6328 heavy=FALSE total=213.97s | block_optim=160.75 block_weights=39.05 block_trajectory=0.86
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6328 blocks_ok=3 t=213.965s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6364 heavy=TRUE total=212.31s | block_optim=155.59 block_weights=38.01 block_trajectory=0.78 block_circuits=5.04
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6364 blocks_ok=4 t=212.308s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6388 SKIP heavy block block_circuits (ordinal=1277 basis=step_fallback heavy_every=8)
+[extract] step=6388 heavy=FALSE total=209.46s | block_optim=158.42 block_weights=37.60 block_trajectory=1.07
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6388 blocks_ok=3 t=209.463s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6412 SKIP heavy block block_circuits (ordinal=1282 basis=step_fallback heavy_every=8)
+[extract] step=6412 heavy=FALSE total=208.89s | block_optim=152.39 block_weights=42.30 block_trajectory=0.93
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6412 blocks_ok=3 t=208.889s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6508 SKIP heavy block block_circuits (ordinal=1301 basis=step_fallback heavy_every=8)
+[extract] step=6508 heavy=FALSE total=204.42s | block_optim=152.05 block_weights=37.34 block_trajectory=1.11
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6508 blocks_ok=3 t=204.418s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[collector wcpu4] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_optim.py:258: RuntimeWarning: overflow encountered in cast
+  scalars = np.array([lam_max, lam_floor, trace, sum_log, pr, eff_rank, cond, aniso,
+[extract] step=6570 SKIP heavy block block_circuits (ordinal=1314 basis=step_fallback heavy_every=8)
+[extract] step=6570 heavy=FALSE total=185.08s | block_optim=136.25 block_weights=36.31 block_trajectory=0.79
+[collector wcpu4] cpu-pass DONE run_id=mae__stable_evo__s42 step=6570 blocks_ok=3 t=185.081s (all_passes_complete=False)
+[collector wcpu4] --once drained 1 checkpoint(s); exiting.
+[cwcpu4] drained 1 checkpoint(s); looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain found nothing new and aggregate queue depth=0 -> all runs collected. Exiting.
+Done: Sun Jun 21 04:29:10 PM EDT 2026

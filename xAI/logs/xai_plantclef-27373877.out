@@ -1,0 +1,148 @@
+Mon Mar 16 06:23:34 PM EDT 2026
+c0903a-s25.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI PlantCLEF training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: plantclef
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/plantclef_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: plantclef
+  Total parameters: 303,303,682
+  CKPT: xAI/output/plantclef_run/checkpoints/epoch0_init.pt
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization)
+============================================================
+  Trainable parameters: 2,050 (head only)
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/278] loss=0.6931 lr=0.001000
+  Epoch 0 [20/278] loss=0.5729 lr=0.001000
+  Epoch 0 [40/278] loss=0.5108 lr=0.001000
+  Epoch 0 [60/278] loss=0.4702 lr=0.001000
+  Epoch 0 [80/278] loss=0.4610 lr=0.000999
+  VAL step=100 val_loss=0.4272 auc_roc_mean=0.8795
+  Epoch 0 [100/278] loss=0.4349 lr=0.000999
+  Epoch 0 [120/278] loss=0.4238 lr=0.000998
+  Epoch 0 [140/278] loss=0.3993 lr=0.000997
+  Epoch 0 [160/278] loss=0.3911 lr=0.000997
+  Epoch 0 [180/278] loss=0.3929 lr=0.000996
+  VAL step=200 val_loss=0.3581 auc_roc_mean=0.8900
+  Epoch 0 [200/278] loss=0.3791 lr=0.000995
+  Epoch 0 [220/278] loss=0.4068 lr=0.000994
+  Epoch 0 [240/278] loss=0.3565 lr=0.000993
+  Epoch 0 [260/278] loss=0.3523 lr=0.000991
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch0.pt
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/278] loss=0.3747 lr=0.000990
+  Epoch 1 [20/278] loss=0.3638 lr=0.000989
+  VAL step=300 val_loss=0.3244 auc_roc_mean=0.8976
+  Epoch 1 [40/278] loss=0.3472 lr=0.000987
+  Epoch 1 [60/278] loss=0.3411 lr=0.000985
+  Epoch 1 [80/278] loss=0.3553 lr=0.000984
+  Epoch 1 [100/278] loss=0.3439 lr=0.000982
+  Epoch 1 [120/278] loss=0.3349 lr=0.000980
+  VAL step=400 val_loss=0.3049 auc_roc_mean=0.9034
+  Epoch 1 [140/278] loss=0.3434 lr=0.000978
+  Epoch 1 [160/278] loss=0.3270 lr=0.000976
+  Epoch 1 [180/278] loss=0.3268 lr=0.000973
+  Epoch 1 [200/278] loss=0.3168 lr=0.000971
+  Epoch 1 [220/278] loss=0.3078 lr=0.000969
+  VAL step=500 val_loss=0.2934 auc_roc_mean=0.9073
+  Epoch 1 [240/278] loss=0.3305 lr=0.000966
+  Epoch 1 [260/278] loss=0.2982 lr=0.000964
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch1.pt
+
+--- Phase 1, Epoch 2 ---
+  Epoch 2 [0/278] loss=0.3371 lr=0.000961
+  Epoch 2 [20/278] loss=0.2958 lr=0.000958
+  Epoch 2 [40/278] loss=0.3252 lr=0.000955
+  VAL step=600 val_loss=0.2837 auc_roc_mean=0.9107
+  Epoch 2 [60/278] loss=0.3179 lr=0.000952
+  Epoch 2 [80/278] loss=0.3418 lr=0.000949
+  Epoch 2 [100/278] loss=0.3209 lr=0.000946
+  Epoch 2 [120/278] loss=0.2998 lr=0.000943
+  Epoch 2 [140/278] loss=0.3023 lr=0.000940
+  VAL step=700 val_loss=0.2758 auc_roc_mean=0.9134
+  Epoch 2 [160/278] loss=0.3156 lr=0.000936
+  Epoch 2 [180/278] loss=0.3173 lr=0.000933
+  Epoch 2 [200/278] loss=0.3028 lr=0.000929
+  Epoch 2 [220/278] loss=0.2858 lr=0.000925
+  Epoch 2 [240/278] loss=0.3130 lr=0.000921
+  VAL step=800 val_loss=0.2705 auc_roc_mean=0.9156
+  Epoch 2 [260/278] loss=0.3223 lr=0.000918
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch2.pt
+
+--- Phase 1, Epoch 3 ---
+  Epoch 3 [0/278] loss=0.2967 lr=0.000914
+  Epoch 3 [20/278] loss=0.3044 lr=0.000910
+  Epoch 3 [40/278] loss=0.3139 lr=0.000906
+  Epoch 3 [60/278] loss=0.3006 lr=0.000902
+  VAL step=900 val_loss=0.2662 auc_roc_mean=0.9172
+  Epoch 3 [80/278] loss=0.3036 lr=0.000897
+  Epoch 3 [100/278] loss=0.2718 lr=0.000893
+  Epoch 3 [120/278] loss=0.2909 lr=0.000889
+  Epoch 3 [140/278] loss=0.2820 lr=0.000884
+  Epoch 3 [160/278] loss=0.2899 lr=0.000880
+  VAL step=1000 val_loss=0.2630 auc_roc_mean=0.9187
+  Epoch 3 [180/278] loss=0.3157 lr=0.000875
+  Epoch 3 [200/278] loss=0.2953 lr=0.000870
+  Epoch 3 [220/278] loss=0.3035 lr=0.000865
+  Epoch 3 [240/278] loss=0.2647 lr=0.000861
+  Epoch 3 [260/278] loss=0.3219 lr=0.000856
+  VAL step=1100 val_loss=0.2596 auc_roc_mean=0.9200
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch3.pt
+
+--- Phase 1, Epoch 4 ---
+  Epoch 4 [0/278] loss=0.2869 lr=0.000851
+  Epoch 4 [20/278] loss=0.2997 lr=0.000846
+  Epoch 4 [40/278] loss=0.3121 lr=0.000841
+  Epoch 4 [60/278] loss=0.3007 lr=0.000836
+  Epoch 4 [80/278] loss=0.2981 lr=0.000830
+  VAL step=1200 val_loss=0.2581 auc_roc_mean=0.9209
+  Epoch 4 [100/278] loss=0.2716 lr=0.000825
+  Epoch 4 [120/278] loss=0.3093 lr=0.000820
+  Epoch 4 [140/278] loss=0.2977 lr=0.000814
+  Epoch 4 [160/278] loss=0.2893 lr=0.000809
+  Epoch 4 [180/278] loss=0.2996 lr=0.000803
+  VAL step=1300 val_loss=0.2561 auc_roc_mean=0.9216
+  Plateau (1/2) auc_roc improvement=0.0016
+  Epoch 4 [200/278] loss=0.3077 lr=0.000797
+  Epoch 4 [220/278] loss=0.2765 lr=0.000792
+  Epoch 4 [240/278] loss=0.2823 lr=0.000786
+  Epoch 4 [260/278] loss=0.2931 lr=0.000780
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch4.pt
+
+--- Phase 1, Epoch 5 ---
+  Epoch 5 [0/278] loss=0.2566 lr=0.000775
+  VAL step=1400 val_loss=0.2545 auc_roc_mean=0.9225
+  Plateau (2/2) auc_roc improvement=0.0016
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_epoch5.pt
+
+*** Phase 1 converged at epoch 5, step 1400 ***
+  CKPT: xAI/output/plantclef_run/checkpoints/phase1_final.pt
+
+PHASE_TRANSITION: step=1400 epoch=5 val_loss=0.2545 auc_roc_mean=0.9225
+
+Phase 1 took 100.0 minutes
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 6 (P2 epoch 0) ---
+Done: Mon Mar 16 08:05:03 PM EDT 2026

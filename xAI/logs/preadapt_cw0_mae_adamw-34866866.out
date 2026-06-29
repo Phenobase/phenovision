@@ -1,0 +1,60 @@
+Tue Jun 16 05:10:47 PM EDT 2026
+host=c0602a-s13.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt collector worker 0 ===
+run_dir=xAI/output/preadapt/mae__adamw__s42 variant=adamw seed=42
+watch_dir=xAI/output/preadapt/mae__adamw__s42/checkpoints
+sentinel=xAI/output/preadapt/mae__adamw__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jid=34866865
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.
+[collector w0] --once drained 0 checkpoint(s); exiting.

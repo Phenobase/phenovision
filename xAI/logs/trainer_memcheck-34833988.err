@@ -1,0 +1,41 @@
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+Traceback (most recent call last):
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 850, in save
+    _save(
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 1122, in _save
+    zip_file.write_record(name, storage, num_bytes)
+OSError: [Errno 122] Disk quota exceeded
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 165, in save_checkpoint_atomic
+    torch.save(state, f)
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 849, in save
+    with _open_zipfile_writer(f) as opened_zipfile:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 706, in __exit__
+    self.file_like.write_end_of_file()
+RuntimeError: [enforce fail at inline_container.cc:603] . unexpected pos 13878528 vs 13878416
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1422, in <module>
+    main()
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1408, in main
+    gstep = run_phase2(
+            ^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1237, in run_phase2
+    emit_checkpoint(global_step, epoch, reason)
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1140, in emit_checkpoint
+    save_checkpoint_atomic(state, path)
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 164, in save_checkpoint_atomic
+    with open(tmp, "wb") as f:
+         ^^^^^^^^^^^^^^^
+OSError: [Errno 122] Disk quota exceeded

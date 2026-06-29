@@ -1,0 +1,1473 @@
+Fri Jun 26 03:18:56 PM EDT 2026
+host=c0611a-s21.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=10
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s43
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s43/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s43/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35808772
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] d90 backfill queue exhausted (no pending configs); idle-collecting only.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7292 SKIP heavy block block_interp (ordinal=1458 basis=step_fallback heavy_every=8)
+[extract] step=7292 SKIP heavy block block_probes (ordinal=1458 basis=step_fallback heavy_every=8)
+[extract] step=7292 heavy=FALSE total=17.57s | block_curvature=5.74 block_fitness=6.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7292 blocks_ok=2 t=17.571s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7292 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7304 SKIP heavy block block_interp (ordinal=1460 basis=step_fallback heavy_every=8)
+[extract] step=7304 SKIP heavy block block_probes (ordinal=1460 basis=step_fallback heavy_every=8)
+[extract] step=7304 heavy=FALSE total=16.44s | block_curvature=5.08 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7304 blocks_ok=2 t=16.443s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7304 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7316 SKIP heavy block block_interp (ordinal=1463 basis=step_fallback heavy_every=8)
+[extract] step=7316 SKIP heavy block block_probes (ordinal=1463 basis=step_fallback heavy_every=8)
+[extract] step=7316 heavy=FALSE total=16.70s | block_curvature=4.66 block_fitness=6.01
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7316 blocks_ok=2 t=16.704s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7316 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7328 SKIP heavy block block_interp (ordinal=1465 basis=step_fallback heavy_every=8)
+[extract] step=7328 SKIP heavy block block_probes (ordinal=1465 basis=step_fallback heavy_every=8)
+[extract] step=7328 heavy=FALSE total=15.98s | block_curvature=4.71 block_fitness=6.04
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7328 blocks_ok=2 t=15.984s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7328 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7340 SKIP heavy block block_interp (ordinal=1468 basis=step_fallback heavy_every=8)
+[extract] step=7340 SKIP heavy block block_probes (ordinal=1468 basis=step_fallback heavy_every=8)
+[extract] step=7340 heavy=FALSE total=15.76s | block_curvature=4.69 block_fitness=5.87
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7340 blocks_ok=2 t=15.761s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7340 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7352 SKIP heavy block block_interp (ordinal=1470 basis=step_fallback heavy_every=8)
+[extract] step=7352 SKIP heavy block block_probes (ordinal=1470 basis=step_fallback heavy_every=8)
+[extract] step=7352 heavy=FALSE total=15.84s | block_curvature=4.69 block_fitness=5.88
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7352 blocks_ok=2 t=15.841s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7352 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7364 heavy=TRUE total=91.58s | block_curvature=4.72 block_interp=40.58 block_probes=34.25 block_fitness=7.01
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7364 blocks_ok=4 t=91.577s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7364 -> deleted
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=7376 SKIP heavy block block_interp (ordinal=1475 basis=step_fallback heavy_every=8)
+[extract] step=7376 SKIP heavy block block_probes (ordinal=1475 basis=step_fallback heavy_every=8)
+[extract] step=7376 heavy=FALSE total=15.85s | block_curvature=4.65 block_fitness=5.87
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7376 blocks_ok=2 t=15.848s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7376 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7388 SKIP heavy block block_interp (ordinal=1477 basis=step_fallback heavy_every=8)
+[extract] step=7388 SKIP heavy block block_probes (ordinal=1477 basis=step_fallback heavy_every=8)
+[extract] step=7388 heavy=FALSE total=15.91s | block_curvature=4.69 block_fitness=5.92
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7388 blocks_ok=2 t=15.913s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7388 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7400 heavy=TRUE total=98.97s | block_curvature=4.72 block_interp=40.03 block_probes=42.81 block_fitness=6.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7400 blocks_ok=4 t=98.965s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7400 -> deleted
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=7412 SKIP heavy block block_interp (ordinal=1482 basis=step_fallback heavy_every=8)
+[extract] step=7412 SKIP heavy block block_probes (ordinal=1482 basis=step_fallback heavy_every=8)
+[extract] step=7412 heavy=FALSE total=16.88s | block_curvature=4.71 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7412 blocks_ok=2 t=16.881s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7412 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7424 SKIP heavy block block_interp (ordinal=1484 basis=step_fallback heavy_every=8)
+[extract] step=7424 SKIP heavy block block_probes (ordinal=1484 basis=step_fallback heavy_every=8)
+[extract] step=7424 heavy=FALSE total=16.60s | block_curvature=5.30 block_fitness=6.07
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7424 blocks_ok=2 t=16.597s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7424 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7436 SKIP heavy block block_interp (ordinal=1487 basis=step_fallback heavy_every=8)
+[extract] step=7436 SKIP heavy block block_probes (ordinal=1487 basis=step_fallback heavy_every=8)
+[extract] step=7436 heavy=FALSE total=16.76s | block_curvature=5.34 block_fitness=6.00
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7436 blocks_ok=2 t=16.755s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7436 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7448 SKIP heavy block block_interp (ordinal=1489 basis=step_fallback heavy_every=8)
+[extract] step=7448 SKIP heavy block block_probes (ordinal=1489 basis=step_fallback heavy_every=8)
+[extract] step=7448 heavy=FALSE total=15.98s | block_curvature=4.74 block_fitness=5.97
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7448 blocks_ok=2 t=15.981s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7448 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7460 SKIP heavy block block_interp (ordinal=1492 basis=step_fallback heavy_every=8)
+[extract] step=7460 SKIP heavy block block_probes (ordinal=1492 basis=step_fallback heavy_every=8)
+[extract] step=7460 heavy=FALSE total=15.96s | block_curvature=4.75 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7460 blocks_ok=2 t=15.957s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7460 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7472 SKIP heavy block block_interp (ordinal=1494 basis=step_fallback heavy_every=8)
+[extract] step=7472 SKIP heavy block block_probes (ordinal=1494 basis=step_fallback heavy_every=8)
+[extract] step=7472 heavy=FALSE total=16.15s | block_curvature=4.77 block_fitness=5.98
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7472 blocks_ok=2 t=16.15s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7472 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7484 heavy=TRUE total=108.24s | block_curvature=5.29 block_interp=44.75 block_probes=45.82 block_fitness=6.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7484 blocks_ok=4 t=108.242s (all_passes_complete=True)
+[extract] step=7496 SKIP heavy block block_interp (ordinal=1499 basis=step_fallback heavy_every=8)
+[extract] step=7496 SKIP heavy block block_probes (ordinal=1499 basis=step_fallback heavy_every=8)
+[extract] step=7496 heavy=FALSE total=17.24s | block_curvature=5.09 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7496 blocks_ok=2 t=17.236s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7496 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7484 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7508 SKIP heavy block block_interp (ordinal=1501 basis=step_fallback heavy_every=8)
+[extract] step=7508 SKIP heavy block block_probes (ordinal=1501 basis=step_fallback heavy_every=8)
+[extract] step=7508 heavy=FALSE total=17.02s | block_curvature=4.94 block_fitness=6.15
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7508 blocks_ok=2 t=17.016s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7508 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7520 heavy=TRUE total=101.89s | block_curvature=4.74 block_interp=42.71 block_probes=42.80 block_fitness=6.15
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7520 blocks_ok=4 t=101.89s (all_passes_complete=True)
+[extract] step=7532 SKIP heavy block block_interp (ordinal=1506 basis=step_fallback heavy_every=8)
+[extract] step=7532 SKIP heavy block block_probes (ordinal=1506 basis=step_fallback heavy_every=8)
+[extract] step=7532 heavy=FALSE total=15.83s | block_curvature=4.61 block_fitness=5.52
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7532 blocks_ok=2 t=15.834s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7520 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7532 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7544 SKIP heavy block block_interp (ordinal=1508 basis=step_fallback heavy_every=8)
+[extract] step=7544 SKIP heavy block block_probes (ordinal=1508 basis=step_fallback heavy_every=8)
+[extract] step=7544 heavy=FALSE total=16.34s | block_curvature=4.71 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7544 blocks_ok=2 t=16.337s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7544 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7556 SKIP heavy block block_interp (ordinal=1511 basis=step_fallback heavy_every=8)
+[extract] step=7556 SKIP heavy block block_probes (ordinal=1511 basis=step_fallback heavy_every=8)
+[extract] step=7556 heavy=FALSE total=17.17s | block_curvature=5.48 block_fitness=6.26
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7556 blocks_ok=2 t=17.171s (all_passes_complete=True)
+[extract] step=7558 SKIP heavy block block_interp (ordinal=1511 basis=step_fallback heavy_every=8)
+[extract] step=7558 SKIP heavy block block_probes (ordinal=1511 basis=step_fallback heavy_every=8)
+[extract] step=7558 heavy=FALSE total=15.98s | block_curvature=5.15 block_fitness=5.41
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7558 blocks_ok=2 t=15.978s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7558 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7556 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7570 SKIP heavy block block_interp (ordinal=1514 basis=step_fallback heavy_every=8)
+[extract] step=7570 SKIP heavy block block_probes (ordinal=1514 basis=step_fallback heavy_every=8)
+[extract] step=7570 heavy=FALSE total=17.27s | block_curvature=4.75 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7570 blocks_ok=2 t=17.275s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7570 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7582 SKIP heavy block block_interp (ordinal=1516 basis=step_fallback heavy_every=8)
+[extract] step=7582 SKIP heavy block block_probes (ordinal=1516 basis=step_fallback heavy_every=8)
+[extract] step=7582 heavy=FALSE total=16.48s | block_curvature=4.75 block_fitness=6.12
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7582 blocks_ok=2 t=16.48s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7582 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7594 SKIP heavy block block_interp (ordinal=1518 basis=step_fallback heavy_every=8)
+[extract] step=7594 SKIP heavy block block_probes (ordinal=1518 basis=step_fallback heavy_every=8)
+[extract] step=7594 heavy=FALSE total=16.12s | block_curvature=4.72 block_fitness=6.06
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7594 blocks_ok=2 t=16.116s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7594 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7606 SKIP heavy block block_interp (ordinal=1521 basis=step_fallback heavy_every=8)
+[extract] step=7606 SKIP heavy block block_probes (ordinal=1521 basis=step_fallback heavy_every=8)
+[extract] step=7606 heavy=FALSE total=16.39s | block_curvature=4.70 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7606 blocks_ok=2 t=16.388s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7606 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7618 SKIP heavy block block_interp (ordinal=1523 basis=step_fallback heavy_every=8)
+[extract] step=7618 SKIP heavy block block_probes (ordinal=1523 basis=step_fallback heavy_every=8)
+[extract] step=7618 heavy=FALSE total=17.05s | block_curvature=5.10 block_fitness=6.14
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7618 blocks_ok=2 t=17.047s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7618 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7630 SKIP heavy block block_interp (ordinal=1526 basis=step_fallback heavy_every=8)
+[extract] step=7630 SKIP heavy block block_probes (ordinal=1526 basis=step_fallback heavy_every=8)
+[extract] step=7630 heavy=FALSE total=17.16s | block_curvature=4.72 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7630 blocks_ok=2 t=17.158s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7630 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7642 heavy=TRUE total=102.33s | block_curvature=4.79 block_interp=43.20 block_probes=42.80 block_fitness=6.06
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7642 blocks_ok=4 t=102.331s (all_passes_complete=True)
+[extract] step=7654 SKIP heavy block block_interp (ordinal=1530 basis=step_fallback heavy_every=8)
+[extract] step=7654 SKIP heavy block block_probes (ordinal=1530 basis=step_fallback heavy_every=8)
+[extract] step=7654 heavy=FALSE total=15.97s | block_curvature=5.15 block_fitness=5.41
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7654 blocks_ok=2 t=15.967s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7642 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7654 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7666 SKIP heavy block block_interp (ordinal=1533 basis=step_fallback heavy_every=8)
+[extract] step=7666 SKIP heavy block block_probes (ordinal=1533 basis=step_fallback heavy_every=8)
+[extract] step=7666 heavy=FALSE total=16.78s | block_curvature=4.89 block_fitness=6.18
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7666 blocks_ok=2 t=16.776s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7666 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7678 SKIP heavy block block_interp (ordinal=1535 basis=step_fallback heavy_every=8)
+[extract] step=7678 SKIP heavy block block_probes (ordinal=1535 basis=step_fallback heavy_every=8)
+[extract] step=7678 heavy=FALSE total=16.59s | block_curvature=4.80 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7678 blocks_ok=2 t=16.594s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7678 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7690 SKIP heavy block block_interp (ordinal=1538 basis=step_fallback heavy_every=8)
+[extract] step=7690 SKIP heavy block block_probes (ordinal=1538 basis=step_fallback heavy_every=8)
+[extract] step=7690 heavy=FALSE total=16.80s | block_curvature=4.82 block_fitness=6.25
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7690 blocks_ok=2 t=16.797s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7690 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7702 SKIP heavy block block_interp (ordinal=1540 basis=step_fallback heavy_every=8)
+[extract] step=7702 SKIP heavy block block_probes (ordinal=1540 basis=step_fallback heavy_every=8)
+[extract] step=7702 heavy=FALSE total=16.58s | block_curvature=4.80 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7702 blocks_ok=2 t=16.58s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7702 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7714 SKIP heavy block block_interp (ordinal=1542 basis=step_fallback heavy_every=8)
+[extract] step=7714 SKIP heavy block block_probes (ordinal=1542 basis=step_fallback heavy_every=8)
+[extract] step=7714 heavy=FALSE total=16.62s | block_curvature=4.77 block_fitness=6.16
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7714 blocks_ok=2 t=16.623s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7714 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7726 SKIP heavy block block_interp (ordinal=1545 basis=step_fallback heavy_every=8)
+[extract] step=7726 SKIP heavy block block_probes (ordinal=1545 basis=step_fallback heavy_every=8)
+[extract] step=7726 heavy=FALSE total=17.34s | block_curvature=5.22 block_fitness=6.03
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7726 blocks_ok=2 t=17.335s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7726 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7738 SKIP heavy block block_interp (ordinal=1547 basis=step_fallback heavy_every=8)
+[extract] step=7738 SKIP heavy block block_probes (ordinal=1547 basis=step_fallback heavy_every=8)
+[extract] step=7738 heavy=FALSE total=16.97s | block_curvature=4.93 block_fitness=6.28
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7738 blocks_ok=2 t=16.975s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7738 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7750 SKIP heavy block block_interp (ordinal=1550 basis=step_fallback heavy_every=8)
+[extract] step=7750 SKIP heavy block block_probes (ordinal=1550 basis=step_fallback heavy_every=8)
+[extract] step=7750 heavy=FALSE total=16.43s | block_curvature=4.80 block_fitness=6.20
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7750 blocks_ok=2 t=16.426s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7750 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7762 heavy=TRUE total=100.05s | block_curvature=4.77 block_interp=43.58 block_probes=39.56 block_fitness=6.55
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7762 blocks_ok=4 t=100.05s (all_passes_complete=True)
+[extract] step=7774 SKIP heavy block block_interp (ordinal=1554 basis=step_fallback heavy_every=8)
+[extract] step=7774 SKIP heavy block block_probes (ordinal=1554 basis=step_fallback heavy_every=8)
+[extract] step=7774 heavy=FALSE total=17.09s | block_curvature=4.64 block_fitness=5.81
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7774 blocks_ok=2 t=17.085s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7762 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7774 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7786 SKIP heavy block block_interp (ordinal=1557 basis=step_fallback heavy_every=8)
+[extract] step=7786 SKIP heavy block block_probes (ordinal=1557 basis=step_fallback heavy_every=8)
+[extract] step=7786 heavy=FALSE total=16.56s | block_curvature=4.71 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7786 blocks_ok=2 t=16.563s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7786 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7798 SKIP heavy block block_interp (ordinal=1559 basis=step_fallback heavy_every=8)
+[extract] step=7798 SKIP heavy block block_probes (ordinal=1559 basis=step_fallback heavy_every=8)
+[extract] step=7798 heavy=FALSE total=16.46s | block_curvature=4.70 block_fitness=6.10
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7798 blocks_ok=2 t=16.455s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7798 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7810 SKIP heavy block block_interp (ordinal=1562 basis=step_fallback heavy_every=8)
+[extract] step=7810 SKIP heavy block block_probes (ordinal=1562 basis=step_fallback heavy_every=8)
+[extract] step=7810 heavy=FALSE total=16.63s | block_curvature=4.73 block_fitness=6.04
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7810 blocks_ok=2 t=16.625s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7810 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7822 SKIP heavy block block_interp (ordinal=1564 basis=step_fallback heavy_every=8)
+[extract] step=7822 SKIP heavy block block_probes (ordinal=1564 basis=step_fallback heavy_every=8)
+[extract] step=7822 heavy=FALSE total=16.86s | block_curvature=4.83 block_fitness=6.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7822 blocks_ok=2 t=16.856s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7822 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7834 SKIP heavy block block_interp (ordinal=1566 basis=step_fallback heavy_every=8)
+[extract] step=7834 SKIP heavy block block_probes (ordinal=1566 basis=step_fallback heavy_every=8)
+[extract] step=7834 heavy=FALSE total=16.59s | block_curvature=4.74 block_fitness=6.14
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7834 blocks_ok=2 t=16.593s (all_passes_complete=True)
+[extract] step=7836 SKIP heavy block block_interp (ordinal=1567 basis=step_fallback heavy_every=8)
+[extract] step=7836 SKIP heavy block block_probes (ordinal=1567 basis=step_fallback heavy_every=8)
+[extract] step=7836 heavy=FALSE total=16.91s | block_curvature=4.61 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7836 blocks_ok=2 t=16.911s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7836 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7834 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7848 SKIP heavy block block_interp (ordinal=1569 basis=step_fallback heavy_every=8)
+[extract] step=7848 SKIP heavy block block_probes (ordinal=1569 basis=step_fallback heavy_every=8)
+[extract] step=7848 heavy=FALSE total=16.59s | block_curvature=4.73 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7848 blocks_ok=2 t=16.592s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7848 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7860 SKIP heavy block block_interp (ordinal=1572 basis=step_fallback heavy_every=8)
+[extract] step=7860 SKIP heavy block block_probes (ordinal=1572 basis=step_fallback heavy_every=8)
+[extract] step=7860 heavy=FALSE total=16.85s | block_curvature=4.75 block_fitness=6.01
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7860 blocks_ok=2 t=16.851s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7860 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7872 SKIP heavy block block_interp (ordinal=1574 basis=step_fallback heavy_every=8)
+[extract] step=7872 SKIP heavy block block_probes (ordinal=1574 basis=step_fallback heavy_every=8)
+[extract] step=7872 heavy=FALSE total=16.69s | block_curvature=4.76 block_fitness=6.10
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7872 blocks_ok=2 t=16.693s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7872 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7884 heavy=TRUE total=105.64s | block_curvature=5.74 block_interp=43.48 block_probes=44.82 block_fitness=6.30
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7884 blocks_ok=4 t=105.639s (all_passes_complete=True)
+[extract] step=7896 SKIP heavy block block_interp (ordinal=1579 basis=step_fallback heavy_every=8)
+[extract] step=7896 SKIP heavy block block_probes (ordinal=1579 basis=step_fallback heavy_every=8)
+[extract] step=7896 heavy=FALSE total=16.80s | block_curvature=5.13 block_fitness=5.45
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7896 blocks_ok=2 t=16.797s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7884 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7896 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7908 SKIP heavy block block_interp (ordinal=1581 basis=step_fallback heavy_every=8)
+[extract] step=7908 SKIP heavy block block_probes (ordinal=1581 basis=step_fallback heavy_every=8)
+[extract] step=7908 heavy=FALSE total=16.75s | block_curvature=4.79 block_fitness=6.12
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7908 blocks_ok=2 t=16.754s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7908 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7920 heavy=TRUE total=97.48s | block_curvature=4.79 block_interp=42.63 block_probes=37.14 block_fitness=7.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7920 blocks_ok=4 t=97.482s (all_passes_complete=True)
+[extract] step=7932 SKIP heavy block block_interp (ordinal=1586 basis=step_fallback heavy_every=8)
+[extract] step=7932 SKIP heavy block block_probes (ordinal=1586 basis=step_fallback heavy_every=8)
+[extract] step=7932 heavy=FALSE total=17.08s | block_curvature=4.60 block_fitness=6.75
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7932 blocks_ok=2 t=17.083s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7932 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7920 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7944 SKIP heavy block block_interp (ordinal=1588 basis=step_fallback heavy_every=8)
+[extract] step=7944 SKIP heavy block block_probes (ordinal=1588 basis=step_fallback heavy_every=8)
+[extract] step=7944 heavy=FALSE total=16.94s | block_curvature=4.79 block_fitness=6.22
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7944 blocks_ok=2 t=16.943s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7944 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7956 SKIP heavy block block_interp (ordinal=1591 basis=step_fallback heavy_every=8)
+[extract] step=7956 SKIP heavy block block_probes (ordinal=1591 basis=step_fallback heavy_every=8)
+[extract] step=7956 heavy=FALSE total=16.42s | block_curvature=4.70 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7956 blocks_ok=2 t=16.425s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7956 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7968 SKIP heavy block block_interp (ordinal=1593 basis=step_fallback heavy_every=8)
+[extract] step=7968 SKIP heavy block block_probes (ordinal=1593 basis=step_fallback heavy_every=8)
+[extract] step=7968 heavy=FALSE total=16.62s | block_curvature=4.78 block_fitness=6.28
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7968 blocks_ok=2 t=16.624s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7968 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=7980 SKIP heavy block block_interp (ordinal=1596 basis=step_fallback heavy_every=8)
+[extract] step=7980 SKIP heavy block block_probes (ordinal=1596 basis=step_fallback heavy_every=8)
+[extract] step=7980 heavy=FALSE total=16.75s | block_curvature=4.72 block_fitness=6.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7980 blocks_ok=2 t=16.746s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7980 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=7992 SKIP heavy block block_interp (ordinal=1598 basis=step_fallback heavy_every=8)
+[extract] step=7992 SKIP heavy block block_probes (ordinal=1598 basis=step_fallback heavy_every=8)
+[extract] step=7992 heavy=FALSE total=16.60s | block_curvature=4.72 block_fitness=6.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=7992 blocks_ok=2 t=16.595s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=7992 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8004 heavy=TRUE total=105.16s | block_curvature=4.76 block_interp=42.92 block_probes=45.19 block_fitness=6.69
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8004 blocks_ok=4 t=105.165s (all_passes_complete=True)
+[extract] step=8016 SKIP heavy block block_interp (ordinal=1603 basis=step_fallback heavy_every=8)
+[extract] step=8016 SKIP heavy block block_probes (ordinal=1603 basis=step_fallback heavy_every=8)
+[extract] step=8016 heavy=FALSE total=16.13s | block_curvature=4.73 block_fitness=5.60
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8016 blocks_ok=2 t=16.13s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8016 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8004 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8028 SKIP heavy block block_interp (ordinal=1605 basis=step_fallback heavy_every=8)
+[extract] step=8028 SKIP heavy block block_probes (ordinal=1605 basis=step_fallback heavy_every=8)
+[extract] step=8028 heavy=FALSE total=17.18s | block_curvature=5.02 block_fitness=6.43
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8028 blocks_ok=2 t=17.181s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8028 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8040 heavy=TRUE total=96.21s | block_curvature=4.75 block_interp=42.32 block_probes=35.81 block_fitness=7.80
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8040 blocks_ok=4 t=96.212s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8040 -> deleted
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=8052 SKIP heavy block block_interp (ordinal=1610 basis=step_fallback heavy_every=8)
+[extract] step=8052 SKIP heavy block block_probes (ordinal=1610 basis=step_fallback heavy_every=8)
+[extract] step=8052 heavy=FALSE total=17.27s | block_curvature=4.68 block_fitness=6.00
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8052 blocks_ok=2 t=17.265s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8052 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8064 SKIP heavy block block_interp (ordinal=1612 basis=step_fallback heavy_every=8)
+[extract] step=8064 SKIP heavy block block_probes (ordinal=1612 basis=step_fallback heavy_every=8)
+[extract] step=8064 heavy=FALSE total=16.85s | block_curvature=4.79 block_fitness=6.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8064 blocks_ok=2 t=16.851s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8064 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8076 SKIP heavy block block_interp (ordinal=1615 basis=step_fallback heavy_every=8)
+[extract] step=8076 SKIP heavy block block_probes (ordinal=1615 basis=step_fallback heavy_every=8)
+[extract] step=8076 heavy=FALSE total=17.14s | block_curvature=4.81 block_fitness=6.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8076 blocks_ok=2 t=17.138s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8076 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8088 SKIP heavy block block_interp (ordinal=1617 basis=step_fallback heavy_every=8)
+[extract] step=8088 SKIP heavy block block_probes (ordinal=1617 basis=step_fallback heavy_every=8)
+[extract] step=8088 heavy=FALSE total=17.95s | block_curvature=5.15 block_fitness=6.47
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8088 blocks_ok=2 t=17.953s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8088 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8100 SKIP heavy block block_interp (ordinal=1620 basis=step_fallback heavy_every=8)
+[extract] step=8100 SKIP heavy block block_probes (ordinal=1620 basis=step_fallback heavy_every=8)
+[extract] step=8100 heavy=FALSE total=16.95s | block_curvature=4.85 block_fitness=6.25
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8100 blocks_ok=2 t=16.952s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8100 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8112 SKIP heavy block block_interp (ordinal=1622 basis=step_fallback heavy_every=8)
+[extract] step=8112 SKIP heavy block block_probes (ordinal=1622 basis=step_fallback heavy_every=8)
+[extract] step=8112 heavy=FALSE total=16.65s | block_curvature=4.68 block_fitness=6.13
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8112 blocks_ok=2 t=16.647s (all_passes_complete=True)
+[extract] step=8114 SKIP heavy block block_interp (ordinal=1622 basis=step_fallback heavy_every=8)
+[extract] step=8114 SKIP heavy block block_probes (ordinal=1622 basis=step_fallback heavy_every=8)
+[extract] step=8114 heavy=FALSE total=17.60s | block_curvature=5.16 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8114 blocks_ok=2 t=17.597s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8114 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8112 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8126 SKIP heavy block block_interp (ordinal=1625 basis=step_fallback heavy_every=8)
+[extract] step=8126 SKIP heavy block block_probes (ordinal=1625 basis=step_fallback heavy_every=8)
+[extract] step=8126 heavy=FALSE total=17.67s | block_curvature=5.11 block_fitness=6.61
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8126 blocks_ok=2 t=17.668s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8126 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8138 SKIP heavy block block_interp (ordinal=1627 basis=step_fallback heavy_every=8)
+[extract] step=8138 SKIP heavy block block_probes (ordinal=1627 basis=step_fallback heavy_every=8)
+[extract] step=8138 heavy=FALSE total=17.65s | block_curvature=5.15 block_fitness=6.50
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8138 blocks_ok=2 t=17.654s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8138 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8150 SKIP heavy block block_interp (ordinal=1630 basis=step_fallback heavy_every=8)
+[extract] step=8150 SKIP heavy block block_probes (ordinal=1630 basis=step_fallback heavy_every=8)
+[extract] step=8150 heavy=FALSE total=16.40s | block_curvature=4.75 block_fitness=6.19
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8150 blocks_ok=2 t=16.404s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8150 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+warning  libmamba failed to open /home/r.dinnage/.cache/mamba/proc/595034.json
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8162 heavy=TRUE total=103.55s | block_curvature=4.74 block_interp=43.15 block_probes=43.76 block_fitness=6.40
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8162 blocks_ok=4 t=103.555s (all_passes_complete=True)
+[extract] step=8174 SKIP heavy block block_interp (ordinal=1634 basis=step_fallback heavy_every=8)
+[extract] step=8174 SKIP heavy block block_probes (ordinal=1634 basis=step_fallback heavy_every=8)
+[extract] step=8174 heavy=FALSE total=17.02s | block_curvature=5.15 block_fitness=5.48
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8174 blocks_ok=2 t=17.02s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8174 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8162 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8186 SKIP heavy block block_interp (ordinal=1637 basis=step_fallback heavy_every=8)
+[extract] step=8186 SKIP heavy block block_probes (ordinal=1637 basis=step_fallback heavy_every=8)
+[extract] step=8186 heavy=FALSE total=16.72s | block_curvature=4.70 block_fitness=6.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8186 blocks_ok=2 t=16.724s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8186 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8198 SKIP heavy block block_interp (ordinal=1639 basis=step_fallback heavy_every=8)
+[extract] step=8198 SKIP heavy block block_probes (ordinal=1639 basis=step_fallback heavy_every=8)
+[extract] step=8198 heavy=FALSE total=16.66s | block_curvature=4.70 block_fitness=6.13
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8198 blocks_ok=2 t=16.664s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8198 -> KEPT(->kept/,ladder model-only+FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8210 SKIP heavy block block_interp (ordinal=1642 basis=step_fallback heavy_every=8)
+[extract] step=8210 SKIP heavy block block_probes (ordinal=1642 basis=step_fallback heavy_every=8)
+[extract] step=8210 heavy=FALSE total=16.95s | block_curvature=5.09 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8210 blocks_ok=2 t=16.949s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8210 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8222 SKIP heavy block block_interp (ordinal=1644 basis=step_fallback heavy_every=8)
+[extract] step=8222 SKIP heavy block block_probes (ordinal=1644 basis=step_fallback heavy_every=8)
+[extract] step=8222 heavy=FALSE total=16.49s | block_curvature=4.73 block_fitness=6.06
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8222 blocks_ok=2 t=16.492s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8222 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8234 SKIP heavy block block_interp (ordinal=1646 basis=step_fallback heavy_every=8)
+[extract] step=8234 SKIP heavy block block_probes (ordinal=1646 basis=step_fallback heavy_every=8)
+[extract] step=8234 heavy=FALSE total=16.82s | block_curvature=4.73 block_fitness=6.26
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8234 blocks_ok=2 t=16.821s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8234 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8246 SKIP heavy block block_interp (ordinal=1649 basis=step_fallback heavy_every=8)
+[extract] step=8246 SKIP heavy block block_probes (ordinal=1649 basis=step_fallback heavy_every=8)
+[extract] step=8246 heavy=FALSE total=16.76s | block_curvature=4.75 block_fitness=6.51
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8246 blocks_ok=2 t=16.762s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8246 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8258 SKIP heavy block block_interp (ordinal=1651 basis=step_fallback heavy_every=8)
+[extract] step=8258 SKIP heavy block block_probes (ordinal=1651 basis=step_fallback heavy_every=8)
+[extract] step=8258 heavy=FALSE total=17.11s | block_curvature=4.77 block_fitness=6.28
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8258 blocks_ok=2 t=17.107s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8258 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8270 SKIP heavy block block_interp (ordinal=1654 basis=step_fallback heavy_every=8)
+[extract] step=8270 SKIP heavy block block_probes (ordinal=1654 basis=step_fallback heavy_every=8)
+[extract] step=8270 heavy=FALSE total=17.81s | block_curvature=5.38 block_fitness=6.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8270 blocks_ok=2 t=17.811s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8270 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8282 heavy=TRUE total=108.22s | block_curvature=4.75 block_interp=44.57 block_probes=47.06 block_fitness=6.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8282 blocks_ok=4 t=108.218s (all_passes_complete=True)
+[extract] step=8294 SKIP heavy block block_interp (ordinal=1658 basis=step_fallback heavy_every=8)
+[extract] step=8294 SKIP heavy block block_probes (ordinal=1658 basis=step_fallback heavy_every=8)
+[extract] step=8294 heavy=FALSE total=16.11s | block_curvature=4.62 block_fitness=5.67
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8294 blocks_ok=2 t=16.115s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8294 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8282 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8306 SKIP heavy block block_interp (ordinal=1661 basis=step_fallback heavy_every=8)
+[extract] step=8306 SKIP heavy block block_probes (ordinal=1661 basis=step_fallback heavy_every=8)
+[extract] step=8306 heavy=FALSE total=17.31s | block_curvature=5.02 block_fitness=6.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8306 blocks_ok=2 t=17.307s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8306 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8318 SKIP heavy block block_interp (ordinal=1663 basis=step_fallback heavy_every=8)
+[extract] step=8318 SKIP heavy block block_probes (ordinal=1663 basis=step_fallback heavy_every=8)
+[extract] step=8318 heavy=FALSE total=17.01s | block_curvature=4.82 block_fitness=6.38
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8318 blocks_ok=2 t=17.01s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8318 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8330 SKIP heavy block block_interp (ordinal=1666 basis=step_fallback heavy_every=8)
+[extract] step=8330 SKIP heavy block block_probes (ordinal=1666 basis=step_fallback heavy_every=8)
+[extract] step=8330 heavy=FALSE total=16.79s | block_curvature=4.78 block_fitness=6.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8330 blocks_ok=2 t=16.791s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8330 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8342 SKIP heavy block block_interp (ordinal=1668 basis=step_fallback heavy_every=8)
+[extract] step=8342 SKIP heavy block block_probes (ordinal=1668 basis=step_fallback heavy_every=8)
+[extract] step=8342 heavy=FALSE total=16.87s | block_curvature=4.82 block_fitness=6.34
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8342 blocks_ok=2 t=16.865s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8342 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8354 SKIP heavy block block_interp (ordinal=1670 basis=step_fallback heavy_every=8)
+[extract] step=8354 SKIP heavy block block_probes (ordinal=1670 basis=step_fallback heavy_every=8)
+[extract] step=8354 heavy=FALSE total=17.06s | block_curvature=4.79 block_fitness=6.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8354 blocks_ok=2 t=17.059s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8354 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8366 SKIP heavy block block_interp (ordinal=1673 basis=step_fallback heavy_every=8)
+[extract] step=8366 SKIP heavy block block_probes (ordinal=1673 basis=step_fallback heavy_every=8)
+[extract] step=8366 heavy=FALSE total=16.71s | block_curvature=4.70 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8366 blocks_ok=2 t=16.706s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8366 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8378 SKIP heavy block block_interp (ordinal=1675 basis=step_fallback heavy_every=8)
+[extract] step=8378 SKIP heavy block block_probes (ordinal=1675 basis=step_fallback heavy_every=8)
+[extract] step=8378 heavy=FALSE total=17.72s | block_curvature=5.54 block_fitness=6.31
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8378 blocks_ok=2 t=17.718s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8378 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8390 SKIP heavy block block_interp (ordinal=1678 basis=step_fallback heavy_every=8)
+[extract] step=8390 SKIP heavy block block_probes (ordinal=1678 basis=step_fallback heavy_every=8)
+[extract] step=8390 heavy=FALSE total=16.79s | block_curvature=4.73 block_fitness=6.25
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8390 blocks_ok=2 t=16.792s (all_passes_complete=True)
+[extract] step=8392 SKIP heavy block block_interp (ordinal=1678 basis=step_fallback heavy_every=8)
+[extract] step=8392 SKIP heavy block block_probes (ordinal=1678 basis=step_fallback heavy_every=8)
+[extract] step=8392 heavy=FALSE total=17.00s | block_curvature=4.81 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8392 blocks_ok=2 t=16.998s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8390 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8392 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8404 heavy=TRUE total=103.35s | block_curvature=4.76 block_interp=45.59 block_probes=38.91 block_fitness=8.05
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8404 blocks_ok=4 t=103.349s (all_passes_complete=True)
+[extract] step=8416 SKIP heavy block block_interp (ordinal=1683 basis=step_fallback heavy_every=8)
+[extract] step=8416 SKIP heavy block block_probes (ordinal=1683 basis=step_fallback heavy_every=8)
+[extract] step=8416 heavy=FALSE total=17.42s | block_curvature=4.64 block_fitness=7.13
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8416 blocks_ok=2 t=17.422s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8416 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8404 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8428 SKIP heavy block block_interp (ordinal=1685 basis=step_fallback heavy_every=8)
+[extract] step=8428 SKIP heavy block block_probes (ordinal=1685 basis=step_fallback heavy_every=8)
+[extract] step=8428 heavy=FALSE total=16.92s | block_curvature=4.70 block_fitness=6.30
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8428 blocks_ok=2 t=16.916s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8428 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8440 heavy=TRUE total=103.76s | block_curvature=4.76 block_interp=42.90 block_probes=43.87 block_fitness=6.70
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8440 blocks_ok=4 t=103.764s (all_passes_complete=True)
+[extract] step=8452 SKIP heavy block block_interp (ordinal=1690 basis=step_fallback heavy_every=8)
+[extract] step=8452 SKIP heavy block block_probes (ordinal=1690 basis=step_fallback heavy_every=8)
+[extract] step=8452 heavy=FALSE total=17.00s | block_curvature=4.61 block_fitness=5.70
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8452 blocks_ok=2 t=16.997s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8452 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8440 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8464 SKIP heavy block block_interp (ordinal=1692 basis=step_fallback heavy_every=8)
+[extract] step=8464 SKIP heavy block block_probes (ordinal=1692 basis=step_fallback heavy_every=8)
+[extract] step=8464 heavy=FALSE total=16.78s | block_curvature=4.76 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8464 blocks_ok=2 t=16.782s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8464 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8476 SKIP heavy block block_interp (ordinal=1695 basis=step_fallback heavy_every=8)
+[extract] step=8476 SKIP heavy block block_probes (ordinal=1695 basis=step_fallback heavy_every=8)
+[extract] step=8476 heavy=FALSE total=16.76s | block_curvature=4.78 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8476 blocks_ok=2 t=16.759s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8476 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8488 SKIP heavy block block_interp (ordinal=1697 basis=step_fallback heavy_every=8)
+[extract] step=8488 SKIP heavy block block_probes (ordinal=1697 basis=step_fallback heavy_every=8)
+[extract] step=8488 heavy=FALSE total=17.92s | block_curvature=5.35 block_fitness=6.53
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8488 blocks_ok=2 t=17.921s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8488 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8500 SKIP heavy block block_interp (ordinal=1700 basis=step_fallback heavy_every=8)
+[extract] step=8500 SKIP heavy block block_probes (ordinal=1700 basis=step_fallback heavy_every=8)
+[extract] step=8500 heavy=FALSE total=17.07s | block_curvature=4.84 block_fitness=6.29
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8500 blocks_ok=2 t=17.069s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8500 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=8512 SKIP heavy block block_interp (ordinal=1702 basis=step_fallback heavy_every=8)
+[extract] step=8512 SKIP heavy block block_probes (ordinal=1702 basis=step_fallback heavy_every=8)
+[extract] step=8512 heavy=FALSE total=16.75s | block_curvature=4.81 block_fitness=6.29
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8512 blocks_ok=2 t=16.754s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8512 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8524 heavy=TRUE total=105.14s | block_curvature=4.80 block_interp=43.89 block_probes=44.32 block_fitness=6.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8524 blocks_ok=4 t=105.145s (all_passes_complete=True)
+[extract] step=8536 SKIP heavy block block_interp (ordinal=1707 basis=step_fallback heavy_every=8)
+[extract] step=8536 SKIP heavy block block_probes (ordinal=1707 basis=step_fallback heavy_every=8)
+[extract] step=8536 heavy=FALSE total=17.13s | block_curvature=4.58 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8536 blocks_ok=2 t=17.127s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8536 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8524 -> deleted
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8548 SKIP heavy block block_interp (ordinal=1709 basis=step_fallback heavy_every=8)
+[extract] step=8548 SKIP heavy block block_probes (ordinal=1709 basis=step_fallback heavy_every=8)
+[extract] step=8548 heavy=FALSE total=16.77s | block_curvature=4.72 block_fitness=6.21
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8548 blocks_ok=2 t=16.766s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8548 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8560 heavy=TRUE total=103.91s | block_curvature=4.71 block_interp=43.53 block_probes=43.83 block_fitness=6.20
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8560 blocks_ok=4 t=103.915s (all_passes_complete=True)
+[extract] step=8572 SKIP heavy block block_interp (ordinal=1714 basis=step_fallback heavy_every=8)
+[extract] step=8572 SKIP heavy block block_probes (ordinal=1714 basis=step_fallback heavy_every=8)
+[extract] step=8572 heavy=FALSE total=16.05s | block_curvature=4.79 block_fitness=5.48
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8572 blocks_ok=2 t=16.052s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8560 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8572 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8584 SKIP heavy block block_interp (ordinal=1716 basis=step_fallback heavy_every=8)
+[extract] step=8584 SKIP heavy block block_probes (ordinal=1716 basis=step_fallback heavy_every=8)
+[extract] step=8584 heavy=FALSE total=16.67s | block_curvature=4.94 block_fitness=5.98
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8584 blocks_ok=2 t=16.671s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8584 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8596 SKIP heavy block block_interp (ordinal=1719 basis=step_fallback heavy_every=8)
+[extract] step=8596 SKIP heavy block block_probes (ordinal=1719 basis=step_fallback heavy_every=8)
+[extract] step=8596 heavy=FALSE total=16.82s | block_curvature=4.72 block_fitness=6.21
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8596 blocks_ok=2 t=16.823s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8596 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8608 SKIP heavy block block_interp (ordinal=1721 basis=step_fallback heavy_every=8)
+[extract] step=8608 SKIP heavy block block_probes (ordinal=1721 basis=step_fallback heavy_every=8)
+[extract] step=8608 heavy=FALSE total=16.60s | block_curvature=4.73 block_fitness=6.18
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8608 blocks_ok=2 t=16.603s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8608 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8620 SKIP heavy block block_interp (ordinal=1724 basis=step_fallback heavy_every=8)
+[extract] step=8620 SKIP heavy block block_probes (ordinal=1724 basis=step_fallback heavy_every=8)
+[extract] step=8620 heavy=FALSE total=16.49s | block_curvature=4.74 block_fitness=6.13
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8620 blocks_ok=2 t=16.492s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8620 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8632 SKIP heavy block block_interp (ordinal=1726 basis=step_fallback heavy_every=8)
+[extract] step=8632 SKIP heavy block block_probes (ordinal=1726 basis=step_fallback heavy_every=8)
+[extract] step=8632 heavy=FALSE total=16.53s | block_curvature=4.72 block_fitness=6.13
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8632 blocks_ok=2 t=16.529s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8632 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8644 heavy=TRUE total=103.35s | block_curvature=4.71 block_interp=42.98 block_probes=44.10 block_fitness=6.28
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8644 blocks_ok=4 t=103.346s (all_passes_complete=True)
+[extract] step=8656 SKIP heavy block block_interp (ordinal=1731 basis=step_fallback heavy_every=8)
+[extract] step=8656 SKIP heavy block block_probes (ordinal=1731 basis=step_fallback heavy_every=8)
+[extract] step=8656 heavy=FALSE total=16.24s | block_curvature=5.12 block_fitness=5.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8656 blocks_ok=2 t=16.237s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8644 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8656 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8668 SKIP heavy block block_interp (ordinal=1733 basis=step_fallback heavy_every=8)
+[extract] step=8668 SKIP heavy block block_probes (ordinal=1733 basis=step_fallback heavy_every=8)
+[extract] step=8668 heavy=FALSE total=16.49s | block_curvature=4.69 block_fitness=6.21
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8668 blocks_ok=2 t=16.491s (all_passes_complete=True)
+[extract] step=8670 SKIP heavy block block_interp (ordinal=1734 basis=step_fallback heavy_every=8)
+[extract] step=8670 SKIP heavy block block_probes (ordinal=1734 basis=step_fallback heavy_every=8)
+[extract] step=8670 heavy=FALSE total=17.32s | block_curvature=5.16 block_fitness=5.38
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8670 blocks_ok=2 t=17.318s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8668 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8670 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=8680 heavy=TRUE total=104.31s | block_curvature=4.76 block_interp=42.26 block_probes=45.60 block_fitness=6.29
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s43 step=8680 blocks_ok=4 t=104.308s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s43 step=8680 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwgpu0] final drain found nothing new and GPU-pass queue depth=0 -> GPU pass complete on all runs. Exiting (CPU pass may still finalize).
+Done: Fri Jun 26 07:14:36 PM EDT 2026

@@ -1,0 +1,52 @@
+Tue Jun 16 03:32:20 PM EDT 2026
+host=c1003a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 2 --max_train_samples 2000 --batch_size 64 --phase2_batch_size 32 --max_precond_dim 2048 --sampler_min_step 3 --sampler_delta 0.01 --sampler_max_step 50 --backpressure-high 4 --backpressure-low 1 --demo_warmup 5 --val_every_n 20 --plateau_window 2 --plateau_patience 1 --plateau_threshold 0.10 --num_workers 6 --output_dir xAI/output/_redesign_smoke/mae__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/_redesign_smoke/mae__stable_evo__s42
+  epochs           : 2
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 2000 samples
+  Training images: 2000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/31] loss=0.6931 lr=0.001000
+  VAL step=20 val_loss=0.5665 auc_roc_mean=0.6163 auc_pr_mean=0.5070
+  Epoch 0 [20/31] loss=0.5702 lr=0.000788
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/31] loss=0.5839 lr=0.000550
+  VAL step=40 val_loss=0.5605 auc_roc_mean=0.6504 auc_pr_mean=0.5309
+  Plateau (1/1) auc_roc improvement=0.0341
+
+*** Phase 1 converged at epoch 1, step 40 ***
+
+PHASE_TRANSITION: step=40 epoch=1 val_loss=0.5605 auc_roc_mean=0.6504 auc_pr_mean=0.5309 (ECOLOGICAL_FITTING: auc_pr=0.5309, val_loss=0.5605)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=6.25e-05  eff_batch=32  variant=stable_evo
+
+TRAINING COMPLETE: run_id=mae__stable_evo__s42 final_step=40 elapsed=2.5 min
+Done: Tue Jun 16 03:35:19 PM EDT 2026

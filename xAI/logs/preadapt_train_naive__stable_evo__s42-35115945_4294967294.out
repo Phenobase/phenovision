@@ -1,0 +1,770 @@
+Thu Jun 18 05:25:06 PM EDT 2026
+host=c0904a-s5.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition naive --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 25 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --lr_schedule fixed --beta1 0 --weight_decay 0 --max_train_samples 107000 --sampler_delta 0.025 --sampler_min_step 12 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2 --max_precond_dim 2048 --num_workers 4 --phase2_early_stop --output_dir xAI/output/preadapt_v2/naive__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : naive__stable_evo__s42
+  condition        : naive
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/preadapt_v2/naive__stable_evo__s42
+  epochs           : 25
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 107000 samples
+  Training images: 107000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='naive', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/139] loss=0.6932 lr=0.001000
+  Epoch 0 [20/139] loss=0.5619 lr=0.001000
+  Epoch 0 [40/139] loss=0.5558 lr=0.001000
+  Epoch 0 [60/139] loss=0.5650 lr=0.000999
+  Epoch 0 [80/139] loss=0.5520 lr=0.000999
+  VAL step=100 val_loss=0.5598 auc_roc_mean=0.5766 auc_pr_mean=0.4639
+  Epoch 0 [100/139] loss=0.5780 lr=0.000998
+  Epoch 0 [120/139] loss=0.5777 lr=0.000997
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/139] loss=0.5555 lr=0.000996
+  Epoch 1 [20/139] loss=0.5543 lr=0.000995
+  Epoch 1 [40/139] loss=0.5553 lr=0.000994
+  VAL step=200 val_loss=0.5571 auc_roc_mean=0.5924 auc_pr_mean=0.4703
+  Epoch 1 [60/139] loss=0.5664 lr=0.000993
+  Epoch 1 [80/139] loss=0.5458 lr=0.000991
+  Epoch 1 [100/139] loss=0.5351 lr=0.000990
+  Epoch 1 [120/139] loss=0.5477 lr=0.000988
+
+--- Phase 1, Epoch 2 ---
+  Epoch 2 [0/139] loss=0.5524 lr=0.000986
+  Epoch 2 [20/139] loss=0.5457 lr=0.000984
+  VAL step=300 val_loss=0.5554 auc_roc_mean=0.6080 auc_pr_mean=0.4865
+  Epoch 2 [40/139] loss=0.5392 lr=0.000982
+  Epoch 2 [60/139] loss=0.5490 lr=0.000979
+  Epoch 2 [80/139] loss=0.5554 lr=0.000977
+  Epoch 2 [100/139] loss=0.5688 lr=0.000974
+  Epoch 2 [120/139] loss=0.5832 lr=0.000971
+  VAL step=400 val_loss=0.5536 auc_roc_mean=0.6085 auc_pr_mean=0.4885
+
+--- Phase 1, Epoch 3 ---
+  Epoch 3 [0/139] loss=0.5625 lr=0.000968
+  Epoch 3 [20/139] loss=0.5543 lr=0.000965
+  Epoch 3 [40/139] loss=0.5469 lr=0.000962
+  Epoch 3 [60/139] loss=0.5588 lr=0.000959
+  Epoch 3 [80/139] loss=0.5589 lr=0.000955
+  VAL step=500 val_loss=0.5537 auc_roc_mean=0.6203 auc_pr_mean=0.4978
+  Epoch 3 [100/139] loss=0.5430 lr=0.000952
+  Epoch 3 [120/139] loss=0.5669 lr=0.000948
+
+--- Phase 1, Epoch 4 ---
+  Epoch 4 [0/139] loss=0.5563 lr=0.000944
+  Epoch 4 [20/139] loss=0.5430 lr=0.000940
+  Epoch 4 [40/139] loss=0.5632 lr=0.000936
+  VAL step=600 val_loss=0.5609 auc_roc_mean=0.6149 auc_pr_mean=0.4929
+  Epoch 4 [60/139] loss=0.5721 lr=0.000932
+  Epoch 4 [80/139] loss=0.5557 lr=0.000928
+  Epoch 4 [100/139] loss=0.5578 lr=0.000923
+  Epoch 4 [120/139] loss=0.5620 lr=0.000919
+
+--- Phase 1, Epoch 5 ---
+  Epoch 5 [0/139] loss=0.5618 lr=0.000914
+  VAL step=700 val_loss=0.5491 auc_roc_mean=0.6200 auc_pr_mean=0.5004
+  Plateau (1/2) auc_roc improvement=-0.0003
+  Epoch 5 [20/139] loss=0.5357 lr=0.000909
+  Epoch 5 [40/139] loss=0.5431 lr=0.000904
+  Epoch 5 [60/139] loss=0.5396 lr=0.000899
+  Epoch 5 [80/139] loss=0.5400 lr=0.000894
+  Epoch 5 [100/139] loss=0.5605 lr=0.000889
+  VAL step=800 val_loss=0.5492 auc_roc_mean=0.6307 auc_pr_mean=0.5048
+  Epoch 5 [120/139] loss=0.5611 lr=0.000883
+
+--- Phase 1, Epoch 6 ---
+  Epoch 6 [0/139] loss=0.5369 lr=0.000878
+  Epoch 6 [20/139] loss=0.5503 lr=0.000872
+  Epoch 6 [40/139] loss=0.5543 lr=0.000867
+  Epoch 6 [60/139] loss=0.5489 lr=0.000861
+  VAL step=900 val_loss=0.5524 auc_roc_mean=0.6286 auc_pr_mean=0.5021
+  Epoch 6 [80/139] loss=0.5451 lr=0.000855
+  Epoch 6 [100/139] loss=0.5468 lr=0.000849
+  Epoch 6 [120/139] loss=0.5679 lr=0.000843
+
+--- Phase 1, Epoch 7 ---
+  Epoch 7 [0/139] loss=0.5544 lr=0.000837
+  Epoch 7 [20/139] loss=0.5684 lr=0.000831
+  VAL step=1000 val_loss=0.5522 auc_roc_mean=0.6291 auc_pr_mean=0.5033
+  Plateau (1/2) auc_roc improvement=-0.0015
+  Epoch 7 [40/139] loss=0.5589 lr=0.000824
+  Epoch 7 [60/139] loss=0.5556 lr=0.000818
+  Epoch 7 [80/139] loss=0.5663 lr=0.000811
+  Epoch 7 [100/139] loss=0.5700 lr=0.000804
+  Epoch 7 [120/139] loss=0.5598 lr=0.000798
+  VAL step=1100 val_loss=0.5482 auc_roc_mean=0.6287 auc_pr_mean=0.5059
+  Plateau (2/2) auc_roc improvement=0.0001
+
+*** Phase 1 converged at epoch 7, step 1100 ***
+
+PHASE_TRANSITION: step=1100 epoch=7 val_loss=0.5482 auc_roc_mean=0.6287 auc_pr_mean=0.5059 (ECOLOGICAL_FITTING: auc_pr=0.5059, val_loss=0.5482)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=0.00075  eff_batch=384  variant=stable_evo  lr_schedule=fixed (min_lr=0.00075)
+
+--- Phase 2, Epoch 8 (P2 epoch 0) ---
+  [0/278] loss=0.5310 upd_norm=2.8929 disp=0.0000 sampler=0.0000 lr=0.000750
+  EMIT ckpt step=1112 reason=displacement on_ladder=True -> step00001112.pt
+  [20/278] loss=0.5695 upd_norm=5.0392 disp=0.0216 sampler=1.5788 lr=0.000750
+  EMIT ckpt step=1124 reason=displacement on_ladder=True -> step00001124.pt
+  EMIT ckpt step=1136 reason=displacement on_ladder=True -> step00001136.pt
+  [40/278] loss=0.5493 upd_norm=5.8824 disp=0.0331 sampler=0.4261 lr=0.000750
+  EMIT ckpt step=1148 reason=displacement on_ladder=True -> step00001148.pt
+  EMIT ckpt step=1160 reason=displacement on_ladder=True -> step00001160.pt
+  [60/278] loss=0.5613 upd_norm=3.3267 disp=0.0458 sampler=0.1053 lr=0.000750
+  EMIT ckpt step=1172 reason=displacement on_ladder=True -> step00001172.pt
+  [80/278] loss=0.5699 upd_norm=9.7122 disp=0.0585 sampler=0.1974 lr=0.000750
+  EMIT ckpt step=1184 reason=displacement on_ladder=True -> step00001184.pt
+  EMIT ckpt step=1196 reason=displacement on_ladder=True -> step00001196.pt
+  VAL step=1200 (p2=100) val_loss=0.5566 auc_pr_mean=0.5168
+  [100/278] loss=0.5686 upd_norm=12.1150 disp=0.0706 sampler=0.0905 lr=0.000750
+  EMIT ckpt step=1208 reason=displacement on_ladder=True -> step00001208.pt
+  EMIT ckpt step=1220 reason=displacement on_ladder=True -> step00001220.pt
+  [120/278] loss=0.5772 upd_norm=6.1536 disp=0.0811 sampler=0.0555 lr=0.000750
+  EMIT ckpt step=1232 reason=displacement on_ladder=True -> step00001232.pt
+  [140/278] loss=0.5209 upd_norm=5.3588 disp=0.0925 sampler=0.0910 lr=0.000750
+  EMIT ckpt step=1244 reason=displacement on_ladder=True -> step00001244.pt
+  EMIT ckpt step=1256 reason=displacement on_ladder=True -> step00001256.pt
+  [160/278] loss=0.5636 upd_norm=12.0739 disp=0.1036 sampler=0.0684 lr=0.000750
+  EMIT ckpt step=1268 reason=displacement on_ladder=True -> step00001268.pt
+  EMIT ckpt step=1280 reason=displacement on_ladder=True -> step00001280.pt
+  [180/278] loss=0.5522 upd_norm=6.0628 disp=0.1157 sampler=0.0393 lr=0.000750
+  EMIT ckpt step=1292 reason=displacement on_ladder=True -> step00001292.pt
+  VAL step=1300 (p2=200) val_loss=0.5503 auc_pr_mean=0.5177
+  [200/278] loss=0.5638 upd_norm=8.5753 disp=0.1258 sampler=0.0900 lr=0.000750
+  EMIT ckpt step=1304 reason=displacement on_ladder=True -> step00001304.pt
+  EMIT ckpt step=1316 reason=displacement on_ladder=True -> step00001316.pt
+  [220/278] loss=0.5646 upd_norm=6.0246 disp=1.2811 sampler=0.0920 lr=0.000750
+  EMIT ckpt step=1328 reason=displacement on_ladder=True -> step00001328.pt
+  EMIT ckpt step=1340 reason=displacement on_ladder=True -> step00001340.pt
+  [240/278] loss=0.5358 upd_norm=9.0244 disp=1.5423 sampler=0.0473 lr=0.000750
+  EMIT ckpt step=1352 reason=displacement on_ladder=True -> step00001352.pt
+  [260/278] loss=0.5640 upd_norm=1.7739 disp=1.9074 sampler=0.1044 lr=0.000750
+  EMIT ckpt step=1364 reason=displacement on_ladder=True -> step00001364.pt
+  EMIT ckpt step=1376 reason=displacement on_ladder=True -> step00001376.pt
+  EMIT ckpt step=1378 reason=epoch_end on_ladder=True -> step00001378.pt
+
+--- Phase 2, Epoch 9 (P2 epoch 1) ---
+  [0/278] loss=0.5885 upd_norm=5.9238 disp=2.2288 sampler=0.0404 lr=0.000750
+  EMIT ckpt step=1390 reason=displacement on_ladder=True -> step00001390.pt
+  [20/278] loss=0.5537 upd_norm=2.8351 disp=2.6847 sampler=0.1203 lr=0.000750
+  VAL step=1400 (p2=300) val_loss=0.5619 auc_pr_mean=0.5194
+  EMIT ckpt step=1402 reason=displacement on_ladder=True -> step00001402.pt
+  EMIT ckpt step=1414 reason=displacement on_ladder=True -> step00001414.pt
+  [40/278] loss=0.5354 upd_norm=4.3084 disp=3.0106 sampler=0.0893 lr=0.000750
+  EMIT ckpt step=1426 reason=displacement on_ladder=True -> step00001426.pt
+  EMIT ckpt step=1438 reason=displacement on_ladder=True -> step00001438.pt
+  [60/278] loss=0.5448 upd_norm=3.7896 disp=3.0735 sampler=0.0296 lr=0.000750
+  EMIT ckpt step=1450 reason=displacement on_ladder=True -> step00001450.pt
+  [80/278] loss=0.5612 upd_norm=8.6554 disp=3.3112 sampler=0.1016 lr=0.000750
+  EMIT ckpt step=1462 reason=displacement on_ladder=True -> step00001462.pt
+  EMIT ckpt step=1474 reason=displacement on_ladder=True -> step00001474.pt
+  [100/278] loss=0.5748 upd_norm=5.9149 disp=3.5932 sampler=0.0791 lr=0.000750
+  EMIT ckpt step=1486 reason=displacement on_ladder=True -> step00001486.pt
+  EMIT ckpt step=1498 reason=displacement on_ladder=True -> step00001498.pt
+  [120/278] loss=0.5746 upd_norm=7.1273 disp=3.6511 sampler=0.0416 lr=0.000750
+  VAL step=1500 (p2=400) val_loss=0.5363 auc_pr_mean=0.5261
+  EMIT ckpt step=1510 reason=displacement on_ladder=True -> step00001510.pt
+  [140/278] loss=0.5376 upd_norm=6.0961 disp=3.9837 sampler=0.0829 lr=0.000750
+  EMIT ckpt step=1522 reason=displacement on_ladder=True -> step00001522.pt
+  EMIT ckpt step=1534 reason=displacement on_ladder=True -> step00001534.pt
+  [160/278] loss=0.5241 upd_norm=9.1451 disp=4.1057 sampler=0.0488 lr=0.000750
+  EMIT ckpt step=1546 reason=displacement on_ladder=True -> step00001546.pt
+  EMIT ckpt step=1558 reason=displacement on_ladder=True -> step00001558.pt
+  [180/278] loss=0.5628 upd_norm=8.0506 disp=4.3831 sampler=0.0494 lr=0.000750
+  EMIT ckpt step=1570 reason=displacement on_ladder=True -> step00001570.pt
+  [200/278] loss=0.5486 upd_norm=2.9176 disp=4.5555 sampler=0.0786 lr=0.000750
+  EMIT ckpt step=1582 reason=displacement on_ladder=True -> step00001582.pt
+  EMIT ckpt step=1594 reason=displacement on_ladder=True -> step00001594.pt
+  [220/278] loss=0.5596 upd_norm=9.4303 disp=4.7892 sampler=0.0761 lr=0.000750
+  VAL step=1600 (p2=500) val_loss=0.5307 auc_pr_mean=0.5314
+  EMIT ckpt step=1606 reason=displacement on_ladder=True -> step00001606.pt
+  EMIT ckpt step=1618 reason=displacement on_ladder=True -> step00001618.pt
+  [240/278] loss=0.5543 upd_norm=2.1000 disp=4.8757 sampler=0.0278 lr=0.000750
+  EMIT ckpt step=1630 reason=displacement on_ladder=True -> step00001630.pt
+  [260/278] loss=0.5494 upd_norm=10.2834 disp=5.0307 sampler=0.1016 lr=0.000750
+  EMIT ckpt step=1642 reason=displacement on_ladder=True -> step00001642.pt
+  EMIT ckpt step=1654 reason=displacement on_ladder=True -> step00001654.pt
+  EMIT ckpt step=1656 reason=epoch_end on_ladder=True -> step00001656.pt
+
+--- Phase 2, Epoch 10 (P2 epoch 2) ---
+  [0/278] loss=0.5360 upd_norm=6.4901 disp=5.2583 sampler=0.0343 lr=0.000750
+  EMIT ckpt step=1668 reason=displacement on_ladder=True -> step00001668.pt
+  [20/278] loss=0.5274 upd_norm=2.2591 disp=5.2937 sampler=0.0696 lr=0.000750
+  EMIT ckpt step=1680 reason=displacement on_ladder=True -> step00001680.pt
+  EMIT ckpt step=1692 reason=displacement on_ladder=True -> step00001692.pt
+  [40/278] loss=0.5032 upd_norm=4.0727 disp=5.5685 sampler=0.0560 lr=0.000750
+  VAL step=1700 (p2=600) val_loss=0.5290 auc_pr_mean=0.5309
+  EMIT ckpt step=1704 reason=displacement on_ladder=True -> step00001704.pt
+  EMIT ckpt step=1716 reason=displacement on_ladder=True -> step00001716.pt
+  [60/278] loss=0.5418 upd_norm=8.5468 disp=5.8349 sampler=0.0514 lr=0.000750
+  EMIT ckpt step=1728 reason=displacement on_ladder=True -> step00001728.pt
+  [80/278] loss=0.5224 upd_norm=3.9888 disp=6.2868 sampler=0.0965 lr=0.000750
+  EMIT ckpt step=1740 reason=displacement on_ladder=True -> step00001740.pt
+  EMIT ckpt step=1752 reason=displacement on_ladder=True -> step00001752.pt
+  [100/278] loss=0.5713 upd_norm=7.8787 disp=6.3886 sampler=0.0566 lr=0.000750
+  EMIT ckpt step=1764 reason=displacement on_ladder=True -> step00001764.pt
+  EMIT ckpt step=1776 reason=displacement on_ladder=True -> step00001776.pt
+  [120/278] loss=0.5572 upd_norm=9.0749 disp=6.5149 sampler=0.0367 lr=0.000750
+  EMIT ckpt step=1788 reason=displacement on_ladder=True -> step00001788.pt
+  [140/278] loss=0.5820 upd_norm=5.0102 disp=6.5778 sampler=0.0564 lr=0.000750
+  EMIT ckpt step=1800 reason=displacement on_ladder=True -> step00001800.pt
+  VAL step=1800 (p2=700) val_loss=0.5214 auc_pr_mean=0.5330
+  EMIT ckpt step=1812 reason=displacement on_ladder=True -> step00001812.pt
+  [160/278] loss=0.5501 upd_norm=1.4410 disp=6.6626 sampler=0.0572 lr=0.000750
+  EMIT ckpt step=1824 reason=displacement on_ladder=True -> step00001824.pt
+  EMIT ckpt step=1836 reason=displacement on_ladder=True -> step00001836.pt
+  [180/278] loss=0.4875 upd_norm=1.8283 disp=6.8489 sampler=0.0238 lr=0.000750
+  EMIT ckpt step=1848 reason=displacement on_ladder=True -> step00001848.pt
+  [200/278] loss=0.5525 upd_norm=6.9621 disp=6.9794 sampler=0.0668 lr=0.000750
+  EMIT ckpt step=1860 reason=displacement on_ladder=True -> step00001860.pt
+  EMIT ckpt step=1872 reason=displacement on_ladder=True -> step00001872.pt
+  [220/278] loss=0.5137 upd_norm=5.2526 disp=7.1480 sampler=0.0484 lr=0.000750
+  EMIT ckpt step=1884 reason=displacement on_ladder=True -> step00001884.pt
+  EMIT ckpt step=1896 reason=displacement on_ladder=True -> step00001896.pt
+  [240/278] loss=0.5123 upd_norm=6.0021 disp=7.2703 sampler=0.0371 lr=0.000750
+  VAL step=1900 (p2=800) val_loss=0.5204 auc_pr_mean=0.5384
+  EMIT ckpt step=1908 reason=displacement on_ladder=True -> step00001908.pt
+  [260/278] loss=0.5351 upd_norm=10.9460 disp=7.3626 sampler=0.0826 lr=0.000750
+  EMIT ckpt step=1920 reason=displacement on_ladder=True -> step00001920.pt
+  EMIT ckpt step=1932 reason=displacement on_ladder=True -> step00001932.pt
+  EMIT ckpt step=1934 reason=epoch_end on_ladder=True -> step00001934.pt
+
+--- Phase 2, Epoch 11 (P2 epoch 3) ---
+  [0/278] loss=0.4948 upd_norm=6.2751 disp=7.5937 sampler=0.0304 lr=0.000750
+  EMIT ckpt step=1946 reason=displacement on_ladder=True -> step00001946.pt
+  [20/278] loss=0.5549 upd_norm=10.5897 disp=7.6084 sampler=0.0603 lr=0.000750
+  EMIT ckpt step=1958 reason=displacement on_ladder=True -> step00001958.pt
+  EMIT ckpt step=1970 reason=displacement on_ladder=True -> step00001970.pt
+  [40/278] loss=0.5635 upd_norm=3.7608 disp=7.7690 sampler=0.0704 lr=0.000750
+  EMIT ckpt step=1982 reason=displacement on_ladder=True -> step00001982.pt
+  EMIT ckpt step=1994 reason=displacement on_ladder=True -> step00001994.pt
+  [60/278] loss=0.5377 upd_norm=5.3614 disp=7.8261 sampler=0.0196 lr=0.000750
+  VAL step=2000 (p2=900) val_loss=0.5167 auc_pr_mean=0.5397
+  EMIT ckpt step=2006 reason=displacement on_ladder=True -> step00002006.pt
+  [80/278] loss=0.5491 upd_norm=5.6298 disp=7.8624 sampler=0.0677 lr=0.000750
+  EMIT ckpt step=2018 reason=displacement on_ladder=True -> step00002018.pt
+  EMIT ckpt step=2030 reason=displacement on_ladder=True -> step00002030.pt
+  [100/278] loss=0.5281 upd_norm=7.4633 disp=8.1498 sampler=0.0478 lr=0.000750
+  EMIT ckpt step=2042 reason=displacement on_ladder=True -> step00002042.pt
+  EMIT ckpt step=2054 reason=displacement on_ladder=True -> step00002054.pt
+  [120/278] loss=0.5398 upd_norm=5.7802 disp=8.2595 sampler=0.0428 lr=0.000750
+  EMIT ckpt step=2066 reason=displacement on_ladder=True -> step00002066.pt
+  [140/278] loss=0.5639 upd_norm=6.8292 disp=8.3852 sampler=0.0765 lr=0.000750
+  EMIT ckpt step=2078 reason=displacement on_ladder=True -> step00002078.pt
+  EMIT ckpt step=2090 reason=displacement on_ladder=True -> step00002090.pt
+  [160/278] loss=0.5341 upd_norm=8.9652 disp=8.4786 sampler=0.0782 lr=0.000750
+  VAL step=2100 (p2=1000) val_loss=0.5159 auc_pr_mean=0.5412
+  EMIT ckpt step=2102 reason=displacement on_ladder=True -> step00002102.pt
+  EMIT ckpt step=2114 reason=displacement on_ladder=True -> step00002114.pt
+  [180/278] loss=0.5177 upd_norm=2.7798 disp=8.7511 sampler=0.0171 lr=0.000750
+  EMIT ckpt step=2126 reason=displacement on_ladder=True -> step00002126.pt
+  [200/278] loss=0.5324 upd_norm=5.5355 disp=8.7986 sampler=0.0757 lr=0.000750
+  EMIT ckpt step=2138 reason=displacement on_ladder=True -> step00002138.pt
+  EMIT ckpt step=2150 reason=displacement on_ladder=True -> step00002150.pt
+  [220/278] loss=0.5341 upd_norm=5.1797 disp=9.0041 sampler=0.0616 lr=0.000750
+  EMIT ckpt step=2162 reason=displacement on_ladder=True -> step00002162.pt
+  EMIT ckpt step=2174 reason=displacement on_ladder=True -> step00002174.pt
+  [240/278] loss=0.5059 upd_norm=1.7801 disp=9.1068 sampler=0.0199 lr=0.000750
+  EMIT ckpt step=2186 reason=displacement on_ladder=True -> step00002186.pt
+  [260/278] loss=0.5280 upd_norm=4.9588 disp=9.1946 sampler=0.0881 lr=0.000750
+  EMIT ckpt step=2198 reason=displacement on_ladder=True -> step00002198.pt
+  VAL step=2200 (p2=1100) val_loss=0.5167 auc_pr_mean=0.5413
+  EMIT ckpt step=2210 reason=displacement on_ladder=True -> step00002210.pt
+  EMIT ckpt step=2212 reason=epoch_end on_ladder=True -> step00002212.pt
+
+--- Phase 2, Epoch 12 (P2 epoch 4) ---
+  [0/278] loss=0.5009 upd_norm=3.4746 disp=9.2474 sampler=0.0207 lr=0.000750
+  EMIT ckpt step=2224 reason=displacement on_ladder=True -> step00002224.pt
+  [20/278] loss=0.5496 upd_norm=6.2462 disp=9.4137 sampler=0.0958 lr=0.000750
+  EMIT ckpt step=2236 reason=displacement on_ladder=True -> step00002236.pt
+  EMIT ckpt step=2248 reason=displacement on_ladder=True -> step00002248.pt
+  [40/278] loss=0.5238 upd_norm=2.0986 disp=9.5903 sampler=0.0599 lr=0.000750
+  EMIT ckpt step=2260 reason=displacement on_ladder=True -> step00002260.pt
+  EMIT ckpt step=2272 reason=displacement on_ladder=True -> step00002272.pt
+  [60/278] loss=0.5649 upd_norm=2.5983 disp=9.6309 sampler=0.0237 lr=0.000750
+  EMIT ckpt step=2284 reason=displacement on_ladder=True -> step00002284.pt
+  [80/278] loss=0.5412 upd_norm=4.7187 disp=9.7245 sampler=0.0904 lr=0.000750
+  EMIT ckpt step=2296 reason=displacement on_ladder=True -> step00002296.pt
+  VAL step=2300 (p2=1200) val_loss=0.5131 auc_pr_mean=0.5404
+  EMIT ckpt step=2308 reason=displacement on_ladder=True -> step00002308.pt
+  [100/278] loss=0.5541 upd_norm=6.7895 disp=9.8522 sampler=0.0568 lr=0.000750
+  EMIT ckpt step=2320 reason=displacement on_ladder=True -> step00002320.pt
+  EMIT ckpt step=2332 reason=displacement on_ladder=True -> step00002332.pt
+  [120/278] loss=0.5591 upd_norm=9.1767 disp=9.9229 sampler=0.0317 lr=0.000750
+  EMIT ckpt step=2344 reason=displacement on_ladder=True -> step00002344.pt
+  [140/278] loss=0.5506 upd_norm=10.5391 disp=9.9660 sampler=0.0608 lr=0.000750
+  EMIT ckpt step=2356 reason=displacement on_ladder=True -> step00002356.pt
+  EMIT ckpt step=2368 reason=displacement on_ladder=True -> step00002368.pt
+  [160/278] loss=0.5952 upd_norm=7.4994 disp=10.0428 sampler=0.0408 lr=0.000750
+  EMIT ckpt step=2380 reason=displacement on_ladder=True -> step00002380.pt
+  EMIT ckpt step=2392 reason=displacement on_ladder=True -> step00002392.pt
+  [180/278] loss=0.5029 upd_norm=6.7840 disp=10.1201 sampler=0.0233 lr=0.000750
+  VAL step=2400 (p2=1300) val_loss=0.5296 auc_pr_mean=0.5427
+  EMIT ckpt step=2404 reason=displacement on_ladder=True -> step00002404.pt
+  [200/278] loss=0.5477 upd_norm=3.7973 disp=10.2138 sampler=0.0596 lr=0.000750
+  EMIT ckpt step=2416 reason=displacement on_ladder=True -> step00002416.pt
+  EMIT ckpt step=2428 reason=displacement on_ladder=True -> step00002428.pt
+  [220/278] loss=0.5210 upd_norm=2.7008 disp=10.3047 sampler=0.0632 lr=0.000750
+  EMIT ckpt step=2440 reason=displacement on_ladder=True -> step00002440.pt
+  EMIT ckpt step=2452 reason=displacement on_ladder=True -> step00002452.pt
+  [240/278] loss=0.4840 upd_norm=2.4386 disp=10.3861 sampler=0.0211 lr=0.000750
+  EMIT ckpt step=2464 reason=displacement on_ladder=True -> step00002464.pt
+  [260/278] loss=0.5516 upd_norm=6.2108 disp=10.4806 sampler=0.0841 lr=0.000750
+  EMIT ckpt step=2476 reason=displacement on_ladder=True -> step00002476.pt
+  EMIT ckpt step=2488 reason=displacement on_ladder=True -> step00002488.pt
+  EMIT ckpt step=2490 reason=epoch_end on_ladder=True -> step00002490.pt
+
+--- Phase 2, Epoch 13 (P2 epoch 5) ---
+  [0/278] loss=0.5755 upd_norm=11.0863 disp=10.6548 sampler=0.0465 lr=0.000750
+  VAL step=2500 (p2=1400) val_loss=0.5099 auc_pr_mean=0.5406
+  EMIT ckpt step=2502 reason=displacement on_ladder=True -> step00002502.pt
+  [20/278] loss=0.5357 upd_norm=2.0424 disp=10.6771 sampler=0.0513 lr=0.000750
+  EMIT ckpt step=2514 reason=displacement on_ladder=True -> step00002514.pt
+  EMIT ckpt step=2526 reason=displacement on_ladder=True -> step00002526.pt
+  [40/278] loss=0.5206 upd_norm=7.9696 disp=10.8190 sampler=0.0713 lr=0.000750
+  EMIT ckpt step=2538 reason=displacement on_ladder=True -> step00002538.pt
+  EMIT ckpt step=2550 reason=displacement on_ladder=True -> step00002550.pt
+  [60/278] loss=0.5389 upd_norm=6.7847 disp=10.9844 sampler=0.0482 lr=0.000750
+  EMIT ckpt step=2562 reason=displacement on_ladder=True -> step00002562.pt
+  [80/278] loss=0.5602 upd_norm=5.1989 disp=11.0406 sampler=0.0651 lr=0.000750
+  EMIT ckpt step=2574 reason=displacement on_ladder=True -> step00002574.pt
+  EMIT ckpt step=2586 reason=displacement on_ladder=True -> step00002586.pt
+  [100/278] loss=0.5208 upd_norm=3.7434 disp=11.0722 sampler=0.0464 lr=0.000750
+  EMIT ckpt step=2598 reason=displacement on_ladder=True -> step00002598.pt
+  VAL step=2600 (p2=1500) val_loss=0.5107 auc_pr_mean=0.5461
+  EMIT ckpt step=2610 reason=displacement on_ladder=True -> step00002610.pt
+  [120/278] loss=0.4937 upd_norm=5.4539 disp=11.2995 sampler=0.0242 lr=0.000750
+  EMIT ckpt step=2622 reason=displacement on_ladder=True -> step00002622.pt
+  [140/278] loss=0.5661 upd_norm=9.3517 disp=11.4255 sampler=0.0963 lr=0.000750
+  EMIT ckpt step=2634 reason=displacement on_ladder=True -> step00002634.pt
+  EMIT ckpt step=2646 reason=displacement on_ladder=True -> step00002646.pt
+  [160/278] loss=0.5165 upd_norm=6.8316 disp=11.5995 sampler=0.0713 lr=0.000750
+  EMIT ckpt step=2658 reason=displacement on_ladder=True -> step00002658.pt
+  EMIT ckpt step=2670 reason=displacement on_ladder=True -> step00002670.pt
+  [180/278] loss=0.5392 upd_norm=3.6292 disp=11.7006 sampler=0.0183 lr=0.000750
+  EMIT ckpt step=2682 reason=displacement on_ladder=True -> step00002682.pt
+  [200/278] loss=0.5718 upd_norm=5.2506 disp=11.8174 sampler=0.0874 lr=0.000750
+  EMIT ckpt step=2694 reason=displacement on_ladder=True -> step00002694.pt
+  VAL step=2700 (p2=1600) val_loss=0.5141 auc_pr_mean=0.5446
+  EMIT ckpt step=2706 reason=displacement on_ladder=True -> step00002706.pt
+  [220/278] loss=0.5272 upd_norm=4.9193 disp=11.9186 sampler=0.0539 lr=0.000750
+  EMIT ckpt step=2718 reason=displacement on_ladder=True -> step00002718.pt
+  EMIT ckpt step=2730 reason=displacement on_ladder=True -> step00002730.pt
+  [240/278] loss=0.5335 upd_norm=2.3294 disp=11.9599 sampler=0.0230 lr=0.000750
+  EMIT ckpt step=2742 reason=displacement on_ladder=True -> step00002742.pt
+  [260/278] loss=0.5150 upd_norm=1.7399 disp=12.1397 sampler=0.1190 lr=0.000750
+  EMIT ckpt step=2754 reason=displacement on_ladder=True -> step00002754.pt
+  EMIT ckpt step=2766 reason=displacement on_ladder=True -> step00002766.pt
+  EMIT ckpt step=2768 reason=epoch_end on_ladder=True -> step00002768.pt
+
+--- Phase 2, Epoch 14 (P2 epoch 6) ---
+  [0/278] loss=0.5044 upd_norm=4.3501 disp=12.1899 sampler=0.0344 lr=0.000750
+  EMIT ckpt step=2780 reason=displacement on_ladder=True -> step00002780.pt
+  [20/278] loss=0.5622 upd_norm=6.1714 disp=12.2894 sampler=0.0972 lr=0.000750
+  EMIT ckpt step=2792 reason=displacement on_ladder=True -> step00002792.pt
+  VAL step=2800 (p2=1700) val_loss=0.5063 auc_pr_mean=0.5470
+  EMIT ckpt step=2804 reason=displacement on_ladder=True -> step00002804.pt
+  [40/278] loss=0.5216 upd_norm=1.3707 disp=12.3540 sampler=0.0480 lr=0.000750
+  EMIT ckpt step=2816 reason=displacement on_ladder=True -> step00002816.pt
+  EMIT ckpt step=2828 reason=displacement on_ladder=True -> step00002828.pt
+  [60/278] loss=0.5269 upd_norm=4.6695 disp=12.4946 sampler=0.0261 lr=0.000750
+  EMIT ckpt step=2840 reason=displacement on_ladder=True -> step00002840.pt
+  [80/278] loss=0.4981 upd_norm=4.6025 disp=12.6145 sampler=0.0545 lr=0.000750
+  EMIT ckpt step=2852 reason=displacement on_ladder=True -> step00002852.pt
+  EMIT ckpt step=2864 reason=displacement on_ladder=True -> step00002864.pt
+  [100/278] loss=0.5406 upd_norm=4.6163 disp=12.6932 sampler=0.0499 lr=0.000750
+  EMIT ckpt step=2876 reason=displacement on_ladder=True -> step00002876.pt
+  EMIT ckpt step=2888 reason=displacement on_ladder=True -> step00002888.pt
+  [120/278] loss=0.5403 upd_norm=6.6685 disp=12.8269 sampler=0.0350 lr=0.000750
+  EMIT ckpt step=2900 reason=displacement on_ladder=True -> step00002900.pt
+  VAL step=2900 (p2=1800) val_loss=0.5146 auc_pr_mean=0.5440
+  [140/278] loss=0.5225 upd_norm=1.5400 disp=12.9754 sampler=0.0885 lr=0.000750
+  EMIT ckpt step=2912 reason=displacement on_ladder=True -> step00002912.pt
+  EMIT ckpt step=2924 reason=displacement on_ladder=True -> step00002924.pt
+  [160/278] loss=0.5846 upd_norm=10.6456 disp=13.0667 sampler=0.0954 lr=0.000750
+  EMIT ckpt step=2936 reason=displacement on_ladder=True -> step00002936.pt
+  EMIT ckpt step=2948 reason=displacement on_ladder=True -> step00002948.pt
+  [180/278] loss=0.5432 upd_norm=2.4042 disp=13.2173 sampler=0.0187 lr=0.000750
+  EMIT ckpt step=2960 reason=displacement on_ladder=True -> step00002960.pt
+  [200/278] loss=0.5389 upd_norm=6.1280 disp=13.2494 sampler=0.0700 lr=0.000750
+  EMIT ckpt step=2972 reason=displacement on_ladder=True -> step00002972.pt
+  EMIT ckpt step=2984 reason=displacement on_ladder=True -> step00002984.pt
+  [220/278] loss=0.5495 upd_norm=3.0290 disp=13.4251 sampler=0.0648 lr=0.000750
+  EMIT ckpt step=2996 reason=displacement on_ladder=True -> step00002996.pt
+  VAL step=3000 (p2=1900) val_loss=0.5094 auc_pr_mean=0.5482
+  EMIT ckpt step=3008 reason=displacement on_ladder=True -> step00003008.pt
+  [240/278] loss=0.5338 upd_norm=4.5868 disp=13.4684 sampler=0.0199 lr=0.000750
+  EMIT ckpt step=3020 reason=displacement on_ladder=True -> step00003020.pt
+  [260/278] loss=0.4980 upd_norm=8.9721 disp=13.5665 sampler=0.1000 lr=0.000750
+  EMIT ckpt step=3032 reason=displacement on_ladder=True -> step00003032.pt
+  EMIT ckpt step=3044 reason=displacement on_ladder=True -> step00003044.pt
+  EMIT ckpt step=3046 reason=epoch_end on_ladder=True -> step00003046.pt
+
+--- Phase 2, Epoch 15 (P2 epoch 7) ---
+  [0/278] loss=0.5557 upd_norm=9.0408 disp=13.7200 sampler=0.0334 lr=0.000750
+  EMIT ckpt step=3058 reason=displacement on_ladder=True -> step00003058.pt
+  [20/278] loss=0.5148 upd_norm=2.4456 disp=13.7457 sampler=0.0631 lr=0.000750
+  EMIT ckpt step=3070 reason=displacement on_ladder=True -> step00003070.pt
+  EMIT ckpt step=3082 reason=displacement on_ladder=True -> step00003082.pt
+  [40/278] loss=0.5355 upd_norm=4.2749 disp=13.9070 sampler=0.0579 lr=0.000750
+  EMIT ckpt step=3094 reason=displacement on_ladder=True -> step00003094.pt
+  VAL step=3100 (p2=2000) val_loss=0.5084 auc_pr_mean=0.5509
+  EMIT ckpt step=3106 reason=displacement on_ladder=True -> step00003106.pt
+  [60/278] loss=0.5199 upd_norm=1.7936 disp=13.9580 sampler=0.0179 lr=0.000750
+  EMIT ckpt step=3118 reason=displacement on_ladder=True -> step00003118.pt
+  [80/278] loss=0.5452 upd_norm=10.4227 disp=14.0122 sampler=0.0870 lr=0.000750
+  EMIT ckpt step=3130 reason=displacement on_ladder=True -> step00003130.pt
+  EMIT ckpt step=3142 reason=displacement on_ladder=True -> step00003142.pt
+  [100/278] loss=0.5391 upd_norm=2.8140 disp=14.2618 sampler=0.0904 lr=0.000750
+  EMIT ckpt step=3154 reason=displacement on_ladder=True -> step00003154.pt
+  EMIT ckpt step=3166 reason=displacement on_ladder=True -> step00003166.pt
+  [120/278] loss=0.5304 upd_norm=7.1241 disp=14.3296 sampler=0.0406 lr=0.000750
+  EMIT ckpt step=3178 reason=displacement on_ladder=True -> step00003178.pt
+  [140/278] loss=0.5027 upd_norm=5.4657 disp=14.4050 sampler=0.0827 lr=0.000750
+  EMIT ckpt step=3190 reason=displacement on_ladder=True -> step00003190.pt
+  VAL step=3200 (p2=2100) val_loss=0.5028 auc_pr_mean=0.5484
+  EMIT ckpt step=3202 reason=displacement on_ladder=True -> step00003202.pt
+  [160/278] loss=0.4673 upd_norm=3.5947 disp=14.4923 sampler=0.0612 lr=0.000750
+  EMIT ckpt step=3214 reason=displacement on_ladder=True -> step00003214.pt
+  EMIT ckpt step=3226 reason=displacement on_ladder=True -> step00003226.pt
+  [180/278] loss=0.5240 upd_norm=5.4867 disp=14.5551 sampler=0.0248 lr=0.000750
+  EMIT ckpt step=3238 reason=displacement on_ladder=True -> step00003238.pt
+  [200/278] loss=0.5394 upd_norm=1.3938 disp=14.7859 sampler=0.1022 lr=0.000750
+  EMIT ckpt step=3250 reason=displacement on_ladder=True -> step00003250.pt
+  EMIT ckpt step=3262 reason=displacement on_ladder=True -> step00003262.pt
+  [220/278] loss=0.5235 upd_norm=4.2657 disp=14.8374 sampler=0.0507 lr=0.000750
+  EMIT ckpt step=3274 reason=displacement on_ladder=True -> step00003274.pt
+  EMIT ckpt step=3286 reason=displacement on_ladder=True -> step00003286.pt
+  [240/278] loss=0.5424 upd_norm=6.0074 disp=14.9106 sampler=0.0363 lr=0.000750
+  EMIT ckpt step=3298 reason=displacement on_ladder=True -> step00003298.pt
+  VAL step=3300 (p2=2200) val_loss=0.5068 auc_pr_mean=0.5517
+  [260/278] loss=0.5320 upd_norm=3.8775 disp=15.0156 sampler=0.1140 lr=0.000750
+  EMIT ckpt step=3310 reason=displacement on_ladder=True -> step00003310.pt
+  EMIT ckpt step=3322 reason=displacement on_ladder=True -> step00003322.pt
+  EMIT ckpt step=3324 reason=epoch_end on_ladder=True -> step00003324.pt
+
+--- Phase 2, Epoch 16 (P2 epoch 8) ---
+  [0/278] loss=0.5276 upd_norm=1.0775 disp=15.0990 sampler=0.0174 lr=0.000750
+  EMIT ckpt step=3336 reason=displacement on_ladder=True -> step00003336.pt
+  [20/278] loss=0.5466 upd_norm=3.2023 disp=15.2456 sampler=0.1099 lr=0.000750
+  EMIT ckpt step=3348 reason=displacement on_ladder=True -> step00003348.pt
+  EMIT ckpt step=3360 reason=displacement on_ladder=True -> step00003360.pt
+  [40/278] loss=0.4970 upd_norm=3.7149 disp=15.3030 sampler=0.0640 lr=0.000750
+  EMIT ckpt step=3372 reason=displacement on_ladder=True -> step00003372.pt
+  EMIT ckpt step=3384 reason=displacement on_ladder=True -> step00003384.pt
+  [60/278] loss=0.5641 upd_norm=2.3721 disp=15.3402 sampler=0.0259 lr=0.000750
+  EMIT ckpt step=3396 reason=displacement on_ladder=True -> step00003396.pt
+  VAL step=3400 (p2=2300) val_loss=0.5021 auc_pr_mean=0.5536
+  Phase-2 plateau (1/3) improvement=-0.00163 < 0.003
+  [80/278] loss=0.5485 upd_norm=8.1676 disp=15.4518 sampler=0.0964 lr=0.000750
+  EMIT ckpt step=3408 reason=displacement on_ladder=True -> step00003408.pt
+  EMIT ckpt step=3420 reason=displacement on_ladder=True -> step00003420.pt
+  [100/278] loss=0.5493 upd_norm=2.2038 disp=15.5520 sampler=0.0543 lr=0.000750
+  EMIT ckpt step=3432 reason=displacement on_ladder=True -> step00003432.pt
+  EMIT ckpt step=3444 reason=displacement on_ladder=True -> step00003444.pt
+  [120/278] loss=0.5075 upd_norm=7.9182 disp=15.6838 sampler=0.0345 lr=0.000750
+  EMIT ckpt step=3456 reason=displacement on_ladder=True -> step00003456.pt
+  [140/278] loss=0.5392 upd_norm=1.3258 disp=15.7433 sampler=0.0835 lr=0.000750
+  EMIT ckpt step=3468 reason=displacement on_ladder=True -> step00003468.pt
+  EMIT ckpt step=3480 reason=displacement on_ladder=True -> step00003480.pt
+  [160/278] loss=0.5303 upd_norm=2.2887 disp=15.7753 sampler=0.0477 lr=0.000750
+  EMIT ckpt step=3492 reason=displacement on_ladder=True -> step00003492.pt
+  VAL step=3500 (p2=2400) val_loss=0.5055 auc_pr_mean=0.5553
+  EMIT ckpt step=3504 reason=displacement on_ladder=True -> step00003504.pt
+  [180/278] loss=0.5504 upd_norm=10.0109 disp=15.9444 sampler=0.0578 lr=0.000750
+  EMIT ckpt step=3516 reason=displacement on_ladder=True -> step00003516.pt
+  [200/278] loss=0.5076 upd_norm=1.0736 disp=16.0585 sampler=0.0608 lr=0.000750
+  EMIT ckpt step=3528 reason=displacement on_ladder=True -> step00003528.pt
+  EMIT ckpt step=3540 reason=displacement on_ladder=True -> step00003540.pt
+  [220/278] loss=0.5560 upd_norm=2.6311 disp=16.2523 sampler=0.0874 lr=0.000750
+  EMIT ckpt step=3552 reason=displacement on_ladder=True -> step00003552.pt
+  EMIT ckpt step=3564 reason=displacement on_ladder=True -> step00003564.pt
+  [240/278] loss=0.5265 upd_norm=4.1160 disp=16.2821 sampler=0.0281 lr=0.000750
+  EMIT ckpt step=3576 reason=displacement on_ladder=True -> step00003576.pt
+  [260/278] loss=0.5193 upd_norm=4.5040 disp=16.3976 sampler=0.0676 lr=0.000750
+  EMIT ckpt step=3588 reason=displacement on_ladder=True -> step00003588.pt
+  EMIT ckpt step=3600 reason=displacement on_ladder=True -> step00003600.pt
+  VAL step=3600 (p2=2500) val_loss=0.5001 auc_pr_mean=0.5552
+  EMIT ckpt step=3602 reason=epoch_end on_ladder=True -> step00003602.pt
+
+--- Phase 2, Epoch 17 (P2 epoch 9) ---
+  [0/278] loss=0.5443 upd_norm=1.9562 disp=16.6140 sampler=0.0173 lr=0.000750
+  EMIT ckpt step=3614 reason=displacement on_ladder=True -> step00003614.pt
+  [20/278] loss=0.5206 upd_norm=7.3521 disp=16.7143 sampler=0.0955 lr=0.000750
+  EMIT ckpt step=3626 reason=displacement on_ladder=True -> step00003626.pt
+  EMIT ckpt step=3638 reason=displacement on_ladder=True -> step00003638.pt
+  [40/278] loss=0.5100 upd_norm=2.1912 disp=16.8221 sampler=0.0376 lr=0.000750
+  EMIT ckpt step=3650 reason=displacement on_ladder=True -> step00003650.pt
+  EMIT ckpt step=3662 reason=displacement on_ladder=True -> step00003662.pt
+  [60/278] loss=0.5420 upd_norm=11.3194 disp=16.8727 sampler=0.0290 lr=0.000750
+  EMIT ckpt step=3674 reason=displacement on_ladder=True -> step00003674.pt
+  [80/278] loss=0.5263 upd_norm=1.0692 disp=16.9082 sampler=0.0677 lr=0.000750
+  EMIT ckpt step=3686 reason=displacement on_ladder=True -> step00003686.pt
+  EMIT ckpt step=3698 reason=displacement on_ladder=True -> step00003698.pt
+  VAL step=3700 (p2=2600) val_loss=0.4990 auc_pr_mean=0.5556
+  Phase-2 plateau (1/3) improvement=0.00260 < 0.003
+  [100/278] loss=0.5621 upd_norm=5.2098 disp=17.0017 sampler=0.0517 lr=0.000750
+  EMIT ckpt step=3710 reason=displacement on_ladder=True -> step00003710.pt
+  EMIT ckpt step=3722 reason=displacement on_ladder=True -> step00003722.pt
+  [120/278] loss=0.5218 upd_norm=10.4840 disp=17.0836 sampler=0.0338 lr=0.000750
+  EMIT ckpt step=3734 reason=displacement on_ladder=True -> step00003734.pt
+  [140/278] loss=0.5281 upd_norm=1.8157 disp=17.1634 sampler=0.0667 lr=0.000750
+  EMIT ckpt step=3746 reason=displacement on_ladder=True -> step00003746.pt
+  EMIT ckpt step=3758 reason=displacement on_ladder=True -> step00003758.pt
+  [160/278] loss=0.5357 upd_norm=2.3117 disp=17.2418 sampler=0.0828 lr=0.000750
+  EMIT ckpt step=3770 reason=displacement on_ladder=True -> step00003770.pt
+  EMIT ckpt step=3782 reason=displacement on_ladder=True -> step00003782.pt
+  [180/278] loss=0.5359 upd_norm=6.1625 disp=17.3592 sampler=0.0264 lr=0.000750
+  EMIT ckpt step=3794 reason=displacement on_ladder=True -> step00003794.pt
+  VAL step=3800 (p2=2700) val_loss=0.5033 auc_pr_mean=0.5595
+  [200/278] loss=0.5386 upd_norm=3.7547 disp=17.5118 sampler=0.1159 lr=0.000750
+  EMIT ckpt step=3806 reason=displacement on_ladder=True -> step00003806.pt
+  EMIT ckpt step=3818 reason=displacement on_ladder=True -> step00003818.pt
+  [220/278] loss=0.5216 upd_norm=4.1071 disp=17.5747 sampler=0.0624 lr=0.000750
+  EMIT ckpt step=3830 reason=displacement on_ladder=True -> step00003830.pt
+  EMIT ckpt step=3842 reason=displacement on_ladder=True -> step00003842.pt
+  [240/278] loss=0.5255 upd_norm=1.9651 disp=17.6746 sampler=0.0231 lr=0.000750
+  EMIT ckpt step=3854 reason=displacement on_ladder=True -> step00003854.pt
+  [260/278] loss=0.5237 upd_norm=5.0933 disp=17.7444 sampler=0.0755 lr=0.000750
+  EMIT ckpt step=3866 reason=displacement on_ladder=True -> step00003866.pt
+  EMIT ckpt step=3878 reason=displacement on_ladder=True -> step00003878.pt
+  EMIT ckpt step=3880 reason=epoch_end on_ladder=True -> step00003880.pt
+
+--- Phase 2, Epoch 18 (P2 epoch 10) ---
+  [0/278] loss=0.5150 upd_norm=3.0401 disp=17.7832 sampler=0.0207 lr=0.000750
+  EMIT ckpt step=3892 reason=displacement on_ladder=True -> step00003892.pt
+  VAL step=3900 (p2=2800) val_loss=0.4988 auc_pr_mean=0.5587
+  Phase-2 plateau (1/3) improvement=0.00081 < 0.003
+  [20/278] loss=0.5347 upd_norm=2.2626 disp=17.8501 sampler=0.0922 lr=0.000750
+  EMIT ckpt step=3904 reason=displacement on_ladder=True -> step00003904.pt
+  EMIT ckpt step=3916 reason=displacement on_ladder=True -> step00003916.pt
+  [40/278] loss=0.5250 upd_norm=5.7836 disp=17.9284 sampler=0.0743 lr=0.000750
+  EMIT ckpt step=3928 reason=displacement on_ladder=True -> step00003928.pt
+  EMIT ckpt step=3940 reason=displacement on_ladder=True -> step00003940.pt
+  [60/278] loss=0.5228 upd_norm=1.9866 disp=18.0195 sampler=0.0249 lr=0.000750
+  EMIT ckpt step=3952 reason=displacement on_ladder=True -> step00003952.pt
+  [80/278] loss=0.5117 upd_norm=5.7168 disp=18.1390 sampler=0.1199 lr=0.000750
+  EMIT ckpt step=3964 reason=displacement on_ladder=True -> step00003964.pt
+  EMIT ckpt step=3976 reason=displacement on_ladder=True -> step00003976.pt
+  [100/278] loss=0.5462 upd_norm=4.3311 disp=18.2627 sampler=0.0602 lr=0.000750
+  EMIT ckpt step=3988 reason=displacement on_ladder=True -> step00003988.pt
+  EMIT ckpt step=4000 reason=displacement on_ladder=True -> step00004000.pt
+  VAL step=4000 (p2=2900) val_loss=0.4943 auc_pr_mean=0.5624
+  [120/278] loss=0.5092 upd_norm=5.4580 disp=18.3079 sampler=0.0324 lr=0.000750
+  EMIT ckpt step=4012 reason=displacement on_ladder=True -> step00004012.pt
+  [140/278] loss=0.5280 upd_norm=3.1082 disp=18.4033 sampler=0.0918 lr=0.000750
+  EMIT ckpt step=4024 reason=displacement on_ladder=True -> step00004024.pt
+  EMIT ckpt step=4036 reason=displacement on_ladder=True -> step00004036.pt
+  [160/278] loss=0.5407 upd_norm=5.9483 disp=18.5205 sampler=0.0523 lr=0.000750
+  EMIT ckpt step=4048 reason=displacement on_ladder=True -> step00004048.pt
+  EMIT ckpt step=4060 reason=displacement on_ladder=True -> step00004060.pt
+  [180/278] loss=0.5065 upd_norm=2.6668 disp=18.5720 sampler=0.0332 lr=0.000750
+  EMIT ckpt step=4072 reason=displacement on_ladder=True -> step00004072.pt
+  [200/278] loss=0.5072 upd_norm=4.0724 disp=18.7161 sampler=0.1245 lr=0.000750
+  EMIT ckpt step=4084 reason=displacement on_ladder=True -> step00004084.pt
+  EMIT ckpt step=4096 reason=displacement on_ladder=True -> step00004096.pt
+  VAL step=4100 (p2=3000) val_loss=0.4960 auc_pr_mean=0.5650
+  [220/278] loss=0.5133 upd_norm=5.4939 disp=18.7457 sampler=0.0431 lr=0.000750
+  EMIT ckpt step=4108 reason=displacement on_ladder=True -> step00004108.pt
+  EMIT ckpt step=4120 reason=displacement on_ladder=True -> step00004120.pt
+  [240/278] loss=0.5424 upd_norm=1.9161 disp=18.8689 sampler=0.0236 lr=0.000750
+  EMIT ckpt step=4132 reason=displacement on_ladder=True -> step00004132.pt
+  [260/278] loss=0.5298 upd_norm=5.0782 disp=18.9790 sampler=0.1182 lr=0.000750
+  EMIT ckpt step=4144 reason=displacement on_ladder=True -> step00004144.pt
+  EMIT ckpt step=4156 reason=displacement on_ladder=True -> step00004156.pt
+  EMIT ckpt step=4158 reason=epoch_end on_ladder=True -> step00004158.pt
+
+--- Phase 2, Epoch 19 (P2 epoch 11) ---
+  [0/278] loss=0.5564 upd_norm=9.5156 disp=19.0420 sampler=0.0373 lr=0.000750
+  EMIT ckpt step=4170 reason=displacement on_ladder=True -> step00004170.pt
+  [20/278] loss=0.4925 upd_norm=7.0136 disp=19.1044 sampler=0.0779 lr=0.000750
+  EMIT ckpt step=4182 reason=displacement on_ladder=True -> step00004182.pt
+  EMIT ckpt step=4194 reason=displacement on_ladder=True -> step00004194.pt
+  [40/278] loss=0.5417 upd_norm=4.0653 disp=19.1281 sampler=0.0472 lr=0.000750
+  VAL step=4200 (p2=3100) val_loss=0.4972 auc_pr_mean=0.5671
+  Phase-2 plateau (1/3) improvement=0.00069 < 0.003
+  EMIT ckpt step=4206 reason=displacement on_ladder=True -> step00004206.pt
+  EMIT ckpt step=4218 reason=displacement on_ladder=True -> step00004218.pt
+  [60/278] loss=0.5075 upd_norm=1.9155 disp=19.2039 sampler=0.0182 lr=0.000750
+  EMIT ckpt step=4230 reason=displacement on_ladder=True -> step00004230.pt
+  [80/278] loss=0.5631 upd_norm=11.2332 disp=19.3036 sampler=0.1217 lr=0.000750
+  EMIT ckpt step=4242 reason=displacement on_ladder=True -> step00004242.pt
+  EMIT ckpt step=4254 reason=displacement on_ladder=True -> step00004254.pt
+  [100/278] loss=0.5268 upd_norm=4.2644 disp=19.3921 sampler=0.0445 lr=0.000750
+  EMIT ckpt step=4266 reason=displacement on_ladder=True -> step00004266.pt
+  EMIT ckpt step=4278 reason=displacement on_ladder=True -> step00004278.pt
+  [120/278] loss=0.5497 upd_norm=4.1578 disp=19.4569 sampler=0.0333 lr=0.000750
+  EMIT ckpt step=4290 reason=displacement on_ladder=True -> step00004290.pt
+  [140/278] loss=0.5302 upd_norm=2.0606 disp=19.5192 sampler=0.0906 lr=0.000750
+  VAL step=4300 (p2=3200) val_loss=0.4966 auc_pr_mean=0.5683
+  EMIT ckpt step=4302 reason=displacement on_ladder=True -> step00004302.pt
+  EMIT ckpt step=4314 reason=displacement on_ladder=True -> step00004314.pt
+  [160/278] loss=0.5496 upd_norm=3.9487 disp=19.6573 sampler=0.0522 lr=0.000750
+  EMIT ckpt step=4326 reason=displacement on_ladder=True -> step00004326.pt
+  EMIT ckpt step=4338 reason=displacement on_ladder=True -> step00004338.pt
+  [180/278] loss=0.5133 upd_norm=4.9117 disp=19.7505 sampler=0.0473 lr=0.000750
+  EMIT ckpt step=4350 reason=displacement on_ladder=True -> step00004350.pt
+  [200/278] loss=0.5070 upd_norm=4.2599 disp=19.9075 sampler=0.0682 lr=0.000750
+  EMIT ckpt step=4362 reason=displacement on_ladder=True -> step00004362.pt
+  EMIT ckpt step=4374 reason=displacement on_ladder=True -> step00004374.pt
+  [220/278] loss=0.5275 upd_norm=6.9745 disp=19.9665 sampler=0.0661 lr=0.000750
+  EMIT ckpt step=4386 reason=displacement on_ladder=True -> step00004386.pt
+  EMIT ckpt step=4398 reason=displacement on_ladder=True -> step00004398.pt
+  [240/278] loss=0.5282 upd_norm=6.5814 disp=20.0996 sampler=0.0448 lr=0.000750
+  VAL step=4400 (p2=3300) val_loss=0.4927 auc_pr_mean=0.5710
+  EMIT ckpt step=4410 reason=displacement on_ladder=True -> step00004410.pt
+  [260/278] loss=0.5213 upd_norm=2.3185 disp=20.2048 sampler=0.1072 lr=0.000750
+  EMIT ckpt step=4422 reason=displacement on_ladder=True -> step00004422.pt
+  EMIT ckpt step=4434 reason=displacement on_ladder=True -> step00004434.pt
+  EMIT ckpt step=4436 reason=epoch_end on_ladder=True -> step00004436.pt
+
+--- Phase 2, Epoch 20 (P2 epoch 12) ---
+  [0/278] loss=0.5461 upd_norm=8.2467 disp=20.2694 sampler=0.0361 lr=0.000750
+  EMIT ckpt step=4448 reason=displacement on_ladder=True -> step00004448.pt
+  [20/278] loss=0.5365 upd_norm=1.5991 disp=20.3551 sampler=0.0527 lr=0.000750
+  EMIT ckpt step=4460 reason=displacement on_ladder=True -> step00004460.pt
+  EMIT ckpt step=4472 reason=displacement on_ladder=True -> step00004472.pt
+  [40/278] loss=0.5001 upd_norm=4.6059 disp=20.4538 sampler=0.0729 lr=0.000750
+  EMIT ckpt step=4484 reason=displacement on_ladder=True -> step00004484.pt
+  EMIT ckpt step=4496 reason=displacement on_ladder=True -> step00004496.pt
+  [60/278] loss=0.5947 upd_norm=15.7075 disp=20.5136 sampler=0.0505 lr=0.000750
+  VAL step=4500 (p2=3400) val_loss=0.4887 auc_pr_mean=0.5737
+  Phase-2 plateau (1/3) improvement=0.00144 < 0.003
+  EMIT ckpt step=4508 reason=displacement on_ladder=True -> step00004508.pt
+  [80/278] loss=0.5339 upd_norm=15.1846 disp=20.5836 sampler=0.0795 lr=0.000750
+  EMIT ckpt step=4520 reason=displacement on_ladder=True -> step00004520.pt
+  EMIT ckpt step=4532 reason=displacement on_ladder=True -> step00004532.pt
+  [100/278] loss=0.5095 upd_norm=3.4171 disp=20.6290 sampler=0.0606 lr=0.000750
+  EMIT ckpt step=4544 reason=displacement on_ladder=True -> step00004544.pt
+  EMIT ckpt step=4556 reason=displacement on_ladder=True -> step00004556.pt
+  [120/278] loss=0.5149 upd_norm=2.4131 disp=20.7274 sampler=0.0186 lr=0.000750
+  EMIT ckpt step=4568 reason=displacement on_ladder=True -> step00004568.pt
+  [140/278] loss=0.5153 upd_norm=3.1075 disp=20.7796 sampler=0.0872 lr=0.000750
+  EMIT ckpt step=4580 reason=displacement on_ladder=True -> step00004580.pt
+  EMIT ckpt step=4592 reason=displacement on_ladder=True -> step00004592.pt
+  [160/278] loss=0.5433 upd_norm=6.3963 disp=20.8187 sampler=0.0521 lr=0.000750
+  VAL step=4600 (p2=3500) val_loss=0.4884 auc_pr_mean=0.5755
+  EMIT ckpt step=4604 reason=displacement on_ladder=True -> step00004604.pt
+  EMIT ckpt step=4616 reason=displacement on_ladder=True -> step00004616.pt
+  [180/278] loss=0.4971 upd_norm=1.6964 disp=20.8923 sampler=0.0258 lr=0.000750
+  EMIT ckpt step=4628 reason=displacement on_ladder=True -> step00004628.pt
+  [200/278] loss=0.5034 upd_norm=5.4116 disp=21.0300 sampler=0.1304 lr=0.000750
+  EMIT ckpt step=4640 reason=displacement on_ladder=True -> step00004640.pt
+  EMIT ckpt step=4652 reason=displacement on_ladder=True -> step00004652.pt
+  [220/278] loss=0.5572 upd_norm=3.4984 disp=21.0683 sampler=0.0526 lr=0.000750
+  EMIT ckpt step=4664 reason=displacement on_ladder=True -> step00004664.pt
+  EMIT ckpt step=4676 reason=displacement on_ladder=True -> step00004676.pt
+  [240/278] loss=0.4940 upd_norm=5.1016 disp=21.1758 sampler=0.0411 lr=0.000750
+  EMIT ckpt step=4688 reason=displacement on_ladder=True -> step00004688.pt
+  [260/278] loss=0.5185 upd_norm=3.6984 disp=21.3134 sampler=0.0768 lr=0.000750
+  EMIT ckpt step=4700 reason=displacement on_ladder=True -> step00004700.pt
+  VAL step=4700 (p2=3600) val_loss=0.4871 auc_pr_mean=0.5765
+  Phase-2 plateau (1/3) improvement=0.00218 < 0.003
+  EMIT ckpt step=4712 reason=displacement on_ladder=True -> step00004712.pt
+  EMIT ckpt step=4714 reason=epoch_end on_ladder=True -> step00004714.pt
+
+--- Phase 2, Epoch 21 (P2 epoch 13) ---
+  [0/278] loss=0.5699 upd_norm=7.3841 disp=21.4249 sampler=0.0533 lr=0.000750
+  EMIT ckpt step=4726 reason=displacement on_ladder=True -> step00004726.pt
+  [20/278] loss=0.5179 upd_norm=2.6659 disp=21.5851 sampler=0.1248 lr=0.000750
+  EMIT ckpt step=4738 reason=displacement on_ladder=True -> step00004738.pt
+  EMIT ckpt step=4750 reason=displacement on_ladder=True -> step00004750.pt
+  [40/278] loss=0.5568 upd_norm=3.9673 disp=21.6908 sampler=0.0984 lr=0.000750
+  EMIT ckpt step=4762 reason=displacement on_ladder=True -> step00004762.pt
+  EMIT ckpt step=4774 reason=displacement on_ladder=True -> step00004774.pt
+  [60/278] loss=0.5302 upd_norm=3.6262 disp=21.7929 sampler=0.0218 lr=0.000750
+  EMIT ckpt step=4786 reason=displacement on_ladder=True -> step00004786.pt
+  [80/278] loss=0.5129 upd_norm=1.9409 disp=21.8760 sampler=0.0724 lr=0.000750
+  EMIT ckpt step=4798 reason=displacement on_ladder=True -> step00004798.pt
+  VAL step=4800 (p2=3700) val_loss=0.4880 auc_pr_mean=0.5802
+  EMIT ckpt step=4810 reason=displacement on_ladder=True -> step00004810.pt
+  [100/278] loss=0.5224 upd_norm=4.6527 disp=21.9962 sampler=0.1234 lr=0.000750
+  EMIT ckpt step=4822 reason=displacement on_ladder=True -> step00004822.pt
+  EMIT ckpt step=4834 reason=displacement on_ladder=True -> step00004834.pt
+  [120/278] loss=0.4777 upd_norm=4.2737 disp=22.1446 sampler=0.0279 lr=0.000750
+  EMIT ckpt step=4846 reason=displacement on_ladder=True -> step00004846.pt
+  [140/278] loss=0.5141 upd_norm=6.0015 disp=22.2267 sampler=0.0637 lr=0.000750
+  EMIT ckpt step=4858 reason=displacement on_ladder=True -> step00004858.pt
+  EMIT ckpt step=4870 reason=displacement on_ladder=True -> step00004870.pt
+  [160/278] loss=0.5005 upd_norm=3.0534 disp=22.2584 sampler=0.0440 lr=0.000750
+  EMIT ckpt step=4882 reason=displacement on_ladder=True -> step00004882.pt
+  EMIT ckpt step=4894 reason=displacement on_ladder=True -> step00004894.pt
+  [180/278] loss=0.5480 upd_norm=4.0490 disp=22.3238 sampler=0.0274 lr=0.000750
+  VAL step=4900 (p2=3800) val_loss=0.4866 auc_pr_mean=0.5811
+  EMIT ckpt step=4906 reason=displacement on_ladder=True -> step00004906.pt
+  [200/278] loss=0.4881 upd_norm=9.0018 disp=22.4070 sampler=0.0934 lr=0.000750
+  EMIT ckpt step=4918 reason=displacement on_ladder=True -> step00004918.pt
+  EMIT ckpt step=4930 reason=displacement on_ladder=True -> step00004930.pt
+  [220/278] loss=0.5368 upd_norm=8.8045 disp=22.5400 sampler=0.0468 lr=0.000750
+  EMIT ckpt step=4942 reason=displacement on_ladder=True -> step00004942.pt
+  EMIT ckpt step=4954 reason=displacement on_ladder=True -> step00004954.pt
+  [240/278] loss=0.4887 upd_norm=4.0630 disp=22.6167 sampler=0.0257 lr=0.000750
+  EMIT ckpt step=4966 reason=displacement on_ladder=True -> step00004966.pt
+  [260/278] loss=0.5172 upd_norm=5.2749 disp=22.6729 sampler=0.0881 lr=0.000750
+  EMIT ckpt step=4978 reason=displacement on_ladder=True -> step00004978.pt
+  EMIT ckpt step=4990 reason=displacement on_ladder=True -> step00004990.pt
+  EMIT ckpt step=4992 reason=epoch_end on_ladder=True -> step00004992.pt
+
+--- Phase 2, Epoch 22 (P2 epoch 14) ---
+  [0/278] loss=0.5171 upd_norm=3.7908 disp=22.8209 sampler=0.0340 lr=0.000750
+  VAL step=5000 (p2=3900) val_loss=0.4950 auc_pr_mean=0.5811
+  Phase-2 plateau (1/3) improvement=0.00128 < 0.003
+  EMIT ckpt step=5004 reason=displacement on_ladder=True -> step00005004.pt
+  [20/278] loss=0.4862 upd_norm=2.0730 disp=22.8892 sampler=0.0825 lr=0.000750
+  EMIT ckpt step=5016 reason=displacement on_ladder=True -> step00005016.pt
+  EMIT ckpt step=5028 reason=displacement on_ladder=True -> step00005028.pt
+  [40/278] loss=0.5018 upd_norm=6.9876 disp=22.9406 sampler=0.0519 lr=0.000750
+  EMIT ckpt step=5040 reason=displacement on_ladder=True -> step00005040.pt
+  EMIT ckpt step=5052 reason=displacement on_ladder=True -> step00005052.pt
+  [60/278] loss=0.5622 upd_norm=10.6458 disp=23.0586 sampler=0.0604 lr=0.000750
+  EMIT ckpt step=5064 reason=displacement on_ladder=True -> step00005064.pt
+  [80/278] loss=0.4870 upd_norm=2.1566 disp=23.1323 sampler=0.0700 lr=0.000750
+  EMIT ckpt step=5076 reason=displacement on_ladder=True -> step00005076.pt
+  EMIT ckpt step=5088 reason=displacement on_ladder=True -> step00005088.pt
+  [100/278] loss=0.5085 upd_norm=11.0316 disp=23.2176 sampler=0.0896 lr=0.000750
+  EMIT ckpt step=5100 reason=displacement on_ladder=True -> step00005100.pt
+  VAL step=5100 (p2=4000) val_loss=0.4870 auc_pr_mean=0.5874
+  Phase-2 plateau (2/3) improvement=0.00246 < 0.003
+  EMIT ckpt step=5112 reason=displacement on_ladder=True -> step00005112.pt
+  [120/278] loss=0.5217 upd_norm=4.1680 disp=23.3429 sampler=0.0240 lr=0.000750
+  EMIT ckpt step=5124 reason=displacement on_ladder=True -> step00005124.pt
+  [140/278] loss=0.4826 upd_norm=2.7677 disp=23.3818 sampler=0.0688 lr=0.000750
+  EMIT ckpt step=5136 reason=displacement on_ladder=True -> step00005136.pt
+  EMIT ckpt step=5148 reason=displacement on_ladder=True -> step00005148.pt
+  [160/278] loss=0.5634 upd_norm=4.8813 disp=23.4471 sampler=0.0693 lr=0.000750
+  EMIT ckpt step=5160 reason=displacement on_ladder=True -> step00005160.pt
+  EMIT ckpt step=5172 reason=displacement on_ladder=True -> step00005172.pt
+  [180/278] loss=0.5436 upd_norm=9.8978 disp=23.5410 sampler=0.0368 lr=0.000750
+  EMIT ckpt step=5184 reason=displacement on_ladder=True -> step00005184.pt
+  [200/278] loss=0.5498 upd_norm=6.7241 disp=23.6681 sampler=0.1285 lr=0.000750
+  EMIT ckpt step=5196 reason=displacement on_ladder=True -> step00005196.pt
+  VAL step=5200 (p2=4100) val_loss=0.4853 auc_pr_mean=0.5892
+  Phase-2 plateau (3/3) improvement=0.00239 < 0.003
+*** Phase-2 EARLY STOP (train-loss plateau) at epoch 22, step 5200 ***
+  EMIT ckpt step=5200 reason=early_stop on_ladder=True -> step00005200.pt
+
+TRAINING COMPLETE: run_id=naive__stable_evo__s42 final_step=5200 elapsed=752.7 min
+Done: Fri Jun 19 05:58:19 AM EDT 2026

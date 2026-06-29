@@ -1,0 +1,4 @@
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu0] ...not all RUN_COMPLETE present: a trainer FAILED without a sentinel. Drained what was emitted; exiting.

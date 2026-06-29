@@ -1,0 +1,11 @@
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/xai_train.py:179: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(model_path, map_location="cpu")
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../PlantCLEF2022/util/misc.py:255: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self._scaler = torch.cuda.amp.GradScaler()
+[2026-03-16T21:48:56.883] error: *** JOB 27388949 ON c0904a-s5 CANCELLED AT 2026-03-16T21:48:56 DUE to SIGNAL Terminated ***

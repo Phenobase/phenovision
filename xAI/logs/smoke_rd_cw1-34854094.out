@@ -1,0 +1,29 @@
+Tue Jun 16 03:32:18 PM EDT 2026
+host=c0606a-s5.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt collector worker 1 ===
+run_dir=xAI/output/_redesign_smoke/mae__stable_evo__s42 variant=stable_evo seed=42
+watch_dir=xAI/output/_redesign_smoke/mae__stable_evo__s42/checkpoints
+sentinel=xAI/output/_redesign_smoke/mae__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/_redesign_smoke/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jid=34854092
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=40 SKIP heavy block block_circuits (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=40 SKIP heavy block block_interp (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=40 SKIP heavy block block_probes (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=40 heavy=FALSE total=33.88s | block_optim=0.00 block_curvature=7.20 block_weights=15.43 block_trajectory=0.00 block_fitness=7.01
+[collector w1] processed run_id=mae__stable_evo__s42 step=0 heavy=False blocks_ok=5 blocks_err=0 t=33.876s -> KEPT(->kept/,FULL anchor)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] RUN_COMPLETE present; performing FINAL drain...
+[cw1] final drain found nothing new and queue depth=0 -> run collected. Exiting.
+Done: Tue Jun 16 03:36:17 PM EDT 2026

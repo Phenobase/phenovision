@@ -1,0 +1,26 @@
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+TypeError: RNG state must be a torch.ByteTensor
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1645, in <module>
+    main()
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_train.py", line 1553, in main
+    resume_ckpt = torch.load(resume_path, map_location=device, weights_only=False)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 1368, in load
+    return _load(
+           ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/serialization.py", line 1856, in _load
+    result = unpickler.load()
+             ^^^^^^^^^^^^^^^^
+SystemError: <built-in method __setstate__ of torch._C.Generator object at 0x1500f152fab0> returned a result with an exception set

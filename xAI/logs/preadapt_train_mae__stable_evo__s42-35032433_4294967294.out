@@ -1,0 +1,551 @@
+Wed Jun 17 08:44:40 PM EDT 2026
+host=c1007a-s5.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 25 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --lr_schedule fixed --beta1 0 --weight_decay 0 --max_train_samples 107000 --sampler_delta 0.01 --sampler_min_step 4 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2 --max_precond_dim 2048 --phase2_early_stop --output_dir xAI/output/preadapt_v2/mae__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/preadapt_v2/mae__stable_evo__s42
+  epochs           : 25
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 107000 samples
+  Training images: 107000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/139] loss=0.6931 lr=0.001000
+  Epoch 0 [20/139] loss=0.5613 lr=0.001000
+  Epoch 0 [40/139] loss=0.5467 lr=0.001000
+  Epoch 0 [60/139] loss=0.5563 lr=0.000999
+  Epoch 0 [80/139] loss=0.5467 lr=0.000999
+  VAL step=100 val_loss=0.5349 auc_roc_mean=0.7441 auc_pr_mean=0.5971
+  Epoch 0 [100/139] loss=0.5035 lr=0.000998
+  Epoch 0 [120/139] loss=0.5463 lr=0.000997
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/139] loss=0.5242 lr=0.000996
+  Epoch 1 [20/139] loss=0.5157 lr=0.000995
+  Epoch 1 [40/139] loss=0.5221 lr=0.000994
+  VAL step=200 val_loss=0.5078 auc_roc_mean=0.7690 auc_pr_mean=0.6253
+  Epoch 1 [60/139] loss=0.5221 lr=0.000993
+  Epoch 1 [80/139] loss=0.5195 lr=0.000991
+  Epoch 1 [100/139] loss=0.5187 lr=0.000990
+  Epoch 1 [120/139] loss=0.5131 lr=0.000988
+
+--- Phase 1, Epoch 2 ---
+  Epoch 2 [0/139] loss=0.4901 lr=0.000986
+  Epoch 2 [20/139] loss=0.5012 lr=0.000984
+  VAL step=300 val_loss=0.4880 auc_roc_mean=0.7802 auc_pr_mean=0.6389
+  Epoch 2 [40/139] loss=0.5015 lr=0.000982
+  Epoch 2 [60/139] loss=0.5041 lr=0.000979
+  Epoch 2 [80/139] loss=0.5014 lr=0.000977
+  Epoch 2 [100/139] loss=0.5330 lr=0.000974
+  Epoch 2 [120/139] loss=0.4777 lr=0.000971
+  VAL step=400 val_loss=0.4734 auc_roc_mean=0.7872 auc_pr_mean=0.6473
+
+--- Phase 1, Epoch 3 ---
+  Epoch 3 [0/139] loss=0.4921 lr=0.000968
+  Epoch 3 [20/139] loss=0.4978 lr=0.000965
+  Epoch 3 [40/139] loss=0.5023 lr=0.000962
+  Epoch 3 [60/139] loss=0.4886 lr=0.000959
+  Epoch 3 [80/139] loss=0.4845 lr=0.000955
+  VAL step=500 val_loss=0.4625 auc_roc_mean=0.7919 auc_pr_mean=0.6539
+  Epoch 3 [100/139] loss=0.4891 lr=0.000952
+  Epoch 3 [120/139] loss=0.4801 lr=0.000948
+
+--- Phase 1, Epoch 4 ---
+  Epoch 4 [0/139] loss=0.4909 lr=0.000944
+  Epoch 4 [20/139] loss=0.4803 lr=0.000940
+  Epoch 4 [40/139] loss=0.4901 lr=0.000936
+  VAL step=600 val_loss=0.4541 auc_roc_mean=0.7961 auc_pr_mean=0.6603
+  Epoch 4 [60/139] loss=0.4814 lr=0.000932
+  Epoch 4 [80/139] loss=0.4946 lr=0.000928
+  Epoch 4 [100/139] loss=0.5010 lr=0.000923
+  Epoch 4 [120/139] loss=0.4588 lr=0.000919
+
+--- Phase 1, Epoch 5 ---
+  Epoch 5 [0/139] loss=0.4828 lr=0.000914
+  VAL step=700 val_loss=0.4474 auc_roc_mean=0.7994 auc_pr_mean=0.6656
+  Epoch 5 [20/139] loss=0.4758 lr=0.000909
+  Epoch 5 [40/139] loss=0.4659 lr=0.000904
+  Epoch 5 [60/139] loss=0.4724 lr=0.000899
+  Epoch 5 [80/139] loss=0.4943 lr=0.000894
+  Epoch 5 [100/139] loss=0.4478 lr=0.000889
+  VAL step=800 val_loss=0.4426 auc_roc_mean=0.8019 auc_pr_mean=0.6694
+  Epoch 5 [120/139] loss=0.4704 lr=0.000883
+
+--- Phase 1, Epoch 6 ---
+  Epoch 6 [0/139] loss=0.4588 lr=0.000878
+  Epoch 6 [20/139] loss=0.4686 lr=0.000872
+  Epoch 6 [40/139] loss=0.4881 lr=0.000867
+  Epoch 6 [60/139] loss=0.4778 lr=0.000861
+  VAL step=900 val_loss=0.4376 auc_roc_mean=0.8042 auc_pr_mean=0.6741
+  Epoch 6 [80/139] loss=0.4575 lr=0.000855
+  Epoch 6 [100/139] loss=0.4672 lr=0.000849
+  Epoch 6 [120/139] loss=0.4674 lr=0.000843
+
+--- Phase 1, Epoch 7 ---
+  Epoch 7 [0/139] loss=0.4677 lr=0.000837
+  Epoch 7 [20/139] loss=0.4877 lr=0.000831
+  VAL step=1000 val_loss=0.4339 auc_roc_mean=0.8060 auc_pr_mean=0.6771
+  Epoch 7 [40/139] loss=0.5006 lr=0.000824
+  Epoch 7 [60/139] loss=0.4926 lr=0.000818
+  Epoch 7 [80/139] loss=0.4731 lr=0.000811
+  Epoch 7 [100/139] loss=0.4822 lr=0.000804
+  Epoch 7 [120/139] loss=0.4781 lr=0.000798
+  VAL step=1100 val_loss=0.4307 auc_roc_mean=0.8077 auc_pr_mean=0.6805
+
+--- Phase 1, Epoch 8 ---
+  Epoch 8 [0/139] loss=0.4818 lr=0.000791
+  Epoch 8 [20/139] loss=0.4578 lr=0.000784
+  Epoch 8 [40/139] loss=0.4934 lr=0.000777
+  Epoch 8 [60/139] loss=0.4687 lr=0.000770
+  Epoch 8 [80/139] loss=0.4851 lr=0.000763
+  VAL step=1200 val_loss=0.4284 auc_roc_mean=0.8093 auc_pr_mean=0.6829
+  Epoch 8 [100/139] loss=0.4757 lr=0.000756
+  Epoch 8 [120/139] loss=0.4614 lr=0.000749
+
+--- Phase 1, Epoch 9 ---
+  Epoch 9 [0/139] loss=0.4652 lr=0.000742
+  Epoch 9 [20/139] loss=0.4787 lr=0.000734
+  Epoch 9 [40/139] loss=0.4713 lr=0.000727
+  VAL step=1300 val_loss=0.4262 auc_roc_mean=0.8107 auc_pr_mean=0.6855
+  Epoch 9 [60/139] loss=0.4580 lr=0.000719
+  Epoch 9 [80/139] loss=0.4490 lr=0.000712
+  Epoch 9 [100/139] loss=0.4689 lr=0.000704
+  Epoch 9 [120/139] loss=0.4694 lr=0.000696
+
+--- Phase 1, Epoch 10 ---
+  Epoch 10 [0/139] loss=0.4616 lr=0.000689
+  VAL step=1400 val_loss=0.4240 auc_roc_mean=0.8117 auc_pr_mean=0.6874
+  Epoch 10 [20/139] loss=0.4798 lr=0.000681
+  Epoch 10 [40/139] loss=0.4678 lr=0.000673
+  Epoch 10 [60/139] loss=0.4981 lr=0.000666
+  Epoch 10 [80/139] loss=0.4554 lr=0.000658
+  Epoch 10 [100/139] loss=0.4572 lr=0.000650
+  VAL step=1500 val_loss=0.4221 auc_roc_mean=0.8127 auc_pr_mean=0.6898
+  Epoch 10 [120/139] loss=0.4682 lr=0.000642
+
+--- Phase 1, Epoch 11 ---
+  Epoch 11 [0/139] loss=0.4950 lr=0.000634
+  Epoch 11 [20/139] loss=0.4663 lr=0.000626
+  Epoch 11 [40/139] loss=0.4746 lr=0.000618
+  Epoch 11 [60/139] loss=0.4612 lr=0.000610
+  VAL step=1600 val_loss=0.4205 auc_roc_mean=0.8139 auc_pr_mean=0.6917
+  Epoch 11 [80/139] loss=0.4490 lr=0.000602
+  Epoch 11 [100/139] loss=0.4827 lr=0.000594
+  Epoch 11 [120/139] loss=0.4641 lr=0.000586
+
+--- Phase 1, Epoch 12 ---
+  Epoch 12 [0/139] loss=0.4865 lr=0.000578
+  Epoch 12 [20/139] loss=0.4419 lr=0.000570
+  VAL step=1700 val_loss=0.4200 auc_roc_mean=0.8147 auc_pr_mean=0.6925
+  Plateau (1/2) auc_roc improvement=0.0020
+  Epoch 12 [40/139] loss=0.4508 lr=0.000562
+  Epoch 12 [60/139] loss=0.4479 lr=0.000554
+  Epoch 12 [80/139] loss=0.4586 lr=0.000546
+  Epoch 12 [100/139] loss=0.4589 lr=0.000538
+  Epoch 12 [120/139] loss=0.4912 lr=0.000529
+  VAL step=1800 val_loss=0.4182 auc_roc_mean=0.8155 auc_pr_mean=0.6945
+  Plateau (2/2) auc_roc improvement=0.0016
+
+*** Phase 1 converged at epoch 12, step 1800 ***
+
+PHASE_TRANSITION: step=1800 epoch=12 val_loss=0.4182 auc_roc_mean=0.8155 auc_pr_mean=0.6945 (ECOLOGICAL_FITTING: auc_pr=0.6945, val_loss=0.4182)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=0.00075  eff_batch=384  variant=stable_evo  lr_schedule=fixed (min_lr=0.00075)
+
+--- Phase 2, Epoch 13 (P2 epoch 0) ---
+  [0/278] loss=0.4729 upd_norm=1.2966 disp=0.0000 sampler=0.0000 lr=0.000750
+  [20/278] loss=0.4761 upd_norm=0.8515 disp=0.0561 sampler=0.0030 lr=0.000750
+  [40/278] loss=0.4499 upd_norm=1.0537 disp=0.1080 sampler=0.0059 lr=0.000750
+  [60/278] loss=0.4535 upd_norm=1.3465 disp=0.1635 sampler=0.0093 lr=0.000750
+  EMIT ckpt step=1866 reason=displacement on_ladder=True -> step00001866.pt
+  [80/278] loss=0.4690 upd_norm=1.0823 disp=0.2197 sampler=0.0037 lr=0.000750
+  VAL step=1900 (p2=100) val_loss=0.3780 auc_pr_mean=0.7275
+  [100/278] loss=0.4115 upd_norm=0.8616 disp=0.2752 sampler=0.0070 lr=0.000750
+  [120/278] loss=0.3975 upd_norm=1.8435 disp=0.3238 sampler=0.0098 lr=0.000750
+  EMIT ckpt step=1923 reason=displacement on_ladder=True -> step00001923.pt
+  [140/278] loss=0.4361 upd_norm=1.4306 disp=0.3741 sampler=0.0037 lr=0.000750
+  [160/278] loss=0.3984 upd_norm=0.9350 disp=0.4244 sampler=0.0068 lr=0.000750
+  [180/278] loss=0.3929 upd_norm=0.8955 disp=0.4627 sampler=0.0093 lr=0.000750
+  EMIT ckpt step=1992 reason=displacement on_ladder=True -> step00001992.pt
+  VAL step=2000 (p2=200) val_loss=0.3460 auc_pr_mean=0.7566
+  [200/278] loss=0.4671 upd_norm=1.6493 disp=0.5024 sampler=0.0022 lr=0.000750
+  EMIT ckpt step=2002 reason=displacement on_ladder=True -> step00002002.pt
+  EMIT ckpt step=2006 reason=displacement on_ladder=True -> step00002006.pt
+  EMIT ckpt step=2010 reason=displacement on_ladder=True -> step00002010.pt
+  EMIT ckpt step=2014 reason=displacement on_ladder=True -> step00002014.pt
+  EMIT ckpt step=2018 reason=displacement on_ladder=True -> step00002018.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  [220/278] loss=0.3907 upd_norm=1.4993 disp=4.9629 sampler=0.0485 lr=0.000750
+  EMIT ckpt step=2022 reason=displacement on_ladder=True -> step00002022.pt
+  EMIT ckpt step=2026 reason=displacement on_ladder=True -> step00002026.pt
+  EMIT ckpt step=2030 reason=displacement on_ladder=True -> step00002030.pt
+  EMIT ckpt step=2034 reason=displacement on_ladder=True -> step00002034.pt
+  EMIT ckpt step=2038 reason=displacement on_ladder=True -> step00002038.pt
+  [240/278] loss=0.3963 upd_norm=1.0018 disp=7.0666 sampler=0.0425 lr=0.000750
+  EMIT ckpt step=2042 reason=displacement on_ladder=True -> step00002042.pt
+  EMIT ckpt step=2046 reason=displacement on_ladder=True -> step00002046.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2050 reason=displacement on_ladder=True -> step00002050.pt
+  EMIT ckpt step=2054 reason=displacement on_ladder=True -> step00002054.pt
+  EMIT ckpt step=2058 reason=displacement on_ladder=True -> step00002058.pt
+  [260/278] loss=0.4041 upd_norm=1.0328 disp=9.4390 sampler=0.0603 lr=0.000750
+  EMIT ckpt step=2062 reason=displacement on_ladder=True -> step00002062.pt
+  EMIT ckpt step=2066 reason=displacement on_ladder=True -> step00002066.pt
+  EMIT ckpt step=2070 reason=displacement on_ladder=True -> step00002070.pt
+  EMIT ckpt step=2074 reason=displacement on_ladder=True -> step00002074.pt
+  EMIT ckpt step=2078 reason=displacement on_ladder=True -> step00002078.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2078 reason=epoch_end on_ladder=True -> step00002078.pt
+
+--- Phase 2, Epoch 14 (P2 epoch 1) ---
+  [0/278] loss=0.3565 upd_norm=1.1153 disp=11.4488 sampler=0.0310 lr=0.000750
+  EMIT ckpt step=2082 reason=displacement on_ladder=True -> step00002082.pt
+  EMIT ckpt step=2086 reason=displacement on_ladder=True -> step00002086.pt
+  EMIT ckpt step=2090 reason=displacement on_ladder=True -> step00002090.pt
+  EMIT ckpt step=2094 reason=displacement on_ladder=True -> step00002094.pt
+  EMIT ckpt step=2098 reason=displacement on_ladder=True -> step00002098.pt
+  [20/278] loss=0.4044 upd_norm=1.7279 disp=13.2908 sampler=0.0430 lr=0.000750
+  VAL step=2100 (p2=300) val_loss=0.3247 auc_pr_mean=0.7776
+  EMIT ckpt step=2102 reason=displacement on_ladder=True -> step00002102.pt
+  EMIT ckpt step=2106 reason=displacement on_ladder=True -> step00002106.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  EMIT ckpt step=2110 reason=displacement on_ladder=True -> step00002110.pt
+  EMIT ckpt step=2114 reason=displacement on_ladder=True -> step00002114.pt
+  EMIT ckpt step=2118 reason=displacement on_ladder=True -> step00002118.pt
+  [40/278] loss=0.3868 upd_norm=1.4704 disp=15.0816 sampler=0.0357 lr=0.000750
+  EMIT ckpt step=2122 reason=displacement on_ladder=True -> step00002122.pt
+  EMIT ckpt step=2126 reason=displacement on_ladder=True -> step00002126.pt
+  EMIT ckpt step=2130 reason=displacement on_ladder=True -> step00002130.pt
+  EMIT ckpt step=2134 reason=displacement on_ladder=True -> step00002134.pt
+  EMIT ckpt step=2138 reason=displacement on_ladder=True -> step00002138.pt
+  [60/278] loss=0.3979 upd_norm=1.2381 disp=16.3417 sampler=0.0373 lr=0.000750
+  EMIT ckpt step=2142 reason=displacement on_ladder=True -> step00002142.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2146 reason=displacement on_ladder=True -> step00002146.pt
+  EMIT ckpt step=2150 reason=displacement on_ladder=True -> step00002150.pt
+  EMIT ckpt step=2154 reason=displacement on_ladder=True -> step00002154.pt
+  EMIT ckpt step=2158 reason=displacement on_ladder=True -> step00002158.pt
+  [80/278] loss=0.3582 upd_norm=0.8823 disp=17.3623 sampler=0.0343 lr=0.000750
+  EMIT ckpt step=2162 reason=displacement on_ladder=True -> step00002162.pt
+  EMIT ckpt step=2166 reason=displacement on_ladder=True -> step00002166.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2170 reason=displacement on_ladder=True -> step00002170.pt
+  EMIT ckpt step=2174 reason=displacement on_ladder=True -> step00002174.pt
+  EMIT ckpt step=2178 reason=displacement on_ladder=True -> step00002178.pt
+  [100/278] loss=0.3941 upd_norm=0.9252 disp=18.6926 sampler=0.0229 lr=0.000750
+  EMIT ckpt step=2182 reason=displacement on_ladder=True -> step00002182.pt
+  EMIT ckpt step=2186 reason=displacement on_ladder=True -> step00002186.pt
+  EMIT ckpt step=2190 reason=displacement on_ladder=True -> step00002190.pt
+  EMIT ckpt step=2194 reason=displacement on_ladder=True -> step00002194.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2198 reason=displacement on_ladder=True -> step00002198.pt
+  [120/278] loss=0.3949 upd_norm=1.0185 disp=19.4368 sampler=0.0292 lr=0.000750
+  VAL step=2200 (p2=400) val_loss=0.3122 auc_pr_mean=0.7922
+  EMIT ckpt step=2202 reason=displacement on_ladder=True -> step00002202.pt
+  EMIT ckpt step=2206 reason=displacement on_ladder=True -> step00002206.pt
+  EMIT ckpt step=2210 reason=displacement on_ladder=True -> step00002210.pt
+  EMIT ckpt step=2214 reason=displacement on_ladder=True -> step00002214.pt
+  EMIT ckpt step=2218 reason=displacement on_ladder=True -> step00002218.pt
+  [140/278] loss=0.3927 upd_norm=1.1298 disp=20.2234 sampler=0.0277 lr=0.000750
+  EMIT ckpt step=2222 reason=displacement on_ladder=True -> step00002222.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2226 reason=displacement on_ladder=True -> step00002226.pt
+  EMIT ckpt step=2230 reason=displacement on_ladder=True -> step00002230.pt
+  EMIT ckpt step=2234 reason=displacement on_ladder=True -> step00002234.pt
+  EMIT ckpt step=2238 reason=displacement on_ladder=True -> step00002238.pt
+  [160/278] loss=0.4137 upd_norm=1.7626 disp=21.1354 sampler=0.0356 lr=0.000750
+  EMIT ckpt step=2242 reason=displacement on_ladder=True -> step00002242.pt
+  EMIT ckpt step=2246 reason=displacement on_ladder=True -> step00002246.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2250 reason=displacement on_ladder=True -> step00002250.pt
+  EMIT ckpt step=2254 reason=displacement on_ladder=True -> step00002254.pt
+  EMIT ckpt step=2258 reason=displacement on_ladder=True -> step00002258.pt
+  [180/278] loss=0.4009 upd_norm=1.9115 disp=21.9909 sampler=0.0328 lr=0.000750
+  EMIT ckpt step=2262 reason=displacement on_ladder=True -> step00002262.pt
+  EMIT ckpt step=2266 reason=displacement on_ladder=True -> step00002266.pt
+  EMIT ckpt step=2270 reason=displacement on_ladder=True -> step00002270.pt
+  EMIT ckpt step=2274 reason=displacement on_ladder=True -> step00002274.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2278 reason=displacement on_ladder=True -> step00002278.pt
+  [200/278] loss=0.3909 upd_norm=0.9367 disp=22.6600 sampler=0.0293 lr=0.000750
+  EMIT ckpt step=2282 reason=displacement on_ladder=True -> step00002282.pt
+  EMIT ckpt step=2286 reason=displacement on_ladder=True -> step00002286.pt
+  EMIT ckpt step=2290 reason=displacement on_ladder=True -> step00002290.pt
+  EMIT ckpt step=2294 reason=displacement on_ladder=True -> step00002294.pt
+  EMIT ckpt step=2298 reason=displacement on_ladder=True -> step00002298.pt
+  [220/278] loss=0.3766 upd_norm=0.7799 disp=23.5331 sampler=0.0314 lr=0.000750
+  VAL step=2300 (p2=500) val_loss=0.3054 auc_pr_mean=0.8022
+  EMIT ckpt step=2302 reason=displacement on_ladder=True -> step00002302.pt
+  EMIT ckpt step=2306 reason=displacement on_ladder=True -> step00002306.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  EMIT ckpt step=2310 reason=displacement on_ladder=True -> step00002310.pt
+  EMIT ckpt step=2314 reason=displacement on_ladder=True -> step00002314.pt
+  EMIT ckpt step=2318 reason=displacement on_ladder=True -> step00002318.pt
+  [240/278] loss=0.4155 upd_norm=1.6253 disp=24.4520 sampler=0.0451 lr=0.000750
+  EMIT ckpt step=2322 reason=displacement on_ladder=True -> step00002322.pt
+  EMIT ckpt step=2326 reason=displacement on_ladder=True -> step00002326.pt
+  EMIT ckpt step=2330 reason=displacement on_ladder=True -> step00002330.pt
+  EMIT ckpt step=2334 reason=displacement on_ladder=True -> step00002334.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2338 reason=displacement on_ladder=True -> step00002338.pt
+  [260/278] loss=0.3713 upd_norm=1.2320 disp=25.2709 sampler=0.0310 lr=0.000750
+  EMIT ckpt step=2342 reason=displacement on_ladder=True -> step00002342.pt
+  EMIT ckpt step=2346 reason=displacement on_ladder=True -> step00002346.pt
+  EMIT ckpt step=2350 reason=displacement on_ladder=True -> step00002350.pt
+  EMIT ckpt step=2354 reason=displacement on_ladder=True -> step00002354.pt
+  EMIT ckpt step=2356 reason=epoch_end on_ladder=True -> step00002356.pt
+
+--- Phase 2, Epoch 15 (P2 epoch 2) ---
+  [0/278] loss=0.3836 upd_norm=1.0955 disp=25.8848 sampler=0.0338 lr=0.000750
+  EMIT ckpt step=2360 reason=displacement on_ladder=True -> step00002360.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  EMIT ckpt step=2364 reason=displacement on_ladder=True -> step00002364.pt
+  EMIT ckpt step=2368 reason=displacement on_ladder=True -> step00002368.pt
+  EMIT ckpt step=2372 reason=displacement on_ladder=True -> step00002372.pt
+  EMIT ckpt step=2376 reason=displacement on_ladder=True -> step00002376.pt
+  [20/278] loss=0.3962 upd_norm=1.2846 disp=26.6197 sampler=0.0301 lr=0.000750
+  EMIT ckpt step=2380 reason=displacement on_ladder=True -> step00002380.pt
+  EMIT ckpt step=2384 reason=displacement on_ladder=True -> step00002384.pt
+  EMIT ckpt step=2388 reason=displacement on_ladder=True -> step00002388.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2392 reason=displacement on_ladder=True -> step00002392.pt
+  EMIT ckpt step=2396 reason=displacement on_ladder=True -> step00002396.pt
+  [40/278] loss=0.3608 upd_norm=1.0359 disp=27.2090 sampler=0.0278 lr=0.000750
+  EMIT ckpt step=2400 reason=displacement on_ladder=True -> step00002400.pt
+  VAL step=2400 (p2=600) val_loss=0.3003 auc_pr_mean=0.8083
+  EMIT ckpt step=2404 reason=displacement on_ladder=True -> step00002404.pt
+  EMIT ckpt step=2408 reason=displacement on_ladder=True -> step00002408.pt
+  EMIT ckpt step=2412 reason=displacement on_ladder=True -> step00002412.pt
+  EMIT ckpt step=2416 reason=displacement on_ladder=True -> step00002416.pt
+  [60/278] loss=0.3754 upd_norm=0.8745 disp=28.0618 sampler=0.0315 lr=0.000750
+  EMIT ckpt step=2420 reason=displacement on_ladder=True -> step00002420.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2424 reason=displacement on_ladder=True -> step00002424.pt
+  EMIT ckpt step=2428 reason=displacement on_ladder=True -> step00002428.pt
+  EMIT ckpt step=2432 reason=displacement on_ladder=True -> step00002432.pt
+  EMIT ckpt step=2436 reason=displacement on_ladder=True -> step00002436.pt
+  [80/278] loss=0.3864 upd_norm=0.9584 disp=28.8889 sampler=0.0338 lr=0.000750
+  EMIT ckpt step=2440 reason=displacement on_ladder=True -> step00002440.pt
+  EMIT ckpt step=2444 reason=displacement on_ladder=True -> step00002444.pt
+  EMIT ckpt step=2448 reason=displacement on_ladder=True -> step00002448.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2452 reason=displacement on_ladder=True -> step00002452.pt
+  EMIT ckpt step=2456 reason=displacement on_ladder=True -> step00002456.pt
+  [100/278] loss=0.3982 upd_norm=0.9502 disp=29.6204 sampler=0.0334 lr=0.000750
+  EMIT ckpt step=2460 reason=displacement on_ladder=True -> step00002460.pt
+  EMIT ckpt step=2464 reason=displacement on_ladder=True -> step00002464.pt
+  EMIT ckpt step=2468 reason=displacement on_ladder=True -> step00002468.pt
+  EMIT ckpt step=2472 reason=displacement on_ladder=True -> step00002472.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2476 reason=displacement on_ladder=True -> step00002476.pt
+  [120/278] loss=0.3670 upd_norm=0.8589 disp=30.4577 sampler=0.0313 lr=0.000750
+  EMIT ckpt step=2480 reason=displacement on_ladder=True -> step00002480.pt
+  EMIT ckpt step=2484 reason=displacement on_ladder=True -> step00002484.pt
+  EMIT ckpt step=2488 reason=displacement on_ladder=True -> step00002488.pt
+  EMIT ckpt step=2492 reason=displacement on_ladder=True -> step00002492.pt
+  EMIT ckpt step=2496 reason=displacement on_ladder=True -> step00002496.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  [140/278] loss=0.3874 upd_norm=1.8736 disp=31.1670 sampler=0.0324 lr=0.000750
+  EMIT ckpt step=2500 reason=displacement on_ladder=True -> step00002500.pt
+  VAL step=2500 (p2=700) val_loss=0.2958 auc_pr_mean=0.8134
+  EMIT ckpt step=2504 reason=displacement on_ladder=True -> step00002504.pt
+  EMIT ckpt step=2508 reason=displacement on_ladder=True -> step00002508.pt
+  EMIT ckpt step=2512 reason=displacement on_ladder=True -> step00002512.pt
+  EMIT ckpt step=2516 reason=displacement on_ladder=True -> step00002516.pt
+  [160/278] loss=0.3234 upd_norm=0.8555 disp=31.7666 sampler=0.0302 lr=0.000750
+  EMIT ckpt step=2520 reason=displacement on_ladder=True -> step00002520.pt
+  EMIT ckpt step=2524 reason=displacement on_ladder=True -> step00002524.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2528 reason=displacement on_ladder=True -> step00002528.pt
+  EMIT ckpt step=2532 reason=displacement on_ladder=True -> step00002532.pt
+  EMIT ckpt step=2536 reason=displacement on_ladder=True -> step00002536.pt
+  [180/278] loss=0.3568 upd_norm=0.9707 disp=32.3268 sampler=0.0354 lr=0.000750
+  EMIT ckpt step=2540 reason=displacement on_ladder=True -> step00002540.pt
+  EMIT ckpt step=2544 reason=displacement on_ladder=True -> step00002544.pt
+  EMIT ckpt step=2548 reason=displacement on_ladder=True -> step00002548.pt
+  EMIT ckpt step=2552 reason=displacement on_ladder=True -> step00002552.pt
+  EMIT ckpt step=2556 reason=displacement on_ladder=True -> step00002556.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  [200/278] loss=0.3933 upd_norm=1.4495 disp=33.0856 sampler=0.0397 lr=0.000750
+  EMIT ckpt step=2560 reason=displacement on_ladder=True -> step00002560.pt
+  EMIT ckpt step=2564 reason=displacement on_ladder=True -> step00002564.pt
+  EMIT ckpt step=2568 reason=displacement on_ladder=True -> step00002568.pt
+  EMIT ckpt step=2572 reason=displacement on_ladder=True -> step00002572.pt
+  EMIT ckpt step=2576 reason=displacement on_ladder=True -> step00002576.pt
+  [220/278] loss=0.3703 upd_norm=1.7796 disp=33.7837 sampler=0.0392 lr=0.000750
+  EMIT ckpt step=2580 reason=displacement on_ladder=True -> step00002580.pt
+  EMIT ckpt step=2584 reason=displacement on_ladder=True -> step00002584.pt
+  EMIT ckpt step=2588 reason=displacement on_ladder=True -> step00002588.pt
+  EMIT ckpt step=2592 reason=displacement on_ladder=True -> step00002592.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2596 reason=displacement on_ladder=True -> step00002596.pt
+  [240/278] loss=0.3833 upd_norm=0.9595 disp=34.3814 sampler=0.0316 lr=0.000750
+  EMIT ckpt step=2600 reason=displacement on_ladder=True -> step00002600.pt
+  VAL step=2600 (p2=800) val_loss=0.2906 auc_pr_mean=0.8177
+  EMIT ckpt step=2604 reason=displacement on_ladder=True -> step00002604.pt
+  EMIT ckpt step=2608 reason=displacement on_ladder=True -> step00002608.pt
+  EMIT ckpt step=2612 reason=displacement on_ladder=True -> step00002612.pt
+  EMIT ckpt step=2616 reason=displacement on_ladder=True -> step00002616.pt
+  [260/278] loss=0.3899 upd_norm=0.8844 disp=35.0025 sampler=0.0354 lr=0.000750
+  EMIT ckpt step=2620 reason=displacement on_ladder=True -> step00002620.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2624 reason=displacement on_ladder=True -> step00002624.pt
+  EMIT ckpt step=2628 reason=displacement on_ladder=True -> step00002628.pt
+  EMIT ckpt step=2632 reason=displacement on_ladder=True -> step00002632.pt
+  EMIT ckpt step=2634 reason=epoch_end on_ladder=True -> step00002634.pt
+
+--- Phase 2, Epoch 16 (P2 epoch 3) ---
+  [0/278] loss=0.3602 upd_norm=1.3381 disp=35.4659 sampler=0.0317 lr=0.000750
+  EMIT ckpt step=2638 reason=displacement on_ladder=True -> step00002638.pt
+  EMIT ckpt step=2642 reason=displacement on_ladder=True -> step00002642.pt
+  EMIT ckpt step=2646 reason=displacement on_ladder=True -> step00002646.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2650 reason=displacement on_ladder=True -> step00002650.pt
+  EMIT ckpt step=2654 reason=displacement on_ladder=True -> step00002654.pt
+  [20/278] loss=0.3884 upd_norm=1.2665 disp=35.9022 sampler=0.0258 lr=0.000750
+  EMIT ckpt step=2658 reason=displacement on_ladder=True -> step00002658.pt
+  EMIT ckpt step=2662 reason=displacement on_ladder=True -> step00002662.pt
+  EMIT ckpt step=2666 reason=displacement on_ladder=True -> step00002666.pt
+  EMIT ckpt step=2670 reason=displacement on_ladder=True -> step00002670.pt
+  EMIT ckpt step=2674 reason=displacement on_ladder=True -> step00002674.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  [40/278] loss=0.3570 upd_norm=1.1422 disp=36.2913 sampler=0.0315 lr=0.000750
+  EMIT ckpt step=2678 reason=displacement on_ladder=True -> step00002678.pt
+  EMIT ckpt step=2682 reason=displacement on_ladder=True -> step00002682.pt
+  EMIT ckpt step=2686 reason=displacement on_ladder=True -> step00002686.pt
+  EMIT ckpt step=2690 reason=displacement on_ladder=True -> step00002690.pt
+  EMIT ckpt step=2694 reason=displacement on_ladder=True -> step00002694.pt
+  [60/278] loss=0.3770 upd_norm=1.0132 disp=36.7363 sampler=0.0273 lr=0.000750
+  EMIT ckpt step=2698 reason=displacement on_ladder=True -> step00002698.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  VAL step=2700 (p2=900) val_loss=0.2865 auc_pr_mean=0.8213
+  EMIT ckpt step=2702 reason=displacement on_ladder=True -> step00002702.pt
+  EMIT ckpt step=2706 reason=displacement on_ladder=True -> step00002706.pt
+  EMIT ckpt step=2710 reason=displacement on_ladder=True -> step00002710.pt
+  EMIT ckpt step=2714 reason=displacement on_ladder=True -> step00002714.pt
+  [80/278] loss=0.3762 upd_norm=0.9976 disp=37.1710 sampler=0.0301 lr=0.000750
+  EMIT ckpt step=2718 reason=displacement on_ladder=True -> step00002718.pt
+  EMIT ckpt step=2722 reason=displacement on_ladder=True -> step00002722.pt
+  EMIT ckpt step=2726 reason=displacement on_ladder=True -> step00002726.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  EMIT ckpt step=2730 reason=displacement on_ladder=True -> step00002730.pt
+  EMIT ckpt step=2734 reason=displacement on_ladder=True -> step00002734.pt
+  [100/278] loss=0.3943 upd_norm=1.0432 disp=37.6324 sampler=0.0284 lr=0.000750
+  EMIT ckpt step=2738 reason=displacement on_ladder=True -> step00002738.pt
+  EMIT ckpt step=2742 reason=displacement on_ladder=True -> step00002742.pt
+  EMIT ckpt step=2746 reason=displacement on_ladder=True -> step00002746.pt
+  EMIT ckpt step=2750 reason=displacement on_ladder=True -> step00002750.pt
+  EMIT ckpt step=2754 reason=displacement on_ladder=True -> step00002754.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  [120/278] loss=0.3511 upd_norm=1.0626 disp=37.9656 sampler=0.0228 lr=0.000750
+  EMIT ckpt step=2758 reason=displacement on_ladder=True -> step00002758.pt
+  EMIT ckpt step=2762 reason=displacement on_ladder=True -> step00002762.pt
+  EMIT ckpt step=2766 reason=displacement on_ladder=True -> step00002766.pt
+  EMIT ckpt step=2770 reason=displacement on_ladder=True -> step00002770.pt
+  EMIT ckpt step=2774 reason=displacement on_ladder=True -> step00002774.pt
+  [140/278] loss=0.3416 upd_norm=1.0210 disp=38.4736 sampler=0.0294 lr=0.000750
+  EMIT ckpt step=2778 reason=displacement on_ladder=True -> step00002778.pt
+  EMIT ckpt step=2782 reason=displacement on_ladder=True -> step00002782.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2786 reason=displacement on_ladder=True -> step00002786.pt
+  EMIT ckpt step=2790 reason=displacement on_ladder=True -> step00002790.pt
+  EMIT ckpt step=2794 reason=displacement on_ladder=True -> step00002794.pt
+  [160/278] loss=0.3601 upd_norm=0.9039 disp=38.9636 sampler=0.0292 lr=0.000750
+  EMIT ckpt step=2798 reason=displacement on_ladder=True -> step00002798.pt
+  VAL step=2800 (p2=1000) val_loss=0.2843 auc_pr_mean=0.8238
+  EMIT ckpt step=2802 reason=displacement on_ladder=True -> step00002802.pt
+  EMIT ckpt step=2806 reason=displacement on_ladder=True -> step00002806.pt
+  EMIT ckpt step=2810 reason=displacement on_ladder=True -> step00002810.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2814 reason=displacement on_ladder=True -> step00002814.pt
+  [180/278] loss=0.3700 upd_norm=1.5342 disp=39.5944 sampler=0.0462 lr=0.000750
+  EMIT ckpt step=2818 reason=displacement on_ladder=True -> step00002818.pt
+  EMIT ckpt step=2822 reason=displacement on_ladder=True -> step00002822.pt
+  EMIT ckpt step=2826 reason=displacement on_ladder=True -> step00002826.pt
+  EMIT ckpt step=2830 reason=displacement on_ladder=True -> step00002830.pt
+  EMIT ckpt step=2834 reason=displacement on_ladder=True -> step00002834.pt
+  [200/278] loss=0.3236 upd_norm=0.8288 disp=40.3482 sampler=0.0347 lr=0.000750
+  EMIT ckpt step=2838 reason=displacement on_ladder=True -> step00002838.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  EMIT ckpt step=2842 reason=displacement on_ladder=True -> step00002842.pt
+  EMIT ckpt step=2846 reason=displacement on_ladder=True -> step00002846.pt
+  EMIT ckpt step=2850 reason=displacement on_ladder=True -> step00002850.pt
+  EMIT ckpt step=2854 reason=displacement on_ladder=True -> step00002854.pt
+  [220/278] loss=0.3951 upd_norm=2.2243 disp=41.3090 sampler=0.0413 lr=0.000750
+  EMIT ckpt step=2858 reason=displacement on_ladder=True -> step00002858.pt
+  EMIT ckpt step=2862 reason=displacement on_ladder=True -> step00002862.pt
+  EMIT ckpt step=2866 reason=displacement on_ladder=True -> step00002866.pt
+  EMIT ckpt step=2870 reason=displacement on_ladder=True -> step00002870.pt
+  EMIT ckpt step=2874 reason=displacement on_ladder=True -> step00002874.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 0 pending < low (2); resuming training.
+  [240/278] loss=0.3796 upd_norm=1.6656 disp=41.8344 sampler=0.0418 lr=0.000750
+  EMIT ckpt step=2878 reason=displacement on_ladder=True -> step00002878.pt
+  EMIT ckpt step=2882 reason=displacement on_ladder=True -> step00002882.pt
+  EMIT ckpt step=2886 reason=displacement on_ladder=True -> step00002886.pt
+  EMIT ckpt step=2890 reason=displacement on_ladder=True -> step00002890.pt
+  EMIT ckpt step=2894 reason=displacement on_ladder=True -> step00002894.pt
+  [260/278] loss=0.3505 upd_norm=1.1624 disp=42.2082 sampler=0.0290 lr=0.000750
+  EMIT ckpt step=2898 reason=displacement on_ladder=True -> step00002898.pt
+  VAL step=2900 (p2=1100) val_loss=0.2823 auc_pr_mean=0.8275
+  EMIT ckpt step=2902 reason=displacement on_ladder=True -> step00002902.pt
+  BACKPRESSURE: 7 pending > high (6), pausing training (waiting for collectors to drain below 2; polling every 15s).
+  BACKPRESSURE cleared — 1 pending < low (2); resuming training.
+  EMIT ckpt step=2906 reason=displacement on_ladder=True -> step00002906.pt
+  EMIT ckpt step=2910 reason=displacement on_ladder=True -> step00002910.pt
+  EMIT ckpt step=2912 reason=epoch_end on_ladder=True -> step00002912.pt
+
+--- Phase 2, Epoch 17 (P2 epoch 4) ---

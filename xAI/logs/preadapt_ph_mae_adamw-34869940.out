@@ -1,0 +1,10 @@
+Wed Jun 17 08:17:14 AM EDT 2026
+host=c1105a-s5.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt post-hoc pass ===
+run_dir=xAI/output/preadapt/mae__adamw__s42 variant=adamw seed=42 run_id=mae__adamw__s42
+per_run_store=xAI/output/preadapt/_extract_store/mae__adamw__s42  inline_scalars=xAI/output/preadapt/mae__adamw__s42/metrics/scalars.parquet
+[posthoc_sequential] run_id=mae__adamw__s42 condition=mae store=/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/output/preadapt/_extract_store/mae__adamw__s42
+[posthoc_sequential] inline log loaded: 316472 rows from xAI/output/preadapt/mae__adamw__s42/metrics/scalars.parquet
+[posthoc_sequential] DONE run_id=mae__adamw__s42 in 966.1s rotation={'section': '6.1_rotation', 'ql_group': None, 'qr_group': None, 'skipped': True} trajectory_straightness=0.09783833723976637
+Done: Wed Jun 17 08:33:24 AM EDT 2026

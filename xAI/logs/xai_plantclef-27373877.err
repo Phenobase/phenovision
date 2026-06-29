@@ -1,0 +1,52 @@
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/xai_train.py:176: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  checkpoint = torch.load(model_path, map_location="cpu")
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../PlantCLEF2022/util/misc.py:255: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self._scaler = torch.cuda.amp.GradScaler()
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../PlantCLEF2022/util/misc.py:255: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self._scaler = torch.cuda.amp.GradScaler()
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/xai_train.py", line 706, in <module>
+    main()
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/xai_train.py", line 672, in main
+    global_step = run_phase2(
+                  ^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/xai_train.py", line 524, in run_phase2
+    outputs = model(samples)
+              ^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 853, in forward
+    x = self.forward_features(x)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 93, in forward
+    x = F.scaled_dot_product_attention(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.78 GiB. GPU 0 has a total capacity of 178.36 GiB of which 1.73 GiB is free. Including non-PyTorch memory, this process has 176.60 GiB memory in use. Of the allocated memory 173.39 GiB is allocated by PyTorch, and 2.01 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

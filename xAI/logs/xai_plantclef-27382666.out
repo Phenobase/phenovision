@@ -1,0 +1,107 @@
+Mon Mar 16 08:07:37 PM EDT 2026
+c0903a-s25.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI PlantCLEF training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: plantclef
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/plantclef_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: plantclef
+  Total parameters: 303,303,682
+
+Resuming from Phase 1 checkpoint: xAI/output/plantclef_run/checkpoints/phase1_final.pt
+  Loaded: step=1400, epoch=5
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  Rebuilding train loader: batch_size 768 -> 384 for Phase 2
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 6 (P2 epoch 0) ---
+  [0/557] loss=0.2605 grad=1.0439 lr=0.000000
+  VAL step=1420 (p2_batch=20, freq=20) val_loss=0.2542 auc_roc_mean=0.9274
+  [20/557] loss=0.2689 grad=2.7458 lr=0.000000
+  VAL step=1440 (p2_batch=40, freq=20) val_loss=0.2137 auc_roc_mean=0.9420
+  [40/557] loss=0.2403 grad=1.5442 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001450.pt shape=(1000, 1024)
+  VAL step=1460 (p2_batch=60, freq=20) val_loss=0.2028 auc_roc_mean=0.9485
+  [60/557] loss=0.2761 grad=1.8472 lr=0.000000
+  VAL step=1480 (p2_batch=80, freq=20) val_loss=0.2011 auc_roc_mean=0.9523
+  [80/557] loss=0.2596 grad=2.1509 lr=0.000000
+  VAL step=1500 (p2_batch=100, freq=20) val_loss=0.1886 auc_roc_mean=0.9546
+  REPR: xAI/output/plantclef_run/representations/features_step001500.pt shape=(1000, 1024)
+  [100/557] loss=0.2984 grad=1.8847 lr=0.000000
+  VAL step=1520 (p2_batch=120, freq=20) val_loss=0.1863 auc_roc_mean=0.9557
+  [120/557] loss=0.2264 grad=1.7040 lr=0.000000
+  VAL step=1540 (p2_batch=140, freq=20) val_loss=0.1841 auc_roc_mean=0.9565
+  [140/557] loss=0.2527 grad=1.5434 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001550.pt shape=(1000, 1024)
+  VAL step=1560 (p2_batch=160, freq=20) val_loss=0.1874 auc_roc_mean=0.9565
+  [160/557] loss=0.2364 grad=1.3667 lr=0.000000
+  VAL step=1580 (p2_batch=180, freq=20) val_loss=0.1862 auc_roc_mean=0.9593
+  [180/557] loss=0.2300 grad=1.2445 lr=0.000000
+  VAL step=1600 (p2_batch=200, freq=20) val_loss=0.1858 auc_roc_mean=0.9599
+  REPR: xAI/output/plantclef_run/representations/features_step001600.pt shape=(1000, 1024)
+  [200/557] loss=0.2292 grad=1.4864 lr=0.000000
+  VAL step=1620 (p2_batch=220, freq=20) val_loss=0.1813 auc_roc_mean=0.9584
+  [220/557] loss=0.2324 grad=1.7810 lr=0.000000
+  VAL step=1640 (p2_batch=240, freq=20) val_loss=0.1886 auc_roc_mean=0.9601
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step001640.pt
+  [240/557] loss=0.2932 grad=2.3187 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001650.pt shape=(1000, 1024)
+  VAL step=1660 (p2_batch=260, freq=20) val_loss=0.1881 auc_roc_mean=0.9608
+  [260/557] loss=0.2513 grad=1.6892 lr=0.000000
+  VAL step=1680 (p2_batch=280, freq=20) val_loss=0.1827 auc_roc_mean=0.9594
+  [280/557] loss=0.2709 grad=2.0350 lr=0.000000
+  VAL step=1700 (p2_batch=300, freq=20) val_loss=0.1757 auc_roc_mean=0.9614
+  REPR: xAI/output/plantclef_run/representations/features_step001700.pt shape=(1000, 1024)
+  [300/557] loss=0.2365 grad=2.4197 lr=0.000000
+  VAL step=1720 (p2_batch=320, freq=20) val_loss=0.1759 auc_roc_mean=0.9621
+  [320/557] loss=0.2504 grad=1.2892 lr=0.000000
+  VAL step=1740 (p2_batch=340, freq=20) val_loss=0.1722 auc_roc_mean=0.9617
+  [340/557] loss=0.2495 grad=1.5080 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001750.pt shape=(1000, 1024)
+  VAL step=1760 (p2_batch=360, freq=20) val_loss=0.1738 auc_roc_mean=0.9610
+  [360/557] loss=0.2650 grad=1.3884 lr=0.000000
+  VAL step=1780 (p2_batch=380, freq=20) val_loss=0.1798 auc_roc_mean=0.9652
+  [380/557] loss=0.2225 grad=2.1045 lr=0.000000
+  VAL step=1800 (p2_batch=400, freq=20) val_loss=0.1750 auc_roc_mean=0.9593
+  REPR: xAI/output/plantclef_run/representations/features_step001800.pt shape=(1000, 1024)
+  [400/557] loss=0.2080 grad=1.5090 lr=0.000000
+  VAL step=1820 (p2_batch=420, freq=20) val_loss=0.1662 auc_roc_mean=0.9644
+  [420/557] loss=0.1875 grad=1.4016 lr=0.000000
+  VAL step=1840 (p2_batch=440, freq=20) val_loss=0.1665 auc_roc_mean=0.9646
+  [440/557] loss=0.2035 grad=1.0871 lr=0.000000
+  REPR: xAI/output/plantclef_run/representations/features_step001850.pt shape=(1000, 1024)
+  VAL step=1860 (p2_batch=460, freq=20) val_loss=0.1690 auc_roc_mean=0.9639
+  [460/557] loss=0.2857 grad=1.7126 lr=0.000000
+  VAL step=1880 (p2_batch=480, freq=20) val_loss=0.1666 auc_roc_mean=0.9654
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_step001880.pt
+  [480/557] loss=0.2198 grad=1.1892 lr=0.000000
+  VAL step=1900 (p2_batch=500, freq=20) val_loss=0.1669 auc_roc_mean=0.9640
+  REPR: xAI/output/plantclef_run/representations/features_step001900.pt shape=(1000, 1024)
+  [500/557] loss=0.2219 grad=1.5194 lr=0.000000
+  [520/557] loss=0.2204 grad=1.3550 lr=0.000000
+  [540/557] loss=0.2550 grad=1.9252 lr=0.000000
+  VAL step=1950 (p2_batch=550, freq=50) val_loss=0.1679 auc_roc_mean=0.9634
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_epoch6.pt
+
+--- Phase 2, Epoch 7 (P2 epoch 1) ---
+  [0/557] loss=0.2214 grad=1.2834 lr=0.000000
+  [20/557] loss=0.2319 grad=1.7969 lr=0.000000
+  [40/557] loss=0.2521 grad=2.3113 lr=0.000000
+  VAL step=2000 (p2_batch=600, freq=50) val_loss=0.1714 auc_roc_mean=0.9638
+  REPR: xAI/output/plantclef_run/representations/features_step002000.pt shape=(1000, 1024)

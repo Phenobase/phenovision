@@ -1,0 +1,540 @@
+Wed Jun 17 08:44:40 PM EDT 2026
+host=c0607a-s11.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42 xAI/output/preadapt_v2/plantclef__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42/checkpoints xAI/output/preadapt_v2/plantclef__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s42/RUN_COMPLETE xAI/output/preadapt_v2/plantclef__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jids=35032433
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] d90 backfill queue exhausted (no pending configs); idle-collecting only.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=1300 SKIP heavy block block_interp (ordinal=260 basis=step_fallback heavy_every=3)
+[extract] step=1300 SKIP heavy block block_probes (ordinal=260 basis=step_fallback heavy_every=3)
+[extract] step=1300 heavy=FALSE total=15.39s | block_curvature=5.83 block_fitness=6.25
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=0 blocks_ok=2 t=15.393s (all_passes_complete=True)
+[extract] step=1300 SKIP heavy block block_interp (ordinal=260 basis=step_fallback heavy_every=3)
+[extract] step=1300 SKIP heavy block block_probes (ordinal=260 basis=step_fallback heavy_every=3)
+[extract] step=1300 heavy=FALSE total=12.32s | block_curvature=4.66 block_fitness=4.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=0 blocks_ok=2 t=12.318s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=0 -> KEPT(->kept/,FULL anchor)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=0 -> KEPT(->kept/,FULL anchor)
+[collector wgpu0] --once drained 4 checkpoint(s); exiting.
+[cwgpu0] drained 4 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=1399 heavy=TRUE total=152.55s | block_curvature=5.32 block_interp=95.88 block_probes=38.43 block_fitness=7.43
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1399 blocks_ok=4 t=152.554s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1399 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=1800 heavy=TRUE total=149.80s | block_curvature=5.32 block_interp=94.34 block_probes=37.07 block_fitness=9.92
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=0 blocks_ok=4 t=149.798s (all_passes_complete=True)
+[extract] step=1494 SKIP heavy block block_interp (ordinal=298 basis=step_fallback heavy_every=3)
+[extract] step=1494 SKIP heavy block block_probes (ordinal=298 basis=step_fallback heavy_every=3)
+[extract] step=1494 heavy=FALSE total=18.57s | block_curvature=5.81 block_fitness=6.88
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1494 blocks_ok=2 t=18.574s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1494 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[extract] step=1502 heavy=TRUE total=153.42s | block_curvature=4.75 block_interp=95.43 block_probes=37.28 block_fitness=9.32
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1502 blocks_ok=4 t=153.42s (all_passes_complete=True)
+[extract] step=1506 SKIP heavy block block_interp (ordinal=301 basis=step_fallback heavy_every=3)
+[extract] step=1506 SKIP heavy block block_probes (ordinal=301 basis=step_fallback heavy_every=3)
+[extract] step=1506 heavy=FALSE total=18.87s | block_curvature=4.70 block_fitness=8.53
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1506 blocks_ok=2 t=18.867s (all_passes_complete=True)
+[extract] step=1510 SKIP heavy block block_interp (ordinal=302 basis=step_fallback heavy_every=3)
+[extract] step=1510 SKIP heavy block block_probes (ordinal=302 basis=step_fallback heavy_every=3)
+[extract] step=1510 heavy=FALSE total=18.94s | block_curvature=4.61 block_fitness=8.69
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1510 blocks_ok=2 t=18.935s (all_passes_complete=True)
+[extract] step=1514 SKIP heavy block block_interp (ordinal=302 basis=step_fallback heavy_every=3)
+[extract] step=1514 SKIP heavy block block_probes (ordinal=302 basis=step_fallback heavy_every=3)
+[extract] step=1514 heavy=FALSE total=18.71s | block_curvature=4.64 block_fitness=8.58
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1514 blocks_ok=2 t=18.707s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1502 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1506 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1510 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1514 -> deleted
+[extract] step=1522 SKIP heavy block block_interp (ordinal=304 basis=step_fallback heavy_every=3)
+[extract] step=1522 SKIP heavy block block_probes (ordinal=304 basis=step_fallback heavy_every=3)
+[extract] step=1522 heavy=FALSE total=18.74s | block_curvature=5.84 block_fitness=6.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1522 blocks_ok=2 t=18.744s (all_passes_complete=True)
+[extract] step=1526 SKIP heavy block block_interp (ordinal=305 basis=step_fallback heavy_every=3)
+[extract] step=1526 SKIP heavy block block_probes (ordinal=305 basis=step_fallback heavy_every=3)
+[extract] step=1526 heavy=FALSE total=17.95s | block_curvature=5.32 block_fitness=5.69
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1526 blocks_ok=2 t=17.951s (all_passes_complete=True)
+[extract] step=1866 SKIP heavy block block_interp (ordinal=373 basis=step_fallback heavy_every=3)
+[extract] step=1866 SKIP heavy block block_probes (ordinal=373 basis=step_fallback heavy_every=3)
+[extract] step=1866 heavy=FALSE total=15.84s | block_curvature=4.69 block_fitness=5.70
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=1866 blocks_ok=2 t=15.841s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=1866 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1399 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1526 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1494 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1522 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 10 checkpoint(s); exiting.
+[cwgpu0] drained 10 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=1530 heavy=TRUE total=154.72s | block_curvature=4.76 block_interp=96.02 block_probes=40.91 block_fitness=6.41
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1530 blocks_ok=4 t=154.72s (all_passes_complete=True)
+[extract] step=1534 heavy=TRUE total=149.97s | block_curvature=4.70 block_interp=95.68 block_probes=38.17 block_fitness=6.03
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1534 blocks_ok=4 t=149.968s (all_passes_complete=True)
+[extract] step=1538 SKIP heavy block block_interp (ordinal=307 basis=step_fallback heavy_every=3)
+[extract] step=1538 SKIP heavy block block_probes (ordinal=307 basis=step_fallback heavy_every=3)
+[extract] step=1538 heavy=FALSE total=15.81s | block_curvature=4.69 block_fitness=5.52
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1538 blocks_ok=2 t=15.811s (all_passes_complete=True)
+[extract] step=1542 SKIP heavy block block_interp (ordinal=308 basis=step_fallback heavy_every=3)
+[extract] step=1542 SKIP heavy block block_probes (ordinal=308 basis=step_fallback heavy_every=3)
+[extract] step=1542 heavy=FALSE total=15.66s | block_curvature=4.66 block_fitness=5.47
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1542 blocks_ok=2 t=15.665s (all_passes_complete=True)
+[extract] step=1546 heavy=TRUE total=149.49s | block_curvature=4.64 block_interp=95.77 block_probes=37.37 block_fitness=6.03
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1546 blocks_ok=4 t=149.489s (all_passes_complete=True)
+[extract] step=1550 SKIP heavy block block_interp (ordinal=310 basis=step_fallback heavy_every=3)
+[extract] step=1550 SKIP heavy block block_probes (ordinal=310 basis=step_fallback heavy_every=3)
+[extract] step=1550 heavy=FALSE total=16.00s | block_curvature=4.71 block_fitness=5.66
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1550 blocks_ok=2 t=15.997s (all_passes_complete=True)
+[extract] step=1923 heavy=TRUE total=151.68s | block_curvature=4.64 block_interp=96.43 block_probes=37.27 block_fitness=7.81
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=1923 blocks_ok=4 t=151.68s (all_passes_complete=True)
+[extract] step=1554 SKIP heavy block block_interp (ordinal=310 basis=step_fallback heavy_every=3)
+[extract] step=1554 SKIP heavy block block_probes (ordinal=310 basis=step_fallback heavy_every=3)
+[extract] step=1554 heavy=FALSE total=18.18s | block_curvature=4.70 block_fitness=7.71
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1554 blocks_ok=2 t=18.181s (all_passes_complete=True)
+[extract] step=1558 SKIP heavy block block_interp (ordinal=311 basis=step_fallback heavy_every=3)
+[extract] step=1558 SKIP heavy block block_probes (ordinal=311 basis=step_fallback heavy_every=3)
+[extract] step=1558 heavy=FALSE total=18.15s | block_curvature=4.66 block_fitness=7.66
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1558 blocks_ok=2 t=18.15s (all_passes_complete=True)
+[extract] step=1562 heavy=TRUE total=158.04s | block_curvature=4.63 block_interp=102.47 block_probes=37.51 block_fitness=8.17
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1562 blocks_ok=4 t=158.04s (all_passes_complete=True)
+[extract] step=1566 SKIP heavy block block_interp (ordinal=313 basis=step_fallback heavy_every=3)
+[extract] step=1566 SKIP heavy block block_probes (ordinal=313 basis=step_fallback heavy_every=3)
+[extract] step=1566 heavy=FALSE total=18.74s | block_curvature=4.67 block_fitness=8.25
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1566 blocks_ok=2 t=18.742s (all_passes_complete=True)
+[extract] step=1570 SKIP heavy block block_interp (ordinal=314 basis=step_fallback heavy_every=3)
+[extract] step=1570 SKIP heavy block block_probes (ordinal=314 basis=step_fallback heavy_every=3)
+[extract] step=1570 heavy=FALSE total=18.16s | block_curvature=4.66 block_fitness=7.83
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1570 blocks_ok=2 t=18.159s (all_passes_complete=True)
+[extract] step=1574 SKIP heavy block block_interp (ordinal=314 basis=step_fallback heavy_every=3)
+[extract] step=1574 SKIP heavy block block_probes (ordinal=314 basis=step_fallback heavy_every=3)
+[extract] step=1574 heavy=FALSE total=18.01s | block_curvature=4.63 block_fitness=7.85
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1574 blocks_ok=2 t=18.014s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1546 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1570 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1550 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1574 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 15 checkpoint(s); exiting.
+[cwgpu0] drained 15 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.

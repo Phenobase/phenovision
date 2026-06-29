@@ -1,0 +1,48 @@
+Mon Mar 16 05:22:44 PM EDT 2026
+c1109a-s15.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI MAE training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: mae
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/mae_run
+
+Device: cuda:0
+Loading data...
+  Training images: 2141091
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: mae
+  Total parameters: 303,303,682
+  CKPT: xAI/output/mae_run/checkpoints/epoch0_init.pt
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization)
+============================================================
+  Trainable parameters: 2,050 (head only)
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/2787] loss=0.6932 lr=0.001000
+  Epoch 0 [20/2787] loss=0.5565 lr=0.001000
+  Epoch 0 [40/2787] loss=0.5495 lr=0.001000
+  Epoch 0 [60/2787] loss=0.5634 lr=0.001000
+  Epoch 0 [80/2787] loss=0.5521 lr=0.001000
+  VAL step=100 val_loss=0.5347 auc_roc_mean=0.7417
+  Epoch 0 [100/2787] loss=0.5250 lr=0.001000
+  Epoch 0 [120/2787] loss=0.5351 lr=0.001000
+  Epoch 0 [140/2787] loss=0.5336 lr=0.001000
+  Epoch 0 [160/2787] loss=0.5122 lr=0.001000
+  Epoch 0 [180/2787] loss=0.5264 lr=0.001000
+  VAL step=200 val_loss=0.5065 auc_roc_mean=0.7697
+  Epoch 0 [200/2787] loss=0.5326 lr=0.001000
+  Epoch 0 [220/2787] loss=0.5373 lr=0.001000
+  Epoch 0 [240/2787] loss=0.5162 lr=0.001000
+  Epoch 0 [260/2787] loss=0.5218 lr=0.001000
+  Epoch 0 [280/2787] loss=0.4924 lr=0.001000
+  VAL step=300 val_loss=0.4867 auc_roc_mean=0.7809
+  Epoch 0 [300/2787] loss=0.4878 lr=0.001000
+  Epoch 0 [320/2787] loss=0.4963 lr=0.001000

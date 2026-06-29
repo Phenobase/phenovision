@@ -1,0 +1,71 @@
+Wed Jun 17 06:59:11 PM EDT 2026
+host=c0900a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --lr_schedule fixed --beta1 0.0 --weight_decay 0.0 --max_train_samples 2000 --num_epochs 4 --batch_size 64 --phase2_batch_size 32 --max_precond_dim 2048 --sampler_min_step 3 --sampler_delta 0.01 --sampler_max_step 40 --backpressure-high 100000 --backpressure-low 1 --demo_warmup 5 --val_every_n 10 --plateau_window 2 --plateau_patience 1 --plateau_threshold 0.10 --phase2_early_stop --phase2_plateau_window 3 --phase2_plateau_threshold 0.005 --phase2_plateau_patience 2 --num_workers 4 --output_dir xAI/output/_v2_smoke/mae__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/_v2_smoke/mae__stable_evo__s42
+  epochs           : 4
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 2000 samples
+  Training images: 2000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/31] loss=0.6931 lr=0.001000
+  VAL step=10 val_loss=0.5875 auc_roc_mean=0.5774 auc_pr_mean=0.4705
+  VAL step=20 val_loss=0.5654 auc_roc_mean=0.6097 auc_pr_mean=0.4977
+  Plateau (1/1) auc_roc improvement=0.0323
+
+*** Phase 1 converged at epoch 0, step 20 ***
+
+PHASE_TRANSITION: step=20 epoch=0 val_loss=0.5654 auc_roc_mean=0.6097 auc_pr_mean=0.4977 (ECOLOGICAL_FITTING: auc_pr=0.4977, val_loss=0.5654)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=6.25e-05  eff_batch=32  variant=stable_evo  lr_schedule=fixed (min_lr=6.25e-05)
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [0/62] loss=0.7992 upd_norm=2.5840 disp=0.0000 sampler=0.0000 lr=0.000013
+  EMIT ckpt step=28 reason=displacement on_ladder=True -> step00000028.pt
+  VAL step=30 (p2=10) val_loss=0.5654 auc_pr_mean=0.4978
+  EMIT ckpt step=31 reason=displacement on_ladder=True -> step00000031.pt
+  EMIT ckpt step=34 reason=displacement on_ladder=True -> step00000034.pt
+  EMIT ckpt step=37 reason=displacement on_ladder=True -> step00000037.pt
+  EMIT ckpt step=40 reason=displacement on_ladder=True -> step00000040.pt
+  VAL step=40 (p2=20) val_loss=0.5654 auc_pr_mean=0.4978
+  [20/62] loss=0.5911 upd_norm=0.3977 disp=1.4283 sampler=0.0088 lr=0.000017
+  EMIT ckpt step=43 reason=displacement on_ladder=True -> step00000043.pt
+  EMIT ckpt step=46 reason=displacement on_ladder=True -> step00000046.pt
+  EMIT ckpt step=49 reason=displacement on_ladder=True -> step00000049.pt
+  VAL step=50 (p2=30) val_loss=0.5654 auc_pr_mean=0.4982
+  Phase-2 plateau (1/2) improvement=-0.00094 < 0.005
+  EMIT ckpt step=52 reason=displacement on_ladder=True -> step00000052.pt
+  EMIT ckpt step=55 reason=displacement on_ladder=True -> step00000055.pt
+  EMIT ckpt step=58 reason=displacement on_ladder=True -> step00000058.pt
+  VAL step=60 (p2=40) val_loss=0.5654 auc_pr_mean=0.4985
+  Phase-2 plateau (2/2) improvement=-0.00901 < 0.005
+*** Phase-2 EARLY STOP (train-loss plateau) at epoch 1, step 60 ***
+  EMIT ckpt step=60 reason=early_stop on_ladder=True -> step00000060.pt
+
+TRAINING COMPLETE: run_id=mae__stable_evo__s42 final_step=60 elapsed=10.8 min
+Done: Wed Jun 17 07:10:35 PM EDT 2026

@@ -1,0 +1,1231 @@
+Thu Jun 18 12:21:37 AM EDT 2026
+host=c0704a-s13.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt CPU collector worker 1 ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42 xAI/output/preadapt_v2/plantclef__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42/checkpoints xAI/output/preadapt_v2/plantclef__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s42/RUN_COMPLETE xAI/output/preadapt_v2/plantclef__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+nthreads=8
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jids=35032433
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1730 SKIP heavy block block_circuits (ordinal=346 basis=step_fallback heavy_every=3)
+[extract] step=1730 heavy=FALSE total=156.34s | block_optim=112.17 block_weights=33.37 block_trajectory=0.85
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1730 blocks_ok=3 t=156.335s (all_passes_complete=False)
+[extract] step=1734 SKIP heavy block block_circuits (ordinal=346 basis=step_fallback heavy_every=3)
+[extract] step=1734 heavy=FALSE total=153.17s | block_optim=113.38 block_weights=30.44 block_trajectory=1.39
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1734 blocks_ok=3 t=153.174s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1738 SKIP heavy block block_circuits (ordinal=347 basis=step_fallback heavy_every=3)
+[extract] step=1738 heavy=FALSE total=159.78s | block_optim=116.31 block_weights=31.85 block_trajectory=0.76
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1738 blocks_ok=3 t=159.776s (all_passes_complete=True)
+[extract] step=1746 SKIP heavy block block_circuits (ordinal=349 basis=step_fallback heavy_every=3)
+[extract] step=1746 heavy=FALSE total=153.32s | block_optim=114.96 block_weights=29.65 block_trajectory=1.31
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1746 blocks_ok=3 t=153.321s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2154 SKIP heavy block block_circuits (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2154 heavy=FALSE total=147.67s | block_optim=109.68 block_weights=29.91 block_trajectory=0.74
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2154 blocks_ok=3 t=147.669s (all_passes_complete=False)
+[extract] step=1758 heavy=TRUE total=163.84s | block_optim=113.42 block_weights=32.37 block_trajectory=0.79 block_circuits=4.73
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1758 blocks_ok=4 t=163.842s (all_passes_complete=False)
+[extract] step=2166 SKIP heavy block block_circuits (ordinal=433 basis=step_fallback heavy_every=3)
+[extract] step=2166 heavy=FALSE total=157.05s | block_optim=113.50 block_weights=28.56 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2166 blocks_ok=3 t=157.051s (all_passes_complete=False)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2154 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1754 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1730 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1758 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1774 heavy=TRUE total=160.00s | block_optim=113.90 block_weights=31.49 block_trajectory=0.74 block_circuits=4.68
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1774 blocks_ok=4 t=160.004s (all_passes_complete=False)
+[extract] step=1786 heavy=TRUE total=172.75s | block_optim=116.94 block_weights=31.79 block_trajectory=1.32 block_circuits=6.64
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1786 blocks_ok=4 t=172.747s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2178 heavy=TRUE total=159.15s | block_optim=114.66 block_weights=29.93 block_trajectory=0.57 block_circuits=4.29
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2178 blocks_ok=4 t=159.153s (all_passes_complete=False)
+[extract] step=2190 heavy=TRUE total=163.63s | block_optim=111.36 block_weights=30.24 block_trajectory=0.70 block_circuits=4.33
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2190 blocks_ok=4 t=163.631s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1798 SKIP heavy block block_circuits (ordinal=359 basis=step_fallback heavy_every=3)
+[extract] step=1798 heavy=FALSE total=150.29s | block_optim=111.14 block_weights=28.93 block_trajectory=0.63
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1798 blocks_ok=3 t=150.286s (all_passes_complete=False)
+[extract] step=1806 SKIP heavy block block_circuits (ordinal=361 basis=step_fallback heavy_every=3)
+[extract] step=1806 heavy=FALSE total=149.57s | block_optim=111.00 block_weights=28.72 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1806 blocks_ok=3 t=149.57s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2182 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2186 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2162 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2190 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2194 -> deleted
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2206 heavy=TRUE total=153.82s | block_optim=111.31 block_weights=28.59 block_trajectory=0.63 block_circuits=4.16
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2206 blocks_ok=4 t=153.817s (all_passes_complete=False)
+[extract] step=2218 SKIP heavy block block_circuits (ordinal=443 basis=step_fallback heavy_every=3)
+[extract] step=2218 heavy=FALSE total=145.21s | block_optim=107.77 block_weights=29.00 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2218 blocks_ok=3 t=145.207s (all_passes_complete=False)
+[collector wcpu1] --once drained 3 checkpoint(s); exiting.
+[cwcpu1] drained 3 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1802 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1806 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1758 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1810 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1818 heavy=TRUE total=154.98s | block_optim=110.95 block_weights=28.05 block_trajectory=0.67 block_circuits=4.34
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1818 blocks_ok=4 t=154.983s (all_passes_complete=False)
+[extract] step=1830 heavy=TRUE total=167.74s | block_optim=112.58 block_weights=30.47 block_trajectory=1.50 block_circuits=5.12
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1830 blocks_ok=4 t=167.743s (all_passes_complete=False)
+[extract] step=1842 SKIP heavy block block_circuits (ordinal=368 basis=step_fallback heavy_every=3)
+[extract] step=1842 heavy=FALSE total=155.47s | block_optim=112.78 block_weights=31.71 block_trajectory=1.46
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1842 blocks_ok=3 t=155.472s (all_passes_complete=False)
+[collector wcpu1] --once drained 3 checkpoint(s); exiting.
+[cwcpu1] drained 3 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2234 SKIP heavy block block_circuits (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2234 heavy=FALSE total=154.62s | block_optim=111.32 block_weights=33.42 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2234 blocks_ok=3 t=154.619s (all_passes_complete=False)
+[extract] step=2246 SKIP heavy block block_circuits (ordinal=449 basis=step_fallback heavy_every=3)
+[extract] step=2246 heavy=FALSE total=155.97s | block_optim=108.73 block_weights=28.36 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2246 blocks_ok=3 t=155.974s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1818 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1826 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1834 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1814 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1842 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1850 SKIP heavy block block_circuits (ordinal=370 basis=step_fallback heavy_every=3)
+[extract] step=1850 heavy=FALSE total=149.53s | block_optim=108.88 block_weights=29.73 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1850 blocks_ok=3 t=149.526s (all_passes_complete=False)
+[extract] step=1860 heavy=TRUE total=161.11s | block_optim=111.47 block_weights=28.08 block_trajectory=0.67 block_circuits=4.14
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1860 blocks_ok=4 t=161.114s (all_passes_complete=False)
+[collector wcpu1] --once drained 2 checkpoint(s); exiting.
+[cwcpu1] drained 2 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2238 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slim '/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/output/preadapt_v2/mae__stable_evo__s42/kept/step00002190.pt' failed (FileNotFoundError(2, 'No such file or directory')); left FULL.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2242 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2246 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2254 heavy=TRUE total=152.55s | block_optim=108.07 block_weights=29.79 block_trajectory=0.64 block_circuits=4.04
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2254 blocks_ok=4 t=152.547s (all_passes_complete=False)
+[extract] step=2266 heavy=TRUE total=157.78s | block_optim=108.89 block_weights=30.10 block_trajectory=0.63 block_circuits=4.84
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2266 blocks_ok=4 t=157.785s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1854 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1850 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1846 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1856 -> deleted
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1860 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1876 heavy=TRUE total=157.39s | block_optim=110.83 block_weights=31.63 block_trajectory=0.63 block_circuits=4.18
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1876 blocks_ok=4 t=157.386s (all_passes_complete=False)
+[extract] step=1888 SKIP heavy block block_circuits (ordinal=377 basis=step_fallback heavy_every=3)
+[extract] step=1888 heavy=FALSE total=146.24s | block_optim=109.20 block_weights=26.81 block_trajectory=0.58
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1888 blocks_ok=3 t=146.236s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2266 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2262 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2258 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2254 -> deleted
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2218 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2270 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2274 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1872 -> deleted
+[collector wcpu1] --once drained 3 checkpoint(s); exiting.
+[cwcpu1] drained 3 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2278 SKIP heavy block block_circuits (ordinal=455 basis=step_fallback heavy_every=3)
+[extract] step=2278 heavy=FALSE total=153.04s | block_optim=109.82 block_weights=32.04 block_trajectory=0.70
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2278 blocks_ok=3 t=153.04s (all_passes_complete=False)
+[extract] step=2290 SKIP heavy block block_circuits (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 heavy=FALSE total=151.52s | block_optim=107.89 block_weights=26.42 block_trajectory=0.62
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2290 blocks_ok=3 t=151.524s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2278 -> deleted
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1864 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1892 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1868 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1896 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=1888 -> deleted
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2290 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2286 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2294 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2282 -> deleted
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2306 SKIP heavy block block_circuits (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 heavy=FALSE total=145.37s | block_optim=105.63 block_weights=29.26 block_trajectory=0.72
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2306 blocks_ok=3 t=145.375s (all_passes_complete=True)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2306 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2302 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1908 heavy=TRUE total=151.89s | block_optim=108.63 block_weights=29.32 block_trajectory=0.65 block_circuits=4.15
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1908 blocks_ok=4 t=151.894s (all_passes_complete=True)
+[extract] step=1916 SKIP heavy block block_circuits (ordinal=383 basis=step_fallback heavy_every=3)
+[extract] step=1916 heavy=FALSE total=161.69s | block_optim=114.01 block_weights=29.94 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1916 blocks_ok=3 t=161.687s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2318 SKIP heavy block block_circuits (ordinal=463 basis=step_fallback heavy_every=3)
+[extract] step=2318 heavy=FALSE total=183.15s | block_optim=112.57 block_weights=28.66 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2318 blocks_ok=3 t=183.15s (all_passes_complete=False)
+[extract] step=1928 SKIP heavy block block_circuits (ordinal=385 basis=step_fallback heavy_every=3)
+[extract] step=1928 heavy=FALSE total=160.59s | block_optim=112.07 block_weights=33.21 block_trajectory=0.71
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1928 blocks_ok=3 t=160.593s (all_passes_complete=False)
+[extract] step=2330 SKIP heavy block block_circuits (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 heavy=FALSE total=148.35s | block_optim=108.51 block_weights=26.37 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2330 blocks_ok=3 t=148.355s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2326 -> deleted
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1936 heavy=TRUE total=154.97s | block_optim=110.42 block_weights=28.30 block_trajectory=0.70 block_circuits=4.22
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1936 blocks_ok=4 t=154.968s (all_passes_complete=True)
+[extract] step=1944 SKIP heavy block block_circuits (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1944 heavy=FALSE total=150.05s | block_optim=110.56 block_weights=30.80 block_trajectory=1.25
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1944 blocks_ok=3 t=150.046s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2346 SKIP heavy block block_circuits (ordinal=469 basis=step_fallback heavy_every=3)
+[extract] step=2346 heavy=FALSE total=151.73s | block_optim=111.35 block_weights=29.94 block_trajectory=0.81
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2346 blocks_ok=3 t=151.728s (all_passes_complete=True)
+[extract] step=1956 SKIP heavy block block_circuits (ordinal=391 basis=step_fallback heavy_every=3)
+[extract] step=1956 heavy=FALSE total=159.21s | block_optim=112.84 block_weights=28.92 block_trajectory=1.25
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1956 blocks_ok=3 t=159.21s (all_passes_complete=True)
+[extract] step=1960 SKIP heavy block block_circuits (ordinal=392 basis=step_fallback heavy_every=3)
+[extract] step=1960 heavy=FALSE total=151.63s | block_optim=110.98 block_weights=31.28 block_trajectory=0.90
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1960 blocks_ok=3 t=151.628s (all_passes_complete=False)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2368 SKIP heavy block block_circuits (ordinal=473 basis=step_fallback heavy_every=3)
+[extract] step=2368 heavy=FALSE total=149.21s | block_optim=110.70 block_weights=28.62 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2368 blocks_ok=3 t=149.208s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=1972 SKIP heavy block block_circuits (ordinal=394 basis=step_fallback heavy_every=3)
+[extract] step=1972 heavy=FALSE total=155.00s | block_optim=113.30 block_weights=33.04 block_trajectory=0.92
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1972 blocks_ok=3 t=154.999s (all_passes_complete=False)
+[extract] step=2380 SKIP heavy block block_circuits (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 heavy=FALSE total=151.45s | block_optim=110.12 block_weights=27.88 block_trajectory=0.83
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2380 blocks_ok=3 t=151.452s (all_passes_complete=True)
+[extract] step=2384 SKIP heavy block block_circuits (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2384 heavy=FALSE total=155.19s | block_optim=111.22 block_weights=29.35 block_trajectory=1.40
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2384 blocks_ok=3 t=155.186s (all_passes_complete=True)
+[extract] step=1988 SKIP heavy block block_circuits (ordinal=397 basis=step_fallback heavy_every=3)
+[extract] step=1988 heavy=FALSE total=156.56s | block_optim=109.42 block_weights=29.54 block_trajectory=1.41
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1988 blocks_ok=3 t=156.557s (all_passes_complete=False)
+[extract] step=2400 heavy=TRUE total=158.83s | block_optim=109.25 block_weights=31.06 block_trajectory=1.10 block_circuits=5.82
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2400 blocks_ok=4 t=158.825s (all_passes_complete=False)
+[extract] step=1992 SKIP heavy block block_circuits (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1992 heavy=FALSE total=154.34s | block_optim=112.38 block_weights=31.76 block_trajectory=1.35
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=1992 blocks_ok=3 t=154.339s (all_passes_complete=False)
+[extract] step=2416 heavy=TRUE total=160.94s | block_optim=111.32 block_weights=29.44 block_trajectory=1.61 block_circuits=4.77
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2416 blocks_ok=4 t=160.945s (all_passes_complete=False)
+[extract] step=2004 SKIP heavy block block_circuits (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2004 heavy=FALSE total=156.25s | block_optim=111.09 block_weights=28.57 block_trajectory=0.84
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2004 blocks_ok=3 t=156.252s (all_passes_complete=False)
+[extract] step=2008 SKIP heavy block block_circuits (ordinal=401 basis=step_fallback heavy_every=3)
+[extract] step=2008 heavy=FALSE total=153.88s | block_optim=110.66 block_weights=27.79 block_trajectory=1.36
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2008 blocks_ok=3 t=153.88s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2400 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2408 -> deleted
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2360 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2416 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2384 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2420 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2004 -> deleted
+[collector wcpu1] --once drained 15 checkpoint(s); exiting.
+[cwcpu1] drained 15 checkpoint(s); looping.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2008 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2424 SKIP heavy block block_circuits (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2424 heavy=FALSE total=156.21s | block_optim=114.02 block_weights=30.63 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2424 blocks_ok=3 t=156.213s (all_passes_complete=False)
+[extract] step=2436 SKIP heavy block block_circuits (ordinal=487 basis=step_fallback heavy_every=3)
+[extract] step=2436 heavy=FALSE total=162.33s | block_optim=110.24 block_weights=32.82 block_trajectory=0.69
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2436 blocks_ok=3 t=162.333s (all_passes_complete=False)
+[extract] step=2448 heavy=TRUE total=163.72s | block_optim=111.41 block_weights=32.07 block_trajectory=0.69 block_circuits=4.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2448 blocks_ok=4 t=163.719s (all_passes_complete=False)
+[collector wcpu1] --once drained 3 checkpoint(s); exiting.
+[cwcpu1] drained 3 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2452 SKIP heavy block block_circuits (ordinal=490 basis=step_fallback heavy_every=3)
+[extract] step=2452 heavy=FALSE total=145.17s | block_optim=105.95 block_weights=28.47 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2452 blocks_ok=3 t=145.17s (all_passes_complete=True)
+[extract] step=2456 SKIP heavy block block_circuits (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2456 heavy=FALSE total=158.86s | block_optim=110.88 block_weights=32.11 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2456 blocks_ok=3 t=158.863s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2036 SKIP heavy block block_circuits (ordinal=407 basis=step_fallback heavy_every=3)
+[extract] step=2036 heavy=FALSE total=147.44s | block_optim=107.94 block_weights=27.84 block_trajectory=0.62
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2036 blocks_ok=3 t=147.443s (all_passes_complete=False)
+[extract] step=2468 SKIP heavy block block_circuits (ordinal=493 basis=step_fallback heavy_every=3)
+[extract] step=2468 heavy=FALSE total=148.25s | block_optim=112.17 block_weights=26.70 block_trajectory=0.61
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2468 blocks_ok=3 t=148.251s (all_passes_complete=False)
+[extract] step=2472 SKIP heavy block block_circuits (ordinal=494 basis=step_fallback heavy_every=3)
+[extract] step=2472 heavy=FALSE total=143.98s | block_optim=107.24 block_weights=26.89 block_trajectory=0.61
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2472 blocks_ok=3 t=143.976s (all_passes_complete=False)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2420 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2468 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2052 SKIP heavy block block_circuits (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2052 heavy=FALSE total=150.38s | block_optim=107.16 block_weights=31.46 block_trajectory=0.72
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2052 blocks_ok=3 t=150.378s (all_passes_complete=False)
+[extract] step=2056 heavy=TRUE total=159.47s | block_optim=110.83 block_weights=28.40 block_trajectory=0.66 block_circuits=4.18
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2056 blocks_ok=4 t=159.469s (all_passes_complete=False)
+[extract] step=2064 SKIP heavy block block_circuits (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2064 heavy=FALSE total=152.70s | block_optim=110.35 block_weights=27.96 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2064 blocks_ok=3 t=152.705s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2496 SKIP heavy block block_circuits (ordinal=499 basis=step_fallback heavy_every=3)
+[extract] step=2496 heavy=FALSE total=161.83s | block_optim=119.63 block_weights=29.44 block_trajectory=0.77
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2496 blocks_ok=3 t=161.831s (all_passes_complete=False)
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2048 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2064 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2500 SKIP heavy block block_circuits (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2500 heavy=FALSE total=163.97s | block_optim=120.55 block_weights=31.69 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2500 blocks_ok=3 t=163.97s (all_passes_complete=True)
+[extract] step=2504 SKIP heavy block block_circuits (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 heavy=FALSE total=152.23s | block_optim=109.28 block_weights=28.47 block_trajectory=0.62
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2504 blocks_ok=3 t=152.233s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2084 SKIP heavy block block_circuits (ordinal=416 basis=step_fallback heavy_every=3)
+[extract] step=2084 heavy=FALSE total=164.12s | block_optim=112.10 block_weights=28.47 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2084 blocks_ok=3 t=164.115s (all_passes_complete=True)
+[extract] step=2516 SKIP heavy block block_circuits (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 heavy=FALSE total=149.58s | block_optim=111.60 block_weights=29.83 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2516 blocks_ok=3 t=149.576s (all_passes_complete=True)
+[extract] step=2096 SKIP heavy block block_circuits (ordinal=419 basis=step_fallback heavy_every=3)
+[extract] step=2096 heavy=FALSE total=152.66s | block_optim=112.05 block_weights=29.15 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2096 blocks_ok=3 t=152.657s (all_passes_complete=True)
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2068 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2096 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2100 heavy=TRUE total=151.08s | block_optim=107.07 block_weights=28.49 block_trajectory=0.74 block_circuits=4.27
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2100 blocks_ok=4 t=151.075s (all_passes_complete=False)
+[extract] step=2104 heavy=TRUE total=157.48s | block_optim=109.34 block_weights=27.44 block_trajectory=0.66 block_circuits=4.04
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2104 blocks_ok=4 t=157.484s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2544 SKIP heavy block block_circuits (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2544 heavy=FALSE total=149.47s | block_optim=110.28 block_weights=27.61 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2544 blocks_ok=3 t=149.466s (all_passes_complete=False)
+[extract] step=2116 heavy=TRUE total=155.85s | block_optim=109.84 block_weights=29.06 block_trajectory=0.65 block_circuits=4.16
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2116 blocks_ok=4 t=155.846s (all_passes_complete=True)
+[extract] step=2556 SKIP heavy block block_circuits (ordinal=511 basis=step_fallback heavy_every=3)
+[extract] step=2556 heavy=FALSE total=151.25s | block_optim=111.46 block_weights=28.04 block_trajectory=0.69
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2556 blocks_ok=3 t=151.254s (all_passes_complete=True)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2548 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2532 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2536 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2544 -> deleted
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2552 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2556 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 10 checkpoint(s); exiting.
+[cwcpu1] drained 10 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2128 SKIP heavy block block_circuits (ordinal=425 basis=step_fallback heavy_every=3)
+[extract] step=2128 heavy=FALSE total=145.21s | block_optim=106.38 block_weights=28.17 block_trajectory=0.58
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2128 blocks_ok=3 t=145.206s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2568 heavy=TRUE total=155.22s | block_optim=109.54 block_weights=32.99 block_trajectory=1.00 block_circuits=4.14
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2568 blocks_ok=4 t=155.225s (all_passes_complete=False)
+[extract] step=2138 SKIP heavy block block_circuits (ordinal=427 basis=step_fallback heavy_every=3)
+[extract] step=2138 heavy=FALSE total=146.01s | block_optim=109.20 block_weights=28.88 block_trajectory=0.92
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2138 blocks_ok=3 t=146.013s (all_passes_complete=False)
+[extract] step=2580 heavy=TRUE total=156.91s | block_optim=111.25 block_weights=28.65 block_trajectory=0.92 block_circuits=4.86
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2580 blocks_ok=4 t=156.907s (all_passes_complete=False)
+[extract] step=2150 SKIP heavy block block_circuits (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 heavy=FALSE total=146.17s | block_optim=109.27 block_weights=28.36 block_trajectory=0.99
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2150 blocks_ok=3 t=146.167s (all_passes_complete=False)
+[extract] step=2154 SKIP heavy block block_circuits (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2154 heavy=FALSE total=155.04s | block_optim=109.81 block_weights=32.11 block_trajectory=1.13
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2154 blocks_ok=3 t=155.038s (all_passes_complete=False)
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2584 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2560 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2588 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2158 SKIP heavy block block_circuits (ordinal=431 basis=step_fallback heavy_every=3)
+[extract] step=2158 heavy=FALSE total=147.02s | block_optim=107.15 block_weights=27.91 block_trajectory=0.63
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2158 blocks_ok=3 t=147.021s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2600 SKIP heavy block block_circuits (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2600 heavy=FALSE total=146.82s | block_optim=108.38 block_weights=29.91 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2600 blocks_ok=3 t=146.818s (all_passes_complete=False)
+[extract] step=2604 SKIP heavy block block_circuits (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2604 heavy=FALSE total=147.39s | block_optim=110.74 block_weights=28.62 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2604 blocks_ok=3 t=147.387s (all_passes_complete=False)
+[extract] step=2178 heavy=TRUE total=161.89s | block_optim=113.11 block_weights=33.10 block_trajectory=0.68 block_circuits=4.42
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2178 blocks_ok=4 t=161.893s (all_passes_complete=False)
+[extract] step=2616 SKIP heavy block block_circuits (ordinal=523 basis=step_fallback heavy_every=3)
+[extract] step=2616 heavy=FALSE total=155.17s | block_optim=115.26 block_weights=28.47 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2616 blocks_ok=3 t=155.171s (all_passes_complete=False)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2190 heavy=TRUE total=159.69s | block_optim=111.08 block_weights=32.80 block_trajectory=0.70 block_circuits=4.13
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2190 blocks_ok=4 t=159.685s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2624 SKIP heavy block block_circuits (ordinal=524 basis=step_fallback heavy_every=3)
+[extract] step=2624 heavy=FALSE total=152.67s | block_optim=112.18 block_weights=29.13 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2624 blocks_ok=3 t=152.666s (all_passes_complete=False)
+[extract] step=2632 SKIP heavy block block_circuits (ordinal=526 basis=step_fallback heavy_every=3)
+[extract] step=2632 heavy=FALSE total=149.82s | block_optim=110.79 block_weights=28.38 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2632 blocks_ok=3 t=149.823s (all_passes_complete=False)
+[extract] step=2210 SKIP heavy block block_circuits (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 heavy=FALSE total=163.89s | block_optim=111.81 block_weights=32.80 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2210 blocks_ok=3 t=163.886s (all_passes_complete=False)
+[extract] step=2646 SKIP heavy block block_circuits (ordinal=529 basis=step_fallback heavy_every=3)
+[extract] step=2646 heavy=FALSE total=152.37s | block_optim=112.20 block_weights=30.10 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2646 blocks_ok=3 t=152.373s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2638 -> deleted
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2218 SKIP heavy block block_circuits (ordinal=443 basis=step_fallback heavy_every=3)
+[extract] step=2218 heavy=FALSE total=146.64s | block_optim=106.43 block_weights=29.19 block_trajectory=0.61
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2218 blocks_ok=3 t=146.637s (all_passes_complete=False)
+[extract] step=2230 SKIP heavy block block_circuits (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 heavy=FALSE total=153.77s | block_optim=113.60 block_weights=29.54 block_trajectory=1.35
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2230 blocks_ok=3 t=153.774s (all_passes_complete=False)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2616 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2642 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2620 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2646 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2214 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2218 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2226 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2222 -> deleted
+[collector wcpu1] --once drained 8 checkpoint(s); exiting.
+[cwcpu1] drained 8 checkpoint(s); looping.
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2230 -> deleted
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2650 SKIP heavy block block_circuits (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2650 heavy=FALSE total=157.75s | block_optim=115.12 block_weights=31.79 block_trajectory=0.58
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2650 blocks_ok=3 t=157.753s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2242 SKIP heavy block block_circuits (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2242 heavy=FALSE total=158.62s | block_optim=112.56 block_weights=29.68 block_trajectory=0.61
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2242 blocks_ok=3 t=158.621s (all_passes_complete=False)
+[extract] step=2666 SKIP heavy block block_circuits (ordinal=533 basis=step_fallback heavy_every=3)
+[extract] step=2666 heavy=FALSE total=154.63s | block_optim=112.00 block_weights=27.80 block_trajectory=0.61
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2666 blocks_ok=3 t=154.632s (all_passes_complete=True)
+[extract] step=2254 heavy=TRUE total=165.46s | block_optim=117.51 block_weights=28.52 block_trajectory=0.60 block_circuits=4.43
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2254 blocks_ok=4 t=165.464s (all_passes_complete=False)
+[extract] step=2262 SKIP heavy block block_circuits (ordinal=452 basis=step_fallback heavy_every=3)
+[extract] step=2262 heavy=FALSE total=163.16s | block_optim=115.65 block_weights=31.82 block_trajectory=0.63
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2262 blocks_ok=3 t=163.155s (all_passes_complete=False)
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2678 SKIP heavy block block_circuits (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2678 heavy=FALSE total=151.78s | block_optim=108.13 block_weights=32.68 block_trajectory=0.70
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2678 blocks_ok=3 t=151.779s (all_passes_complete=False)
+[extract] step=2690 SKIP heavy block block_circuits (ordinal=538 basis=step_fallback heavy_every=3)
+[extract] step=2690 heavy=FALSE total=158.93s | block_optim=113.08 block_weights=28.15 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2690 blocks_ok=3 t=158.927s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2674 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2682 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2678 -> deleted
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2210 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2258 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2234 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2262 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2254 -> deleted
+[collector wcpu1] --once drained 8 checkpoint(s); exiting.
+[cwcpu1] drained 8 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2270 SKIP heavy block block_circuits (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2270 heavy=FALSE total=147.03s | block_optim=107.52 block_weights=28.59 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2270 blocks_ok=3 t=147.031s (all_passes_complete=False)
+[extract] step=2282 heavy=TRUE total=163.38s | block_optim=115.54 block_weights=27.09 block_trajectory=0.64 block_circuits=4.23
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2282 blocks_ok=4 t=163.384s (all_passes_complete=False)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2646 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2698 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2690 -> deleted
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2670 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2694 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2702 heavy=TRUE total=155.05s | block_optim=107.35 block_weights=33.54 block_trajectory=0.70 block_circuits=4.16
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2702 blocks_ok=4 t=155.052s (all_passes_complete=False)
+[extract] step=2710 SKIP heavy block block_circuits (ordinal=542 basis=step_fallback heavy_every=3)
+[extract] step=2710 heavy=FALSE total=163.46s | block_optim=114.25 block_weights=29.13 block_trajectory=0.60
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2710 blocks_ok=3 t=163.464s (all_passes_complete=True)
+[extract] step=2718 heavy=TRUE total=153.33s | block_optim=111.07 block_weights=28.40 block_trajectory=0.73 block_circuits=4.13
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2718 blocks_ok=4 t=153.332s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2306 SKIP heavy block block_circuits (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 heavy=FALSE total=157.20s | block_optim=113.11 block_weights=26.51 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2306 blocks_ok=3 t=157.203s (all_passes_complete=False)
+[extract] step=2314 heavy=TRUE total=151.71s | block_optim=111.71 block_weights=26.31 block_trajectory=0.60 block_circuits=4.40
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2314 blocks_ok=4 t=151.706s (all_passes_complete=False)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2730 heavy=TRUE total=152.56s | block_optim=106.84 block_weights=29.61 block_trajectory=0.68 block_circuits=4.33
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2730 blocks_ok=4 t=152.561s (all_passes_complete=False)
+[extract] step=2742 SKIP heavy block block_circuits (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 heavy=FALSE total=164.49s | block_optim=117.35 block_weights=29.31 block_trajectory=0.63
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2742 blocks_ok=3 t=164.495s (all_passes_complete=False)
+[extract] step=2754 SKIP heavy block block_circuits (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 heavy=FALSE total=150.56s | block_optim=110.18 block_weights=30.29 block_trajectory=0.79
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2754 blocks_ok=3 t=150.565s (all_passes_complete=False)
+[collector wcpu1] --once drained 3 checkpoint(s); exiting.
+[cwcpu1] drained 3 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2742 -> deleted
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2330 SKIP heavy block block_circuits (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 heavy=FALSE total=149.04s | block_optim=109.76 block_weights=28.52 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2330 blocks_ok=3 t=149.043s (all_passes_complete=False)
+[extract] step=2338 SKIP heavy block block_circuits (ordinal=467 basis=step_fallback heavy_every=3)
+[extract] step=2338 heavy=FALSE total=150.74s | block_optim=109.59 block_weights=29.02 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2338 blocks_ok=3 t=150.737s (all_passes_complete=False)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2746 -> deleted
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2722 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2750 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2726 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2754 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 5 checkpoint(s); exiting.
+[cwcpu1] drained 5 checkpoint(s); looping.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2758 SKIP heavy block block_circuits (ordinal=551 basis=step_fallback heavy_every=3)
+[extract] step=2758 heavy=FALSE total=154.17s | block_optim=111.90 block_weights=32.22 block_trajectory=0.74
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2758 blocks_ok=3 t=154.167s (all_passes_complete=False)
+[extract] step=2770 SKIP heavy block block_circuits (ordinal=554 basis=step_fallback heavy_every=3)
+[extract] step=2770 heavy=FALSE total=162.70s | block_optim=113.06 block_weights=31.94 block_trajectory=1.36
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2770 blocks_ok=3 t=162.696s (all_passes_complete=False)
+[extract] step=2782 SKIP heavy block block_circuits (ordinal=556 basis=step_fallback heavy_every=3)
+[extract] step=2782 heavy=FALSE total=150.35s | block_optim=110.69 block_weights=29.79 block_trajectory=1.28
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2782 blocks_ok=3 t=150.354s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2354 SKIP heavy block block_circuits (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2354 heavy=FALSE total=149.52s | block_optim=110.99 block_weights=27.86 block_trajectory=1.34
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2354 blocks_ok=3 t=149.523s (all_passes_complete=True)
+[extract] step=2362 SKIP heavy block block_circuits (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2362 heavy=FALSE total=151.66s | block_optim=113.30 block_weights=28.45 block_trajectory=1.34
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2362 blocks_ok=3 t=151.664s (all_passes_complete=True)
+[extract] step=2794 heavy=TRUE total=159.80s | block_optim=111.18 block_weights=31.69 block_trajectory=1.06 block_circuits=4.31
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2794 blocks_ok=4 t=159.8s (all_passes_complete=True)
+[extract] step=2374 heavy=TRUE total=152.64s | block_optim=112.20 block_weights=26.96 block_trajectory=1.10 block_circuits=4.28
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2374 blocks_ok=4 t=152.639s (all_passes_complete=False)
+[extract] step=2810 SKIP heavy block block_circuits (ordinal=562 basis=step_fallback heavy_every=3)
+[extract] step=2810 heavy=FALSE total=152.79s | block_optim=109.84 block_weights=29.41 block_trajectory=1.31
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2810 blocks_ok=3 t=152.787s (all_passes_complete=False)
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2374 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2370 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 9 checkpoint(s); exiting.
+[cwcpu1] drained 9 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2378 SKIP heavy block block_circuits (ordinal=475 basis=step_fallback heavy_every=3)
+[extract] step=2378 heavy=FALSE total=148.43s | block_optim=109.04 block_weights=28.91 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2378 blocks_ok=3 t=148.429s (all_passes_complete=False)
+[extract] step=2386 heavy=TRUE total=151.11s | block_optim=109.80 block_weights=28.60 block_trajectory=0.66 block_circuits=4.11
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2386 blocks_ok=4 t=151.108s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2822 heavy=TRUE total=154.56s | block_optim=111.75 block_weights=28.12 block_trajectory=0.67 block_circuits=4.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2822 blocks_ok=4 t=154.556s (all_passes_complete=True)
+[extract] step=2398 SKIP heavy block block_circuits (ordinal=479 basis=step_fallback heavy_every=3)
+[extract] step=2398 heavy=FALSE total=150.76s | block_optim=108.73 block_weights=26.69 block_trajectory=0.70
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2398 blocks_ok=3 t=150.763s (all_passes_complete=True)
+[extract] step=2838 heavy=TRUE total=152.34s | block_optim=107.27 block_weights=31.34 block_trajectory=0.72 block_circuits=4.01
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2838 blocks_ok=4 t=152.339s (all_passes_complete=False)
+[extract] step=2412 SKIP heavy block block_circuits (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2412 heavy=FALSE total=151.18s | block_optim=112.34 block_weights=29.17 block_trajectory=0.62
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2412 blocks_ok=3 t=151.184s (all_passes_complete=False)
+[extract] step=2854 heavy=TRUE total=149.16s | block_optim=108.26 block_weights=27.64 block_trajectory=0.67 block_circuits=4.09
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2854 blocks_ok=4 t=149.162s (all_passes_complete=False)
+[extract] step=2858 SKIP heavy block block_circuits (ordinal=571 basis=step_fallback heavy_every=3)
+[extract] step=2858 heavy=FALSE total=146.31s | block_optim=109.65 block_weights=26.86 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2858 blocks_ok=3 t=146.312s (all_passes_complete=False)
+[extract] step=2428 SKIP heavy block block_circuits (ordinal=485 basis=step_fallback heavy_every=3)
+[extract] step=2428 heavy=FALSE total=144.52s | block_optim=107.57 block_weights=27.40 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2428 blocks_ok=3 t=144.525s (all_passes_complete=True)
+[extract] step=2432 heavy=TRUE total=151.74s | block_optim=110.47 block_weights=27.02 block_trajectory=0.67 block_circuits=4.51
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2432 blocks_ok=4 t=151.741s (all_passes_complete=False)
+[extract] step=2874 SKIP heavy block block_circuits (ordinal=574 basis=step_fallback heavy_every=3)
+[extract] step=2874 heavy=FALSE total=147.53s | block_optim=106.62 block_weights=27.24 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2874 blocks_ok=3 t=147.533s (all_passes_complete=False)
+[collector wcpu1] --once drained 11 checkpoint(s); exiting.
+[cwcpu1] drained 11 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2448 heavy=TRUE total=157.42s | block_optim=112.87 block_weights=30.00 block_trajectory=0.93 block_circuits=4.06
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2448 blocks_ok=4 t=157.416s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2886 SKIP heavy block block_circuits (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 heavy=FALSE total=151.97s | block_optim=111.42 block_weights=27.62 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2886 blocks_ok=3 t=151.975s (all_passes_complete=False)
+[extract] step=2890 SKIP heavy block block_circuits (ordinal=578 basis=step_fallback heavy_every=3)
+[extract] step=2890 heavy=FALSE total=153.49s | block_optim=110.99 block_weights=27.92 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2890 blocks_ok=3 t=153.488s (all_passes_complete=True)
+[extract] step=2464 heavy=TRUE total=157.48s | block_optim=110.94 block_weights=27.26 block_trajectory=0.58 block_circuits=4.45
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2464 blocks_ok=4 t=157.477s (all_passes_complete=True)
+[extract] step=2902 SKIP heavy block block_circuits (ordinal=580 basis=step_fallback heavy_every=3)
+[extract] step=2902 heavy=FALSE total=150.68s | block_optim=110.45 block_weights=26.82 block_trajectory=0.60
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2902 blocks_ok=3 t=150.677s (all_passes_complete=False)
+[extract] step=2906 SKIP heavy block block_circuits (ordinal=581 basis=step_fallback heavy_every=3)
+[extract] step=2906 heavy=FALSE total=147.90s | block_optim=110.62 block_weights=28.66 block_trajectory=0.66
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2906 blocks_ok=3 t=147.898s (all_passes_complete=True)
+[extract] step=2480 SKIP heavy block block_circuits (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2480 heavy=FALSE total=160.25s | block_optim=111.15 block_weights=32.60 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2480 blocks_ok=3 t=160.251s (all_passes_complete=False)
+[extract] step=2916 SKIP heavy block block_circuits (ordinal=583 basis=step_fallback heavy_every=3)
+[extract] step=2916 heavy=FALSE total=157.66s | block_optim=112.44 block_weights=29.64 block_trajectory=0.76
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2916 blocks_ok=3 t=157.661s (all_passes_complete=False)
+[extract] step=2492 heavy=TRUE total=161.96s | block_optim=113.99 block_weights=28.58 block_trajectory=0.62 block_circuits=4.39
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2492 blocks_ok=4 t=161.961s (all_passes_complete=False)
+[extract] step=2928 heavy=TRUE total=157.72s | block_optim=110.54 block_weights=27.85 block_trajectory=0.65 block_circuits=4.33
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2928 blocks_ok=4 t=157.718s (all_passes_complete=False)
+[collector wcpu1] --once drained 10 checkpoint(s); exiting.
+[cwcpu1] drained 10 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2898 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2924 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] --once drained 1 checkpoint(s); exiting.
+[cwcpu1] drained 1 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2472 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2500 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2504 SKIP heavy block block_circuits (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 heavy=FALSE total=157.34s | block_optim=111.26 block_weights=33.56 block_trajectory=0.72
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2504 blocks_ok=3 t=157.339s (all_passes_complete=True)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2944 heavy=TRUE total=169.10s | block_optim=114.43 block_weights=31.88 block_trajectory=0.63 block_circuits=4.69
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2944 blocks_ok=4 t=169.104s (all_passes_complete=False)
+[extract] step=2516 SKIP heavy block block_circuits (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 heavy=FALSE total=161.37s | block_optim=115.67 block_weights=28.70 block_trajectory=0.67
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2516 blocks_ok=3 t=161.37s (all_passes_complete=True)
+[extract] step=2956 heavy=TRUE total=161.85s | block_optim=113.03 block_weights=27.65 block_trajectory=0.64 block_circuits=4.34
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2956 blocks_ok=4 t=161.851s (all_passes_complete=True)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2940 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2944 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2936 -> deleted
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2902 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2956 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] re-slimmed kept run_id=mae__stable_evo__s42 step=2924 MODEL-ONLY (bumped out of latest-2).
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2952 -> KEPT(->kept/,FULL latest2)
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2932 -> deleted
+[collector wcpu1] FINALIZED run_id=mae__stable_evo__s42 step=2948 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2516 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2508 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2504 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2512 -> deleted
+[collector wcpu1] FINALIZED run_id=plantclef__stable_evo__s42 step=2520 -> deleted
+[collector wcpu1] --once drained 17 checkpoint(s); exiting.
+[cwcpu1] drained 17 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2960 SKIP heavy block block_circuits (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2960 heavy=FALSE total=153.83s | block_optim=108.42 block_weights=34.16 block_trajectory=0.75
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2960 blocks_ok=3 t=153.827s (all_passes_complete=False)
+[collector wcpu1] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=plantclef__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=2536 heavy=TRUE total=150.92s | block_optim=108.10 block_weights=29.22 block_trajectory=0.72 block_circuits=4.39
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2536 blocks_ok=4 t=150.915s (all_passes_complete=False)
+[extract] step=2976 SKIP heavy block block_circuits (ordinal=595 basis=step_fallback heavy_every=3)
+[extract] step=2976 heavy=FALSE total=159.98s | block_optim=112.38 block_weights=28.36 block_trajectory=0.65
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2976 blocks_ok=3 t=159.983s (all_passes_complete=False)
+[extract] step=2548 SKIP heavy block block_circuits (ordinal=509 basis=step_fallback heavy_every=3)
+[extract] step=2548 heavy=FALSE total=149.71s | block_optim=107.82 block_weights=28.40 block_trajectory=0.68
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2548 blocks_ok=3 t=149.706s (all_passes_complete=False)
+[extract] step=2988 heavy=TRUE total=163.59s | block_optim=115.66 block_weights=27.78 block_trajectory=0.71 block_circuits=4.38
+[collector wcpu1] cpu-pass DONE run_id=mae__stable_evo__s42 step=2988 blocks_ok=4 t=163.586s (all_passes_complete=False)
+[extract] step=2560 SKIP heavy block block_circuits (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2560 heavy=FALSE total=148.09s | block_optim=111.16 block_weights=27.26 block_trajectory=0.64
+[collector wcpu1] cpu-pass DONE run_id=plantclef__stable_evo__s42 step=2560 blocks_ok=3 t=148.093s (all_passes_complete=False)
+[collector wcpu1] --once drained 6 checkpoint(s); exiting.
+[cwcpu1] drained 6 checkpoint(s); looping.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+[cwcpu1] none of the trainer jobs (35032433) are in the queue; performing FINAL drain before exit...
+[collector wcpu1] --once drained 0 checkpoint(s); exiting.
+Done: Thu Jun 18 08:52:24 AM EDT 2026

@@ -1,0 +1,52 @@
+===== SETUP: repopulate watch dir from kept (real StableEvo ckpts) =====
+queued 2 real step*.pt into xAI/output/_v2_smoke/mae__stable_evo__s42/checkpoints ; sizes:
+  7064503420 xAI/output/_v2_smoke/mae__stable_evo__s42/checkpoints/step00000058.pt
+  7064503420 xAI/output/_v2_smoke/mae__stable_evo__s42/checkpoints/step00000060.pt
+===== PASS 1: GPU =====
+[extract] step=58 SKIP heavy block block_interp (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=58 SKIP heavy block block_probes (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=58 heavy=FALSE total=12.92s | block_curvature=4.77 block_fitness=3.60
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=58 blocks_ok=2 t=12.921s (all_passes_complete=False)
+[extract] step=60 heavy=TRUE total=38.78s | block_curvature=3.56 block_interp=20.60 block_probes=8.27 block_fitness=1.85
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=60 blocks_ok=4 t=38.781s (all_passes_complete=False)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+INVARIANT A (no finalize before BOTH passes): pt_present=2 gpu.complete=2 cpu.complete=0 kept_step=2
+===== PASS 2: CPU (block_optim §6.1 etc.) =====
+[collector wcpu0] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=58 SKIP heavy block block_circuits (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=58 heavy=FALSE total=109.20s | block_optim=90.01 block_weights=14.64 block_trajectory=0.42
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=58 blocks_ok=3 t=109.201s (all_passes_complete=True)
+[extract] step=60 heavy=TRUE total=107.24s | block_optim=86.32 block_weights=12.84 block_trajectory=0.42 block_circuits=4.68
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=60 blocks_ok=4 t=107.237s (all_passes_complete=True)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=60 -> KEPT(->kept/,FULL latest-slot)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=58 -> KEPT(->kept/,ladder model-only)
+[collector wcpu0] --once drained 4 checkpoint(s); exiting.
+AFTER CPU: pt_left=0 latest_slot=1 leftover_claim=0
+===== ASSERTIONS (new storage semantics) =====
+  zarr root: xAI/output/_v2_smoke/mae__stable_evo__s42/_e2e_store/mae__stable_evo__s42/arrays.zarr
+  [PASS] zarr store opened
+  [PASS] §6.1 exp_avg_sq_SUMMARY group written
+  [PASS] §6.1 precond_SUMMARY group written
+  [PASS] FULL exp_avg_sq_spectrum NOT written (pilot off)
+  [PASS] FULL precond_spectrum NOT written (pilot off)
+  [PASS] kron_L/R spectrum retained
+  [PASS] QL/QR eigvecs retained
+  [PASS] CurvSummary width==139 — (2, 139)
+  [PASS] CurvSummary dtype float32 — float32
+  [PASS] CurvSummary numel scalar plausible (>1e3) — numel=4194304.0
+  [PASS] probe_features downcast to float16 — float16
+  [PASS] attn_entropy_heads downcast to float16 — float16
+  [PASS] patch_class_maps downcast to float16 — float16
+  [PASS] probe_acc_vs_depth downcast to float16 — float16
+  [PASS] kron_L_spectrum kept float32 (guardrail) — float32
+  [PASS] kron_R_spectrum kept float32 (guardrail) — float32
+  [PASS] ql_eigvecs kept float32 (guardrail) — float32
+  [PASS] qr_eigvecs kept float32 (guardrail) — float32
+  [PASS] single rotating kept/latest_full.pt slot exists
+  [PASS] exactly one latest_full.pt (no accumulation)
+[preadapt_train] --resume auto -> kept/latest_full.pt (rotating resume slot)
+  [PASS] resume auto resolves to a checkpoint — xAI/output/_v2_smoke/mae__stable_evo__s42/kept/latest_full.pt
+
+E2E RESULT: ALL PASS
+=== E2E SMOKE DONE ===

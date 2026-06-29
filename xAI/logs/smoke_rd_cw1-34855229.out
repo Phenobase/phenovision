@@ -1,0 +1,125 @@
+Tue Jun 16 03:39:45 PM EDT 2026
+host=c0610a-s5.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt collector worker 1 ===
+run_dir=xAI/output/_redesign_smoke/mae__stable_evo__s42 variant=stable_evo seed=42
+watch_dir=xAI/output/_redesign_smoke/mae__stable_evo__s42/checkpoints
+sentinel=xAI/output/_redesign_smoke/mae__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/_redesign_smoke/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jid=34855225
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=20 SKIP heavy block block_circuits (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 SKIP heavy block block_interp (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 SKIP heavy block block_probes (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 heavy=FALSE total=24.36s | block_optim=0.00 block_curvature=5.81 block_weights=8.50 block_trajectory=0.00 block_fitness=6.45
+[collector w1] processed run_id=mae__stable_evo__s42 step=0 heavy=False blocks_ok=4 blocks_err=1 t=24.356s -> KEPT(->kept/,FULL anchor)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=38 SKIP heavy block block_circuits (ordinal=7 basis=step_fallback heavy_every=3)
+[extract] step=38 SKIP heavy block block_interp (ordinal=7 basis=step_fallback heavy_every=3)
+[extract] step=38 SKIP heavy block block_probes (ordinal=7 basis=step_fallback heavy_every=3)
+[extract] step=38 heavy=FALSE total=118.03s | block_optim=89.01 block_curvature=5.13 block_weights=10.95 block_trajectory=0.45 block_fitness=6.94
+[collector w1] processed run_id=mae__stable_evo__s42 step=38 heavy=False blocks_ok=5 blocks_err=0 t=118.033s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=82 SKIP heavy block block_circuits (ordinal=16 basis=step_fallback heavy_every=3)
+[extract] step=82 SKIP heavy block block_interp (ordinal=16 basis=step_fallback heavy_every=3)
+[extract] step=82 SKIP heavy block block_probes (ordinal=16 basis=step_fallback heavy_every=3)
+[extract] step=82 heavy=FALSE total=114.55s | block_optim=85.00 block_curvature=5.32 block_weights=10.99 block_trajectory=0.46 block_fitness=6.12
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=55 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=82 heavy=False blocks_ok=5 blocks_err=0 t=114.554s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=101 SKIP heavy block block_circuits (ordinal=20 basis=step_fallback heavy_every=3)
+[extract] step=101 SKIP heavy block block_interp (ordinal=20 basis=step_fallback heavy_every=3)
+[extract] step=101 SKIP heavy block block_probes (ordinal=20 basis=step_fallback heavy_every=3)
+[extract] step=101 heavy=FALSE total=114.02s | block_optim=84.28 block_curvature=4.75 block_weights=11.18 block_trajectory=0.45 block_fitness=6.54
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=82 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=101 heavy=False blocks_ok=5 blocks_err=0 t=114.021s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=144 SKIP heavy block block_circuits (ordinal=28 basis=step_fallback heavy_every=3)
+[extract] step=144 SKIP heavy block block_interp (ordinal=28 basis=step_fallback heavy_every=3)
+[extract] step=144 SKIP heavy block block_probes (ordinal=28 basis=step_fallback heavy_every=3)
+[extract] step=144 heavy=FALSE total=113.14s | block_optim=84.75 block_curvature=5.16 block_weights=10.90 block_trajectory=0.45 block_fitness=6.25
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=119 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=144 heavy=False blocks_ok=5 blocks_err=0 t=113.14s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[extract] step=171 SKIP heavy block block_circuits (ordinal=34 basis=step_fallback heavy_every=3)
+[extract] step=171 SKIP heavy block block_interp (ordinal=34 basis=step_fallback heavy_every=3)
+[extract] step=171 SKIP heavy block block_probes (ordinal=34 basis=step_fallback heavy_every=3)
+[extract] step=171 heavy=FALSE total=120.31s | block_optim=87.58 block_curvature=6.07 block_weights=12.22 block_trajectory=1.51 block_fitness=6.09
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=140 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=171 heavy=False blocks_ok=5 blocks_err=0 t=120.306s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] RUN_COMPLETE present; performing FINAL drain...
+[cw1] final drain found nothing new and queue depth=0 -> run collected. Exiting.
+Done: Tue Jun 16 04:16:25 PM EDT 2026

@@ -1,0 +1,36 @@
+Tue Jun 16 05:18:35 PM EDT 2026
+host=c1001a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant adamw --shared-tokenizer mae --seed 42 --num_epochs 15 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --weight_decay 0.05 --max_train_samples 214000 --sampler_delta 0.01 --sampler_min_step 5 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__adamw__s42
+  condition        : mae
+  variant          : adamw
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : /blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../xAI/output/preadapt/mae__adamw__s42
+  epochs           : 15
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/278] loss=0.6931 lr=0.001000
+  Epoch 0 [20/278] loss=0.5497 lr=0.001000
+  Epoch 0 [40/278] loss=0.5784 lr=0.001000
+  Epoch 0 [60/278] loss=0.5471 lr=0.001000
+  Epoch 0 [80/278] loss=0.5477 lr=0.000999

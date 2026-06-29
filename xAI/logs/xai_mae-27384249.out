@@ -1,0 +1,78 @@
+Mon Mar 16 08:40:59 PM EDT 2026
+c1009a-s5.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI MAE training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: mae
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/mae_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: mae
+  Total parameters: 303,303,682
+
+Resuming from Phase 1 checkpoint: xAI/output/mae_run/checkpoints/phase1_final.pt
+  Loaded: step=2000, epoch=7
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  Rebuilding train loader: batch_size 768 -> 384 for Phase 2
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/mae_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 8 (P2 epoch 0) ---
+  [0/557] loss=0.5050 grad=1.6868 lr=0.000000
+  VAL step=2020 (p2_batch=20, freq=20) val_loss=0.8022 auc_roc_mean=0.8216
+  [20/557] loss=0.9140 grad=13.9566 lr=0.000000
+  VAL step=2040 (p2_batch=40, freq=20) val_loss=0.3855 auc_roc_mean=0.8489
+  [40/557] loss=0.4475 grad=1.4130 lr=0.000000
+  REPR: xAI/output/mae_run/representations/features_step002050.pt shape=(1000, 1024)
+  VAL step=2060 (p2_batch=60, freq=20) val_loss=0.3330 auc_roc_mean=0.8679
+  [60/557] loss=0.3948 grad=0.8708 lr=0.000000
+  VAL step=2080 (p2_batch=80, freq=20) val_loss=0.3172 auc_roc_mean=0.8815
+  [80/557] loss=0.3934 grad=1.5809 lr=0.000000
+  VAL step=2100 (p2_batch=100, freq=20) val_loss=0.3016 auc_roc_mean=0.8903
+  REPR: xAI/output/mae_run/representations/features_step002100.pt shape=(1000, 1024)
+  [100/557] loss=0.3596 grad=1.2178 lr=0.000000
+  VAL step=2120 (p2_batch=120, freq=20) val_loss=0.2977 auc_roc_mean=0.8934
+  [120/557] loss=0.3889 grad=2.5669 lr=0.000000
+  VAL step=2140 (p2_batch=140, freq=20) val_loss=0.2885 auc_roc_mean=0.8970
+  [140/557] loss=0.3742 grad=1.2509 lr=0.000000
+  REPR: xAI/output/mae_run/representations/features_step002150.pt shape=(1000, 1024)
+  VAL step=2160 (p2_batch=160, freq=20) val_loss=0.2846 auc_roc_mean=0.9000
+  [160/557] loss=0.3452 grad=1.7906 lr=0.000000
+  VAL step=2180 (p2_batch=180, freq=20) val_loss=0.2822 auc_roc_mean=0.9020
+  [180/557] loss=0.3054 grad=1.0521 lr=0.000000
+  VAL step=2200 (p2_batch=200, freq=20) val_loss=0.2788 auc_roc_mean=0.9038
+  REPR: xAI/output/mae_run/representations/features_step002200.pt shape=(1000, 1024)
+  [200/557] loss=0.3483 grad=1.1179 lr=0.000000
+  VAL step=2220 (p2_batch=220, freq=20) val_loss=0.2802 auc_roc_mean=0.9078
+  [220/557] loss=0.3425 grad=2.4206 lr=0.000000
+  VAL step=2240 (p2_batch=240, freq=20) val_loss=0.2749 auc_roc_mean=0.9063
+  CKPT: xAI/output/mae_run/checkpoints/phase2_step002240.pt
+  [240/557] loss=0.3762 grad=1.9118 lr=0.000000
+  REPR: xAI/output/mae_run/representations/features_step002250.pt shape=(1000, 1024)
+  VAL step=2260 (p2_batch=260, freq=20) val_loss=0.2749 auc_roc_mean=0.9089
+  [260/557] loss=0.3181 grad=1.9871 lr=0.000000
+  VAL step=2280 (p2_batch=280, freq=20) val_loss=0.2696 auc_roc_mean=0.9108
+  [280/557] loss=0.3372 grad=1.4014 lr=0.000000
+  VAL step=2300 (p2_batch=300, freq=20) val_loss=0.2676 auc_roc_mean=0.9125
+  REPR: xAI/output/mae_run/representations/features_step002300.pt shape=(1000, 1024)
+  [300/557] loss=0.3692 grad=1.2294 lr=0.000000
+  VAL step=2320 (p2_batch=320, freq=20) val_loss=0.2630 auc_roc_mean=0.9122
+  [320/557] loss=0.3577 grad=1.4697 lr=0.000000
+  VAL step=2340 (p2_batch=340, freq=20) val_loss=0.2661 auc_roc_mean=0.9138
+  [340/557] loss=0.3246 grad=2.0187 lr=0.000000
+  REPR: xAI/output/mae_run/representations/features_step002350.pt shape=(1000, 1024)
+  VAL step=2360 (p2_batch=360, freq=20) val_loss=0.2643 auc_roc_mean=0.9134
+  [360/557] loss=0.3131 grad=1.6854 lr=0.000000

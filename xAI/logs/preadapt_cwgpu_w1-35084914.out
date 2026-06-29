@@ -1,0 +1,89 @@
+Thu Jun 18 08:52:38 AM EDT 2026
+host=c0605a-s8.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=10
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42 xAI/output/preadapt_v2/plantclef__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42/checkpoints xAI/output/preadapt_v2/plantclef__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s42/RUN_COMPLETE xAI/output/preadapt_v2/plantclef__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jids=35084912
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2536 heavy=TRUE total=97.72s | block_curvature=5.84 block_interp=42.41 block_probes=36.30 block_fitness=7.54
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2536 blocks_ok=4 t=97.718s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2972 heavy=TRUE total=100.33s | block_curvature=4.70 block_interp=45.69 block_probes=37.91 block_fitness=6.61
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2972 blocks_ok=4 t=100.325s (all_passes_complete=True)
+[extract] step=2540 SKIP heavy block block_interp (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2540 SKIP heavy block block_probes (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2540 heavy=FALSE total=17.10s | block_curvature=4.70 block_fitness=6.54
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2540 blocks_ok=2 t=17.099s (all_passes_complete=True)
+[extract] step=2976 SKIP heavy block block_interp (ordinal=595 basis=step_fallback heavy_every=3)
+[extract] step=2976 SKIP heavy block block_probes (ordinal=595 basis=step_fallback heavy_every=3)
+[extract] step=2976 heavy=FALSE total=16.78s | block_curvature=4.69 block_fitness=6.25
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2976 blocks_ok=2 t=16.777s (all_passes_complete=True)
+[extract] step=2544 SKIP heavy block block_interp (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2544 SKIP heavy block block_probes (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2544 heavy=FALSE total=17.08s | block_curvature=4.70 block_fitness=6.56
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2544 blocks_ok=2 t=17.08s (all_passes_complete=True)
+[extract] step=2980 SKIP heavy block block_interp (ordinal=596 basis=step_fallback heavy_every=3)
+[extract] step=2980 SKIP heavy block block_probes (ordinal=596 basis=step_fallback heavy_every=3)
+[extract] step=2980 heavy=FALSE total=17.04s | block_curvature=4.67 block_fitness=6.54
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2980 blocks_ok=2 t=17.04s (all_passes_complete=True)
+[extract] step=2548 SKIP heavy block block_interp (ordinal=509 basis=step_fallback heavy_every=3)
+[extract] step=2548 SKIP heavy block block_probes (ordinal=509 basis=step_fallback heavy_every=3)
+[extract] step=2548 heavy=FALSE total=16.99s | block_curvature=4.69 block_fitness=6.50
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2548 blocks_ok=2 t=16.988s (all_passes_complete=True)
+[extract] step=2984 SKIP heavy block block_interp (ordinal=596 basis=step_fallback heavy_every=3)
+[extract] step=2984 SKIP heavy block block_probes (ordinal=596 basis=step_fallback heavy_every=3)
+[extract] step=2984 heavy=FALSE total=17.16s | block_curvature=4.70 block_fitness=6.56
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2984 blocks_ok=2 t=17.165s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2552 heavy=TRUE total=99.92s | block_curvature=4.71 block_interp=46.18 block_probes=36.09 block_fitness=7.17
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2552 blocks_ok=4 t=99.915s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2988 heavy=TRUE total=100.45s | block_curvature=4.72 block_interp=46.09 block_probes=37.53 block_fitness=6.50
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2988 blocks_ok=4 t=100.453s (all_passes_complete=True)
+[extract] step=2556 SKIP heavy block block_interp (ordinal=511 basis=step_fallback heavy_every=3)
+[extract] step=2556 SKIP heavy block block_probes (ordinal=511 basis=step_fallback heavy_every=3)
+[extract] step=2556 heavy=FALSE total=16.84s | block_curvature=4.73 block_fitness=6.27
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2556 blocks_ok=2 t=16.836s (all_passes_complete=True)
+[extract] step=2992 SKIP heavy block block_interp (ordinal=598 basis=step_fallback heavy_every=3)
+[extract] step=2992 SKIP heavy block block_probes (ordinal=598 basis=step_fallback heavy_every=3)
+[extract] step=2992 heavy=FALSE total=16.76s | block_curvature=4.68 block_fitness=6.32
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2992 blocks_ok=2 t=16.764s (all_passes_complete=True)
+[extract] step=2560 SKIP heavy block block_interp (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2560 SKIP heavy block block_probes (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2560 heavy=FALSE total=16.81s | block_curvature=4.71 block_fitness=6.34
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2560 blocks_ok=2 t=16.814s (all_passes_complete=True)
+[extract] step=2996 SKIP heavy block block_interp (ordinal=599 basis=step_fallback heavy_every=3)
+[extract] step=2996 SKIP heavy block block_probes (ordinal=599 basis=step_fallback heavy_every=3)
+[extract] step=2996 heavy=FALSE total=16.80s | block_curvature=4.70 block_fitness=6.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2996 blocks_ok=2 t=16.801s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2972 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2984 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2980 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2964 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2996 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2976 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2988 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2968 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2992 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2544 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2536 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2528 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2560 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2552 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2540 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2548 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2532 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2556 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 28 checkpoint(s); exiting.
+[cwgpu0] drained 28 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] none of the trainer jobs (35084912) are in the queue; performing FINAL drain before exit...
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+Done: Thu Jun 18 09:03:29 AM EDT 2026

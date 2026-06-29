@@ -1,0 +1,7 @@
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+[2026-06-22T16:28:00.015] error: *** JOB 35365980 ON c1100a-s15 CANCELLED AT 2026-06-22T16:28:00 DUE TO TIME LIMIT ***
