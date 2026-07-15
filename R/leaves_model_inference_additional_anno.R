@@ -34,7 +34,7 @@ taxa_meta <- open_dataset("data/phenobase_inat_data/metadata/taxa/part-0.parquet
 
 file_data <- add_taxonomy(file_data, taxa_meta)
 file_data <- file_data |>
-  mutate(file_name = file.path("data/phenobase_inat_data/images/medium", paste0("batch_", batch_j), paste0(photo_id, ".", extension)))
+  mutate(file_name = file.path("data/phenobase_inat_data/images/medium", paste0("batch_", batch_j), paste0(photo_id, ".webp")))
 
 write_csv(file_data, "data/leaves/rob_new_annotations_bb.csv")
 

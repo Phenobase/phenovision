@@ -166,7 +166,7 @@ extract_leaf_annotations <- function(leaf_parquet_path,
     mutate(file_name = file.path(
       "data", "phenobase_inat_data", "images", "medium",
       paste0("batch_", batch_j),
-      paste0(photo_id, ".", extension)
+      paste0(photo_id, ".webp")
     ))
 
   # =========================================================================
@@ -424,7 +424,7 @@ prepare_rob_bb_annotations <- function(scoring_csv,
     mutate(file_name = file.path(
       images_root,
       paste0("batch_", batch_j),
-      paste0(photo_id, ".", extension)
+      paste0(photo_id, ".webp")
     ))
 
   message(sprintf("  Final dataset: %d rows", nrow(scoring)))

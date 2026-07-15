@@ -200,7 +200,7 @@ write_csv_split <- function(split_list, split_name, output_dir,
   # Add file_name if not present
   if (!"file_name" %in% names(split_data)) {
     split_data <- split_data %>%
-      mutate(file_name = file.path(images_root, paste0(photo_id, ".", extension)))
+      mutate(file_name = file.path(images_root, paste0(photo_id, ".webp")))
   }
 
   # Create output directory

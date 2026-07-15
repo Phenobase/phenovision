@@ -70,7 +70,7 @@ rob_annot2 <- rob_annot2 |>
   mutate(leaves_breaking_buds = as.numeric(leaves_breaking_buds))
 
 meta <- meta |>
-  mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".", extension)))
+  mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".webp")))
 
 fams <- meta |>
   select(genus, family) |>

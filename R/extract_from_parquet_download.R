@@ -140,7 +140,7 @@ extract_reproductive_from_parquet <- function(annotation_parquet,
       file_name = file.path(
         images_root,
         paste0("batch_", batch_j),
-        paste0(photo_id, ".", extension)
+        paste0(photo_id, ".webp")  # WebP store; `extension` kept only for the S3 URL (R/webp_paths_common.R)
       )
     ) %>%
     # Extract order from taxonomy (may need to join with taxa table for full taxonomy)
@@ -357,7 +357,7 @@ extract_leaf_from_parquet <- function(annotation_parquet,
       file_name = file.path(
         images_root,
         paste0("batch_", batch_j),
-        paste0(photo_id, ".", extension)
+        paste0(photo_id, ".webp")  # WebP store; `extension` kept only for the S3 URL (R/webp_paths_common.R)
       )
     )
 

@@ -61,7 +61,7 @@ taxonomy <- taxonomy |>
 meta_filtered <- meta_filtered |>
   left_join(taxonomy)
 meta_filtered <- meta_filtered |>
-  mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".", extension)))
+  mutate(file_name = file.path("data", "phenobase_inat_data", "images", "medium", paste0("batch_", batch_j), paste0(photo_id, ".webp")))
 
 write_csv(meta_filtered, "data/leaves/inference_metadata_04-11-2025.csv")
 

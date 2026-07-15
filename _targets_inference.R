@@ -121,11 +121,9 @@ tar_plan(
         dplyr::collect() |>
         tidyr::drop_na(batch_j) |>
         dplyr::mutate(
-          path = file.path(
-            images_root,
-            paste0("batch_", batch_j),
-            paste0(photo_id, ".", extension)
-          )
+          # WebP store: on-disk files are <photo_id>.webp (the `extension` column is kept only for
+          # the iNat S3 fetch URL, not the on-disk filename). See R/webp_paths_common.R.
+          path = webp_image_path(images_root, batch_j, photo_id)
         )
     }
   ),

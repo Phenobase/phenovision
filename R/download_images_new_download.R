@@ -255,8 +255,10 @@ download_batch_from_list <- function(batch_data, status_dir) {
   # Create batch directory if needed
   dir.create(batch_dir, recursive = TRUE, showWarnings = FALSE)
 
-  # Check which images already exist
-  img_ids <- paste(batch_data$photo_ids, batch_data$extensions, sep = ".")
+  # Check which images already exist. The store is WebP-only: a photo is "done" when its
+  # <photo_id>.webp exists. The download still writes <id>.<ext> (curl streams the original S3
+  # format) and then converts to <id>.webp (Step 5b below) and deletes the original.
+  img_ids <- paste0(batch_data$photo_ids, ".webp")
 
   if (dir.exists(batch_dir)) {
     img_done <- list.files(batch_dir)
@@ -428,6 +430,30 @@ download_batch_from_list <- function(batch_data, status_dir) {
     }
   } else {
     n_failed_attempt2 <- 0
+  }
+
+  # ===========================================================================
+  # Step 5b: Convert downloaded originals to WebP q82 (<id>.webp), delete originals.
+  # Single source of truth: py/webp_convert.py (Pillow q82/method6, verify-decode, atomic publish).
+  # Corrupt/undecodable downloads are deleted (self-cleaning store). Requires reticulate-gpu2 to be
+  # configured for this session (RETICULATE_PYTHON / use_condaenv in the download submit script).
+  # ===========================================================================
+
+  fs_final <- file.size(dest_to_download)
+  ok_originals <- dest_to_download[!is.na(fs_final) & fs_final > 0]
+  if (length(ok_originals) > 0) {
+    tryCatch({
+      webp <- reticulate::import_from_path("webp_convert", "py")
+      conv <- webp$convert_many(reticulate::r_to_py(as.list(ok_originals)))
+      n_corrupt_removed <- length(conv[[2]])
+      message(sprintf("[Batch %d] WebP conversion: %s ok, %s corrupt removed",
+                      batch_id,
+                      format(length(ok_originals) - n_corrupt_removed, big.mark = ","),
+                      format(n_corrupt_removed, big.mark = ",")))
+    }, error = function(e) {
+      warning(sprintf("[Batch %d] WebP conversion FAILED (originals left as-is): %s",
+                      batch_id, conditionMessage(e)))
+    })
   }
 
   # ===========================================================================
