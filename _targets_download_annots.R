@@ -134,7 +134,7 @@ tar_plan(
   # Data update trigger: change this date to force a full data update.
   # When this value changes, all download + extraction + processing targets re-run.
   # Set to the date you're triggering the update. No need to reset afterwards.
-  data_update_trigger = "2026-03-06",
+  data_update_trigger = "2026-07-14",
 
   # ===========================================================================
   # Step 1: Update iNaturalist Metadata (Granular Targets)
