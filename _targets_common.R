@@ -66,6 +66,12 @@ paths <- list(
   metadata_root = file.path(data_root, "metadata"),
   metadata_photos = file.path(data_root, "metadata/angio_photos"),
   metadata_annotation = file.path(data_root, "metadata/phenobase_dwca_annotation"),
+
+  # Raw iNaturalist Open Data snapshot. This is a SHARED store: one dump serves every
+  # project on aip-dinnage (phenovision, iNat-leps, ...), so nobody re-downloads 36 GB.
+  # It lives at /project/aip-dinnage/shared/inat-open-data/<YYYY-MM-DD>/ with a `latest`
+  # symlink, and is reached here through data/phenobase_inat_data/opendata.
+  opendata = file.path(data_root, "opendata"),
   image_download_status = file.path(data_root, "metadata/img_download_status"),
 
   # WebDataset shard manifests (Vulcan pull)
