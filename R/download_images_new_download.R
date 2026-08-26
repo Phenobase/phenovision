@@ -433,10 +433,13 @@ download_batch_from_list <- function(batch_data, status_dir) {
   }
 
   # ===========================================================================
-  # Step 5b: Convert downloaded originals to WebP q82 (<id>.webp), delete originals.
+  # Step 5b: Convert downloaded originals to WebP q82 (<id>.webp) and delete the original ONLY
+  # after the webp is written and re-verified to decode.
   # Single source of truth: py/webp_convert.py (Pillow q82/method6, verify-decode, atomic publish).
-  # Corrupt/undecodable downloads are deleted (self-cleaning store). Requires reticulate-gpu2 to be
-  # configured for this session (RETICULATE_PYTHON / use_condaenv in the download submit script).
+  # Undecodable downloads are LEFT ON DISK and only counted here -- the converter never deletes a
+  # source it failed to convert, because a transient read error looks exactly like corruption
+  # (that mistake cost ~1.96M good images in the 2026-07-01 incident). Requires reticulate-gpu2 to
+  # be configured for this session (RETICULATE_PYTHON / use_condaenv in the download submit script).
   # ===========================================================================
 
   fs_final <- file.size(dest_to_download)
@@ -445,11 +448,11 @@ download_batch_from_list <- function(batch_data, status_dir) {
     tryCatch({
       webp <- reticulate::import_from_path("webp_convert", "py")
       conv <- webp$convert_many(reticulate::r_to_py(as.list(ok_originals)))
-      n_corrupt_removed <- length(conv[[2]])
-      message(sprintf("[Batch %d] WebP conversion: %s ok, %s corrupt removed",
+      n_unconverted <- length(conv[[2]])
+      message(sprintf("[Batch %d] WebP conversion: %s ok, %s unconverted (originals kept)",
                       batch_id,
-                      format(length(ok_originals) - n_corrupt_removed, big.mark = ","),
-                      format(n_corrupt_removed, big.mark = ",")))
+                      format(length(ok_originals) - n_unconverted, big.mark = ","),
+                      format(n_unconverted, big.mark = ",")))
     }, error = function(e) {
       warning(sprintf("[Batch %d] WebP conversion FAILED (originals left as-is): %s",
                       batch_id, conditionMessage(e)))

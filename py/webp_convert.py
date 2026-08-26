@@ -5,10 +5,15 @@ Single source of truth for jpg/png -> WebP q82 conversion, used by:
   - the download pipeline (R/download_images_new_download.R, via reticulate).
 
 Policy: convert each <id>.<jpg|jpeg|png> -> <id>.webp (quality 82, method 6) and delete the
-original. A source that won't decode/convert is CORRUPT -> delete it too (it would be skipped by
-training/inference anyway; deleting keeps the store self-cleaning). Idempotent: an existing,
-decodable <id>.webp is left in place. The webp is written to a .tmp then atomically renamed, and
-verified to decode before the original is removed, so an interrupted run never loses data.
+original ONLY after the webp has been written AND re-verified to decode. Idempotent: an existing,
+decodable <id>.webp is left in place. The webp is written to a .tmp then atomically renamed, so an
+interrupted run never loses data.
+
+A source that will NOT decode/convert is LEFT ON DISK and merely reported (returns None; the CLI
+records it via --fail-log). This module never self-cleans "corrupt" files. See the CRITICAL SAFETY
+RULE in convert_to_webp(): a transient filesystem read error is indistinguishable from genuine
+corruption, and an earlier version that deleted on decode failure destroyed ~1.96M good images
+during two brief /blue I/O hiccups.
 """
 import os
 from PIL import Image
@@ -20,9 +25,11 @@ METHOD = 6
 def convert_to_webp(src, delete_src=True, skip_existing=True):
     """Convert one image file to `<stem>.webp` (q82/method6).
 
-    Returns the webp path on success, or None on a corrupt/unconvertible source. On failure the
-    bad source is deleted (when delete_src). Idempotent when skip_existing: a present, non-empty
-    `<stem>.webp` is returned as-is (and any leftover original removed).
+    Returns the webp path on success, or None on an unconvertible source. On failure the source is
+    LEFT IN PLACE -- never deleted, whatever `delete_src` says (see the CRITICAL SAFETY RULE below).
+    `delete_src` governs only the success path: removing an original we have just replaced with a
+    verified webp. Idempotent when skip_existing: a present, non-empty `<stem>.webp` is returned
+    as-is (and any leftover original removed).
     """
     stem, ext = os.path.splitext(src)
     dst = stem + ".webp"
