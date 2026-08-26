@@ -25,6 +25,26 @@ SHARD_SIZE = 10_000
 BATCH_SIZE = 100_000      # legacy batch_j, kept so the pre-shard file_name layout still works
 ANGIO_ROOT = "47125"      # iNat taxon id for angiosperms (Magnoliopsida)
 
+# Photo licenses admitted into the shard store. NOT cosmetic.
+#
+# The pull creates ~100M re-encoded WebP copies packed into redistributable tar shards.
+# A JPEG re-encoded to WebP q82 is plausibly an *adaptation*, and NoDerivatives (ND)
+# forbids distributing adaptations; ShareAlike (SA) would additionally require any
+# derivative to be SA-licensed, colliding with PhenoVision's MIT license.
+#
+# This whitelist also makes the corpus match what the published model cards already claim
+# ("Images under CC-0, CC-BY, or CC-BY-NC licenses" -- phenovision_README.md:130), which
+# the original pipeline never enforced: it had no license filter at all.
+#
+# PD is public domain -- the most permissive tag there is -- so it belongs here, not with
+# the exclusions.
+#
+# Note iNaturalist's Open Data export is NOT limited to open licenses. Measured against the
+# 2026-08-26 snapshot it carries 9.3M CC-BY-NC-ND, 9.2M CC-BY-NC-SA, 6.7M CC-BY-SA and
+# 1.2M CC-BY-ND photos. Matching is case-insensitive: the export uses upper case, while
+# iNat-leps lower-cased its copy.
+DEFAULT_LICENSES = "CC0,CC-BY,CC-BY-NC,PD"
+
 
 def reader(snap, name, cols):
     path = os.path.join(snap, name + ".csv.gz")
@@ -42,6 +62,9 @@ def main():
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--memory", default="56GB")
     ap.add_argument("--temp", default=None, help="duckdb spill dir (default: <out>/.duckdb_tmp)")
+    ap.add_argument("--licenses", default=DEFAULT_LICENSES,
+                    help="comma-separated photo licenses to ADMIT, case-insensitive "
+                         "(default: %s). Pass 'ALL' to disable filtering." % DEFAULT_LICENSES)
     a = ap.parse_args()
 
     snap = a.snapshot.rstrip("/")
@@ -106,8 +129,30 @@ def main():
     print("      observations: {:,}".format(
         con.execute("SELECT count(*) FROM angio_obs").fetchone()[0]))
 
-    # --- 3. photos of those observations, sharded --------------------------------
-    print("[3/5] photos + shard assignment ...", flush=True)
+    # --- 3. photos of those observations, license-filtered, sharded ---------------
+    print("[3/5] photos + license filter + shard assignment ...", flush=True)
+    if a.licenses.strip().upper() == "ALL":
+        lic_pred = "TRUE"
+        print("      licenses: ALL (no filter) -- see DEFAULT_LICENSES for why this is risky")
+    else:
+        admitted = [x.strip().upper() for x in a.licenses.split(",") if x.strip()]
+        lic_pred = "upper(p.license) IN (%s)" % ", ".join("'%s'" % x for x in admitted)
+        print("      licenses admitted: %s" % ", ".join(admitted))
+
+    # Count what the filter removes BEFORE applying it, so the exclusion is always
+    # recorded rather than silently disappearing from the corpus.
+    excluded = con.execute("""
+      SELECT p.license, count(*) c
+      FROM {pho} p SEMI JOIN angio_obs o ON p.observation_uuid = o.observation_uuid
+      WHERE NOT ({lic})
+      GROUP BY 1 ORDER BY c DESC
+    """.format(pho=pho, lic=lic_pred)).fetchall()
+    n_excluded = sum(c for _, c in excluded)
+    if excluded:
+        print("      EXCLUDED by license: {:,} photos".format(n_excluded))
+        for k, c in excluded:
+            print("        {:<14} {:>12,}".format(k if k else "<empty>", c))
+
     con.execute("""
       CREATE TEMP TABLE frame AS
       SELECT p.photo_id, p.photo_uuid, p.observation_uuid, p.observer_id,
@@ -117,7 +162,8 @@ def main():
              CAST(FLOOR((ROW_NUMBER() OVER (ORDER BY p.photo_id) - 1) / {batch}) AS INTEGER) + 1 AS batch_j
       FROM {pho} p
       JOIN angio_obs o USING (observation_uuid)
-    """.format(shard=SHARD_SIZE, batch=BATCH_SIZE, pho=pho))
+      WHERE {lic}
+    """.format(shard=SHARD_SIZE, batch=BATCH_SIZE, pho=pho, lic=lic_pred))
     n_photos, n_shards, n_taxa, n_obs = con.execute(
         "SELECT count(*), max(shard)+1, count(DISTINCT taxon_id), "
         "count(DISTINCT observation_uuid) FROM frame").fetchone()
@@ -155,11 +201,17 @@ def main():
         est. sharded size @ ~45 KB/img (webp q82, measured): {est_gb:,.0f} GB
         angiosperm taxa: {strict:,} strict / {loose:,} loose (old awk over-included {over:,})
         snapshot: {snap}
+        licenses admitted: {adm}
         license mix: {lic}
+        EXCLUDED by license: {n_excl:,} photos{excl_detail}
         """).format(
         n_photos=n_photos, n_shards=n_shards, shard_size=SHARD_SIZE, n_taxa=n_taxa,
         n_obs=n_obs, est_gb=est_gb, strict=strict, loose=loose, over=loose - strict,
-        snap=snap, lic=", ".join("%s=%s" % (k, format(v, ",")) for k, v in lic))
+        snap=snap, adm=a.licenses,
+        lic=", ".join("%s=%s" % (k, format(v, ",")) for k, v in lic),
+        n_excl=n_excluded,
+        excl_detail=("" if not excluded else " ("
+                     + ", ".join("%s=%s" % (k, format(c, ",")) for k, c in excluded) + ")"))
     with open(os.path.join(out, "full_summary.txt"), "w") as fh:
         fh.write(summary)
     print(summary)
