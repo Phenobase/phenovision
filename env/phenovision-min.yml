@@ -1,0 +1,27 @@
+# Minimal conda environment to RUN PhenoVision inference from the Hugging Face
+# Hub (load model + preprocess + predict). This is NOT the full training/pipeline
+# stack — it deliberately omits timm, rocksdb, reticulate/R, and the PlantCLEF2022
+# code. It is enough to: load phenobase/phenovision(L), preprocess images, and run
+# forward passes on CPU. Verified 2026-07-07 on Windows (CPU) with the versions
+# noted below.
+#
+# Create:   conda env create -f phenovision-min.yml
+# Activate: conda activate phenovision-min
+# Smoke test: python ../py/hf_inference_smoke_test.py
+#
+# NOTE: transformers 5.x routes AutoImageProcessor through a torchvision backend,
+# so torchvision is REQUIRED (without it AutoImageProcessor raises ImportError).
+name: phenovision-min
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - torch          # 2.12.1 tested (CPU build on Windows by default)
+      - torchvision    # 0.27.1 tested (required by transformers 5.x image processors)
+      - transformers   # 5.13.0 tested
+      - pillow         # 12.3.0 tested
+      - numpy          # 2.4.6 tested
+      - safetensors
+      - huggingface_hub

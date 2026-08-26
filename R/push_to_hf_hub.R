@@ -163,6 +163,30 @@ if (args$dry_run) {
   cat("Model uploaded successfully.\n\n")
 }
 
+# --- Upload image preprocessor config ---
+# Without a preprocessor_config.json on the Hub, `AutoImageProcessor.from_pretrained`
+# fails with "OSError: Can't load image processor". This reproduces the timm eval
+# transform used for training/inference (datasets.py build_transform, is_train=False):
+# resize shortest edge to 256 (bicubic) -> center-crop 224 -> rescale 1/255 ->
+# ImageNet-default normalization. Same preprocessing for the reproductive (2-label)
+# and leaves (3-label) models, so this runs regardless of --num-labels.
+if (args$dry_run) {
+  cat("[DRY RUN] Would push preprocessor_config.json (ConvNextImageProcessor) to ", args$hf_repo, "\n")
+} else {
+  cat("Pushing image preprocessor config to ", args$hf_repo, "...\n")
+  processor <- transformers$ConvNextImageProcessor(
+    size         = reticulate::dict(shortest_edge = 224L),
+    crop_pct     = 0.875,
+    resample     = 3L,   # PIL bicubic
+    do_rescale   = TRUE,
+    do_normalize = TRUE,
+    image_mean   = c(0.485, 0.456, 0.406),
+    image_std    = c(0.229, 0.224, 0.225)
+  )
+  processor$push_to_hub(args$hf_repo, commit_message = "Add/update preprocessor_config.json")
+  cat("Preprocessor config uploaded.\n\n")
+}
+
 # --- Upload companion files ---
 if (length(companion_files) > 0) {
   if (args$dry_run) {
