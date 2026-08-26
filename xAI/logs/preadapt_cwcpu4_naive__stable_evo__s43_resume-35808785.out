@@ -1,0 +1,97 @@
+Fri Jun 26 07:15:49 PM EDT 2026
+host=c0702a-s8.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt CPU collector worker 4 ===
+run_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43
+watch_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43/checkpoints
+sentinels=xAI/output/preadapt_v2/naive__stable_evo__s43/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+nthreads=8
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35808779
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=7); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=6); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=5); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=4); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+warning  libmamba failed to open /home/r.dinnage/.cache/mamba/proc/1732772.json
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain still had work (drained=0 depth=1); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu4] --once drained 0 checkpoint(s); exiting.
+[cwcpu4] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu4] final drain found nothing new and aggregate queue depth=0 -> all runs collected. Exiting.
+Done: Fri Jun 26 07:21:40 PM EDT 2026

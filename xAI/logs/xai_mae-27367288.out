@@ -1,0 +1,53 @@
+Mon Mar 16 04:44:27 PM EDT 2026
+c1101a-s5.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI MAE training...
+/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/cuda/__init__.py:235: UserWarning: 
+NVIDIA B200 with CUDA capability sm_100 is not compatible with the current PyTorch installation.
+The current PyTorch install supports CUDA capabilities sm_35 sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 compute_89.
+If you want to use the NVIDIA B200 GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
+
+  warnings.warn(
+/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../PlantCLEF2022/util/misc.py:255: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  self._scaler = torch.cuda.amp.GradScaler()
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: mae
+  Epochs: 20
+  Batch size: 384
+  Val every: 100 batches
+  Output: xAI/output/mae_run
+
+Device: cuda:0
+Loading data...
+  Training images: 2141091
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: mae
+  Total parameters: 303,303,682
+  CKPT: xAI/output/mae_run/checkpoints/epoch0_init.pt
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization)
+============================================================
+  Trainable parameters: 2,050 (head only)
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/5575] loss=0.6932 lr=0.001000
+  Epoch 0 [20/5575] loss=0.5351 lr=0.001000
+  Epoch 0 [40/5575] loss=0.5764 lr=0.001000
+  Epoch 0 [60/5575] loss=0.5600 lr=0.001000
+  Epoch 0 [80/5575] loss=0.5657 lr=0.001000
+  VAL step=100 val_loss=0.5364 auc_roc_mean=0.7435
+  Epoch 0 [100/5575] loss=0.5423 lr=0.001000
+  Epoch 0 [120/5575] loss=0.5211 lr=0.001000
+  Epoch 0 [140/5575] loss=0.5372 lr=0.001000
+  Epoch 0 [160/5575] loss=0.5441 lr=0.001000
+  Epoch 0 [180/5575] loss=0.5199 lr=0.001000
+  VAL step=200 val_loss=0.5117 auc_roc_mean=0.7651
+  Epoch 0 [200/5575] loss=0.4981 lr=0.001000
+  Epoch 0 [220/5575] loss=0.5115 lr=0.001000
+  Epoch 0 [240/5575] loss=0.5375 lr=0.001000
+  Epoch 0 [260/5575] loss=0.5337 lr=0.001000
+  Epoch 0 [280/5575] loss=0.5070 lr=0.001000

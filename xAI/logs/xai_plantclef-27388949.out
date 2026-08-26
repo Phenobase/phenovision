@@ -1,0 +1,34 @@
+Mon Mar 16 09:46:53 PM EDT 2026
+c0904a-s5.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI PlantCLEF training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: plantclef
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/plantclef_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: plantclef
+  Total parameters: 303,303,682
+
+Resuming from Phase 1 checkpoint: xAI/output/plantclef_run/checkpoints/phase1_final.pt
+  Loaded: step=1400, epoch=5
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  Rebuilding train loader: batch_size 768 -> 384 for Phase 2
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/plantclef_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 6 (P2 epoch 0) ---
+  [0/557] loss=0.3135 grad=1.3755 g_head=0.4900 g_last=0.1984 g_first=0.3189 lr=0.000000

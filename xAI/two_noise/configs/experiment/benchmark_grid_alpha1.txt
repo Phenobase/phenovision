@@ -1,0 +1,6 @@
+--model vit_s --dataset cifar100 --optimizer soap --alpha 1 --lr 1e-5 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0
+--model vit_s --dataset cifar100 --optimizer soap --alpha 1 --lr 3e-5 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0
+--model vit_s --dataset cifar100 --optimizer soap --alpha 1 --lr 1e-4 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0
+--model vit_b --dataset cifar100 --optimizer soap --alpha 1 --lr 1e-5 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0
+--model vit_b --dataset cifar100 --optimizer soap --alpha 1 --lr 3e-5 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0
+--model vit_b --dataset cifar100 --optimizer soap --alpha 1 --lr 1e-4 --batch-size 256 --max-steps 4000 --eval-every 200 --log-every 25 --seed 0 --amp --max-update-norm 1.0

@@ -1,0 +1,26 @@
+Thu Jun 18 08:54:28 AM EDT 2026
+host=c0910a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition plantclef --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 25 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --lr_schedule fixed --beta1 0 --weight_decay 0 --max_train_samples 107000 --sampler_delta 0.01 --sampler_min_step 4 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2 --max_precond_dim 2048 --phase2_early_stop --output_dir xAI/output/preadapt_v2/plantclef__stable_evo__s42 --resume xAI/output/preadapt_v2/plantclef__stable_evo__s42/kept/step00002532.pt --num_workers 4
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : plantclef__stable_evo__s42
+  condition        : plantclef
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/preadapt_v2/plantclef__stable_evo__s42
+  epochs           : 25
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 107000 samples
+  Training images: 107000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_train] loading resume checkpoint: xAI/output/preadapt_v2/plantclef__stable_evo__s42/kept/step00002532.pt

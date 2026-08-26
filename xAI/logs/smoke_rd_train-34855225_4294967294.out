@@ -1,0 +1,97 @@
+Tue Jun 16 03:42:10 PM EDT 2026
+host=c0906a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 4 --max_train_samples 2000 --batch_size 64 --phase2_batch_size 32 --max_precond_dim 2048 --sampler_min_step 3 --sampler_delta 0.01 --sampler_max_step 50 --backpressure-high 4 --backpressure-low 1 --demo_warmup 5 --val_every_n 10 --plateau_window 2 --plateau_patience 1 --plateau_threshold 0.10 --num_workers 6 --output_dir xAI/output/_redesign_smoke/mae__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/_redesign_smoke/mae__stable_evo__s42
+  epochs           : 4
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 2000 samples
+  Training images: 2000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/31] loss=0.6931 lr=0.001000
+  VAL step=10 val_loss=0.5875 auc_roc_mean=0.5724 auc_pr_mean=0.4680
+  VAL step=20 val_loss=0.5656 auc_roc_mean=0.6192 auc_pr_mean=0.5094
+  Plateau (1/1) auc_roc improvement=0.0468
+
+*** Phase 1 converged at epoch 0, step 20 ***
+
+PHASE_TRANSITION: step=20 epoch=0 val_loss=0.5656 auc_roc_mean=0.6192 auc_pr_mean=0.5094 (ECOLOGICAL_FITTING: auc_pr=0.5094, val_loss=0.5656)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=6.25e-05  eff_batch=32  variant=stable_evo
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [0/62] loss=0.7975 upd_norm=2.5818 disp=0.0000 sampler=0.0000 lr=0.000013
+  VAL step=30 (p2=10) val_loss=0.5655 auc_pr_mean=0.5095
+  EMIT ckpt step=38 reason=displacement on_ladder=True -> step00000038.pt
+  VAL step=40 (p2=20) val_loss=0.5655 auc_pr_mean=0.5097
+  [20/62] loss=0.5968 upd_norm=0.3984 disp=0.5016 sampler=0.0052 lr=0.000017
+  VAL step=50 (p2=30) val_loss=0.5654 auc_pr_mean=0.5099
+  EMIT ckpt step=55 reason=displacement on_ladder=True -> step00000055.pt
+  VAL step=60 (p2=40) val_loss=0.5654 auc_pr_mean=0.5106
+  [40/62] loss=0.4999 upd_norm=0.9300 disp=0.7099 sampler=0.0070 lr=0.000021
+  EMIT ckpt step=68 reason=displacement on_ladder=True -> step00000068.pt
+  VAL step=70 (p2=50) val_loss=0.5653 auc_pr_mean=0.5109
+  VAL step=80 (p2=60) val_loss=0.5651 auc_pr_mean=0.5115
+  [60/62] loss=0.6062 upd_norm=0.7148 disp=0.8923 sampler=0.0088 lr=0.000025
+  EMIT ckpt step=82 reason=epoch_end on_ladder=True -> step00000082.pt
+
+--- Phase 2, Epoch 2 (P2 epoch 1) ---
+  [0/62] loss=0.4757 upd_norm=0.9862 disp=0.9076 sampler=0.0024 lr=0.000025
+  EMIT ckpt step=90 reason=displacement on_ladder=True -> step00000090.pt
+  VAL step=90 (p2=70) val_loss=0.5650 auc_pr_mean=0.5116
+  VAL step=100 (p2=80) val_loss=0.5649 auc_pr_mean=0.5124
+  EMIT ckpt step=101 reason=displacement on_ladder=True -> step00000101.pt
+  [20/62] loss=0.4216 upd_norm=1.5461 disp=1.2034 sampler=0.0026 lr=0.000029
+  VAL step=110 (p2=90) val_loss=0.5648 auc_pr_mean=0.5130
+  EMIT ckpt step=119 reason=displacement on_ladder=True -> step00000119.pt
+  VAL step=120 (p2=100) val_loss=0.5646 auc_pr_mean=0.5135
+  [40/62] loss=0.5244 upd_norm=0.7407 disp=1.2857 sampler=0.0037 lr=0.000033
+  VAL step=130 (p2=110) val_loss=0.5645 auc_pr_mean=0.5140
+  EMIT ckpt step=140 reason=displacement on_ladder=True -> step00000140.pt
+  VAL step=140 (p2=120) val_loss=0.5643 auc_pr_mean=0.5146
+  [60/62] loss=0.5810 upd_norm=0.6995 disp=1.3496 sampler=0.0029 lr=0.000037
+  EMIT ckpt step=144 reason=epoch_end on_ladder=True -> step00000144.pt
+
+--- Phase 2, Epoch 3 (P2 epoch 2) ---
+  [0/62] loss=0.6261 upd_norm=1.1654 disp=1.3528 sampler=0.0014 lr=0.000038
+  VAL step=150 (p2=130) val_loss=0.5642 auc_pr_mean=0.5154
+  VAL step=160 (p2=140) val_loss=0.5641 auc_pr_mean=0.5161
+  [20/62] loss=0.6646 upd_norm=1.0631 disp=1.3980 sampler=0.0086 lr=0.000042
+  VAL step=170 (p2=150) val_loss=0.5639 auc_pr_mean=0.5168
+  EMIT ckpt step=171 reason=displacement on_ladder=True -> step00000171.pt
+  VAL step=180 (p2=160) val_loss=0.5638 auc_pr_mean=0.5176
+  [40/62] loss=0.5018 upd_norm=0.9119 disp=1.4415 sampler=0.0072 lr=0.000046
+  EMIT ckpt step=190 reason=displacement on_ladder=True -> step00000190.pt
+  VAL step=190 (p2=170) val_loss=0.5636 auc_pr_mean=0.5184
+  VAL step=200 (p2=180) val_loss=0.5634 auc_pr_mean=0.5191
+  [60/62] loss=0.4823 upd_norm=0.8818 disp=1.5305 sampler=0.0096 lr=0.000050
+  EMIT ckpt step=206 reason=displacement on_ladder=True -> step00000206.pt
+  EMIT ckpt step=206 reason=epoch_end on_ladder=True -> step00000206.pt
+
+TRAINING COMPLETE: run_id=mae__stable_evo__s42 final_step=206 elapsed=33.4 min
+Done: Tue Jun 16 04:16:04 PM EDT 2026

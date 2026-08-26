@@ -1,0 +1,33 @@
+# §2.1 standard-benchmark matrix (analysis_plan.md §2.1).
+#
+# This file documents the full matrix the SLURM array (scripts/submit_benchmark.sh) covers. The
+# array reads the line for SLURM_ARRAY_TASK_ID from configs/experiment/benchmark_grid.txt (one
+# config per line, generated from this spec). Keep this YAML as the human-readable source; regen
+# the grid with scripts/gen_benchmark_grid.py-style logic or edit benchmark_grid.txt by hand.
+
+model_data_pairs:
+  - {model: vit_s,   dataset: cifar100}          # WORKING (auto-download)
+  - {model: vit_b,   dataset: cifar100}          # WORKING (auto-download)
+  - {model: vit_s,   dataset: tiny_imagenet}     # needs manual download (see _harness)
+  - {model: nanogpt, dataset: tinystories}       # needs `datasets`+`tiktoken` + one-time tokenize
+
+optimizers:
+  - {optimizer: adamw, alpha: null}
+  - {optimizer: soap,  alpha: 0.0}
+  - {optimizer: soap,  alpha: 0.25}
+  - {optimizer: soap,  alpha: 0.5}
+  - {optimizer: soap,  alpha: 0.75}
+  - {optimizer: soap,  alpha: 1.0}
+
+# Small LR grid per optimizer. alpha=1 needs ~10x smaller lr; the grid straddles the default_lr.
+lr_grid:
+  adamw:   [3.0e-4, 1.0e-3, 3.0e-3]
+  soap_lo: [1.0e-4, 3.0e-4, 1.0e-3]   # alpha <= 0.5 (whitening regime)
+  soap_hi: [1.0e-5, 3.0e-5, 1.0e-4]   # alpha >= 0.75 (full-power regime, smaller lr)
+
+budget:
+  batch_size: 256        # micro-batch on an L4 for ViT-S/B at 224 (tune; use --accum for larger)
+  max_steps: 4000        # optimizer steps per config (loss-vs-step + loss-vs-wallclock curves)
+  eval_every: 200
+  amp: true
+  seed: 0

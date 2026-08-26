@@ -1,0 +1,78 @@
+[Extractor] block 'block_trajectory' FAILED at run_id=plantclef__stable_evo__s42 step=62:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 712, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_trajectory.py", line 409, in extract
+    ctx.array.put(group="msd_curve", step=step,
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 531, in put
+    self._put_zarr(key, step, arr)
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 547, in _put_zarr
+    za.append(arr[np.newaxis, ...])
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 3856, in append
+    return sync(self.async_array.append(data, axis=axis))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 158, in sync
+    raise return_result
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 118, in _runner
+    return await coro
+           ^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 1676, in append
+    return await _append(self, data, axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 5949, in _append
+    raise ValueError(
+ValueError: shape of data to append is not compatible with the array. The shape of the data is ((2, 2))and the shape of the array is ((1, 2)).All dimensions must match except for the dimension being appended.
+
+[Extractor] block 'block_trajectory' FAILED at run_id=plantclef__stable_evo__s42 step=62:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 712, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_trajectory.py", line 409, in extract
+    ctx.array.put(group="msd_curve", step=step,
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 531, in put
+    self._put_zarr(key, step, arr)
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 547, in _put_zarr
+    za.append(arr[np.newaxis, ...])
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 3856, in append
+    return sync(self.async_array.append(data, axis=axis))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 158, in sync
+    raise return_result
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 118, in _runner
+    return await coro
+           ^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 1676, in append
+    return await _append(self, data, axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 5949, in _append
+    raise ValueError(
+ValueError: shape of data to append is not compatible with the array. The shape of the data is ((3, 2))and the shape of the array is ((1, 2)).All dimensions must match except for the dimension being appended.
+
+[Extractor] block 'block_trajectory' FAILED at run_id=plantclef__stable_evo__s42 step=62:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 712, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_trajectory.py", line 409, in extract
+    ctx.array.put(group="msd_curve", step=step,
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 531, in put
+    self._put_zarr(key, step, arr)
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/preadapt_common.py", line 547, in _put_zarr
+    za.append(arr[np.newaxis, ...])
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 3856, in append
+    return sync(self.async_array.append(data, axis=axis))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 158, in sync
+    raise return_result
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/sync.py", line 118, in _runner
+    return await coro
+           ^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 1676, in append
+    return await _append(self, data, axis)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/zarr/core/array.py", line 5949, in _append
+    raise ValueError(
+ValueError: shape of data to append is not compatible with the array. The shape of the data is ((4, 2))and the shape of the array is ((1, 2)).All dimensions must match except for the dimension being appended.
+

@@ -1,0 +1,184 @@
+Thu Jun 18 12:57:11 PM EDT 2026
+host=c0603a-s10.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=10
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/naive__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/naive__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/naive__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35115945
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] d90 backfill queue exhausted (no pending configs); idle-collecting only.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+warning  libmamba failed to open /home/r.dinnage/.cache/mamba/proc/248492.json
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.

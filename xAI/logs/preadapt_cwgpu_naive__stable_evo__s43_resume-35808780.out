@@ -1,0 +1,62 @@
+Fri Jun 26 07:15:46 PM EDT 2026
+host=c0611a-s3.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=10
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43
+watch_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43/checkpoints
+sentinels=xAI/output/preadapt_v2/naive__stable_evo__s43/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35808779
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[extract] step=2224 SKIP heavy block block_interp (ordinal=444 basis=step_fallback heavy_every=8)
+[extract] step=2224 SKIP heavy block block_probes (ordinal=444 basis=step_fallback heavy_every=8)
+[extract] step=2224 heavy=FALSE total=18.48s | block_curvature=5.86 block_fitness=6.98
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2224 blocks_ok=2 t=18.482s (all_passes_complete=True)
+[extract] step=2236 SKIP heavy block block_interp (ordinal=447 basis=step_fallback heavy_every=8)
+[extract] step=2236 SKIP heavy block block_probes (ordinal=447 basis=step_fallback heavy_every=8)
+[extract] step=2236 heavy=FALSE total=16.11s | block_curvature=4.63 block_fitness=5.78
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2236 blocks_ok=2 t=16.111s (all_passes_complete=True)
+[extract] step=2248 SKIP heavy block block_interp (ordinal=449 basis=step_fallback heavy_every=8)
+[extract] step=2248 SKIP heavy block block_probes (ordinal=449 basis=step_fallback heavy_every=8)
+[extract] step=2248 heavy=FALSE total=16.14s | block_curvature=4.58 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2248 blocks_ok=2 t=16.145s (all_passes_complete=True)
+[extract] step=2260 SKIP heavy block block_interp (ordinal=452 basis=step_fallback heavy_every=8)
+[extract] step=2260 SKIP heavy block block_probes (ordinal=452 basis=step_fallback heavy_every=8)
+[extract] step=2260 heavy=FALSE total=15.95s | block_curvature=4.57 block_fitness=5.57
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2260 blocks_ok=2 t=15.952s (all_passes_complete=True)
+[extract] step=2272 SKIP heavy block block_interp (ordinal=454 basis=step_fallback heavy_every=8)
+[extract] step=2272 SKIP heavy block block_probes (ordinal=454 basis=step_fallback heavy_every=8)
+[extract] step=2272 heavy=FALSE total=15.82s | block_curvature=4.54 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2272 blocks_ok=2 t=15.821s (all_passes_complete=True)
+[extract] step=2284 heavy=TRUE total=102.14s | block_curvature=4.54 block_interp=43.29 block_probes=43.08 block_fitness=5.69
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2284 blocks_ok=4 t=102.143s (all_passes_complete=True)
+[extract] step=2296 SKIP heavy block block_interp (ordinal=459 basis=step_fallback heavy_every=8)
+[extract] step=2296 SKIP heavy block block_probes (ordinal=459 basis=step_fallback heavy_every=8)
+[extract] step=2296 heavy=FALSE total=16.57s | block_curvature=4.55 block_fitness=6.22
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2296 blocks_ok=2 t=16.57s (all_passes_complete=True)
+[extract] step=2308 SKIP heavy block block_interp (ordinal=461 basis=step_fallback heavy_every=8)
+[extract] step=2308 SKIP heavy block block_probes (ordinal=461 basis=step_fallback heavy_every=8)
+[extract] step=2308 heavy=FALSE total=16.24s | block_curvature=4.54 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2308 blocks_ok=2 t=16.235s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=naive__stable_evo__s43 step=2308 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 9 checkpoint(s); exiting.
+[cwgpu0] drained 9 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2320 heavy=TRUE total=96.84s | block_curvature=4.64 block_interp=41.96 block_probes=37.45 block_fitness=7.45
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2320 blocks_ok=4 t=96.841s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=naive__stable_evo__s43 step=2320 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2332 SKIP heavy block block_interp (ordinal=466 basis=step_fallback heavy_every=8)
+[extract] step=2332 SKIP heavy block block_probes (ordinal=466 basis=step_fallback heavy_every=8)
+[extract] step=2332 heavy=FALSE total=18.05s | block_curvature=4.68 block_fitness=6.91
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2332 blocks_ok=2 t=18.051s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=naive__stable_evo__s43 step=2332 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwgpu0] final drain found nothing new and GPU-pass queue depth=0 -> GPU pass complete on all runs. Exiting (CPU pass may still finalize).
+Done: Fri Jun 26 07:22:29 PM EDT 2026

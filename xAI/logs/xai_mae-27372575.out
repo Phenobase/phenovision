@@ -1,0 +1,19 @@
+Mon Mar 16 06:07:28 PM EDT 2026
+c1007a-s15.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI MAE training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: mae
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/mae_run
+
+Device: cuda:0
+Loading data...
+  Training images: 2141091
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: mae

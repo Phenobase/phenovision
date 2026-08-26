@@ -1,0 +1,78 @@
+Fri Jun 26 07:15:49 PM EDT 2026
+host=c0707a-s20.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt CPU collector worker 3 ===
+run_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43
+watch_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43/checkpoints
+sentinels=xAI/output/preadapt_v2/naive__stable_evo__s43/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+nthreads=8
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35808779
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=7); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=7); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=6); a GPU worker may still be emitting/claiming. Looping.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=5); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=4); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+error    libmamba Could not set lock (Resource temporarily unavailable)
+warning  libmamba Cannot lock '/home/r.dinnage/.cache/mamba/proc'
+    Waiting for other mamba process to finish
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=3); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain still had work (drained=0 depth=2); a GPU worker may still be emitting/claiming. Looping.
+[collector wcpu3] FINALIZED run_id=naive__stable_evo__s43 step=2296 -> deleted
+[collector wcpu3] --once drained 1 checkpoint(s); exiting.
+[cwcpu3] drained 1 checkpoint(s); looping.
+[collector wcpu3] --once drained 0 checkpoint(s); exiting.
+[cwcpu3] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwcpu3] final drain found nothing new and aggregate queue depth=0 -> all runs collected. Exiting.
+Done: Fri Jun 26 07:19:41 PM EDT 2026

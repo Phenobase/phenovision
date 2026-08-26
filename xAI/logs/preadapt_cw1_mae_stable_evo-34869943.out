@@ -1,0 +1,1261 @@
+Wed Jun 17 08:33:31 AM EDT 2026
+host=c0602a-s21.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt collector worker 1 ===
+run_dir=xAI/output/preadapt/mae__stable_evo__s42 variant=stable_evo seed=42
+watch_dir=xAI/output/preadapt/mae__stable_evo__s42/checkpoints
+sentinel=xAI/output/preadapt/mae__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jid=34869941
+d90_queue=xAI/output/preadapt/_d90_queue
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 021_mae_d10000_s43.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 10000 --seed 43 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 10000
+  seed             : 43
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 43, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4101
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6920 auc_pr_mean=0.4182 best=0.4101 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=10000 seed=43 step=95 best=0.4182 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d10000_s43.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 023_mae_d10000_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 10000 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 10000
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 45, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6922 auc_pr_mean=0.4070 best=0.4070 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=10000 seed=45 step=96 best=0.4070 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d10000_s45.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 025_mae_d30000_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 30000 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 30000
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=30000  (P: {'method': 'achlioptas', 'seed': 42, 'd': 30000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6922 auc_pr_mean=0.4103 best=0.4103 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=30000 seed=42 step=96 best=0.4103 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d30000_s42.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 027_mae_d30000_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 30000 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 30000
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=30000  (P: {'method': 'achlioptas', 'seed': 44, 'd': 30000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4045
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6919 auc_pr_mean=0.4045 best=0.4045 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=30000 seed=44 step=96 best=0.4045 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d30000_s44.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 029_mae_d30000_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 30000 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 30000
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=30000  (P: {'method': 'achlioptas', 'seed': 46, 'd': 30000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6920 auc_pr_mean=0.4069 best=0.4069 target=<post-hoc> (5.8 min)
+[d90] YIELD condition=mae d=30000 seed=46 step=93 best=0.4069 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d30000_s46.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 031_mae_d100000_s43.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 100000 --seed 43 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 100000
+  seed             : 43
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100000  (P: {'method': 'achlioptas', 'seed': 43, 'd': 100000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4101
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6918 auc_pr_mean=0.4099 best=0.4101 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=100000 seed=43 step=95 best=0.4101 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d100000_s43.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 002_mae_d100_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 100 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 100
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100  (P: {'method': 'achlioptas', 'seed': 44, 'd': 100, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d100_s44.pt: step=86 best=0.4045 since_improve=1 perf_init=0.4045
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6928 auc_pr_mean=0.4130 best=0.4045 target=<post-hoc> (2.1 min)
+  step=150 loss=0.6928 auc_pr_mean=0.4137 best=0.4130 target=<post-hoc> (7.7 min)
+[d90] YIELD condition=mae d=100 seed=44 step=174 best=0.4137 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d100_s44.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 004_mae_d100_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 100 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 100
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100  (P: {'method': 'achlioptas', 'seed': 46, 'd': 100, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d100_s46.pt: step=91 best=0.4069 since_improve=1 perf_init=0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6928 auc_pr_mean=0.4072 best=0.4069 target=<post-hoc> (1.6 min)
+  step=150 loss=0.6928 auc_pr_mean=0.4055 best=0.4072 target=<post-hoc> (7.2 min)
+[d90] YIELD condition=mae d=100 seed=46 step=179 best=0.4072 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d100_s46.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 006_mae_d300_s43.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 300 --seed 43 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 300
+  seed             : 43
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300  (P: {'method': 'achlioptas', 'seed': 43, 'd': 300, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d300_s43.pt: step=82 best=0.4101 since_improve=1 perf_init=0.4101
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6927 auc_pr_mean=0.4091 best=0.4101 target=<post-hoc> (2.5 min)
+  step=150 loss=0.6927 auc_pr_mean=0.4111 best=0.4101 target=<post-hoc> (8.1 min)
+[d90] YIELD condition=mae d=300 seed=43 step=170 best=0.4111 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d300_s43.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 008_mae_d300_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 300 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 300
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300  (P: {'method': 'achlioptas', 'seed': 45, 'd': 300, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d300_s45.pt: step=92 best=0.4178 since_improve=0 perf_init=0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6925 auc_pr_mean=0.4072 best=0.4178 target=<post-hoc> (1.5 min)
+  step=150 loss=0.6923 auc_pr_mean=0.4066 best=0.4178 target=<post-hoc> (7.1 min)
+[d90] YIELD condition=mae d=300 seed=45 step=180 best=0.4178 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d300_s45.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 010_mae_d1000_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 1000 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 1000
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=1000  (P: {'method': 'achlioptas', 'seed': 42, 'd': 1000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d1000_s42.pt: step=96 best=0.4103 since_improve=1 perf_init=0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6920 auc_pr_mean=0.4100 best=0.4103 target=<post-hoc> (1.1 min)
+  step=150 loss=0.6919 auc_pr_mean=0.4104 best=0.4103 target=<post-hoc> (6.7 min)
+[d90] YIELD condition=mae d=1000 seed=42 step=184 best=0.4103 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d1000_s42.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=1900 SKIP heavy block block_circuits (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1900 SKIP heavy block block_interp (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1900 SKIP heavy block block_probes (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1900 heavy=FALSE total=29.45s | block_optim=0.00 block_curvature=5.52 block_weights=14.11 block_trajectory=0.51 block_fitness=5.98
+[collector w1] processed run_id=mae__stable_evo__s42 step=0 heavy=False blocks_ok=5 blocks_err=0 t=29.452s -> KEPT(->kept/,FULL anchor)
+[extract] step=1908 heavy=TRUE total=258.30s | block_optim=83.98 block_curvature=4.74 block_weights=10.69 block_trajectory=0.56 block_circuits=3.51 block_interp=100.12 block_probes=43.64 block_fitness=5.55
+[collector w1] processed run_id=mae__stable_evo__s42 step=1908 heavy=True blocks_ok=8 blocks_err=0 t=258.304s -> deleted
+[extract] step=1943 SKIP heavy block block_circuits (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1943 SKIP heavy block block_interp (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1943 SKIP heavy block block_probes (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1943 heavy=FALSE total=107.48s | block_optim=80.21 block_curvature=4.75 block_weights=10.61 block_trajectory=0.57 block_fitness=5.59
+[collector w1] processed run_id=mae__stable_evo__s42 step=1943 heavy=False blocks_ok=5 blocks_err=0 t=107.484s -> deleted
+[extract] step=1952 heavy=TRUE total=255.23s | block_optim=79.06 block_curvature=4.73 block_weights=10.67 block_trajectory=0.57 block_circuits=2.48 block_interp=100.63 block_probes=46.00 block_fitness=5.57
+[collector w1] processed run_id=mae__stable_evo__s42 step=1952 heavy=True blocks_ok=8 blocks_err=0 t=255.229s -> deleted
+[extract] step=1990 SKIP heavy block block_circuits (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1990 SKIP heavy block block_interp (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1990 SKIP heavy block block_probes (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1990 heavy=FALSE total=107.01s | block_optim=79.66 block_curvature=4.66 block_weights=10.47 block_trajectory=0.53 block_fitness=5.63
+[collector w1] processed run_id=mae__stable_evo__s42 step=1990 heavy=False blocks_ok=5 blocks_err=0 t=107.01s -> KEPT(->kept/,FULL latest2)
+[extract] step=2000 SKIP heavy block block_circuits (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2000 SKIP heavy block block_interp (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2000 SKIP heavy block block_probes (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2000 heavy=FALSE total=105.77s | block_optim=79.30 block_curvature=4.71 block_weights=10.30 block_trajectory=0.53 block_fitness=5.78
+[collector w1] processed run_id=mae__stable_evo__s42 step=2000 heavy=False blocks_ok=5 blocks_err=0 t=105.77s -> KEPT(->kept/,FULL latest2)
+[extract] step=2010 heavy=TRUE total=253.68s | block_optim=78.81 block_curvature=4.72 block_weights=10.35 block_trajectory=0.52 block_circuits=2.68 block_interp=100.03 block_probes=46.07 block_fitness=5.61
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2000 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2010 heavy=True blocks_ok=8 blocks_err=0 t=253.683s -> KEPT(->kept/,model-only)
+[extract] step=2050 SKIP heavy block block_circuits (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2050 SKIP heavy block block_interp (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2050 SKIP heavy block block_probes (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2050 heavy=FALSE total=107.22s | block_optim=80.29 block_curvature=4.77 block_weights=10.85 block_trajectory=0.60 block_fitness=5.59
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2020 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2050 heavy=False blocks_ok=5 blocks_err=0 t=107.224s -> KEPT(->kept/,FULL latest2)
+[extract] step=2060 SKIP heavy block block_circuits (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2060 SKIP heavy block block_interp (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2060 SKIP heavy block block_probes (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2060 heavy=FALSE total=107.36s | block_optim=79.93 block_curvature=4.71 block_weights=10.06 block_trajectory=0.53 block_fitness=5.59
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2030 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2060 heavy=False blocks_ok=5 blocks_err=0 t=107.357s -> KEPT(->kept/,FULL latest2)
+[extract] step=2070 heavy=TRUE total=255.00s | block_optim=78.53 block_curvature=4.68 block_weights=10.03 block_trajectory=0.59 block_circuits=2.74 block_interp=99.80 block_probes=46.75 block_fitness=5.67
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2060 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2070 heavy=True blocks_ok=8 blocks_err=0 t=255.001s -> KEPT(->kept/,FULL latest2)
+[extract] step=2100 heavy=TRUE total=258.26s | block_optim=79.82 block_curvature=4.71 block_weights=10.92 block_trajectory=0.62 block_circuits=2.76 block_interp=101.21 block_probes=47.07 block_fitness=5.60
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2080 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2100 heavy=True blocks_ok=8 blocks_err=0 t=258.262s -> KEPT(->kept/,FULL latest2)
+[extract] step=2110 SKIP heavy block block_circuits (ordinal=422 basis=step_fallback heavy_every=3)
+[extract] step=2110 SKIP heavy block block_interp (ordinal=422 basis=step_fallback heavy_every=3)
+[extract] step=2110 SKIP heavy block block_probes (ordinal=422 basis=step_fallback heavy_every=3)
+[extract] step=2110 heavy=FALSE total=106.08s | block_optim=78.97 block_curvature=4.72 block_weights=10.23 block_trajectory=0.50 block_fitness=5.56
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2090 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2110 heavy=False blocks_ok=5 blocks_err=0 t=106.083s -> KEPT(->kept/,FULL latest2)
+[extract] step=2120 SKIP heavy block block_circuits (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2120 SKIP heavy block block_interp (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2120 SKIP heavy block block_probes (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2120 heavy=FALSE total=105.07s | block_optim=78.94 block_curvature=4.74 block_weights=10.00 block_trajectory=0.51 block_fitness=5.63
+[collector w1] processed run_id=mae__stable_evo__s42 step=2120 heavy=False blocks_ok=5 blocks_err=0 t=105.075s -> deleted
+[extract] step=2130 heavy=TRUE total=253.98s | block_optim=78.84 block_curvature=4.76 block_weights=10.07 block_trajectory=0.53 block_circuits=2.31 block_interp=99.70 block_probes=46.48 block_fitness=5.61
+[collector w1] processed run_id=mae__stable_evo__s42 step=2130 heavy=True blocks_ok=8 blocks_err=0 t=253.977s -> deleted
+[extract] step=2150 SKIP heavy block block_circuits (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 SKIP heavy block block_interp (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 SKIP heavy block block_probes (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 heavy=FALSE total=106.48s | block_optim=79.19 block_curvature=4.75 block_weights=10.43 block_trajectory=0.50 block_fitness=5.60
+[collector w1] processed run_id=mae__stable_evo__s42 step=2150 heavy=False blocks_ok=5 blocks_err=0 t=106.477s -> deleted
+[extract] step=2170 SKIP heavy block block_circuits (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2170 SKIP heavy block block_interp (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2170 SKIP heavy block block_probes (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2170 heavy=FALSE total=106.65s | block_optim=79.46 block_curvature=4.71 block_weights=10.53 block_trajectory=0.53 block_fitness=5.52
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2100 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2170 heavy=False blocks_ok=5 blocks_err=0 t=106.654s -> KEPT(->kept/,FULL latest2)
+[extract] step=2180 SKIP heavy block block_circuits (ordinal=436 basis=step_fallback heavy_every=3)
+[extract] step=2180 SKIP heavy block block_interp (ordinal=436 basis=step_fallback heavy_every=3)
+[extract] step=2180 SKIP heavy block block_probes (ordinal=436 basis=step_fallback heavy_every=3)
+[extract] step=2180 heavy=FALSE total=104.82s | block_optim=78.87 block_curvature=4.77 block_weights=10.20 block_trajectory=0.51 block_fitness=5.57
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2160 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2180 heavy=False blocks_ok=5 blocks_err=0 t=104.818s -> KEPT(->kept/,FULL latest2)
+[extract] step=2200 SKIP heavy block block_circuits (ordinal=440 basis=step_fallback heavy_every=3)
+[extract] step=2200 SKIP heavy block block_interp (ordinal=440 basis=step_fallback heavy_every=3)
+[extract] step=2200 SKIP heavy block block_probes (ordinal=440 basis=step_fallback heavy_every=3)
+[extract] step=2200 heavy=FALSE total=106.67s | block_optim=79.98 block_curvature=4.76 block_weights=10.81 block_trajectory=0.54 block_fitness=5.62
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2170 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2200 heavy=False blocks_ok=5 blocks_err=0 t=106.667s -> KEPT(->kept/,FULL latest2)
+[extract] step=2210 SKIP heavy block block_circuits (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 SKIP heavy block block_interp (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 SKIP heavy block block_probes (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 heavy=FALSE total=106.04s | block_optim=79.05 block_curvature=4.78 block_weights=10.52 block_trajectory=0.49 block_fitness=5.51
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2190 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2210 heavy=False blocks_ok=5 blocks_err=0 t=106.038s -> KEPT(->kept/,FULL latest2)
+[extract] step=2230 SKIP heavy block block_circuits (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 SKIP heavy block block_interp (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 SKIP heavy block block_probes (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 heavy=FALSE total=107.28s | block_optim=79.91 block_curvature=4.75 block_weights=10.77 block_trajectory=0.52 block_fitness=5.55
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2200 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2230 heavy=False blocks_ok=5 blocks_err=0 t=107.28s -> KEPT(->kept/,FULL latest2)
+[extract] step=2240 SKIP heavy block block_circuits (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2240 SKIP heavy block block_interp (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2240 SKIP heavy block block_probes (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2240 heavy=FALSE total=105.93s | block_optim=79.22 block_curvature=4.72 block_weights=10.15 block_trajectory=0.59 block_fitness=5.62
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2210 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2240 heavy=False blocks_ok=5 blocks_err=0 t=105.93s -> KEPT(->kept/,FULL latest2)
+[extract] step=2250 heavy=TRUE total=255.44s | block_optim=79.09 block_curvature=4.77 block_weights=10.49 block_trajectory=0.52 block_circuits=2.70 block_interp=100.07 block_probes=46.27 block_fitness=5.62
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2240 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2250 heavy=True blocks_ok=8 blocks_err=0 t=255.441s -> KEPT(->kept/,FULL latest2)
+[extract] step=2280 heavy=TRUE total=249.31s | block_optim=80.55 block_curvature=4.80 block_weights=10.84 block_trajectory=0.53 block_circuits=2.48 block_interp=100.11 block_probes=38.88 block_fitness=5.81
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2260 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2280 heavy=True blocks_ok=8 blocks_err=0 t=249.309s -> KEPT(->kept/,FULL latest2)
+[extract] step=2290 SKIP heavy block block_circuits (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 SKIP heavy block block_interp (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 SKIP heavy block block_probes (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 heavy=FALSE total=105.44s | block_optim=79.25 block_curvature=4.81 block_weights=10.16 block_trajectory=0.52 block_fitness=5.68
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2270 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2290 heavy=False blocks_ok=5 blocks_err=0 t=105.439s -> KEPT(->kept/,FULL latest2)
+[extract] step=2300 SKIP heavy block block_circuits (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2300 SKIP heavy block block_interp (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2300 SKIP heavy block block_probes (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2300 heavy=FALSE total=107.57s | block_optim=80.47 block_curvature=4.72 block_weights=10.28 block_trajectory=0.51 block_fitness=6.59
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2280 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2300 heavy=False blocks_ok=5 blocks_err=0 t=107.568s -> KEPT(->kept/,FULL latest2)
+[extract] step=2310 heavy=TRUE total=289.27s | block_optim=85.16 block_curvature=4.72 block_weights=10.41 block_trajectory=0.50 block_circuits=18.74 block_interp=105.03 block_probes=54.21 block_fitness=5.55
+[collector w1] processed run_id=mae__stable_evo__s42 step=2310 heavy=True blocks_ok=8 blocks_err=0 t=289.271s -> deleted
+[extract] step=2320 SKIP heavy block block_circuits (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2320 SKIP heavy block block_interp (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2320 SKIP heavy block block_probes (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2320 heavy=FALSE total=111.03s | block_optim=80.03 block_curvature=4.75 block_weights=14.40 block_trajectory=0.52 block_fitness=5.52
+[collector w1] processed run_id=mae__stable_evo__s42 step=2320 heavy=False blocks_ok=5 blocks_err=0 t=111.026s -> deleted
+[extract] step=2340 heavy=TRUE total=261.38s | block_optim=79.02 block_curvature=4.76 block_weights=10.02 block_trajectory=0.49 block_circuits=7.65 block_interp=105.55 block_probes=41.78 block_fitness=6.32
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2290 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2340 heavy=True blocks_ok=8 blocks_err=0 t=261.379s -> KEPT(->kept/,FULL latest2)
+[extract] step=2360 SKIP heavy block block_circuits (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2360 SKIP heavy block block_interp (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2360 SKIP heavy block block_probes (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2360 heavy=FALSE total=107.19s | block_optim=80.46 block_curvature=4.80 block_weights=10.62 block_trajectory=0.53 block_fitness=5.76
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2340 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2360 heavy=False blocks_ok=5 blocks_err=0 t=107.19s -> KEPT(->kept/,FULL latest2)
+[extract] step=2380 SKIP heavy block block_circuits (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 SKIP heavy block block_interp (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 SKIP heavy block block_probes (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 heavy=FALSE total=106.25s | block_optim=78.96 block_curvature=4.72 block_weights=10.39 block_trajectory=0.59 block_fitness=5.70
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2350 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2380 heavy=False blocks_ok=5 blocks_err=0 t=106.251s -> KEPT(->kept/,FULL latest2)
+[extract] step=2390 SKIP heavy block block_circuits (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2390 SKIP heavy block block_interp (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2390 SKIP heavy block block_probes (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2390 heavy=FALSE total=106.98s | block_optim=79.32 block_curvature=4.73 block_weights=10.49 block_trajectory=0.62 block_fitness=5.68
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2370 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2390 heavy=False blocks_ok=5 blocks_err=0 t=106.981s -> KEPT(->kept/,FULL latest2)
+[extract] step=2401 heavy=TRUE total=262.82s | block_optim=80.12 block_curvature=4.77 block_weights=10.51 block_trajectory=0.61 block_circuits=2.86 block_interp=104.39 block_probes=48.10 block_fitness=5.51
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2380 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2401 heavy=True blocks_ok=8 blocks_err=0 t=262.821s -> KEPT(->kept/,FULL latest2)
+[extract] step=2411 SKIP heavy block block_circuits (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2411 SKIP heavy block block_interp (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2411 SKIP heavy block block_probes (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2411 heavy=FALSE total=107.47s | block_optim=80.14 block_curvature=4.78 block_weights=11.55 block_trajectory=0.49 block_fitness=5.54
+[collector w1] processed run_id=mae__stable_evo__s42 step=2411 heavy=False blocks_ok=5 blocks_err=0 t=107.472s -> deleted
+[extract] step=2421 SKIP heavy block block_circuits (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2421 SKIP heavy block block_interp (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2421 SKIP heavy block block_probes (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2421 heavy=FALSE total=106.19s | block_optim=79.35 block_curvature=4.72 block_weights=10.33 block_trajectory=0.51 block_fitness=5.49
+[collector w1] processed run_id=mae__stable_evo__s42 step=2421 heavy=False blocks_ok=5 blocks_err=0 t=106.191s -> deleted
+[extract] step=2431 heavy=TRUE total=253.10s | block_optim=80.09 block_curvature=4.71 block_weights=11.28 block_trajectory=0.53 block_circuits=2.70 block_interp=100.05 block_probes=41.23 block_fitness=6.70
+[collector w1] processed run_id=mae__stable_evo__s42 step=2431 heavy=True blocks_ok=8 blocks_err=0 t=253.1s -> deleted
+[extract] step=2457 SKIP heavy block block_circuits (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2457 SKIP heavy block block_interp (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2457 SKIP heavy block block_probes (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2457 heavy=FALSE total=107.50s | block_optim=79.18 block_curvature=4.91 block_weights=10.85 block_trajectory=0.66 block_fitness=5.72
+[collector w1] processed run_id=mae__stable_evo__s42 step=2457 heavy=False blocks_ok=5 blocks_err=0 t=107.498s -> deleted
+[extract] step=2477 heavy=TRUE total=260.62s | block_optim=80.62 block_curvature=4.72 block_weights=10.71 block_trajectory=0.63 block_circuits=2.57 block_interp=101.53 block_probes=48.32 block_fitness=5.77
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2467 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2477 heavy=True blocks_ok=8 blocks_err=0 t=260.621s -> KEPT(->kept/,FULL latest2)
+[extract] step=2510 SKIP heavy block block_circuits (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2510 SKIP heavy block block_interp (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2510 SKIP heavy block block_probes (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2510 heavy=FALSE total=106.27s | block_optim=78.79 block_curvature=4.75 block_weights=10.74 block_trajectory=0.57 block_fitness=5.71
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2488 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2510 heavy=False blocks_ok=5 blocks_err=0 t=106.267s -> KEPT(->kept/,FULL latest2)
+[extract] step=2521 heavy=TRUE total=261.95s | block_optim=79.37 block_curvature=4.72 block_weights=10.18 block_trajectory=0.56 block_circuits=2.62 block_interp=104.13 block_probes=48.87 block_fitness=5.59
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2499 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2521 heavy=True blocks_ok=8 blocks_err=0 t=261.955s -> KEPT(->kept/,FULL latest2)
+[extract] step=2532 SKIP heavy block block_circuits (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 SKIP heavy block block_interp (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 SKIP heavy block block_probes (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 heavy=FALSE total=106.29s | block_optim=79.56 block_curvature=4.72 block_weights=11.21 block_trajectory=0.53 block_fitness=5.60
+[collector w1] processed run_id=mae__stable_evo__s42 step=2532 heavy=False blocks_ok=5 blocks_err=0 t=106.288s -> deleted
+[extract] step=2543 SKIP heavy block block_circuits (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2543 SKIP heavy block block_interp (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2543 SKIP heavy block block_probes (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2543 heavy=FALSE total=107.29s | block_optim=79.83 block_curvature=4.79 block_weights=10.93 block_trajectory=0.58 block_fitness=5.57
+[collector w1] processed run_id=mae__stable_evo__s42 step=2543 heavy=False blocks_ok=5 blocks_err=0 t=107.29s -> deleted
+[extract] step=2554 heavy=TRUE total=260.92s | block_optim=79.36 block_curvature=4.74 block_weights=10.32 block_trajectory=0.50 block_circuits=2.68 block_interp=103.39 block_probes=48.75 block_fitness=5.65
+[collector w1] processed run_id=mae__stable_evo__s42 step=2554 heavy=True blocks_ok=8 blocks_err=0 t=260.921s -> deleted
+[extract] step=2576 SKIP heavy block block_circuits (ordinal=515 basis=step_fallback heavy_every=3)
+[extract] step=2576 SKIP heavy block block_interp (ordinal=515 basis=step_fallback heavy_every=3)
+[extract] step=2576 SKIP heavy block block_probes (ordinal=515 basis=step_fallback heavy_every=3)
+[extract] step=2576 heavy=FALSE total=107.68s | block_optim=80.13 block_curvature=4.75 block_weights=10.61 block_trajectory=0.54 block_fitness=5.65
+[collector w1] processed run_id=mae__stable_evo__s42 step=2576 heavy=False blocks_ok=5 blocks_err=0 t=107.678s -> deleted
+[extract] step=2598 heavy=TRUE total=260.12s | block_optim=80.37 block_curvature=4.81 block_weights=10.96 block_trajectory=0.60 block_circuits=2.79 block_interp=100.69 block_probes=48.24 block_fitness=5.80
+[collector w1] processed run_id=mae__stable_evo__s42 step=2598 heavy=True blocks_ok=8 blocks_err=0 t=260.12s -> KEPT(->kept/,model-only)
+[extract] step=2642 heavy=TRUE total=263.71s | block_optim=79.89 block_curvature=4.79 block_weights=11.79 block_trajectory=0.51 block_circuits=2.51 block_interp=104.03 block_probes=49.11 block_fitness=5.62
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2620 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2642 heavy=True blocks_ok=8 blocks_err=0 t=263.705s -> KEPT(->kept/,FULL latest2)
+[extract] step=2653 SKIP heavy block block_circuits (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2653 SKIP heavy block block_interp (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2653 SKIP heavy block block_probes (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2653 heavy=FALSE total=107.97s | block_optim=79.24 block_curvature=4.81 block_weights=11.72 block_trajectory=0.60 block_fitness=5.65
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2631 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2653 heavy=False blocks_ok=5 blocks_err=0 t=107.973s -> KEPT(->kept/,FULL latest2)
+[extract] step=2664 SKIP heavy block block_circuits (ordinal=532 basis=step_fallback heavy_every=3)
+[extract] step=2664 SKIP heavy block block_interp (ordinal=532 basis=step_fallback heavy_every=3)
+[extract] step=2664 SKIP heavy block block_probes (ordinal=532 basis=step_fallback heavy_every=3)
+[extract] step=2664 heavy=FALSE total=105.09s | block_optim=78.94 block_curvature=4.78 block_weights=10.50 block_trajectory=0.53 block_fitness=5.56
+[collector w1] processed run_id=mae__stable_evo__s42 step=2664 heavy=False blocks_ok=5 blocks_err=0 t=105.088s -> deleted
+[extract] step=2675 SKIP heavy block block_circuits (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2675 SKIP heavy block block_interp (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2675 SKIP heavy block block_probes (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2675 heavy=FALSE total=105.67s | block_optim=78.82 block_curvature=4.72 block_weights=10.15 block_trajectory=0.57 block_fitness=5.58
+[collector w1] processed run_id=mae__stable_evo__s42 step=2675 heavy=False blocks_ok=5 blocks_err=0 t=105.674s -> deleted
+[extract] step=2686 heavy=TRUE total=263.07s | block_optim=79.11 block_curvature=4.72 block_weights=10.36 block_trajectory=0.53 block_circuits=2.74 block_interp=104.46 block_probes=48.98 block_fitness=5.67
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2653 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2686 heavy=True blocks_ok=8 blocks_err=0 t=263.067s -> KEPT(->kept/,FULL latest2)
+[extract] step=2720 SKIP heavy block block_circuits (ordinal=544 basis=step_fallback heavy_every=3)
+[extract] step=2720 SKIP heavy block block_interp (ordinal=544 basis=step_fallback heavy_every=3)
+[extract] step=2720 SKIP heavy block block_probes (ordinal=544 basis=step_fallback heavy_every=3)
+[extract] step=2720 heavy=FALSE total=105.21s | block_optim=79.10 block_curvature=4.76 block_weights=10.47 block_trajectory=0.52 block_fitness=5.67
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2697 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2720 heavy=False blocks_ok=5 blocks_err=0 t=105.205s -> KEPT(->kept/,FULL latest2)
+[extract] step=2742 SKIP heavy block block_circuits (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 SKIP heavy block block_interp (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 SKIP heavy block block_probes (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 heavy=FALSE total=106.34s | block_optim=79.22 block_curvature=4.72 block_weights=10.55 block_trajectory=0.58 block_fitness=5.69
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2708 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2742 heavy=False blocks_ok=5 blocks_err=0 t=106.338s -> KEPT(->kept/,FULL latest2)
+[extract] step=2754 SKIP heavy block block_circuits (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 SKIP heavy block block_interp (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 SKIP heavy block block_probes (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 heavy=FALSE total=107.89s | block_optim=80.37 block_curvature=4.80 block_weights=10.20 block_trajectory=0.53 block_fitness=5.71
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2731 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2754 heavy=False blocks_ok=5 blocks_err=0 t=107.891s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 52 checkpoint(s); exiting.
+[cw1] drained 52 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 017_mae_d3000_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 3000 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 3000
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=3000  (P: {'method': 'achlioptas', 'seed': 44, 'd': 3000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d3000_s44.pt: step=92 best=0.4045 since_improve=1 perf_init=0.4045
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6918 auc_pr_mean=0.4045 best=0.4045 target=<post-hoc> (1.5 min)
+  step=150 loss=0.6917 auc_pr_mean=0.4051 best=0.4045 target=<post-hoc> (7.1 min)
+[d90] YIELD condition=mae d=3000 seed=44 step=180 best=0.4051 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d3000_s44.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=2802 SKIP heavy block block_circuits (ordinal=560 basis=step_fallback heavy_every=3)
+[extract] step=2802 SKIP heavy block block_interp (ordinal=560 basis=step_fallback heavy_every=3)
+[extract] step=2802 SKIP heavy block block_probes (ordinal=560 basis=step_fallback heavy_every=3)
+[extract] step=2802 heavy=FALSE total=109.87s | block_optim=79.59 block_curvature=5.56 block_weights=10.98 block_trajectory=0.54 block_fitness=7.51
+[collector w1] processed run_id=mae__stable_evo__s42 step=2802 heavy=False blocks_ok=5 blocks_err=0 t=109.871s -> deleted
+[extract] step=2826 SKIP heavy block block_circuits (ordinal=565 basis=step_fallback heavy_every=3)
+[extract] step=2826 SKIP heavy block block_interp (ordinal=565 basis=step_fallback heavy_every=3)
+[extract] step=2826 SKIP heavy block block_probes (ordinal=565 basis=step_fallback heavy_every=3)
+[extract] step=2826 heavy=FALSE total=107.00s | block_optim=79.07 block_curvature=4.75 block_weights=10.67 block_trajectory=0.58 block_fitness=5.89
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2778 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2826 heavy=False blocks_ok=5 blocks_err=0 t=106.999s -> KEPT(->kept/,FULL latest2)
+[extract] step=2850 heavy=TRUE total=266.96s | block_optim=79.56 block_curvature=4.78 block_weights=10.62 block_trajectory=0.49 block_circuits=2.79 block_interp=109.41 block_probes=47.92 block_fitness=5.70
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2838 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2850 heavy=True blocks_ok=8 blocks_err=0 t=266.957s -> KEPT(->kept/,FULL latest2)
+[extract] step=2886 SKIP heavy block block_circuits (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 SKIP heavy block block_interp (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 SKIP heavy block block_probes (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 heavy=FALSE total=106.63s | block_optim=79.11 block_curvature=4.76 block_weights=11.31 block_trajectory=0.51 block_fitness=5.79
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2862 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2886 heavy=False blocks_ok=5 blocks_err=0 t=106.632s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 4 checkpoint(s); exiting.
+[cw1] drained 4 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 018_mae_d3000_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 3000 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 3000
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=3000  (P: {'method': 'achlioptas', 'seed': 45, 'd': 3000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d3000_s45.pt: step=84 best=0.4070 since_improve=1 perf_init=0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6921 auc_pr_mean=0.4061 best=0.4070 target=<post-hoc> (2.3 min)
+  step=150 loss=0.6923 auc_pr_mean=0.4070 best=0.4070 target=<post-hoc> (7.9 min)
+[d90] YIELD condition=mae d=3000 seed=45 step=172 best=0.4070 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d3000_s45.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=2936 SKIP heavy block block_circuits (ordinal=587 basis=step_fallback heavy_every=3)
+[extract] step=2936 SKIP heavy block block_interp (ordinal=587 basis=step_fallback heavy_every=3)
+[extract] step=2936 SKIP heavy block block_probes (ordinal=587 basis=step_fallback heavy_every=3)
+[extract] step=2936 heavy=FALSE total=110.62s | block_optim=80.73 block_curvature=5.74 block_weights=10.77 block_trajectory=0.51 block_fitness=6.94
+[collector w1] processed run_id=mae__stable_evo__s42 step=2936 heavy=False blocks_ok=5 blocks_err=0 t=110.618s -> deleted
+[extract] step=2962 SKIP heavy block block_circuits (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2962 SKIP heavy block block_interp (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2962 SKIP heavy block block_probes (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2962 heavy=FALSE total=115.53s | block_optim=84.56 block_curvature=5.32 block_weights=12.50 block_trajectory=1.53 block_fitness=5.62
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2898 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2962 heavy=False blocks_ok=5 blocks_err=0 t=115.532s -> KEPT(->kept/,FULL latest2)
+[extract] step=2986 heavy=TRUE total=269.95s | block_optim=85.16 block_curvature=5.28 block_weights=12.72 block_trajectory=1.60 block_circuits=3.28 block_interp=110.04 block_probes=39.83 block_fitness=6.57
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2962 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=2986 heavy=True blocks_ok=8 blocks_err=0 t=269.948s -> KEPT(->kept/,FULL latest2)
+[extract] step=3012 SKIP heavy block block_circuits (ordinal=602 basis=step_fallback heavy_every=3)
+[extract] step=3012 SKIP heavy block block_interp (ordinal=602 basis=step_fallback heavy_every=3)
+[extract] step=3012 SKIP heavy block block_probes (ordinal=602 basis=step_fallback heavy_every=3)
+[extract] step=3012 heavy=FALSE total=106.77s | block_optim=80.08 block_curvature=4.72 block_weights=10.33 block_trajectory=0.50 block_fitness=6.59
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=2974 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3012 heavy=False blocks_ok=5 blocks_err=0 t=106.765s -> KEPT(->kept/,FULL latest2)
+[extract] step=3027 SKIP heavy block block_circuits (ordinal=605 basis=step_fallback heavy_every=3)
+[extract] step=3027 SKIP heavy block block_interp (ordinal=605 basis=step_fallback heavy_every=3)
+[extract] step=3027 SKIP heavy block block_probes (ordinal=605 basis=step_fallback heavy_every=3)
+[extract] step=3027 heavy=FALSE total=112.37s | block_optim=80.09 block_curvature=4.73 block_weights=10.41 block_trajectory=0.49 block_fitness=6.68
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3012 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3027 heavy=False blocks_ok=5 blocks_err=0 t=112.372s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 5 checkpoint(s); exiting.
+[cw1] drained 5 checkpoint(s); extraction backlog present -> skip d90, loop.
+[extract] step=3053 SKIP heavy block block_circuits (ordinal=610 basis=step_fallback heavy_every=3)
+[extract] step=3053 SKIP heavy block block_interp (ordinal=610 basis=step_fallback heavy_every=3)
+[extract] step=3053 SKIP heavy block block_probes (ordinal=610 basis=step_fallback heavy_every=3)
+[extract] step=3053 heavy=FALSE total=108.71s | block_optim=79.25 block_curvature=4.95 block_weights=10.71 block_trajectory=0.49 block_fitness=6.55
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3027 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3053 heavy=False blocks_ok=5 blocks_err=0 t=108.71s -> KEPT(->kept/,FULL latest2)
+[extract] step=3067 SKIP heavy block block_circuits (ordinal=613 basis=step_fallback heavy_every=3)
+[extract] step=3067 SKIP heavy block block_interp (ordinal=613 basis=step_fallback heavy_every=3)
+[extract] step=3067 SKIP heavy block block_probes (ordinal=613 basis=step_fallback heavy_every=3)
+[extract] step=3067 heavy=FALSE total=106.88s | block_optim=79.49 block_curvature=4.72 block_weights=10.38 block_trajectory=0.52 block_fitness=5.66
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3040 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3067 heavy=False blocks_ok=5 blocks_err=0 t=106.881s -> KEPT(->kept/,FULL latest2)
+[extract] step=3080 SKIP heavy block block_circuits (ordinal=616 basis=step_fallback heavy_every=3)
+[extract] step=3080 SKIP heavy block block_interp (ordinal=616 basis=step_fallback heavy_every=3)
+[extract] step=3080 SKIP heavy block block_probes (ordinal=616 basis=step_fallback heavy_every=3)
+[extract] step=3080 heavy=FALSE total=108.22s | block_optim=79.28 block_curvature=4.72 block_weights=10.21 block_trajectory=0.53 block_fitness=6.07
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3053 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3080 heavy=False blocks_ok=5 blocks_err=0 t=108.222s -> KEPT(->kept/,FULL latest2)
+[extract] step=3093 heavy=TRUE total=264.58s | block_optim=79.30 block_curvature=4.71 block_weights=10.28 block_trajectory=0.53 block_circuits=5.40 block_interp=112.26 block_probes=40.23 block_fitness=6.18
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3067 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3093 heavy=True blocks_ok=8 blocks_err=0 t=264.582s -> KEPT(->kept/,FULL latest2)
+[extract] step=3106 heavy=TRUE total=265.28s | block_optim=78.59 block_curvature=4.73 block_weights=10.50 block_trajectory=0.51 block_circuits=2.58 block_interp=112.08 block_probes=39.88 block_fitness=6.27
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3132 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3106 heavy=True blocks_ok=8 blocks_err=0 t=265.284s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 5 checkpoint(s); exiting.
+[cw1] drained 5 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 020_mae_d10000_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 10000 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 10000
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 42, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d10000_s42.pt: step=82 best=0.4103 since_improve=1 perf_init=0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6916 auc_pr_mean=0.4102 best=0.4103 target=<post-hoc> (2.5 min)
+  step=150 loss=0.6917 auc_pr_mean=0.4418 best=0.4103 target=<post-hoc> (8.1 min)
+[d90] YIELD condition=mae d=10000 seed=42 step=170 best=0.4418 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d10000_s42.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=3201 SKIP heavy block block_circuits (ordinal=640 basis=step_fallback heavy_every=3)
+[extract] step=3201 SKIP heavy block block_interp (ordinal=640 basis=step_fallback heavy_every=3)
+[extract] step=3201 SKIP heavy block block_probes (ordinal=640 basis=step_fallback heavy_every=3)
+[extract] step=3201 heavy=FALSE total=109.48s | block_optim=80.03 block_curvature=5.51 block_weights=10.52 block_trajectory=0.52 block_fitness=6.77
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3173 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3201 heavy=False blocks_ok=5 blocks_err=0 t=109.483s -> KEPT(->kept/,FULL latest2)
+[extract] step=3215 SKIP heavy block block_circuits (ordinal=643 basis=step_fallback heavy_every=3)
+[extract] step=3215 SKIP heavy block block_interp (ordinal=643 basis=step_fallback heavy_every=3)
+[extract] step=3215 SKIP heavy block block_probes (ordinal=643 basis=step_fallback heavy_every=3)
+[extract] step=3215 heavy=FALSE total=107.58s | block_optim=79.21 block_curvature=4.79 block_weights=10.60 block_trajectory=0.49 block_fitness=5.90
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3187 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3215 heavy=False blocks_ok=5 blocks_err=0 t=107.58s -> KEPT(->kept/,FULL latest2)
+[extract] step=3229 heavy=TRUE total=263.65s | block_optim=78.93 block_curvature=4.77 block_weights=10.43 block_trajectory=0.49 block_circuits=2.67 block_interp=111.43 block_probes=42.69 block_fitness=6.18
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3201 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3229 heavy=True blocks_ok=8 blocks_err=0 t=263.648s -> KEPT(->kept/,FULL latest2)
+[extract] step=3257 heavy=TRUE total=265.08s | block_optim=79.45 block_curvature=4.70 block_weights=10.60 block_trajectory=0.52 block_circuits=2.81 block_interp=111.01 block_probes=40.18 block_fitness=6.31
+[collector w1] processed run_id=mae__stable_evo__s42 step=3257 heavy=True blocks_ok=8 blocks_err=0 t=265.082s -> deleted
+[extract] step=3285 heavy=TRUE total=253.27s | block_optim=79.69 block_curvature=4.69 block_weights=10.68 block_trajectory=0.57 block_circuits=2.81 block_interp=102.88 block_probes=39.29 block_fitness=6.67
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3299 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3285 heavy=True blocks_ok=8 blocks_err=0 t=253.271s -> KEPT(->kept/,FULL latest2)
+[extract] step=3313 SKIP heavy block block_circuits (ordinal=662 basis=step_fallback heavy_every=3)
+[extract] step=3313 SKIP heavy block block_interp (ordinal=662 basis=step_fallback heavy_every=3)
+[extract] step=3313 SKIP heavy block block_probes (ordinal=662 basis=step_fallback heavy_every=3)
+[extract] step=3313 heavy=FALSE total=110.96s | block_optim=79.31 block_curvature=4.69 block_weights=10.67 block_trajectory=0.61 block_fitness=6.31
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3271 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3313 heavy=False blocks_ok=5 blocks_err=0 t=110.961s -> KEPT(->kept/,FULL latest2)
+[extract] step=3343 SKIP heavy block block_circuits (ordinal=668 basis=step_fallback heavy_every=3)
+[extract] step=3343 SKIP heavy block block_interp (ordinal=668 basis=step_fallback heavy_every=3)
+[extract] step=3343 SKIP heavy block block_probes (ordinal=668 basis=step_fallback heavy_every=3)
+[extract] step=3343 heavy=FALSE total=110.88s | block_optim=79.22 block_curvature=4.72 block_weights=10.60 block_trajectory=0.52 block_fitness=6.37
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3313 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3343 heavy=False blocks_ok=5 blocks_err=0 t=110.884s -> KEPT(->kept/,FULL latest2)
+[extract] step=3373 SKIP heavy block block_circuits (ordinal=674 basis=step_fallback heavy_every=3)
+[extract] step=3373 SKIP heavy block block_interp (ordinal=674 basis=step_fallback heavy_every=3)
+[extract] step=3373 SKIP heavy block block_probes (ordinal=674 basis=step_fallback heavy_every=3)
+[extract] step=3373 heavy=FALSE total=110.37s | block_optim=79.65 block_curvature=4.72 block_weights=10.37 block_trajectory=0.51 block_fitness=6.24
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3343 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3373 heavy=False blocks_ok=5 blocks_err=0 t=110.367s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 8 checkpoint(s); exiting.
+[cw1] drained 8 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 022_mae_d10000_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 10000 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 10000
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 44, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d10000_s44.pt: step=84 best=0.4052 since_improve=0 perf_init=0.4045
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6919 auc_pr_mean=0.4048 best=0.4052 target=<post-hoc> (2.3 min)
+  step=150 loss=0.6917 auc_pr_mean=0.4251 best=0.4052 target=<post-hoc> (7.9 min)
+[d90] YIELD condition=mae d=10000 seed=44 step=173 best=0.4251 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d10000_s44.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=3404 SKIP heavy block block_circuits (ordinal=680 basis=step_fallback heavy_every=3)
+[extract] step=3404 SKIP heavy block block_interp (ordinal=680 basis=step_fallback heavy_every=3)
+[extract] step=3404 SKIP heavy block block_probes (ordinal=680 basis=step_fallback heavy_every=3)
+[extract] step=3404 heavy=FALSE total=109.94s | block_optim=80.66 block_curvature=5.58 block_weights=10.67 block_trajectory=0.54 block_fitness=6.79
+[collector w1] processed run_id=mae__stable_evo__s42 step=3404 heavy=False blocks_ok=5 blocks_err=0 t=109.936s -> deleted
+[extract] step=3420 heavy=TRUE total=252.96s | block_optim=79.35 block_curvature=4.73 block_weights=10.54 block_trajectory=0.49 block_circuits=3.02 block_interp=101.73 block_probes=41.53 block_fitness=5.90
+[collector w1] processed run_id=mae__stable_evo__s42 step=3420 heavy=True blocks_ok=8 blocks_err=0 t=252.961s -> deleted
+[extract] step=3468 heavy=TRUE total=254.34s | block_optim=79.88 block_curvature=4.79 block_weights=10.84 block_trajectory=0.53 block_circuits=2.82 block_interp=102.21 block_probes=41.40 block_fitness=6.23
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3373 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3468 heavy=True blocks_ok=8 blocks_err=0 t=254.336s -> KEPT(->kept/,FULL latest2)
+[extract] step=3484 heavy=TRUE total=263.25s | block_optim=79.64 block_curvature=4.78 block_weights=10.63 block_trajectory=0.51 block_circuits=2.74 block_interp=109.36 block_probes=39.91 block_fitness=6.46
+[collector w1] processed run_id=mae__stable_evo__s42 step=3484 heavy=True blocks_ok=8 blocks_err=0 t=263.252s -> deleted
+[extract] step=3500 SKIP heavy block block_circuits (ordinal=700 basis=step_fallback heavy_every=3)
+[extract] step=3500 SKIP heavy block block_interp (ordinal=700 basis=step_fallback heavy_every=3)
+[extract] step=3500 SKIP heavy block block_probes (ordinal=700 basis=step_fallback heavy_every=3)
+[extract] step=3500 heavy=FALSE total=107.45s | block_optim=80.06 block_curvature=4.77 block_weights=10.26 block_trajectory=0.51 block_fitness=5.90
+[collector w1] processed run_id=mae__stable_evo__s42 step=3500 heavy=False blocks_ok=5 blocks_err=0 t=107.449s -> deleted
+[extract] step=3517 SKIP heavy block block_circuits (ordinal=703 basis=step_fallback heavy_every=3)
+[extract] step=3517 SKIP heavy block block_interp (ordinal=703 basis=step_fallback heavy_every=3)
+[extract] step=3517 SKIP heavy block block_probes (ordinal=703 basis=step_fallback heavy_every=3)
+[extract] step=3517 heavy=FALSE total=106.24s | block_optim=78.99 block_curvature=4.75 block_weights=10.14 block_trajectory=0.52 block_fitness=5.90
+[collector w1] processed run_id=mae__stable_evo__s42 step=3517 heavy=False blocks_ok=5 blocks_err=0 t=106.243s -> deleted
+[extract] step=3550 SKIP heavy block block_circuits (ordinal=710 basis=step_fallback heavy_every=3)
+[extract] step=3550 SKIP heavy block block_interp (ordinal=710 basis=step_fallback heavy_every=3)
+[extract] step=3550 SKIP heavy block block_probes (ordinal=710 basis=step_fallback heavy_every=3)
+[extract] step=3550 heavy=FALSE total=107.39s | block_optim=79.99 block_curvature=4.80 block_weights=10.24 block_trajectory=0.52 block_fitness=5.90
+[collector w1] processed run_id=mae__stable_evo__s42 step=3550 heavy=False blocks_ok=5 blocks_err=0 t=107.389s -> deleted
+[extract] step=3571 heavy=TRUE total=251.49s | block_optim=79.36 block_curvature=4.77 block_weights=10.35 block_trajectory=0.51 block_circuits=2.64 block_interp=101.06 block_probes=39.74 block_fitness=6.95
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3468 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3571 heavy=True blocks_ok=8 blocks_err=0 t=251.488s -> KEPT(->kept/,FULL latest2)
+[extract] step=3605 SKIP heavy block block_circuits (ordinal=721 basis=step_fallback heavy_every=3)
+[extract] step=3605 SKIP heavy block block_interp (ordinal=721 basis=step_fallback heavy_every=3)
+[extract] step=3605 SKIP heavy block block_probes (ordinal=721 basis=step_fallback heavy_every=3)
+[extract] step=3605 heavy=FALSE total=113.28s | block_optim=81.11 block_curvature=4.75 block_weights=10.73 block_trajectory=0.54 block_fitness=6.01
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3571 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3605 heavy=False blocks_ok=5 blocks_err=0 t=113.281s -> KEPT(->kept/,FULL latest2)
+[extract] step=3640 SKIP heavy block block_circuits (ordinal=728 basis=step_fallback heavy_every=3)
+[extract] step=3640 SKIP heavy block block_interp (ordinal=728 basis=step_fallback heavy_every=3)
+[extract] step=3640 SKIP heavy block block_probes (ordinal=728 basis=step_fallback heavy_every=3)
+[extract] step=3640 heavy=FALSE total=115.08s | block_optim=82.49 block_curvature=4.81 block_weights=10.82 block_trajectory=0.52 block_fitness=6.06
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3605 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3640 heavy=False blocks_ok=5 blocks_err=0 t=115.078s -> KEPT(->kept/,FULL latest2)
+[extract] step=3657 SKIP heavy block block_circuits (ordinal=731 basis=step_fallback heavy_every=3)
+[extract] step=3657 SKIP heavy block block_interp (ordinal=731 basis=step_fallback heavy_every=3)
+[extract] step=3657 SKIP heavy block block_probes (ordinal=731 basis=step_fallback heavy_every=3)
+[extract] step=3657 heavy=FALSE total=113.55s | block_optim=81.46 block_curvature=4.81 block_weights=10.74 block_trajectory=0.51 block_fitness=5.95
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3622 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3657 heavy=False blocks_ok=5 blocks_err=0 t=113.545s -> KEPT(->kept/,FULL latest2)
+[extract] step=3675 heavy=TRUE total=279.45s | block_optim=81.85 block_curvature=4.76 block_weights=10.72 block_trajectory=0.53 block_circuits=2.81 block_interp=114.11 block_probes=48.92 block_fitness=6.04
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3640 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3675 heavy=True blocks_ok=8 blocks_err=0 t=279.446s -> KEPT(->kept/,FULL latest2)
+[extract] step=3712 SKIP heavy block block_circuits (ordinal=742 basis=step_fallback heavy_every=3)
+[extract] step=3712 SKIP heavy block block_interp (ordinal=742 basis=step_fallback heavy_every=3)
+[extract] step=3712 SKIP heavy block block_probes (ordinal=742 basis=step_fallback heavy_every=3)
+[extract] step=3712 heavy=FALSE total=113.30s | block_optim=81.65 block_curvature=4.79 block_weights=10.83 block_trajectory=0.55 block_fitness=6.07
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3657 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3712 heavy=False blocks_ok=5 blocks_err=0 t=113.3s -> KEPT(->kept/,FULL latest2)
+[extract] step=3730 SKIP heavy block block_circuits (ordinal=746 basis=step_fallback heavy_every=3)
+[extract] step=3730 SKIP heavy block block_interp (ordinal=746 basis=step_fallback heavy_every=3)
+[extract] step=3730 SKIP heavy block block_probes (ordinal=746 basis=step_fallback heavy_every=3)
+[extract] step=3730 heavy=FALSE total=113.46s | block_optim=81.04 block_curvature=4.80 block_weights=10.56 block_trajectory=0.52 block_fitness=6.06
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3693 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3730 heavy=False blocks_ok=5 blocks_err=0 t=113.456s -> KEPT(->kept/,FULL latest2)
+[extract] step=3768 heavy=TRUE total=274.34s | block_optim=82.91 block_curvature=4.72 block_weights=10.69 block_trajectory=0.56 block_circuits=2.94 block_interp=113.75 block_probes=41.31 block_fitness=7.36
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3730 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3768 heavy=True blocks_ok=8 blocks_err=0 t=274.337s -> KEPT(->kept/,FULL latest2)
+[extract] step=3787 SKIP heavy block block_circuits (ordinal=757 basis=step_fallback heavy_every=3)
+[extract] step=3787 SKIP heavy block block_interp (ordinal=757 basis=step_fallback heavy_every=3)
+[extract] step=3787 SKIP heavy block block_probes (ordinal=757 basis=step_fallback heavy_every=3)
+[extract] step=3787 heavy=FALSE total=113.09s | block_optim=80.98 block_curvature=4.74 block_weights=10.66 block_trajectory=0.52 block_fitness=5.94
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3749 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3787 heavy=False blocks_ok=5 blocks_err=0 t=113.095s -> KEPT(->kept/,FULL latest2)
+[extract] step=3806 SKIP heavy block block_circuits (ordinal=761 basis=step_fallback heavy_every=3)
+[extract] step=3806 SKIP heavy block block_interp (ordinal=761 basis=step_fallback heavy_every=3)
+[extract] step=3806 SKIP heavy block block_probes (ordinal=761 basis=step_fallback heavy_every=3)
+[extract] step=3806 heavy=FALSE total=111.91s | block_optim=81.19 block_curvature=4.82 block_weights=10.22 block_trajectory=0.53 block_fitness=5.94
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3768 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3806 heavy=False blocks_ok=5 blocks_err=0 t=111.913s -> KEPT(->kept/,FULL latest2)
+[extract] step=3846 SKIP heavy block block_circuits (ordinal=769 basis=step_fallback heavy_every=3)
+[extract] step=3846 SKIP heavy block block_interp (ordinal=769 basis=step_fallback heavy_every=3)
+[extract] step=3846 SKIP heavy block block_probes (ordinal=769 basis=step_fallback heavy_every=3)
+[extract] step=3846 heavy=FALSE total=113.88s | block_optim=81.11 block_curvature=4.71 block_weights=10.62 block_trajectory=0.52 block_fitness=6.04
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3806 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3846 heavy=False blocks_ok=5 blocks_err=0 t=113.878s -> KEPT(->kept/,FULL latest2)
+[extract] step=3886 heavy=TRUE total=278.85s | block_optim=81.38 block_curvature=4.77 block_weights=10.96 block_trajectory=0.55 block_circuits=3.00 block_interp=114.91 block_probes=49.45 block_fitness=5.93
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3846 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3886 heavy=True blocks_ok=8 blocks_err=0 t=278.852s -> KEPT(->kept/,FULL latest2)
+[extract] step=3907 SKIP heavy block block_circuits (ordinal=781 basis=step_fallback heavy_every=3)
+[extract] step=3907 SKIP heavy block block_interp (ordinal=781 basis=step_fallback heavy_every=3)
+[extract] step=3907 SKIP heavy block block_probes (ordinal=781 basis=step_fallback heavy_every=3)
+[extract] step=3907 heavy=FALSE total=115.70s | block_optim=81.19 block_curvature=4.79 block_weights=12.98 block_trajectory=0.51 block_fitness=5.97
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3866 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3907 heavy=False blocks_ok=5 blocks_err=0 t=115.703s -> KEPT(->kept/,FULL latest2)
+[extract] step=3928 SKIP heavy block block_circuits (ordinal=785 basis=step_fallback heavy_every=3)
+[extract] step=3928 SKIP heavy block block_interp (ordinal=785 basis=step_fallback heavy_every=3)
+[extract] step=3928 SKIP heavy block block_probes (ordinal=785 basis=step_fallback heavy_every=3)
+[extract] step=3928 heavy=FALSE total=113.20s | block_optim=81.07 block_curvature=4.84 block_weights=10.54 block_trajectory=0.51 block_fitness=5.94
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3886 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3928 heavy=False blocks_ok=5 blocks_err=0 t=113.198s -> KEPT(->kept/,FULL latest2)
+[extract] step=3971 SKIP heavy block block_circuits (ordinal=794 basis=step_fallback heavy_every=3)
+[extract] step=3971 SKIP heavy block block_interp (ordinal=794 basis=step_fallback heavy_every=3)
+[extract] step=3971 SKIP heavy block block_probes (ordinal=794 basis=step_fallback heavy_every=3)
+[extract] step=3971 heavy=FALSE total=114.15s | block_optim=81.41 block_curvature=4.73 block_weights=11.00 block_trajectory=0.53 block_fitness=6.01
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=3907 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=3971 heavy=False blocks_ok=5 blocks_err=0 t=114.152s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 22 checkpoint(s); exiting.
+[cw1] drained 22 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 028_mae_d30000_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 30000 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 30000
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=30000  (P: {'method': 'achlioptas', 'seed': 45, 'd': 30000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  [resume] state from xAI/output/preadapt/_d90_queue/state/mae_d30000_s45.pt: step=84 best=0.4070 since_improve=1 perf_init=0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=100 loss=0.6919 auc_pr_mean=0.4129 best=0.4070 target=<post-hoc> (2.3 min)
+  step=150 loss=0.6922 auc_pr_mean=0.4082 best=0.4129 target=<post-hoc> (7.9 min)
+[d90] YIELD condition=mae d=30000 seed=45 step=172 best=0.4129 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d30000_s45.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=4063 SKIP heavy block block_circuits (ordinal=812 basis=step_fallback heavy_every=3)
+[extract] step=4063 SKIP heavy block block_interp (ordinal=812 basis=step_fallback heavy_every=3)
+[extract] step=4063 SKIP heavy block block_probes (ordinal=812 basis=step_fallback heavy_every=3)
+[extract] step=4063 heavy=FALSE total=110.87s | block_optim=81.44 block_curvature=5.51 block_weights=10.63 block_trajectory=0.51 block_fitness=6.96
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4017 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4063 heavy=False blocks_ok=5 blocks_err=0 t=110.873s -> KEPT(->kept/,FULL latest2)
+[extract] step=4087 SKIP heavy block block_circuits (ordinal=817 basis=step_fallback heavy_every=3)
+[extract] step=4087 SKIP heavy block block_interp (ordinal=817 basis=step_fallback heavy_every=3)
+[extract] step=4087 SKIP heavy block block_probes (ordinal=817 basis=step_fallback heavy_every=3)
+[extract] step=4087 heavy=FALSE total=119.76s | block_optim=84.33 block_curvature=5.39 block_weights=12.25 block_trajectory=1.53 block_fitness=5.81
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4040 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4087 heavy=False blocks_ok=5 blocks_err=0 t=119.756s -> KEPT(->kept/,FULL latest2)
+[extract] step=4111 heavy=TRUE total=279.79s | block_optim=84.72 block_curvature=5.40 block_weights=12.37 block_trajectory=1.59 block_circuits=2.70 block_interp=114.62 block_probes=41.39 block_fitness=6.56
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4063 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4111 heavy=True blocks_ok=8 blocks_err=0 t=279.789s -> KEPT(->kept/,FULL latest2)
+[extract] step=4153 SKIP heavy block block_circuits (ordinal=830 basis=step_fallback heavy_every=3)
+[extract] step=4153 SKIP heavy block block_interp (ordinal=830 basis=step_fallback heavy_every=3)
+[extract] step=4153 SKIP heavy block block_probes (ordinal=830 basis=step_fallback heavy_every=3)
+[extract] step=4153 heavy=FALSE total=113.69s | block_optim=81.23 block_curvature=4.76 block_weights=10.40 block_trajectory=0.50 block_fitness=6.48
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4087 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4153 heavy=False blocks_ok=5 blocks_err=0 t=113.691s -> KEPT(->kept/,FULL latest2)
+[extract] step=4179 SKIP heavy block block_circuits (ordinal=835 basis=step_fallback heavy_every=3)
+[extract] step=4179 SKIP heavy block block_interp (ordinal=835 basis=step_fallback heavy_every=3)
+[extract] step=4179 SKIP heavy block block_probes (ordinal=835 basis=step_fallback heavy_every=3)
+[extract] step=4179 heavy=FALSE total=114.25s | block_optim=80.67 block_curvature=4.84 block_weights=10.69 block_trajectory=0.55 block_fitness=6.60
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4128 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4179 heavy=False blocks_ok=5 blocks_err=0 t=114.249s -> KEPT(->kept/,FULL latest2)
+[extract] step=4206 SKIP heavy block block_circuits (ordinal=841 basis=step_fallback heavy_every=3)
+[extract] step=4206 SKIP heavy block block_interp (ordinal=841 basis=step_fallback heavy_every=3)
+[extract] step=4206 SKIP heavy block block_probes (ordinal=841 basis=step_fallback heavy_every=3)
+[extract] step=4206 heavy=FALSE total=113.81s | block_optim=80.82 block_curvature=4.77 block_weights=10.61 block_trajectory=0.49 block_fitness=6.44
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4153 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4206 heavy=False blocks_ok=5 blocks_err=0 t=113.806s -> KEPT(->kept/,FULL latest2)
+[extract] step=4232 heavy=TRUE total=275.13s | block_optim=81.90 block_curvature=4.89 block_weights=10.77 block_trajectory=0.57 block_circuits=2.81 block_interp=115.33 block_probes=40.46 block_fitness=7.36
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4179 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4232 heavy=True blocks_ok=8 blocks_err=0 t=275.134s -> KEPT(->kept/,FULL latest2)
+[extract] step=4259 SKIP heavy block block_circuits (ordinal=851 basis=step_fallback heavy_every=3)
+[extract] step=4259 SKIP heavy block block_interp (ordinal=851 basis=step_fallback heavy_every=3)
+[extract] step=4259 SKIP heavy block block_probes (ordinal=851 basis=step_fallback heavy_every=3)
+[extract] step=4259 heavy=FALSE total=114.97s | block_optim=81.94 block_curvature=4.81 block_weights=10.81 block_trajectory=0.50 block_fitness=6.55
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4206 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4259 heavy=False blocks_ok=5 blocks_err=0 t=114.966s -> KEPT(->kept/,FULL latest2)
+[extract] step=4288 SKIP heavy block block_circuits (ordinal=857 basis=step_fallback heavy_every=3)
+[extract] step=4288 SKIP heavy block block_interp (ordinal=857 basis=step_fallback heavy_every=3)
+[extract] step=4288 SKIP heavy block block_probes (ordinal=857 basis=step_fallback heavy_every=3)
+[extract] step=4288 heavy=FALSE total=114.80s | block_optim=81.49 block_curvature=4.88 block_weights=10.84 block_trajectory=0.52 block_fitness=6.79
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4232 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4288 heavy=False blocks_ok=5 blocks_err=0 t=114.803s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 9 checkpoint(s); exiting.
+[cw1] drained 9 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 034_mae_d100000_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 100000 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 100000
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100000  (P: {'method': 'achlioptas', 'seed': 46, 'd': 100000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6920 auc_pr_mean=0.4069 best=0.4069 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=mae d=100000 seed=46 step=95 best=0.4069 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d100000_s46.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=4347 SKIP heavy block block_circuits (ordinal=869 basis=step_fallback heavy_every=3)
+[extract] step=4347 SKIP heavy block block_interp (ordinal=869 basis=step_fallback heavy_every=3)
+[extract] step=4347 SKIP heavy block block_probes (ordinal=869 basis=step_fallback heavy_every=3)
+[extract] step=4347 heavy=FALSE total=110.91s | block_optim=81.38 block_curvature=5.58 block_weights=10.73 block_trajectory=0.53 block_fitness=6.91
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4288 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4347 heavy=False blocks_ok=5 blocks_err=0 t=110.912s -> KEPT(->kept/,FULL latest2)
+[extract] step=4410 heavy=TRUE total=270.26s | block_optim=81.72 block_curvature=4.76 block_weights=11.02 block_trajectory=0.57 block_circuits=2.70 block_interp=114.69 block_probes=41.12 block_fitness=6.73
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4347 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4410 heavy=True blocks_ok=8 blocks_err=0 t=270.262s -> KEPT(->kept/,FULL latest2)
+[extract] step=4444 heavy=TRUE total=275.57s | block_optim=82.25 block_curvature=4.72 block_weights=10.40 block_trajectory=0.53 block_circuits=2.72 block_interp=115.82 block_probes=41.97 block_fitness=6.95
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4378 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4444 heavy=True blocks_ok=8 blocks_err=0 t=275.572s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 3 checkpoint(s); exiting.
+[cw1] drained 3 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 037_mae_d300000_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 300000 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 300000
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300000  (P: {'method': 'achlioptas', 'seed': 44, 'd': 300000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4045
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6919 auc_pr_mean=0.4045 best=0.4045 target=<post-hoc> (5.7 min)
+[d90] YIELD condition=mae d=300000 seed=44 step=95 best=0.4045 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d300000_s44.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=4587 SKIP heavy block block_circuits (ordinal=917 basis=step_fallback heavy_every=3)
+[extract] step=4587 SKIP heavy block block_interp (ordinal=917 basis=step_fallback heavy_every=3)
+[extract] step=4587 SKIP heavy block block_probes (ordinal=917 basis=step_fallback heavy_every=3)
+[extract] step=4587 heavy=FALSE total=113.19s | block_optim=81.23 block_curvature=5.93 block_weights=11.26 block_trajectory=0.65 block_fitness=7.18
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4513 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4587 heavy=False blocks_ok=5 blocks_err=0 t=113.193s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] drained 1 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 039_mae_d300000_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition mae --d 300000 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : mae
+  d                : 300000
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300000  (P: {'method': 'achlioptas', 'seed': 46, 'd': 300000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6920 auc_pr_mean=0.4069 best=0.4069 target=<post-hoc> (5.8 min)
+[d90] YIELD condition=mae d=300000 seed=46 step=91 best=0.4069 -> state saved xAI/output/preadapt/_d90_queue/state/mae_d300000_s46.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 040_plantclef_d100_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 100 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 100
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100  (P: {'method': 'achlioptas', 'seed': 42, 'd': 100, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6929 auc_pr_mean=0.4079 best=0.4103 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=100 seed=42 step=90 best=0.4103 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d100_s42.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=4730 SKIP heavy block block_circuits (ordinal=946 basis=step_fallback heavy_every=3)
+[extract] step=4730 SKIP heavy block block_interp (ordinal=946 basis=step_fallback heavy_every=3)
+[extract] step=4730 SKIP heavy block block_probes (ordinal=946 basis=step_fallback heavy_every=3)
+[extract] step=4730 heavy=FALSE total=118.64s | block_optim=85.13 block_curvature=6.32 block_weights=12.67 block_trajectory=1.64 block_fitness=6.90
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4667 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4730 heavy=False blocks_ok=5 blocks_err=0 t=118.638s -> KEPT(->kept/,FULL latest2)
+[extract] step=4778 SKIP heavy block block_circuits (ordinal=955 basis=step_fallback heavy_every=3)
+[extract] step=4778 SKIP heavy block block_interp (ordinal=955 basis=step_fallback heavy_every=3)
+[extract] step=4778 SKIP heavy block block_probes (ordinal=955 basis=step_fallback heavy_every=3)
+[extract] step=4778 heavy=FALSE total=113.66s | block_optim=81.15 block_curvature=4.78 block_weights=10.72 block_trajectory=0.51 block_fitness=5.50
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4685 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4778 heavy=False blocks_ok=5 blocks_err=0 t=113.664s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 2 checkpoint(s); exiting.
+[cw1] drained 2 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 043_plantclef_d100_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 100 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 100
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100  (P: {'method': 'achlioptas', 'seed': 45, 'd': 100, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6928 auc_pr_mean=0.4044 best=0.4070 target=<post-hoc> (5.6 min)
+[d90] YIELD condition=plantclef d=100 seed=45 step=95 best=0.4070 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d100_s45.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 044_plantclef_d100_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 100 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 100
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=100  (P: {'method': 'achlioptas', 'seed': 46, 'd': 100, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6928 auc_pr_mean=0.4078 best=0.4069 target=<post-hoc> (5.7 min)
+[d90] YIELD condition=plantclef d=100 seed=46 step=94 best=0.4078 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d100_s46.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=4940 SKIP heavy block block_circuits (ordinal=988 basis=step_fallback heavy_every=3)
+[extract] step=4940 SKIP heavy block block_interp (ordinal=988 basis=step_fallback heavy_every=3)
+[extract] step=4940 SKIP heavy block block_probes (ordinal=988 basis=step_fallback heavy_every=3)
+[extract] step=4940 heavy=FALSE total=111.85s | block_optim=82.01 block_curvature=5.69 block_weights=11.03 block_trajectory=0.50 block_fitness=6.76
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4827 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=4940 heavy=False blocks_ok=5 blocks_err=0 t=111.851s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] drained 1 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 046_plantclef_d300_s43.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 300 --seed 43 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 300
+  seed             : 43
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300  (P: {'method': 'achlioptas', 'seed': 43, 'd': 300, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4101
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6926 auc_pr_mean=0.4096 best=0.4101 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=300 seed=43 step=90 best=0.4101 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d300_s43.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=5005 SKIP heavy block block_circuits (ordinal=1001 basis=step_fallback heavy_every=3)
+[extract] step=5005 SKIP heavy block block_interp (ordinal=1001 basis=step_fallback heavy_every=3)
+[extract] step=5005 SKIP heavy block block_probes (ordinal=1001 basis=step_fallback heavy_every=3)
+[extract] step=5005 heavy=FALSE total=111.32s | block_optim=81.53 block_curvature=5.61 block_weights=10.72 block_trajectory=0.51 block_fitness=6.90
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=4880 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=5005 heavy=False blocks_ok=5 blocks_err=0 t=111.318s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] drained 1 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 049_plantclef_d300_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 300 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 300
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=300  (P: {'method': 'achlioptas', 'seed': 46, 'd': 300, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6926 auc_pr_mean=0.4095 best=0.4069 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=300 seed=46 step=90 best=0.4095 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d300_s46.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 050_plantclef_d1000_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 1000 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 1000
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=1000  (P: {'method': 'achlioptas', 'seed': 42, 'd': 1000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6925 auc_pr_mean=0.4104 best=0.4103 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=1000 seed=42 step=90 best=0.4104 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d1000_s42.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[extract] step=5155 SKIP heavy block block_circuits (ordinal=1031 basis=step_fallback heavy_every=3)
+[extract] step=5155 SKIP heavy block block_interp (ordinal=1031 basis=step_fallback heavy_every=3)
+[extract] step=5155 SKIP heavy block block_probes (ordinal=1031 basis=step_fallback heavy_every=3)
+[extract] step=5155 heavy=FALSE total=110.53s | block_optim=80.95 block_curvature=5.59 block_weights=10.68 block_trajectory=0.60 block_fitness=6.79
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=5005 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=5155 heavy=False blocks_ok=5 blocks_err=0 t=110.531s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] drained 1 checkpoint(s); extraction backlog present -> skip d90, loop.
+[extract] step=5242 SKIP heavy block block_circuits (ordinal=1048 basis=step_fallback heavy_every=3)
+[extract] step=5242 SKIP heavy block block_interp (ordinal=1048 basis=step_fallback heavy_every=3)
+[extract] step=5242 SKIP heavy block block_probes (ordinal=1048 basis=step_fallback heavy_every=3)
+[extract] step=5242 heavy=FALSE total=118.36s | block_optim=85.02 block_curvature=5.60 block_weights=12.07 block_trajectory=1.59 block_fitness=6.32
+[collector w1] re-slimmed kept run_id=mae__stable_evo__s42 step=5077 MODEL-ONLY (bumped out of latest-2).
+[collector w1] processed run_id=mae__stable_evo__s42 step=5242 heavy=False blocks_ok=5 blocks_err=0 t=118.358s -> KEPT(->kept/,FULL latest2)
+[collector w1] --once drained 1 checkpoint(s); exiting.
+[cw1] drained 1 checkpoint(s); extraction backlog present -> skip d90, loop.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 053_plantclef_d1000_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 1000 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 1000
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=1000  (P: {'method': 'achlioptas', 'seed': 45, 'd': 1000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6922 auc_pr_mean=0.4070 best=0.4070 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=1000 seed=45 step=90 best=0.4070 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d1000_s45.pt (10.1 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 055_plantclef_d3000_s42.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 3000 --seed 42 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 3000
+  seed             : 42
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=3000  (P: {'method': 'achlioptas', 'seed': 42, 'd': 3000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4103
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6922 auc_pr_mean=0.4184 best=0.4103 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=3000 seed=42 step=90 best=0.4184 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d3000_s42.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 057_plantclef_d3000_s44.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 3000 --seed 44 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 3000
+  seed             : 44
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=3000  (P: {'method': 'achlioptas', 'seed': 44, 'd': 3000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4165
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6917 auc_pr_mean=0.4046 best=0.4165 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=3000 seed=44 step=90 best=0.4165 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d3000_s44.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 059_plantclef_d3000_s46.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 3000 --seed 46 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 3000
+  seed             : 46
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=3000  (P: {'method': 'achlioptas', 'seed': 46, 'd': 3000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4069
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6917 auc_pr_mean=0.4071 best=0.4069 target=<post-hoc> (5.9 min)
+[d90] YIELD condition=plantclef d=3000 seed=46 step=89 best=0.4071 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d3000_s46.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 061_plantclef_d10000_s43.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 10000 --seed 43 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 10000
+  seed             : 43
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 43, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4101
+  target (90%-gain): <post-hoc; running to plateau/step_cap>
+  step=50 loss=0.6917 auc_pr_mean=0.4104 best=0.4101 target=<post-hoc> (6.0 min)
+[d90] YIELD condition=plantclef d=10000 seed=43 step=89 best=0.4104 -> state saved xAI/output/preadapt/_d90_queue/state/plantclef_d10000_s43.pt (10.0 min this claim); re-queue to resume.
+[d90] INCOMPLETE (wall_timeout): state saved; exit 2 -> caller should re-queue.
+[collector w1] --once drained 0 checkpoint(s); exiting.
+[cw1] d90 START 063_plantclef_d10000_s45.args  (claim=34869943_w1)
+[cw1] d90 args: --backfill --condition plantclef --d 10000 --seed 45 --shared-tokenizer mae --variant stable_evo --step_cap 4000 --patience 8 --eps 0.0001 --eval_every 50 --batch_size 64 --lr 0.001 --train_csv data/inat/train_v1.1.0.csv --val_csv data/inat/val_v1.1.0.csv --max_wall_seconds 600 --state_dir xAI/output/preadapt/_d90_queue/state --out xAI/output/preadapt/_d90_queue/d90_results.csv
+============================================================
+d90 subspace run (theta = theta0 + P v) [BACKFILL]
+  condition        : plantclef
+  d                : 10000
+  seed             : 45
+  shared-tokenizer : mae
+  perf_init/full   : <measure> / <post-hoc>
+  device           : cuda:0
+============================================================
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  D_trainable      : 302,314,498  ->  d=10000  (P: {'method': 'achlioptas', 'seed': 45, 'd': 10000, 'D_trainable': 302314498, 'density': 5.751359468564455e-05})
+  perf_init (measured at v=0): 0.4070
+  target (90%-gain): <post-hoc; running to plateau/step_cap>

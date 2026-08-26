@@ -1,0 +1,41 @@
+Sun Jun 21 04:27:49 PM EDT 2026
+host=c1100a-s15.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition naive --variant stable_evo --shared-tokenizer mae --seed 43 --num_epochs 25 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --lr_schedule fixed --beta1 0 --weight_decay 0 --max_train_samples 107000 --sampler_delta 0.025 --sampler_min_step 12 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2 --max_precond_dim 2048 --num_workers 4 --phase2_early_stop --output_dir xAI/output/preadapt_v2/naive__stable_evo__s43 --resume auto --phase2_plateau_patience 6
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : naive__stable_evo__s43
+  condition        : naive
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 43
+  output_dir       : xAI/output/preadapt_v2/naive__stable_evo__s43
+  epochs           : 25
+  phase2 epochs    : 25 (evolution budget, counted from 0 — independent of Phase-1 length)
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 107000 samples
+  Training images: 107000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='naive', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+[preadapt_train] --resume auto -> kept/latest_full.pt (rotating resume slot)
+[preadapt_train] loading resume checkpoint: xAI/output/preadapt_v2/naive__stable_evo__s43/kept/latest_full.pt
+[preadapt_train] resume: phase=phase2 epoch=3 global_step=2200
+[preadapt_train] RESUME Phase 2 from epoch 3 (start of epoch 4), global_step=2200.
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)  [RESUME]
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=0.00075  eff_batch=384  variant=stable_evo  lr_schedule=fixed (min_lr=0.00075)
+  [RESUME] optimizer_state_dict loaded + state moved to device.
+  [RESUME] RNG state restored (torch/cuda/numpy/python/demographic).
+  [RESUME] continuing from global_step=2200, next epoch=4.
+  [RESUME] keeping existing init_model.pt (not overwriting on resume).
+
+--- Phase 2, Epoch 4/25 ---

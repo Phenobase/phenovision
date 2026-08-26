@@ -1,0 +1,24 @@
+Sun Jun 21 04:30:59 PM EDT 2026
+host=c0605a-s21.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=10
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43
+watch_dirs=xAI/output/preadapt_v2/naive__stable_evo__s43/checkpoints
+sentinels=xAI/output/preadapt_v2/naive__stable_evo__s43/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=8 retention_latest_keep=2 keep_full_latest=2
+train_jids=35365980
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[extract] step=2212 SKIP heavy block block_interp (ordinal=442 basis=step_fallback heavy_every=8)
+[extract] step=2212 SKIP heavy block block_probes (ordinal=442 basis=step_fallback heavy_every=8)
+[extract] step=2212 heavy=FALSE total=17.10s | block_curvature=5.55 block_fitness=6.22
+[collector wgpu0] gpu-pass DONE run_id=naive__stable_evo__s43 step=2212 blocks_ok=2 t=17.096s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=naive__stable_evo__s43 step=2212 -> KEPT(->kept/,FULL latest-slot)
+[collector wgpu0] --once drained 2 checkpoint(s); exiting.
+[cwgpu0] drained 2 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] all RUN_COMPLETE sentinels present; performing FINAL drain...
+[cwgpu0] final drain found nothing new and GPU-pass queue depth=0 -> GPU pass complete on all runs. Exiting (CPU pass may still finalize).
+Done: Sun Jun 21 04:31:47 PM EDT 2026

@@ -1,0 +1,382 @@
+=== BEFORE: pt=14 ===
+===== PASS 1: GPU =====
+[extract] step=20 SKIP heavy block block_interp (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 SKIP heavy block block_probes (ordinal=4 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=20: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=20: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=20 heavy=FALSE total=11.15s | block_curvature=5.84 block_fitness=2.05
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=0 blocks_ok=2 t=11.152s (all_passes_complete=False)
+[extract] step=20 SKIP heavy block block_interp (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 SKIP heavy block block_probes (ordinal=4 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=20: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=20: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=20 heavy=FALSE total=8.41s | block_curvature=4.82 block_fitness=0.77
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=0 blocks_ok=2 t=8.411s (all_passes_complete=False)
+[extract] step=28 SKIP heavy block block_interp (ordinal=5 basis=step_fallback heavy_every=3)
+[extract] step=28 SKIP heavy block block_probes (ordinal=5 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=28: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=28: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=28 heavy=FALSE total=12.07s | block_curvature=4.83 block_fitness=1.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=28 blocks_ok=2 t=12.073s (all_passes_complete=False)
+[block_interp] attention statistics skipped: CUDA error: CUBLAS_STATUS_NOT_SUPPORTED when calling `cublasLtMatmulAlgoGetHeuristic( ltHandle, computeDesc.descriptor(), Adesc.descriptor(), Bdesc.descriptor(), Cdesc.descriptor(), Cdesc.descriptor(), preference.descriptor(), 1, &heuristicResult, &returnedResult)`
+[Extractor] block 'block_interp' FAILED at run_id=mae__stable_evo__s42 step=31:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 827, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 674, in extract
+    cur_feats = _extract_cls_features(model, eval_loader, device, CKA_MAX_EXAMPLES)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 421, in _extract_cls_features
+    f = model.forward_features(sub)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 88, in forward
+    qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+          ^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_NOT_SUPPORTED when calling `cublasLtMatmulAlgoGetHeuristic( ltHandle, computeDesc.descriptor(), Adesc.descriptor(), Bdesc.descriptor(), Cdesc.descriptor(), Cdesc.descriptor(), preference.descriptor(), 1, &heuristicResult, &returnedResult)`
+
+[block_probes] feature capture failed at run_id=mae__stable_evo__s42 step=31: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0')
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=31: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=31: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=31 heavy=TRUE total=13.83s | block_curvature=4.69 block_interp=1.33 block_probes=0.71 block_fitness=1.14
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=31 blocks_ok=3 t=13.83s (all_passes_complete=False)
+[block_interp] attention statistics skipped: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+[Extractor] block 'block_interp' FAILED at run_id=mae__stable_evo__s42 step=34:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 827, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 674, in extract
+    cur_feats = _extract_cls_features(model, eval_loader, device, CKA_MAX_EXAMPLES)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 421, in _extract_cls_features
+    f = model.forward_features(sub)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 88, in forward
+    qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+          ^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+
+[block_probes] feature capture failed at run_id=mae__stable_evo__s42 step=34: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0')
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=34: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=34: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=34 heavy=TRUE total=13.63s | block_curvature=4.65 block_interp=1.33 block_probes=0.57 block_fitness=1.30
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=34 blocks_ok=3 t=13.631s (all_passes_complete=False)
+[extract] step=37 SKIP heavy block block_interp (ordinal=7 basis=step_fallback heavy_every=3)
+[extract] step=37 SKIP heavy block block_probes (ordinal=7 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=37: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=37: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=37 heavy=FALSE total=11.89s | block_curvature=4.65 block_fitness=1.31
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=37 blocks_ok=2 t=11.894s (all_passes_complete=False)
+[extract] step=40 SKIP heavy block block_interp (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=40 SKIP heavy block block_probes (ordinal=8 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=40: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=40: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=40 heavy=FALSE total=12.21s | block_curvature=4.84 block_fitness=1.42
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=40 blocks_ok=2 t=12.215s (all_passes_complete=False)
+[extract] step=43 SKIP heavy block block_interp (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=43 SKIP heavy block block_probes (ordinal=8 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=43: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=43: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=43 heavy=FALSE total=13.97s | block_curvature=4.64 block_fitness=1.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=43 blocks_ok=2 t=13.974s (all_passes_complete=False)
+[block_interp] attention statistics skipped: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+[Extractor] block 'block_interp' FAILED at run_id=mae__stable_evo__s42 step=46:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 827, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 674, in extract
+    cur_feats = _extract_cls_features(model, eval_loader, device, CKA_MAX_EXAMPLES)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 421, in _extract_cls_features
+    f = model.forward_features(sub)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 88, in forward
+    qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+          ^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+
+[block_probes] feature capture failed at run_id=mae__stable_evo__s42 step=46: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0')
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=46: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=46: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=46 heavy=TRUE total=17.28s | block_curvature=4.65 block_interp=1.38 block_probes=0.66 block_fitness=1.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=46 blocks_ok=3 t=17.282s (all_passes_complete=False)
+[block_interp] attention statistics skipped: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+[Extractor] block 'block_interp' FAILED at run_id=mae__stable_evo__s42 step=49:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 827, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 674, in extract
+    cur_feats = _extract_cls_features(model, eval_loader, device, CKA_MAX_EXAMPLES)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 421, in _extract_cls_features
+    f = model.forward_features(sub)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 88, in forward
+    qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+          ^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+
+[block_probes] feature capture failed at run_id=mae__stable_evo__s42 step=49: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0')
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=49: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=49: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=49 heavy=TRUE total=17.43s | block_curvature=4.91 block_interp=1.41 block_probes=0.62 block_fitness=1.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=49 blocks_ok=3 t=17.428s (all_passes_complete=False)
+[extract] step=52 SKIP heavy block block_interp (ordinal=10 basis=step_fallback heavy_every=3)
+[extract] step=52 SKIP heavy block block_probes (ordinal=10 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=52: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=52: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=52 heavy=FALSE total=15.63s | block_curvature=4.83 block_fitness=1.44
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=52 blocks_ok=2 t=15.634s (all_passes_complete=False)
+[extract] step=55 SKIP heavy block block_interp (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=55 SKIP heavy block block_probes (ordinal=11 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=55: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=55: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=55 heavy=FALSE total=14.82s | block_curvature=4.65 block_fitness=1.29
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=55 blocks_ok=2 t=14.816s (all_passes_complete=False)
+[extract] step=58 SKIP heavy block block_interp (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=58 SKIP heavy block block_probes (ordinal=11 basis=step_fallback heavy_every=3)
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=58: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=58: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=58 heavy=FALSE total=15.46s | block_curvature=4.66 block_fitness=1.40
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=58 blocks_ok=2 t=15.459s (all_passes_complete=False)
+[block_interp] attention statistics skipped: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+[Extractor] block 'block_interp' FAILED at run_id=mae__stable_evo__s42 step=60:
+Traceback (most recent call last):
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/extract.py", line 827, in extract_checkpoint
+    block_summary = mod.extract(ctx)
+                    ^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 674, in extract
+    cur_feats = _extract_cls_features(model, eval_loader, device, CKA_MAX_EXAMPLES)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/extractor/block_interp.py", line 421, in _extract_cls_features
+    f = model.forward_features(sub)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/share/r.dinnage/Projects/phenovision/PlantCLEF2022/models_vit.py", line 44, in forward_features
+    x = blk(x)
+        ^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 169, in forward
+    x = x + self.drop_path1(self.ls1(self.attn(self.norm1(x))))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/timm/models/vision_transformer.py", line 88, in forward
+    qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
+          ^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 125, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 6304 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0
+
+[block_probes] feature capture failed at run_id=mae__stable_evo__s42 step=60: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 14 computeType 68 scaleType 0')
+[block_fitness] validate(loss) failed at run_id=mae__stable_evo__s42 step=60: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[block_fitness] forward pass failed at run_id=mae__stable_evo__s42 step=60: RuntimeError('CUDA error: CUBLAS_STATUS_EXECUTION_FAILED when calling cublasLtMatmul with transpose_mat1 1 transpose_mat2 0 m 3072 n 12608 k 1024 mat1_ld 1024 mat2_ld 1024 result_ld 3072 abcType 2 computeType 68 scaleType 0')
+[extract] step=60 heavy=TRUE total=17.02s | block_curvature=4.65 block_interp=1.36 block_probes=0.67 block_fitness=1.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=60 blocks_ok=3 t=17.023s (all_passes_complete=False)
+[collector wgpu0] --once drained 14 checkpoint(s); exiting.
+=== AFTER GPU: gpu.complete=14 cpu.complete=0 pt_still_present=14 finalized_to_kept=0 ===
+INVARIANT A (no finalize before BOTH passes): pt must still be present, cpu.complete must be 0
+===== PASS 2: CPU =====
+[collector wcpu0] no probe/val CSV (probe_csv=None, val_csv=None); forward/backward blocks skipped for run_id=mae__stable_evo__s42.
+[Extractor] block_set='cpu': CPU-only block set ['block_optim', 'block_weights', 'block_trajectory', 'block_circuits'] needs no model forward — skipping probe/Hessian build (no CSV/dataloaders, lower host RAM).
+[extract] step=20 SKIP heavy block block_circuits (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 heavy=FALSE total=17.99s | block_optim=0.00 block_weights=14.74 block_trajectory=0.30
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=0 blocks_ok=3 t=17.99s (all_passes_complete=True)
+[extract] step=20 SKIP heavy block block_circuits (ordinal=4 basis=step_fallback heavy_every=3)
+[extract] step=20 heavy=FALSE total=12.30s | block_optim=0.00 block_weights=10.26 block_trajectory=0.35
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=0 blocks_ok=3 t=12.3s (all_passes_complete=True)
+[extract] step=28 SKIP heavy block block_circuits (ordinal=5 basis=step_fallback heavy_every=3)
+[extract] step=28 heavy=FALSE total=86.24s | block_optim=70.57 block_weights=8.58 block_trajectory=0.29
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=28 blocks_ok=3 t=86.238s (all_passes_complete=True)
+[extract] step=31 heavy=TRUE total=87.48s | block_optim=66.90 block_weights=9.93 block_trajectory=0.37 block_circuits=3.38
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=31 blocks_ok=4 t=87.482s (all_passes_complete=True)
+[extract] step=34 heavy=TRUE total=84.58s | block_optim=66.59 block_weights=9.05 block_trajectory=0.30 block_circuits=2.33
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=34 blocks_ok=4 t=84.576s (all_passes_complete=True)
+[extract] step=37 SKIP heavy block block_circuits (ordinal=7 basis=step_fallback heavy_every=3)
+[extract] step=37 heavy=FALSE total=85.22s | block_optim=67.96 block_weights=10.33 block_trajectory=0.37
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=37 blocks_ok=3 t=85.223s (all_passes_complete=True)
+[extract] step=40 SKIP heavy block block_circuits (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=40 heavy=FALSE total=85.08s | block_optim=67.34 block_weights=11.23 block_trajectory=0.33
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=40 blocks_ok=3 t=85.084s (all_passes_complete=True)
+[extract] step=43 SKIP heavy block block_circuits (ordinal=8 basis=step_fallback heavy_every=3)
+[extract] step=43 heavy=FALSE total=83.17s | block_optim=66.59 block_weights=8.81 block_trajectory=0.29
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=43 blocks_ok=3 t=83.166s (all_passes_complete=True)
+[extract] step=46 heavy=TRUE total=85.57s | block_optim=66.99 block_weights=8.74 block_trajectory=0.30 block_circuits=2.54
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=46 blocks_ok=4 t=85.572s (all_passes_complete=True)
+[extract] step=49 heavy=TRUE total=82.57s | block_optim=64.65 block_weights=8.38 block_trajectory=0.28 block_circuits=2.38
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=49 blocks_ok=4 t=82.575s (all_passes_complete=True)
+[extract] step=52 SKIP heavy block block_circuits (ordinal=10 basis=step_fallback heavy_every=3)
+[extract] step=52 heavy=FALSE total=80.73s | block_optim=64.30 block_weights=8.52 block_trajectory=0.28
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=52 blocks_ok=3 t=80.728s (all_passes_complete=True)
+[extract] step=55 SKIP heavy block block_circuits (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=55 heavy=FALSE total=80.82s | block_optim=64.20 block_weights=9.28 block_trajectory=0.26
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=55 blocks_ok=3 t=80.824s (all_passes_complete=True)
+[extract] step=58 SKIP heavy block block_circuits (ordinal=11 basis=step_fallback heavy_every=3)
+[extract] step=58 heavy=FALSE total=80.12s | block_optim=64.23 block_weights=9.38 block_trajectory=0.28
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=58 blocks_ok=3 t=80.117s (all_passes_complete=True)
+[extract] step=60 heavy=TRUE total=82.34s | block_optim=64.41 block_weights=9.15 block_trajectory=0.28 block_circuits=2.42
+[collector wcpu0] cpu-pass DONE run_id=mae__stable_evo__s42 step=60 blocks_ok=4 t=82.344s (all_passes_complete=True)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=55 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=31 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=40 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=34 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=0 -> KEPT(->kept/,FULL anchor)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=52 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=0 -> KEPT(->kept/,FULL anchor)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=28 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=60 -> KEPT(->kept/,FULL latest2)
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=37 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=43 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=49 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=46 -> deleted
+[collector wcpu0] FINALIZED run_id=mae__stable_evo__s42 step=58 -> KEPT(->kept/,FULL latest2)
+[collector wcpu0] --once drained 28 checkpoint(s); exiting.
+=== AFTER CPU: pt_left=0 kept=4 leftover_complete=0 leftover_claim=0 ===
+===== STORE CHECK (both GPU-pass + CPU-pass quantities present) =====
+scalar parts: 56
+steps: [np.int64(20), np.int64(28), np.int64(31), np.int64(34), np.int64(37), np.int64(40), np.int64(43), np.int64(46)] ...n= 13
+GPU-pass quantities present (sample): ['curvature_eig_participation', 'curvature_eig_top', 'curvature_eig_topk', 'curvature_eig_trace']
+CPU-pass quantities present (sample): ['disp_from_init_global', 'kron_L_participation', 'kron_L_top_eig', 'kron_L_trace', 'kron_R_participation', 'kron_R_top_eig', 'kron_R_trace', 'layer_displacement']
+RESULT: PASS both passes wrote
+=== SMOKE DONE ===

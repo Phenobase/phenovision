@@ -1,0 +1,10 @@
+Tue Jun 16 04:18:12 PM EDT 2026
+host=c0604a-s20.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+=== preadapt post-hoc pass ===
+run_dir=xAI/output/_redesign_smoke/mae__stable_evo__s42 variant=stable_evo seed=42 run_id=mae__stable_evo__s42
+per_run_store=xAI/output/_redesign_smoke/_extract_store/mae__stable_evo__s42  inline_scalars=xAI/output/_redesign_smoke/mae__stable_evo__s42/metrics/scalars.parquet
+[posthoc_sequential] run_id=mae__stable_evo__s42 condition=mae store=/blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/output/_redesign_smoke/_extract_store/mae__stable_evo__s42
+[posthoc_sequential] inline log loaded: 13976 rows from xAI/output/_redesign_smoke/mae__stable_evo__s42/metrics/scalars.parquet
+[posthoc_sequential] DONE run_id=mae__stable_evo__s42 in 20.775s rotation={'layers': 49, 'pairs': 539, 'vs_init': 539} trajectory_straightness=0.08047096812272973
+Done: Tue Jun 16 04:18:39 PM EDT 2026

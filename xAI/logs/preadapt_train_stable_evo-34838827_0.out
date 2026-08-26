@@ -1,0 +1,87 @@
+Tue Jun 16 02:40:36 PM EDT 2026
+host=c1000a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[task 0] grid=xAI/two_noise/configs/experiment/preadapt_grid_stable_evo.txt
+[task 0] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 15 --batch_size 768 --phase2_batch_size 384 --blr 0.0005 --weight_decay 0.05 --max_train_samples 214000 --sampler_delta 0.1 --sampler_min_step 500 --sampler_max_step 1000 --demo_kappa 1 --demo_warmup 200 --val_every_n 100 --projection_dim 8192 --retention_latest_keep 2 --max_precond_dim 2048
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : /blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/py/../../xAI/output/preadapt/mae__stable_evo__s42
+  epochs           : 15
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/278] loss=0.6931 lr=0.001000
+  Epoch 0 [20/278] loss=0.5497 lr=0.001000
+  Epoch 0 [40/278] loss=0.5784 lr=0.001000
+  Epoch 0 [60/278] loss=0.5471 lr=0.001000
+  Epoch 0 [80/278] loss=0.5477 lr=0.000999
+  VAL step=100 val_loss=0.5336 auc_roc_mean=0.7471 auc_pr_mean=0.6007
+  Epoch 0 [100/278] loss=0.5197 lr=0.000999
+  Epoch 0 [120/278] loss=0.5354 lr=0.000998
+  Epoch 0 [140/278] loss=0.5361 lr=0.000997
+  Epoch 0 [160/278] loss=0.5267 lr=0.000997
+  Epoch 0 [180/278] loss=0.5379 lr=0.000996
+  VAL step=200 val_loss=0.5059 auc_roc_mean=0.7680 auc_pr_mean=0.6245
+  Epoch 0 [200/278] loss=0.5216 lr=0.000995
+  Epoch 0 [220/278] loss=0.5200 lr=0.000994
+  Epoch 0 [240/278] loss=0.5034 lr=0.000993
+  Epoch 0 [260/278] loss=0.5313 lr=0.000991
+
+--- Phase 1, Epoch 1 ---
+  Epoch 1 [0/278] loss=0.5170 lr=0.000990
+  Epoch 1 [20/278] loss=0.5169 lr=0.000989
+  VAL step=300 val_loss=0.4862 auc_roc_mean=0.7804 auc_pr_mean=0.6391
+  Epoch 1 [40/278] loss=0.5044 lr=0.000987
+  Epoch 1 [60/278] loss=0.5107 lr=0.000985
+  Epoch 1 [80/278] loss=0.4879 lr=0.000984
+  Epoch 1 [100/278] loss=0.5166 lr=0.000982
+  Epoch 1 [120/278] loss=0.5028 lr=0.000980
+  VAL step=400 val_loss=0.4717 auc_roc_mean=0.7875 auc_pr_mean=0.6478
+  Epoch 1 [140/278] loss=0.5192 lr=0.000978
+  Epoch 1 [160/278] loss=0.4982 lr=0.000976
+  Epoch 1 [180/278] loss=0.4863 lr=0.000973
+  Epoch 1 [200/278] loss=0.4854 lr=0.000971
+  Epoch 1 [220/278] loss=0.4862 lr=0.000969
+  VAL step=500 val_loss=0.4612 auc_roc_mean=0.7924 auc_pr_mean=0.6546
+  Epoch 1 [240/278] loss=0.4895 lr=0.000966
+  Epoch 1 [260/278] loss=0.4939 lr=0.000964
+
+--- Phase 1, Epoch 2 ---
+  Epoch 2 [0/278] loss=0.4696 lr=0.000961
+  Epoch 2 [20/278] loss=0.4826 lr=0.000958
+  Epoch 2 [40/278] loss=0.5173 lr=0.000955
+  VAL step=600 val_loss=0.4525 auc_roc_mean=0.7969 auc_pr_mean=0.6623
+  Epoch 2 [60/278] loss=0.4731 lr=0.000952
+  Epoch 2 [80/278] loss=0.4867 lr=0.000949
+  Epoch 2 [100/278] loss=0.4996 lr=0.000946
+  Epoch 2 [120/278] loss=0.5065 lr=0.000943
+  Epoch 2 [140/278] loss=0.4902 lr=0.000940
+  VAL step=700 val_loss=0.4458 auc_roc_mean=0.8005 auc_pr_mean=0.6672
+  Epoch 2 [160/278] loss=0.4805 lr=0.000936
+  Epoch 2 [180/278] loss=0.4735 lr=0.000933
+  Epoch 2 [200/278] loss=0.4717 lr=0.000929
+  Epoch 2 [220/278] loss=0.4779 lr=0.000925
+  Epoch 2 [240/278] loss=0.4962 lr=0.000921
+  VAL step=800 val_loss=0.4403 auc_roc_mean=0.8033 auc_pr_mean=0.6718
+  Epoch 2 [260/278] loss=0.4890 lr=0.000918
+
+--- Phase 1, Epoch 3 ---

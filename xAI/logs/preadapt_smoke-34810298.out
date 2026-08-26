@@ -1,0 +1,61 @@
+================ TRAINER SMOKE ================
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : plantclef__stable_evo__s42
+  condition        : plantclef
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/preadapt_smoke/plantclef__stable_evo__s42
+  epochs           : 4
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 1500 samples
+  Training images: 1500
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/23] loss=0.6932 lr=0.001000
+  VAL step=8 val_loss=0.5609 auc_roc_mean=0.7636 auc_pr_mean=0.6021
+  VAL step=16 val_loss=0.5595 auc_roc_mean=0.8013 auc_pr_mean=0.6294
+  Plateau (1/1) auc_roc improvement=0.0377
+
+*** Phase 1 converged at epoch 0, step 16 ***
+
+PHASE_TRANSITION: step=16 epoch=0 val_loss=0.5595 auc_roc_mean=0.8013 auc_pr_mean=0.6294 (ECOLOGICAL_FITTING: auc_pr=0.6294, val_loss=0.5595)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+  Rebuilding train loader: batch_size -> 24 for Phase 2
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=4.6875e-05  eff_batch=24  variant=stable_evo
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [0/62] loss=0.3860 upd_norm=2.4358 disp=0.0000 sampler=0.0000 lr=0.000009
+  VAL step=24 (p2=8) val_loss=0.5595 auc_pr_mean=0.6295
+  VAL step=32 (p2=16) val_loss=0.5595 auc_pr_mean=0.6296
+  [20/62] loss=0.5788 upd_norm=1.5284 disp=0.0483 sampler=0.0018 lr=0.000012
+  VAL step=40 (p2=24) val_loss=0.5594 auc_pr_mean=0.6298
+  VAL step=48 (p2=32) val_loss=0.5593 auc_pr_mean=0.6299
+  VAL step=56 (p2=40) val_loss=0.5591 auc_pr_mean=0.6300
+  [40/62] loss=0.5886 upd_norm=2.8347 disp=0.0661 sampler=0.0030 lr=0.000015
+  VAL step=64 (p2=48) val_loss=0.5590 auc_pr_mean=0.6301
+  VAL step=72 (p2=56) val_loss=0.5588 auc_pr_mean=0.6303
+  [60/62] loss=0.5483 upd_norm=1.0771 disp=0.0764 sampler=0.0044 lr=0.000018
+  EMIT ckpt step=78 reason=epoch_end on_ladder=True -> step00000078.pt
+
+--- Phase 2, Epoch 2 (P2 epoch 1) ---
+  [0/62] loss=0.6627 upd_norm=2.8173 disp=0.0774 sampler=0.0002 lr=0.000019
+  VAL step=80 (p2=64) val_loss=0.5587 auc_pr_mean=0.6304

@@ -1,0 +1,46 @@
+#!/bin/bash
+# O2 — cheap rho-SCHEDULE (1x) vs TRUE-FISHER (2x) vs whiten baseline, with the matrix-free
+# RiccatiPrecond. Does the noise-dependent shrink schedule recover most of true-Fisher's gain at
+# 1x cost? Runs the three conditions sequentially in ONE single-GPU job and writes
+# runs/riccati_schedule_vs_fisher/<model>_<dataset>_b<batch>.csv. Uses bf16 autocast (no GradScaler).
+#
+# -------------------------------------------------------------------------------------------------
+# ONE GPU ONLY. The guralnick allocation is capped at ~5 concurrent GPUs; be fair (<=3 of ours).
+# BEFORE submitting, check group usage:
+#     squeue -A guralnick -t R -h -O "tres-alloc:200" | grep -oE 'gres/gpu=[0-9]+' | awk -F= '{s+=$2} END {print s+0}'
+# Only submit if that prints <= 2 (so this job's 1 GPU keeps the total <= 3). Never request >1 here.
+# -------------------------------------------------------------------------------------------------
+#
+#SBATCH --job-name=tn_ricc_o2
+#SBATCH --account=guralnick
+#SBATCH --qos=guralnick
+#SBATCH --partition=hpg-turin
+#SBATCH --gres=gpu:l4:1
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=12:00:00
+#SBATCH --output logs/%x-%j.out
+#SBATCH --error  logs/%x-%j.err
+
+set -euo pipefail
+
+cd /blue/guralnick/share/r.dinnage/Projects/phenovision/xAI/two_noise
+mkdir -p logs runs/riccati_schedule_vs_fisher
+
+# Defaults: ViT-S / CIFAR-100, batch 64 (small enough to stress gradient noise), AMP(bf16), 4000
+# steps, all three conditions. Override:  sbatch scripts/submit_riccati_o2.sh --batch 32 ...
+ARGS=("--device" "cuda" "--model" "vit_s" "--dataset" "cifar100" "--batch" "64"
+      "--max-steps" "4000" "--amp" "--conditions" "whiten" "inverse_fisher" "schedule")
+if [[ $# -gt 0 ]]; then
+    ARGS=("$@")
+fi
+
+echo "[o2] args: ${ARGS[*]}"
+nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
+
+mamba run -n two_noise python -m ml_experiments.riccati_schedule_vs_fisher "${ARGS[@]}"
+
+echo "[o2] results tail:"
+tail -n 8 runs/riccati_schedule_vs_fisher/*.csv || true

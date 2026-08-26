@@ -1,0 +1,5 @@
+=== collector-only on L4 over ONE FULL checkpoint (counter 0 -> HEAVY path) ===
+[extract] step=62 heavy=TRUE total=271.79s | block_optim=85.90 block_curvature=6.13 block_weights=16.85 block_trajectory=3.78 block_circuits=3.84 block_interp=99.09 block_probes=43.75 block_fitness=7.59
+[collector] --once drained 1 checkpoint(s); exiting.
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:44.24
+	Maximum resident set size (kbytes): 84856124

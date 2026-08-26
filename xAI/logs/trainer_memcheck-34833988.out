@@ -1,0 +1,95 @@
+=== trainer-only; sampling TRUE cgroup memory.current (OOM-relevant) vs sacct ===
+  [cgroup_mem] 13:45:18 cur_GB=0.0
+  [cgroup_mem] 13:45:30 cur_GB=0.0
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : plantclef__stable_evo__s42
+  condition        : plantclef
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/_trainer_memcheck/run
+  epochs           : 2
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 4000 samples
+  Training images: 4000
+  Validation subset: 10000
+  Representation subset: 1000
+  [cgroup_mem] 13:45:42 cur_GB=0.0
+[preadapt_models] load_state_dict(condition='plantclef', strict=False): 4 missing, 2 unexpected. non-head-missing=['norm.weight', 'norm.bias'] unexpected=['fc_norm.weight', 'fc_norm.bias']
+[preadapt_models] init_model(condition='plantclef', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/62] loss=0.6932 lr=0.001000
+  [cgroup_mem] 13:45:54 cur_GB=0.0
+  [cgroup_mem] 13:46:06 cur_GB=0.0
+  [cgroup_mem] 13:46:18 cur_GB=0.0
+  [cgroup_mem] 13:46:30 cur_GB=0.0
+  VAL step=20 val_loss=0.5548 auc_roc_mean=0.8219 auc_pr_mean=0.6550
+  Epoch 0 [20/62] loss=0.6504 lr=0.000943
+  [cgroup_mem] 13:46:42 cur_GB=0.0
+  [cgroup_mem] 13:46:54 cur_GB=0.0
+  [cgroup_mem] 13:47:06 cur_GB=0.0
+  [cgroup_mem] 13:47:18 cur_GB=0.0
+  VAL step=40 val_loss=0.5200 auc_roc_mean=0.8588 auc_pr_mean=0.7355
+  Plateau (1/1) auc_roc improvement=0.0369
+
+*** Phase 1 converged at epoch 0, step 40 ***
+  [cgroup_mem] 13:47:30 cur_GB=0.0
+  [cgroup_mem] 13:47:42 cur_GB=0.0
+  [cgroup_mem] 13:47:54 cur_GB=0.0
+  [cgroup_mem] 13:48:06 cur_GB=0.0
+
+PHASE_TRANSITION: step=40 epoch=0 val_loss=0.5200 auc_roc_mean=0.8588 auc_pr_mean=0.7355 (ECOLOGICAL_FITTING: auc_pr=0.7355, val_loss=0.5200)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=6.25e-05  eff_batch=32  variant=stable_evo
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [cgroup_mem] 13:48:18 cur_GB=0.0
+  [0/125] loss=0.5122 upd_norm=0.5765 disp=0.0000 sampler=0.0000 lr=0.000013
+  [cgroup_mem] 13:48:30 cur_GB=0.0
+  [cgroup_mem] 13:48:42 cur_GB=0.0
+  [cgroup_mem] 13:48:54 cur_GB=0.0
+  [cgroup_mem] 13:49:06 cur_GB=0.0
+  [cgroup_mem] 13:49:18 cur_GB=0.0
+  [cgroup_mem] 13:49:30 cur_GB=0.0
+  [cgroup_mem] 13:49:42 cur_GB=0.0
+  [cgroup_mem] 13:49:54 cur_GB=0.0
+  [cgroup_mem] 13:50:06 cur_GB=0.0
+  [cgroup_mem] 13:50:18 cur_GB=0.0
+  [cgroup_mem] 13:50:30 cur_GB=0.0
+  VAL step=60 (p2=20) val_loss=0.5197 auc_pr_mean=0.7357
+  [cgroup_mem] 13:50:42 cur_GB=0.0
+  [20/125] loss=0.5555 upd_norm=1.2808 disp=0.4034 sampler=0.0102 lr=0.000015
+  [cgroup_mem] 13:50:54 cur_GB=0.0
+  [cgroup_mem] 13:51:06 cur_GB=0.0
+  [cgroup_mem] 13:51:18 cur_GB=0.0
+  [cgroup_mem] 13:51:31 cur_GB=0.0
+  [cgroup_mem] 13:51:43 cur_GB=0.0
+  [cgroup_mem] 13:51:55 cur_GB=0.0
+  [cgroup_mem] 13:52:07 cur_GB=0.0
+  [cgroup_mem] 13:52:19 cur_GB=0.0
+  [cgroup_mem] 13:52:31 cur_GB=0.0
+  [cgroup_mem] 13:52:43 cur_GB=0.0
+  [cgroup_mem] 13:52:55 cur_GB=0.0
+  VAL step=80 (p2=40) val_loss=0.5194 auc_pr_mean=0.7359
+  [40/125] loss=0.5608 upd_norm=1.1960 disp=0.9412 sampler=0.0231 lr=0.000017
+  [cgroup_mem] 13:53:07 cur_GB=0.0
+  [cgroup_mem] 13:53:19 cur_GB=0.0
+  [cgroup_mem] 13:53:31 cur_GB=0.0
+  [cgroup_mem] 13:53:43 cur_GB=0.0
+  [cgroup_mem] 13:53:55 cur_GB=0.0
+  [cgroup_mem] 13:54:07 cur_GB=0.0

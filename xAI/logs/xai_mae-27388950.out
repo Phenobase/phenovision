@@ -1,0 +1,34 @@
+Mon Mar 16 09:46:51 PM EDT 2026
+c1009a-s5.ufhpc
+/blue/guralnick/share/r.dinnage/Projects/phenovision
+Running xAI MAE training...
+============================================================
+xAI Training: Pretraining as Preadaptation
+============================================================
+  Pretrained model: mae
+  Epochs: 15
+  Batch size: 768
+  Val every: 100 batches
+  Output: xAI/output/mae_run
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+Initializing model: mae
+  Total parameters: 303,303,682
+
+Resuming from Phase 1 checkpoint: xAI/output/mae_run/checkpoints/phase1_final.pt
+  Loaded: step=2000, epoch=7
+
+============================================================
+PHASE 2: Full Model Unfrozen (Evolution)
+============================================================
+  Rebuilding train loader: batch_size 768 -> 384 for Phase 2
+  All parameters unfrozen: 303,303,682 trainable
+  CKPT: xAI/output/mae_run/checkpoints/phase2_start.pt
+
+--- Phase 2, Epoch 8 (P2 epoch 0) ---
+  [0/557] loss=0.4547 grad=0.9555 g_head=0.0342 g_last=0.1065 g_first=0.2764 lr=0.000000

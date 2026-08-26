@@ -1,0 +1,29 @@
+# §2.2 real-model α*-vs-batch sweep (analysis_plan.md §2.2). Left half of the §5 figure.
+#
+# Run as a SINGLE GPU job per model/dataset (the script loops α × batch internally). To launch
+# several model/dataset pairs concurrently, submit one job each — but keep total concurrent GPU
+# jobs (this + any benchmark array tasks) at or below 3.
+#
+# Launch (one pair, single L4):
+#   sbatch --job-name=tn_avb_vits scripts/submit_benchmark.sh --avb \
+#     --model vit_s --dataset cifar100 \
+#     --alphas 0 0.25 0.5 0.75 1.0 --batch-sizes 16 64 256 1024 4096 \
+#     --micro-batch 64 --budget-microbatches 8000 --amp
+#
+# Notes:
+#   micro-batch is the largest batch that fits on the GPU; each target batch size is realized as
+#   accum_steps = batch_size / micro_batch (so batch-sizes must all be multiples of micro-batch;
+#   for 16 use --micro-batch 16). Compute budget is fixed in micro-batches, so larger batch = fewer
+#   optimizer steps (same total examples / flops per cell — a fair COMPUTE-budget comparison).
+
+defaults:
+  alphas: [0.0, 0.25, 0.5, 0.75, 1.0]
+  batch_sizes: [16, 64, 256, 1024, 4096]
+  micro_batch: 16          # so every batch size (incl. 16) is a clean multiple
+  budget_microbatches: 8000
+  amp: true
+  seed: 0
+
+pairs:
+  - {model: vit_s,   dataset: cifar100}     # WORKING
+  - {model: nanogpt, dataset: tinystories}  # needs datasets+tiktoken + tokenize step

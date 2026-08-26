@@ -1,0 +1,1422 @@
+Thu Jun 18 02:32:05 AM EDT 2026
+host=c0607a-s3.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+BLAS threads pinned: OMP/MKL/OPENBLAS_NUM_THREADS=8
+=== preadapt v2 GPU collector worker 0 (two-pass: gpu, pass=gpu) ===
+run_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42 xAI/output/preadapt_v2/plantclef__stable_evo__s42
+watch_dirs=xAI/output/preadapt_v2/mae__stable_evo__s42/checkpoints xAI/output/preadapt_v2/plantclef__stable_evo__s42/checkpoints
+sentinels=xAI/output/preadapt_v2/mae__stable_evo__s42/RUN_COMPLETE xAI/output/preadapt_v2/plantclef__stable_evo__s42/RUN_COMPLETE
+out_store=xAI/output/preadapt_v2/_extract_store
+val_csv=data/inat/val_v1.1.0.csv
+poll=15s heavy_every=3 retention_latest_keep=2 keep_full_latest=2
+train_jids=<unset>
+d90_queue=xAI/output/preadapt_v2/_d90_queue
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1864 heavy=TRUE total=96.17s | block_curvature=5.49 block_interp=39.59 block_probes=38.83 block_fitness=6.57
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1864 blocks_ok=4 t=96.172s (all_passes_complete=True)
+[extract] step=1868 SKIP heavy block block_interp (ordinal=373 basis=step_fallback heavy_every=3)
+[extract] step=1868 SKIP heavy block block_probes (ordinal=373 basis=step_fallback heavy_every=3)
+[extract] step=1868 heavy=FALSE total=15.69s | block_curvature=4.60 block_fitness=5.45
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1868 blocks_ok=2 t=15.688s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2250 heavy=TRUE total=94.86s | block_curvature=4.50 block_interp=39.55 block_probes=40.03 block_fitness=5.59
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2250 blocks_ok=4 t=94.865s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2254 heavy=TRUE total=95.54s | block_curvature=4.52 block_interp=39.67 block_probes=40.13 block_fitness=5.48
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2254 blocks_ok=4 t=95.542s (all_passes_complete=True)
+[extract] step=2258 SKIP heavy block block_interp (ordinal=451 basis=step_fallback heavy_every=3)
+[extract] step=2258 SKIP heavy block block_probes (ordinal=451 basis=step_fallback heavy_every=3)
+[extract] step=2258 heavy=FALSE total=15.84s | block_curvature=4.54 block_fitness=5.40
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2258 blocks_ok=2 t=15.844s (all_passes_complete=True)
+[extract] step=2262 SKIP heavy block block_interp (ordinal=452 basis=step_fallback heavy_every=3)
+[extract] step=2262 SKIP heavy block block_probes (ordinal=452 basis=step_fallback heavy_every=3)
+[extract] step=2262 heavy=FALSE total=15.36s | block_curvature=4.43 block_fitness=5.27
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2262 blocks_ok=2 t=15.356s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2266 heavy=TRUE total=155.05s | block_curvature=4.45 block_interp=100.96 block_probes=38.88 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2266 blocks_ok=4 t=155.053s (all_passes_complete=True)
+[extract] step=2270 SKIP heavy block block_interp (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2270 SKIP heavy block block_probes (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2270 heavy=FALSE total=15.55s | block_curvature=4.54 block_fitness=5.41
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2270 blocks_ok=2 t=15.551s (all_passes_complete=True)
+[extract] step=2274 SKIP heavy block block_interp (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2274 SKIP heavy block block_probes (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2274 heavy=FALSE total=15.73s | block_curvature=4.48 block_fitness=5.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2274 blocks_ok=2 t=15.725s (all_passes_complete=True)
+[extract] step=1872 SKIP heavy block block_interp (ordinal=374 basis=step_fallback heavy_every=3)
+[extract] step=1872 SKIP heavy block block_probes (ordinal=374 basis=step_fallback heavy_every=3)
+[extract] step=1872 heavy=FALSE total=15.34s | block_curvature=4.44 block_fitness=5.35
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1872 blocks_ok=2 t=15.341s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1876 heavy=TRUE total=90.49s | block_curvature=4.47 block_interp=38.87 block_probes=34.57 block_fitness=7.21
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1876 blocks_ok=4 t=90.487s (all_passes_complete=True)
+[extract] step=1880 SKIP heavy block block_interp (ordinal=376 basis=step_fallback heavy_every=3)
+[extract] step=1880 SKIP heavy block block_probes (ordinal=376 basis=step_fallback heavy_every=3)
+[extract] step=1880 heavy=FALSE total=16.06s | block_curvature=4.47 block_fitness=5.62
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1880 blocks_ok=2 t=16.056s (all_passes_complete=True)
+[extract] step=1884 SKIP heavy block block_interp (ordinal=376 basis=step_fallback heavy_every=3)
+[extract] step=1884 SKIP heavy block block_probes (ordinal=376 basis=step_fallback heavy_every=3)
+[extract] step=1884 heavy=FALSE total=15.54s | block_curvature=4.47 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1884 blocks_ok=2 t=15.54s (all_passes_complete=True)
+[extract] step=1888 SKIP heavy block block_interp (ordinal=377 basis=step_fallback heavy_every=3)
+[extract] step=1888 SKIP heavy block block_probes (ordinal=377 basis=step_fallback heavy_every=3)
+[extract] step=1888 heavy=FALSE total=15.82s | block_curvature=4.49 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1888 blocks_ok=2 t=15.822s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1892 heavy=TRUE total=96.04s | block_curvature=4.47 block_interp=40.44 block_probes=40.18 block_fitness=5.44
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1892 blocks_ok=4 t=96.04s (all_passes_complete=True)
+[extract] step=1896 SKIP heavy block block_interp (ordinal=379 basis=step_fallback heavy_every=3)
+[extract] step=1896 SKIP heavy block block_probes (ordinal=379 basis=step_fallback heavy_every=3)
+[extract] step=1896 heavy=FALSE total=15.40s | block_curvature=4.48 block_fitness=5.35
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1896 blocks_ok=2 t=15.402s (all_passes_complete=True)
+[extract] step=2278 SKIP heavy block block_interp (ordinal=455 basis=step_fallback heavy_every=3)
+[extract] step=2278 SKIP heavy block block_probes (ordinal=455 basis=step_fallback heavy_every=3)
+[extract] step=2278 heavy=FALSE total=15.35s | block_curvature=4.46 block_fitness=5.42
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2278 blocks_ok=2 t=15.349s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2282 heavy=TRUE total=108.70s | block_curvature=4.49 block_interp=52.36 block_probes=41.09 block_fitness=5.47
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2282 blocks_ok=4 t=108.704s (all_passes_complete=True)
+[extract] step=2286 SKIP heavy block block_interp (ordinal=457 basis=step_fallback heavy_every=3)
+[extract] step=2286 SKIP heavy block block_probes (ordinal=457 basis=step_fallback heavy_every=3)
+[extract] step=2286 heavy=FALSE total=15.95s | block_curvature=4.55 block_fitness=5.40
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2286 blocks_ok=2 t=15.951s (all_passes_complete=True)
+[extract] step=2290 SKIP heavy block block_interp (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 SKIP heavy block block_probes (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 heavy=FALSE total=15.59s | block_curvature=4.48 block_fitness=5.38
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2290 blocks_ok=2 t=15.59s (all_passes_complete=True)
+[extract] step=2294 SKIP heavy block block_interp (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2294 SKIP heavy block block_probes (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2294 heavy=FALSE total=15.40s | block_curvature=4.47 block_fitness=5.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2294 blocks_ok=2 t=15.405s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2298 heavy=TRUE total=91.00s | block_curvature=4.48 block_interp=39.47 block_probes=35.72 block_fitness=6.01
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2298 blocks_ok=4 t=90.996s (all_passes_complete=True)
+[extract] step=2302 SKIP heavy block block_interp (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2302 SKIP heavy block block_probes (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2302 heavy=FALSE total=15.84s | block_curvature=4.48 block_fitness=5.57
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2302 blocks_ok=2 t=15.838s (all_passes_complete=True)
+[extract] step=2306 SKIP heavy block block_interp (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 SKIP heavy block block_probes (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 heavy=FALSE total=15.67s | block_curvature=4.50 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2306 blocks_ok=2 t=15.673s (all_passes_complete=True)
+[extract] step=1900 SKIP heavy block block_interp (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1900 SKIP heavy block block_probes (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1900 heavy=FALSE total=15.49s | block_curvature=4.48 block_fitness=5.44
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1900 blocks_ok=2 t=15.486s (all_passes_complete=True)
+[extract] step=1904 SKIP heavy block block_interp (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1904 SKIP heavy block block_probes (ordinal=380 basis=step_fallback heavy_every=3)
+[extract] step=1904 heavy=FALSE total=15.47s | block_curvature=4.48 block_fitness=5.52
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1904 blocks_ok=2 t=15.471s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2298 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2270 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2306 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1900 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1892 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1904 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 30 checkpoint(s); exiting.
+[cwgpu0] drained 30 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1908 heavy=TRUE total=92.72s | block_curvature=5.27 block_interp=41.96 block_probes=32.98 block_fitness=7.28
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1908 blocks_ok=4 t=92.718s (all_passes_complete=True)
+[extract] step=1912 SKIP heavy block block_interp (ordinal=382 basis=step_fallback heavy_every=3)
+[extract] step=1912 SKIP heavy block block_probes (ordinal=382 basis=step_fallback heavy_every=3)
+[extract] step=1912 heavy=FALSE total=16.06s | block_curvature=4.48 block_fitness=6.11
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1912 blocks_ok=2 t=16.06s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2310 heavy=TRUE total=95.07s | block_curvature=4.47 block_interp=43.83 block_probes=35.05 block_fitness=6.53
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2310 blocks_ok=4 t=95.069s (all_passes_complete=True)
+[extract] step=1916 SKIP heavy block block_interp (ordinal=383 basis=step_fallback heavy_every=3)
+[extract] step=1916 SKIP heavy block block_probes (ordinal=383 basis=step_fallback heavy_every=3)
+[extract] step=1916 heavy=FALSE total=16.89s | block_curvature=4.50 block_fitness=6.59
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1916 blocks_ok=2 t=16.888s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2314 heavy=TRUE total=99.44s | block_curvature=4.47 block_interp=45.61 block_probes=37.34 block_fitness=6.79
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2314 blocks_ok=4 t=99.436s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1920 heavy=TRUE total=171.55s | block_curvature=4.50 block_interp=116.25 block_probes=38.83 block_fitness=6.78
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1920 blocks_ok=4 t=171.547s (all_passes_complete=True)
+[extract] step=2318 SKIP heavy block block_interp (ordinal=463 basis=step_fallback heavy_every=3)
+[extract] step=2318 SKIP heavy block block_probes (ordinal=463 basis=step_fallback heavy_every=3)
+[extract] step=2318 heavy=FALSE total=16.38s | block_curvature=4.48 block_fitness=6.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2318 blocks_ok=2 t=16.376s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1924 heavy=TRUE total=120.89s | block_curvature=4.49 block_interp=66.61 block_probes=37.56 block_fitness=6.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1924 blocks_ok=4 t=120.892s (all_passes_complete=True)
+[extract] step=2322 SKIP heavy block block_interp (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2322 SKIP heavy block block_probes (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2322 heavy=FALSE total=17.13s | block_curvature=4.58 block_fitness=6.50
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2322 blocks_ok=2 t=17.132s (all_passes_complete=True)
+[extract] step=1928 SKIP heavy block block_interp (ordinal=385 basis=step_fallback heavy_every=3)
+[extract] step=1928 SKIP heavy block block_probes (ordinal=385 basis=step_fallback heavy_every=3)
+[extract] step=1928 heavy=FALSE total=16.81s | block_curvature=4.68 block_fitness=6.46
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1928 blocks_ok=2 t=16.805s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2326 heavy=TRUE total=124.12s | block_curvature=4.50 block_interp=73.13 block_probes=34.08 block_fitness=6.99
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2326 blocks_ok=4 t=124.122s (all_passes_complete=True)
+[extract] step=1932 SKIP heavy block block_interp (ordinal=386 basis=step_fallback heavy_every=3)
+[extract] step=1932 SKIP heavy block block_probes (ordinal=386 basis=step_fallback heavy_every=3)
+[extract] step=1932 heavy=FALSE total=16.90s | block_curvature=4.59 block_fitness=6.56
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1932 blocks_ok=2 t=16.896s (all_passes_complete=True)
+[extract] step=2330 SKIP heavy block block_interp (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 SKIP heavy block block_probes (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 heavy=FALSE total=16.64s | block_curvature=4.46 block_fitness=6.65
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2330 blocks_ok=2 t=16.638s (all_passes_complete=True)
+[extract] step=2334 SKIP heavy block block_interp (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2334 SKIP heavy block block_probes (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2334 heavy=FALSE total=16.94s | block_curvature=4.46 block_fitness=6.60
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2334 blocks_ok=2 t=16.941s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1936 heavy=TRUE total=100.41s | block_curvature=4.48 block_interp=48.79 block_probes=35.24 block_fitness=6.57
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1936 blocks_ok=4 t=100.413s (all_passes_complete=True)
+[extract] step=1940 SKIP heavy block block_interp (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1940 SKIP heavy block block_probes (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1940 heavy=FALSE total=16.73s | block_curvature=4.64 block_fitness=6.41
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1940 blocks_ok=2 t=16.726s (all_passes_complete=True)
+[extract] step=2338 SKIP heavy block block_interp (ordinal=467 basis=step_fallback heavy_every=3)
+[extract] step=2338 SKIP heavy block block_probes (ordinal=467 basis=step_fallback heavy_every=3)
+[extract] step=2338 heavy=FALSE total=16.34s | block_curvature=4.44 block_fitness=6.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2338 blocks_ok=2 t=16.337s (all_passes_complete=True)
+[extract] step=1944 SKIP heavy block block_interp (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1944 SKIP heavy block block_probes (ordinal=388 basis=step_fallback heavy_every=3)
+[extract] step=1944 heavy=FALSE total=16.51s | block_curvature=4.59 block_fitness=6.45
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1944 blocks_ok=2 t=16.512s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2342 heavy=TRUE total=96.68s | block_curvature=4.48 block_interp=45.11 block_probes=35.62 block_fitness=6.40
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2342 blocks_ok=4 t=96.678s (all_passes_complete=True)
+[extract] step=1948 SKIP heavy block block_interp (ordinal=389 basis=step_fallback heavy_every=3)
+[extract] step=1948 SKIP heavy block block_probes (ordinal=389 basis=step_fallback heavy_every=3)
+[extract] step=1948 heavy=FALSE total=16.58s | block_curvature=4.52 block_fitness=6.28
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1948 blocks_ok=2 t=16.585s (all_passes_complete=True)
+[extract] step=2346 SKIP heavy block block_interp (ordinal=469 basis=step_fallback heavy_every=3)
+[extract] step=2346 SKIP heavy block block_probes (ordinal=469 basis=step_fallback heavy_every=3)
+[extract] step=2346 heavy=FALSE total=16.46s | block_curvature=4.49 block_fitness=6.51
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2346 blocks_ok=2 t=16.46s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1952 heavy=TRUE total=100.03s | block_curvature=4.46 block_interp=45.65 block_probes=37.42 block_fitness=6.92
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1952 blocks_ok=4 t=100.032s (all_passes_complete=True)
+[extract] step=2350 SKIP heavy block block_interp (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2350 SKIP heavy block block_probes (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2350 heavy=FALSE total=16.83s | block_curvature=4.51 block_fitness=6.45
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2350 blocks_ok=2 t=16.834s (all_passes_complete=True)
+[extract] step=1956 SKIP heavy block block_interp (ordinal=391 basis=step_fallback heavy_every=3)
+[extract] step=1956 SKIP heavy block block_probes (ordinal=391 basis=step_fallback heavy_every=3)
+[extract] step=1956 heavy=FALSE total=17.26s | block_curvature=4.58 block_fitness=6.88
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1956 blocks_ok=2 t=17.256s (all_passes_complete=True)
+[extract] step=2354 SKIP heavy block block_interp (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2354 SKIP heavy block block_probes (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2354 heavy=FALSE total=16.82s | block_curvature=4.51 block_fitness=6.80
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2354 blocks_ok=2 t=16.818s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2356 heavy=TRUE total=182.58s | block_curvature=4.69 block_interp=129.60 block_probes=36.48 block_fitness=6.52
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2356 blocks_ok=4 t=182.581s (all_passes_complete=True)
+[extract] step=1960 SKIP heavy block block_interp (ordinal=392 basis=step_fallback heavy_every=3)
+[extract] step=1960 SKIP heavy block block_probes (ordinal=392 basis=step_fallback heavy_every=3)
+[extract] step=1960 heavy=FALSE total=16.45s | block_curvature=4.63 block_fitness=6.32
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1960 blocks_ok=2 t=16.449s (all_passes_complete=True)
+[extract] step=2360 SKIP heavy block block_interp (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2360 SKIP heavy block block_probes (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2360 heavy=FALSE total=16.48s | block_curvature=4.49 block_fitness=6.44
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2360 blocks_ok=2 t=16.479s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2338 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2354 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2330 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2356 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2346 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2350 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2334 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2360 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2342 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1940 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1952 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1928 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1956 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1936 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1948 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=1932 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=1960 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 41 checkpoint(s); exiting.
+[cwgpu0] drained 41 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[cwgpu0] d90 backfill queue exhausted (no pending configs); idle-collecting only.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=2364 SKIP heavy block block_interp (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2364 SKIP heavy block block_probes (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2364 heavy=FALSE total=16.83s | block_curvature=5.17 block_fitness=6.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2364 blocks_ok=2 t=16.828s (all_passes_complete=True)
+[extract] step=1964 SKIP heavy block block_interp (ordinal=392 basis=step_fallback heavy_every=3)
+[extract] step=1964 SKIP heavy block block_probes (ordinal=392 basis=step_fallback heavy_every=3)
+[extract] step=1964 heavy=FALSE total=15.23s | block_curvature=4.54 block_fitness=5.31
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1964 blocks_ok=2 t=15.235s (all_passes_complete=True)
+[extract] step=2368 SKIP heavy block block_interp (ordinal=473 basis=step_fallback heavy_every=3)
+[extract] step=2368 SKIP heavy block block_probes (ordinal=473 basis=step_fallback heavy_every=3)
+[extract] step=2368 heavy=FALSE total=16.71s | block_curvature=4.95 block_fitness=5.19
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2368 blocks_ok=2 t=16.708s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1968 heavy=TRUE total=171.11s | block_curvature=4.94 block_interp=112.61 block_probes=41.51 block_fitness=5.43
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1968 blocks_ok=4 t=171.113s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2372 heavy=TRUE total=137.73s | block_curvature=5.22 block_interp=78.76 block_probes=42.67 block_fitness=5.65
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2372 blocks_ok=4 t=137.734s (all_passes_complete=True)
+[extract] step=1972 SKIP heavy block block_interp (ordinal=394 basis=step_fallback heavy_every=3)
+[extract] step=1972 SKIP heavy block block_probes (ordinal=394 basis=step_fallback heavy_every=3)
+[extract] step=1972 heavy=FALSE total=16.52s | block_curvature=5.13 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1972 blocks_ok=2 t=16.523s (all_passes_complete=True)
+[extract] step=2376 SKIP heavy block block_interp (ordinal=475 basis=step_fallback heavy_every=3)
+[extract] step=2376 SKIP heavy block block_probes (ordinal=475 basis=step_fallback heavy_every=3)
+[extract] step=2376 heavy=FALSE total=16.01s | block_curvature=5.03 block_fitness=5.47
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2376 blocks_ok=2 t=16.008s (all_passes_complete=True)
+[extract] step=1976 SKIP heavy block block_interp (ordinal=395 basis=step_fallback heavy_every=3)
+[extract] step=1976 SKIP heavy block block_probes (ordinal=395 basis=step_fallback heavy_every=3)
+[extract] step=1976 heavy=FALSE total=15.89s | block_curvature=5.05 block_fitness=5.44
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1976 blocks_ok=2 t=15.893s (all_passes_complete=True)
+[extract] step=2380 SKIP heavy block block_interp (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 SKIP heavy block block_probes (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2380 heavy=FALSE total=26.93s | block_curvature=15.91 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2380 blocks_ok=2 t=26.932s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1980 heavy=TRUE total=148.76s | block_curvature=5.56 block_interp=96.32 block_probes=34.96 block_fitness=6.06
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1980 blocks_ok=4 t=148.764s (all_passes_complete=True)
+[extract] step=2384 SKIP heavy block block_interp (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2384 SKIP heavy block block_probes (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2384 heavy=FALSE total=16.80s | block_curvature=5.17 block_fitness=5.60
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2384 blocks_ok=2 t=16.797s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1984 heavy=TRUE total=144.96s | block_curvature=5.11 block_interp=85.49 block_probes=43.33 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1984 blocks_ok=4 t=144.958s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2388 heavy=TRUE total=151.88s | block_curvature=5.13 block_interp=94.41 block_probes=41.05 block_fitness=5.56
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2388 blocks_ok=4 t=151.879s (all_passes_complete=True)
+[extract] step=1988 SKIP heavy block block_interp (ordinal=397 basis=step_fallback heavy_every=3)
+[extract] step=1988 SKIP heavy block block_probes (ordinal=397 basis=step_fallback heavy_every=3)
+[extract] step=1988 heavy=FALSE total=16.40s | block_curvature=5.18 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1988 blocks_ok=2 t=16.402s (all_passes_complete=True)
+[extract] step=2392 SKIP heavy block block_interp (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2392 SKIP heavy block block_probes (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2392 heavy=FALSE total=16.64s | block_curvature=5.12 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2392 blocks_ok=2 t=16.638s (all_passes_complete=True)
+[extract] step=2396 SKIP heavy block block_interp (ordinal=479 basis=step_fallback heavy_every=3)
+[extract] step=2396 SKIP heavy block block_probes (ordinal=479 basis=step_fallback heavy_every=3)
+[extract] step=2396 heavy=FALSE total=16.69s | block_curvature=5.12 block_fitness=5.61
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2396 blocks_ok=2 t=16.691s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2400 heavy=TRUE total=144.21s | block_curvature=5.11 block_interp=91.22 block_probes=35.45 block_fitness=6.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2400 blocks_ok=4 t=144.209s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2404 heavy=TRUE total=151.83s | block_curvature=5.07 block_interp=93.60 block_probes=41.99 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2404 blocks_ok=4 t=151.826s (all_passes_complete=True)
+[extract] step=2408 SKIP heavy block block_interp (ordinal=481 basis=step_fallback heavy_every=3)
+[extract] step=2408 SKIP heavy block block_probes (ordinal=481 basis=step_fallback heavy_every=3)
+[extract] step=2408 heavy=FALSE total=16.39s | block_curvature=5.11 block_fitness=5.53
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2408 blocks_ok=2 t=16.388s (all_passes_complete=True)
+[extract] step=1992 SKIP heavy block block_interp (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1992 SKIP heavy block block_probes (ordinal=398 basis=step_fallback heavy_every=3)
+[extract] step=1992 heavy=FALSE total=16.15s | block_curvature=5.11 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1992 blocks_ok=2 t=16.152s (all_passes_complete=True)
+[extract] step=2412 SKIP heavy block block_interp (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2412 SKIP heavy block block_probes (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2412 heavy=FALSE total=16.00s | block_curvature=5.01 block_fitness=5.53
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2412 blocks_ok=2 t=16.004s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=1996 heavy=TRUE total=135.69s | block_curvature=5.05 block_interp=83.59 block_probes=35.72 block_fitness=6.01
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=1996 blocks_ok=4 t=135.685s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2416 heavy=TRUE total=148.55s | block_curvature=5.07 block_interp=96.79 block_probes=33.30 block_fitness=7.20
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2416 blocks_ok=4 t=148.554s (all_passes_complete=True)
+[extract] step=2000 SKIP heavy block block_interp (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2000 SKIP heavy block block_probes (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2000 heavy=FALSE total=16.44s | block_curvature=5.11 block_fitness=5.55
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2000 blocks_ok=2 t=16.442s (all_passes_complete=True)
+[extract] step=2420 SKIP heavy block block_interp (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2420 SKIP heavy block block_probes (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2420 heavy=FALSE total=16.72s | block_curvature=5.16 block_fitness=5.59
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2420 blocks_ok=2 t=16.721s (all_passes_complete=True)
+[extract] step=2004 SKIP heavy block block_interp (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2004 SKIP heavy block block_probes (ordinal=400 basis=step_fallback heavy_every=3)
+[extract] step=2004 heavy=FALSE total=16.71s | block_curvature=5.26 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2004 blocks_ok=2 t=16.713s (all_passes_complete=True)
+[extract] step=2008 SKIP heavy block block_interp (ordinal=401 basis=step_fallback heavy_every=3)
+[extract] step=2008 SKIP heavy block block_probes (ordinal=401 basis=step_fallback heavy_every=3)
+[extract] step=2008 heavy=FALSE total=16.53s | block_curvature=5.08 block_fitness=5.56
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2008 blocks_ok=2 t=16.531s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2012 heavy=TRUE total=153.07s | block_curvature=5.09 block_interp=94.65 block_probes=41.88 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2012 blocks_ok=4 t=153.071s (all_passes_complete=True)
+[extract] step=2016 SKIP heavy block block_interp (ordinal=403 basis=step_fallback heavy_every=3)
+[extract] step=2016 SKIP heavy block block_probes (ordinal=403 basis=step_fallback heavy_every=3)
+[extract] step=2016 heavy=FALSE total=16.57s | block_curvature=5.12 block_fitness=5.71
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2016 blocks_ok=2 t=16.566s (all_passes_complete=True)
+[extract] step=2424 SKIP heavy block block_interp (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2424 SKIP heavy block block_probes (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2424 heavy=FALSE total=16.59s | block_curvature=5.16 block_fitness=5.77
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2424 blocks_ok=2 t=16.589s (all_passes_complete=True)
+[extract] step=2428 SKIP heavy block block_interp (ordinal=485 basis=step_fallback heavy_every=3)
+[extract] step=2428 SKIP heavy block block_probes (ordinal=485 basis=step_fallback heavy_every=3)
+[extract] step=2428 heavy=FALSE total=16.31s | block_curvature=5.10 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2428 blocks_ok=2 t=16.311s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2432 heavy=TRUE total=154.30s | block_curvature=5.06 block_interp=97.71 block_probes=40.80 block_fitness=5.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2432 blocks_ok=4 t=154.303s (all_passes_complete=True)
+[extract] step=2436 SKIP heavy block block_interp (ordinal=487 basis=step_fallback heavy_every=3)
+[extract] step=2436 SKIP heavy block block_probes (ordinal=487 basis=step_fallback heavy_every=3)
+[extract] step=2436 heavy=FALSE total=16.26s | block_curvature=5.10 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2436 blocks_ok=2 t=16.255s (all_passes_complete=True)
+[extract] step=2440 SKIP heavy block block_interp (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2440 SKIP heavy block block_probes (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2440 heavy=FALSE total=16.39s | block_curvature=5.18 block_fitness=5.56
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2440 blocks_ok=2 t=16.386s (all_passes_complete=True)
+[extract] step=2444 SKIP heavy block block_interp (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2444 SKIP heavy block block_probes (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2444 heavy=FALSE total=16.31s | block_curvature=5.07 block_fitness=5.47
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2444 blocks_ok=2 t=16.306s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2448 heavy=TRUE total=134.78s | block_curvature=5.05 block_interp=82.06 block_probes=34.97 block_fitness=6.81
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2448 blocks_ok=4 t=134.781s (all_passes_complete=True)
+[extract] step=2020 SKIP heavy block block_interp (ordinal=404 basis=step_fallback heavy_every=3)
+[extract] step=2020 SKIP heavy block block_probes (ordinal=404 basis=step_fallback heavy_every=3)
+[extract] step=2020 heavy=FALSE total=16.55s | block_curvature=5.08 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2020 blocks_ok=2 t=16.553s (all_passes_complete=True)
+[extract] step=2024 SKIP heavy block block_interp (ordinal=404 basis=step_fallback heavy_every=3)
+[extract] step=2024 SKIP heavy block block_probes (ordinal=404 basis=step_fallback heavy_every=3)
+[extract] step=2024 heavy=FALSE total=16.68s | block_curvature=5.18 block_fitness=5.83
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2024 blocks_ok=2 t=16.684s (all_passes_complete=True)
+[extract] step=2452 SKIP heavy block block_interp (ordinal=490 basis=step_fallback heavy_every=3)
+[extract] step=2452 SKIP heavy block block_probes (ordinal=490 basis=step_fallback heavy_every=3)
+[extract] step=2452 heavy=FALSE total=16.57s | block_curvature=5.09 block_fitness=5.71
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2452 blocks_ok=2 t=16.569s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2028 heavy=TRUE total=152.24s | block_curvature=5.08 block_interp=95.15 block_probes=41.04 block_fitness=5.60
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2028 blocks_ok=4 t=152.241s (all_passes_complete=True)
+[extract] step=2456 SKIP heavy block block_interp (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2456 SKIP heavy block block_probes (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2456 heavy=FALSE total=15.75s | block_curvature=4.65 block_fitness=5.48
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2456 blocks_ok=2 t=15.746s (all_passes_complete=True)
+[extract] step=2032 SKIP heavy block block_interp (ordinal=406 basis=step_fallback heavy_every=3)
+[extract] step=2032 SKIP heavy block block_probes (ordinal=406 basis=step_fallback heavy_every=3)
+[extract] step=2032 heavy=FALSE total=16.28s | block_curvature=5.19 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2032 blocks_ok=2 t=16.285s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2460 heavy=TRUE total=221.48s | block_curvature=5.41 block_interp=167.34 block_probes=36.63 block_fitness=6.76
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2460 blocks_ok=4 t=221.48s (all_passes_complete=True)
+[extract] step=2036 SKIP heavy block block_interp (ordinal=407 basis=step_fallback heavy_every=3)
+[extract] step=2036 SKIP heavy block block_probes (ordinal=407 basis=step_fallback heavy_every=3)
+[extract] step=2036 heavy=FALSE total=16.82s | block_curvature=5.09 block_fitness=5.67
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2036 blocks_ok=2 t=16.819s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2464 heavy=TRUE total=172.33s | block_curvature=5.06 block_interp=112.69 block_probes=43.21 block_fitness=5.91
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2464 blocks_ok=4 t=172.33s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2040 heavy=TRUE total=139.65s | block_curvature=5.08 block_interp=80.47 block_probes=42.71 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2040 blocks_ok=4 t=139.647s (all_passes_complete=True)
+[extract] step=2468 SKIP heavy block block_interp (ordinal=493 basis=step_fallback heavy_every=3)
+[extract] step=2468 SKIP heavy block block_probes (ordinal=493 basis=step_fallback heavy_every=3)
+[extract] step=2468 heavy=FALSE total=16.57s | block_curvature=5.09 block_fitness=5.66
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2468 blocks_ok=2 t=16.569s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2044 heavy=TRUE total=132.05s | block_curvature=5.13 block_interp=73.44 block_probes=42.43 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2044 blocks_ok=4 t=132.053s (all_passes_complete=True)
+[extract] step=2472 SKIP heavy block block_interp (ordinal=494 basis=step_fallback heavy_every=3)
+[extract] step=2472 SKIP heavy block block_probes (ordinal=494 basis=step_fallback heavy_every=3)
+[extract] step=2472 heavy=FALSE total=16.48s | block_curvature=5.07 block_fitness=5.68
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2472 blocks_ok=2 t=16.479s (all_passes_complete=True)
+[extract] step=2048 SKIP heavy block block_interp (ordinal=409 basis=step_fallback heavy_every=3)
+[extract] step=2048 SKIP heavy block block_probes (ordinal=409 basis=step_fallback heavy_every=3)
+[extract] step=2048 heavy=FALSE total=16.47s | block_curvature=5.07 block_fitness=5.71
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2048 blocks_ok=2 t=16.472s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2476 heavy=TRUE total=118.79s | block_curvature=5.07 block_interp=67.71 block_probes=34.32 block_fitness=6.22
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2476 blocks_ok=4 t=118.788s (all_passes_complete=True)
+[extract] step=2052 SKIP heavy block block_interp (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2052 SKIP heavy block block_probes (ordinal=410 basis=step_fallback heavy_every=3)
+[extract] step=2052 heavy=FALSE total=16.43s | block_curvature=5.16 block_fitness=5.55
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2052 blocks_ok=2 t=16.431s (all_passes_complete=True)
+[extract] step=2480 SKIP heavy block block_interp (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2480 SKIP heavy block block_probes (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2480 heavy=FALSE total=16.29s | block_curvature=5.08 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2480 blocks_ok=2 t=16.286s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2056 heavy=TRUE total=143.11s | block_curvature=5.07 block_interp=84.81 block_probes=41.89 block_fitness=5.95
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2056 blocks_ok=4 t=143.109s (all_passes_complete=True)
+[extract] step=2484 SKIP heavy block block_interp (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2484 SKIP heavy block block_probes (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2484 heavy=FALSE total=16.82s | block_curvature=5.21 block_fitness=5.50
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2484 blocks_ok=2 t=16.815s (all_passes_complete=True)
+[extract] step=2060 SKIP heavy block block_interp (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2060 SKIP heavy block block_probes (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2060 heavy=FALSE total=16.38s | block_curvature=5.04 block_fitness=5.56
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2060 blocks_ok=2 t=16.381s (all_passes_complete=True)
+[extract] step=2488 SKIP heavy block block_interp (ordinal=497 basis=step_fallback heavy_every=3)
+[extract] step=2488 SKIP heavy block block_probes (ordinal=497 basis=step_fallback heavy_every=3)
+[extract] step=2488 heavy=FALSE total=16.06s | block_curvature=5.03 block_fitness=5.56
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2488 blocks_ok=2 t=16.055s (all_passes_complete=True)
+[extract] step=2064 SKIP heavy block block_interp (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2064 SKIP heavy block block_probes (ordinal=412 basis=step_fallback heavy_every=3)
+[extract] step=2064 heavy=FALSE total=15.91s | block_curvature=5.05 block_fitness=5.42
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2064 blocks_ok=2 t=15.914s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2492 heavy=TRUE total=146.42s | block_curvature=5.04 block_interp=95.89 block_probes=33.09 block_fitness=6.89
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2492 blocks_ok=4 t=146.421s (all_passes_complete=True)
+[extract] step=2068 SKIP heavy block block_interp (ordinal=413 basis=step_fallback heavy_every=3)
+[extract] step=2068 SKIP heavy block block_probes (ordinal=413 basis=step_fallback heavy_every=3)
+[extract] step=2068 heavy=FALSE total=16.30s | block_curvature=5.06 block_fitness=5.64
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2068 blocks_ok=2 t=16.304s (all_passes_complete=True)
+[extract] step=2496 SKIP heavy block block_interp (ordinal=499 basis=step_fallback heavy_every=3)
+[extract] step=2496 SKIP heavy block block_probes (ordinal=499 basis=step_fallback heavy_every=3)
+[extract] step=2496 heavy=FALSE total=16.06s | block_curvature=5.06 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2496 blocks_ok=2 t=16.056s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2444 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2496 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2060 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2052 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2056 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2040 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2068 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 66 checkpoint(s); exiting.
+[cwgpu0] drained 66 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=2500 SKIP heavy block block_interp (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2500 SKIP heavy block block_probes (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2500 heavy=FALSE total=17.17s | block_curvature=5.10 block_fitness=6.42
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2500 blocks_ok=2 t=17.17s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2072 heavy=TRUE total=200.13s | block_curvature=4.47 block_interp=152.05 block_probes=30.33 block_fitness=6.90
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2072 blocks_ok=4 t=200.135s (all_passes_complete=True)
+[extract] step=2076 SKIP heavy block block_interp (ordinal=415 basis=step_fallback heavy_every=3)
+[extract] step=2076 SKIP heavy block block_probes (ordinal=415 basis=step_fallback heavy_every=3)
+[extract] step=2076 heavy=FALSE total=16.39s | block_curvature=4.49 block_fitness=6.38
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2076 blocks_ok=2 t=16.392s (all_passes_complete=True)
+[extract] step=2504 SKIP heavy block block_interp (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 SKIP heavy block block_probes (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 heavy=FALSE total=16.23s | block_curvature=4.44 block_fitness=6.39
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2504 blocks_ok=2 t=16.228s (all_passes_complete=True)
+[extract] step=2080 SKIP heavy block block_interp (ordinal=416 basis=step_fallback heavy_every=3)
+[extract] step=2080 SKIP heavy block block_probes (ordinal=416 basis=step_fallback heavy_every=3)
+[extract] step=2080 heavy=FALSE total=16.08s | block_curvature=4.47 block_fitness=6.29
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2080 blocks_ok=2 t=16.084s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2508 heavy=TRUE total=94.14s | block_curvature=4.46 block_interp=42.59 block_probes=34.81 block_fitness=7.15
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2508 blocks_ok=4 t=94.136s (all_passes_complete=True)
+[extract] step=2084 SKIP heavy block block_interp (ordinal=416 basis=step_fallback heavy_every=3)
+[extract] step=2084 SKIP heavy block block_probes (ordinal=416 basis=step_fallback heavy_every=3)
+[extract] step=2084 heavy=FALSE total=17.30s | block_curvature=4.53 block_fitness=7.14
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2084 blocks_ok=2 t=17.297s (all_passes_complete=True)
+[extract] step=2512 SKIP heavy block block_interp (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2512 SKIP heavy block block_probes (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2512 heavy=FALSE total=17.10s | block_curvature=4.46 block_fitness=7.05
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2512 blocks_ok=2 t=17.104s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2088 heavy=TRUE total=130.10s | block_curvature=4.51 block_interp=79.34 block_probes=34.26 block_fitness=6.89
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2088 blocks_ok=4 t=130.102s (all_passes_complete=True)
+[extract] step=2516 SKIP heavy block block_interp (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 SKIP heavy block block_probes (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 heavy=FALSE total=16.80s | block_curvature=4.50 block_fitness=6.69
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2516 blocks_ok=2 t=16.799s (all_passes_complete=True)
+[extract] step=2092 SKIP heavy block block_interp (ordinal=418 basis=step_fallback heavy_every=3)
+[extract] step=2092 SKIP heavy block block_probes (ordinal=418 basis=step_fallback heavy_every=3)
+[extract] step=2092 heavy=FALSE total=16.92s | block_curvature=4.46 block_fitness=6.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2092 blocks_ok=2 t=16.917s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2520 heavy=TRUE total=102.85s | block_curvature=4.45 block_interp=51.91 block_probes=34.66 block_fitness=6.68
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2520 blocks_ok=4 t=102.852s (all_passes_complete=True)
+[extract] step=2096 SKIP heavy block block_interp (ordinal=419 basis=step_fallback heavy_every=3)
+[extract] step=2096 SKIP heavy block block_probes (ordinal=419 basis=step_fallback heavy_every=3)
+[extract] step=2096 heavy=FALSE total=16.90s | block_curvature=4.46 block_fitness=6.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2096 blocks_ok=2 t=16.895s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2524 heavy=TRUE total=118.13s | block_curvature=4.48 block_interp=66.76 block_probes=34.45 block_fitness=7.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2524 blocks_ok=4 t=118.134s (all_passes_complete=True)
+[extract] step=2528 SKIP heavy block block_interp (ordinal=505 basis=step_fallback heavy_every=3)
+[extract] step=2528 SKIP heavy block block_probes (ordinal=505 basis=step_fallback heavy_every=3)
+[extract] step=2528 heavy=FALSE total=17.61s | block_curvature=4.49 block_fitness=7.05
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2528 blocks_ok=2 t=17.61s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2528 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 16 checkpoint(s); exiting.
+[cwgpu0] drained 16 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2100 heavy=TRUE total=171.87s | block_curvature=5.13 block_interp=115.59 block_probes=39.47 block_fitness=6.34
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2100 blocks_ok=4 t=171.871s (all_passes_complete=True)
+[extract] step=2532 SKIP heavy block block_interp (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 SKIP heavy block block_probes (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 heavy=FALSE total=15.58s | block_curvature=4.49 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2532 blocks_ok=2 t=15.58s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2536 heavy=TRUE total=132.17s | block_curvature=4.46 block_interp=82.27 block_probes=34.16 block_fitness=6.07
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2536 blocks_ok=4 t=132.173s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2104 heavy=TRUE total=99.13s | block_curvature=4.45 block_interp=50.21 block_probes=32.74 block_fitness=6.62
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2104 blocks_ok=4 t=99.127s (all_passes_complete=True)
+[extract] step=2540 SKIP heavy block block_interp (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2540 SKIP heavy block block_probes (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2540 heavy=FALSE total=16.05s | block_curvature=4.56 block_fitness=6.18
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2540 blocks_ok=2 t=16.054s (all_passes_complete=True)
+[extract] step=2108 SKIP heavy block block_interp (ordinal=421 basis=step_fallback heavy_every=3)
+[extract] step=2108 SKIP heavy block block_probes (ordinal=421 basis=step_fallback heavy_every=3)
+[extract] step=2108 heavy=FALSE total=15.89s | block_curvature=4.46 block_fitness=6.12
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2108 blocks_ok=2 t=15.892s (all_passes_complete=True)
+[extract] step=2544 SKIP heavy block block_interp (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2544 SKIP heavy block block_probes (ordinal=508 basis=step_fallback heavy_every=3)
+[extract] step=2544 heavy=FALSE total=16.05s | block_curvature=4.47 block_fitness=6.17
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2544 blocks_ok=2 t=16.054s (all_passes_complete=True)
+[extract] step=2112 SKIP heavy block block_interp (ordinal=422 basis=step_fallback heavy_every=3)
+[extract] step=2112 SKIP heavy block block_probes (ordinal=422 basis=step_fallback heavy_every=3)
+[extract] step=2112 heavy=FALSE total=16.04s | block_curvature=4.50 block_fitness=6.14
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2112 blocks_ok=2 t=16.04s (all_passes_complete=True)
+[extract] step=2548 SKIP heavy block block_interp (ordinal=509 basis=step_fallback heavy_every=3)
+[extract] step=2548 SKIP heavy block block_probes (ordinal=509 basis=step_fallback heavy_every=3)
+[extract] step=2548 heavy=FALSE total=16.11s | block_curvature=4.48 block_fitness=6.19
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2548 blocks_ok=2 t=16.107s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2116 heavy=TRUE total=90.61s | block_curvature=4.47 block_interp=41.11 block_probes=33.00 block_fitness=6.82
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2116 blocks_ok=4 t=90.61s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2552 heavy=TRUE total=127.62s | block_curvature=4.50 block_interp=76.13 block_probes=34.69 block_fitness=6.80
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2552 blocks_ok=4 t=127.624s (all_passes_complete=True)
+[extract] step=2120 SKIP heavy block block_interp (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2120 SKIP heavy block block_probes (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2120 heavy=FALSE total=16.58s | block_curvature=4.48 block_fitness=6.44
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2120 blocks_ok=2 t=16.58s (all_passes_complete=True)
+[extract] step=2556 SKIP heavy block block_interp (ordinal=511 basis=step_fallback heavy_every=3)
+[extract] step=2556 SKIP heavy block block_probes (ordinal=511 basis=step_fallback heavy_every=3)
+[extract] step=2556 heavy=FALSE total=16.26s | block_curvature=4.47 block_fitness=6.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2556 blocks_ok=2 t=16.261s (all_passes_complete=True)
+[extract] step=2124 SKIP heavy block block_interp (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2124 SKIP heavy block block_probes (ordinal=424 basis=step_fallback heavy_every=3)
+[extract] step=2124 heavy=FALSE total=16.36s | block_curvature=4.48 block_fitness=6.43
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2124 blocks_ok=2 t=16.359s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2540 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2092 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2124 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2096 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2120 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 17 checkpoint(s); exiting.
+[cwgpu0] drained 17 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=2560 SKIP heavy block block_interp (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2560 SKIP heavy block block_probes (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2560 heavy=FALSE total=17.16s | block_curvature=5.14 block_fitness=6.41
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2560 blocks_ok=2 t=17.164s (all_passes_complete=True)
+[extract] step=2128 SKIP heavy block block_interp (ordinal=425 basis=step_fallback heavy_every=3)
+[extract] step=2128 SKIP heavy block block_probes (ordinal=425 basis=step_fallback heavy_every=3)
+[extract] step=2128 heavy=FALSE total=15.53s | block_curvature=4.95 block_fitness=5.38
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2128 blocks_ok=2 t=15.531s (all_passes_complete=True)
+[extract] step=2564 SKIP heavy block block_interp (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2564 SKIP heavy block block_probes (ordinal=512 basis=step_fallback heavy_every=3)
+[extract] step=2564 heavy=FALSE total=16.95s | block_curvature=4.96 block_fitness=5.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2564 blocks_ok=2 t=16.949s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2560 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2556 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2564 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2120 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2128 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 6 checkpoint(s); exiting.
+[cwgpu0] drained 6 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2132 heavy=TRUE total=222.26s | block_curvature=4.60 block_interp=166.65 block_probes=39.51 block_fitness=6.12
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2132 blocks_ok=4 t=222.265s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2568 heavy=TRUE total=137.84s | block_curvature=4.48 block_interp=86.99 block_probes=35.14 block_fitness=5.99
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2568 blocks_ok=4 t=137.836s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2134 heavy=TRUE total=157.36s | block_curvature=4.50 block_interp=106.60 block_probes=34.92 block_fitness=5.91
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2134 blocks_ok=4 t=157.36s (all_passes_complete=True)
+[extract] step=2572 SKIP heavy block block_interp (ordinal=514 basis=step_fallback heavy_every=3)
+[extract] step=2572 SKIP heavy block block_probes (ordinal=514 basis=step_fallback heavy_every=3)
+[extract] step=2572 heavy=FALSE total=16.15s | block_curvature=4.51 block_fitness=5.97
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2572 blocks_ok=2 t=16.151s (all_passes_complete=True)
+[extract] step=2138 SKIP heavy block block_interp (ordinal=427 basis=step_fallback heavy_every=3)
+[extract] step=2138 SKIP heavy block block_probes (ordinal=427 basis=step_fallback heavy_every=3)
+[extract] step=2138 heavy=FALSE total=15.97s | block_curvature=4.48 block_fitness=5.86
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2138 blocks_ok=2 t=15.968s (all_passes_complete=True)
+[extract] step=2576 SKIP heavy block block_interp (ordinal=515 basis=step_fallback heavy_every=3)
+[extract] step=2576 SKIP heavy block block_probes (ordinal=515 basis=step_fallback heavy_every=3)
+[extract] step=2576 heavy=FALSE total=15.79s | block_curvature=4.48 block_fitness=5.82
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2576 blocks_ok=2 t=15.789s (all_passes_complete=True)
+[extract] step=2142 SKIP heavy block block_interp (ordinal=428 basis=step_fallback heavy_every=3)
+[extract] step=2142 SKIP heavy block block_probes (ordinal=428 basis=step_fallback heavy_every=3)
+[extract] step=2142 heavy=FALSE total=16.13s | block_curvature=4.46 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2142 blocks_ok=2 t=16.134s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2580 heavy=TRUE total=183.73s | block_curvature=4.59 block_interp=131.01 block_probes=36.26 block_fitness=6.32
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2580 blocks_ok=4 t=183.732s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2146 heavy=TRUE total=216.62s | block_curvature=4.57 block_interp=164.08 block_probes=36.45 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2146 blocks_ok=4 t=216.621s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2584 heavy=TRUE total=211.38s | block_curvature=4.51 block_interp=158.54 block_probes=36.50 block_fitness=6.24
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2584 blocks_ok=4 t=211.379s (all_passes_complete=True)
+[extract] step=2150 SKIP heavy block block_interp (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 SKIP heavy block block_probes (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2150 heavy=FALSE total=16.34s | block_curvature=4.53 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2150 blocks_ok=2 t=16.345s (all_passes_complete=True)
+[extract] step=2588 SKIP heavy block block_interp (ordinal=517 basis=step_fallback heavy_every=3)
+[extract] step=2588 SKIP heavy block block_probes (ordinal=517 basis=step_fallback heavy_every=3)
+[extract] step=2588 heavy=FALSE total=16.17s | block_curvature=4.50 block_fitness=5.93
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2588 blocks_ok=2 t=16.173s (all_passes_complete=True)
+[extract] step=2154 SKIP heavy block block_interp (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2154 SKIP heavy block block_probes (ordinal=430 basis=step_fallback heavy_every=3)
+[extract] step=2154 heavy=FALSE total=16.20s | block_curvature=4.48 block_fitness=6.04
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2154 blocks_ok=2 t=16.204s (all_passes_complete=True)
+[extract] step=2592 SKIP heavy block block_interp (ordinal=518 basis=step_fallback heavy_every=3)
+[extract] step=2592 SKIP heavy block block_probes (ordinal=518 basis=step_fallback heavy_every=3)
+[extract] step=2592 heavy=FALSE total=16.33s | block_curvature=4.46 block_fitness=6.05
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2592 blocks_ok=2 t=16.334s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2564 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2592 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 15 checkpoint(s); exiting.
+[cwgpu0] drained 15 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2158 SKIP heavy block block_interp (ordinal=431 basis=step_fallback heavy_every=3)
+[extract] step=2158 SKIP heavy block block_probes (ordinal=431 basis=step_fallback heavy_every=3)
+[extract] step=2158 heavy=FALSE total=17.45s | block_curvature=5.18 block_fitness=6.45
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2158 blocks_ok=2 t=17.448s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2596 heavy=TRUE total=221.16s | block_curvature=4.49 block_interp=170.02 block_probes=35.37 block_fitness=6.03
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2596 blocks_ok=4 t=221.16s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2162 heavy=TRUE total=220.83s | block_curvature=4.48 block_interp=165.61 block_probes=39.56 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2162 blocks_ok=4 t=220.827s (all_passes_complete=True)
+[extract] step=2600 SKIP heavy block block_interp (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2600 SKIP heavy block block_probes (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2600 heavy=FALSE total=15.92s | block_curvature=4.52 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2600 blocks_ok=2 t=15.918s (all_passes_complete=True)
+[extract] step=2166 SKIP heavy block block_interp (ordinal=433 basis=step_fallback heavy_every=3)
+[extract] step=2166 SKIP heavy block block_probes (ordinal=433 basis=step_fallback heavy_every=3)
+[extract] step=2166 heavy=FALSE total=15.75s | block_curvature=4.49 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2166 blocks_ok=2 t=15.745s (all_passes_complete=True)
+[extract] step=2170 SKIP heavy block block_interp (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2170 SKIP heavy block block_probes (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2170 heavy=FALSE total=15.66s | block_curvature=4.47 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2170 blocks_ok=2 t=15.658s (all_passes_complete=True)
+[extract] step=2604 SKIP heavy block block_interp (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2604 SKIP heavy block block_probes (ordinal=520 basis=step_fallback heavy_every=3)
+[extract] step=2604 heavy=FALSE total=15.63s | block_curvature=4.49 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2604 blocks_ok=2 t=15.633s (all_passes_complete=True)
+[extract] step=2174 SKIP heavy block block_interp (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2174 SKIP heavy block block_probes (ordinal=434 basis=step_fallback heavy_every=3)
+[extract] step=2174 heavy=FALSE total=15.77s | block_curvature=4.48 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2174 blocks_ok=2 t=15.769s (all_passes_complete=True)
+[extract] step=2608 SKIP heavy block block_interp (ordinal=521 basis=step_fallback heavy_every=3)
+[extract] step=2608 SKIP heavy block block_probes (ordinal=521 basis=step_fallback heavy_every=3)
+[extract] step=2608 heavy=FALSE total=15.83s | block_curvature=4.50 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2608 blocks_ok=2 t=15.828s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2178 heavy=TRUE total=234.73s | block_curvature=4.51 block_interp=177.91 block_probes=41.25 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2178 blocks_ok=4 t=234.734s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2612 heavy=TRUE total=112.85s | block_curvature=4.56 block_interp=57.59 block_probes=39.29 block_fitness=5.85
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2612 blocks_ok=4 t=112.847s (all_passes_complete=True)
+[extract] step=2182 SKIP heavy block block_interp (ordinal=436 basis=step_fallback heavy_every=3)
+[extract] step=2182 SKIP heavy block block_probes (ordinal=436 basis=step_fallback heavy_every=3)
+[extract] step=2182 heavy=FALSE total=15.77s | block_curvature=4.47 block_fitness=5.80
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2182 blocks_ok=2 t=15.767s (all_passes_complete=True)
+[extract] step=2616 SKIP heavy block block_interp (ordinal=523 basis=step_fallback heavy_every=3)
+[extract] step=2616 SKIP heavy block block_probes (ordinal=523 basis=step_fallback heavy_every=3)
+[extract] step=2616 heavy=FALSE total=15.82s | block_curvature=4.50 block_fitness=5.83
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2616 blocks_ok=2 t=15.821s (all_passes_complete=True)
+[extract] step=2620 SKIP heavy block block_interp (ordinal=524 basis=step_fallback heavy_every=3)
+[extract] step=2620 SKIP heavy block block_probes (ordinal=524 basis=step_fallback heavy_every=3)
+[extract] step=2620 heavy=FALSE total=16.17s | block_curvature=4.52 block_fitness=5.84
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2620 blocks_ok=2 t=16.167s (all_passes_complete=True)
+[extract] step=2186 SKIP heavy block block_interp (ordinal=437 basis=step_fallback heavy_every=3)
+[extract] step=2186 SKIP heavy block block_probes (ordinal=437 basis=step_fallback heavy_every=3)
+[extract] step=2186 heavy=FALSE total=15.89s | block_curvature=4.51 block_fitness=5.82
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2186 blocks_ok=2 t=15.886s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2190 heavy=TRUE total=139.72s | block_curvature=4.49 block_interp=83.95 block_probes=40.04 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2190 blocks_ok=4 t=139.717s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2194 heavy=TRUE total=163.16s | block_curvature=4.50 block_interp=107.72 block_probes=39.75 block_fitness=5.81
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2194 blocks_ok=4 t=163.163s (all_passes_complete=True)
+[extract] step=2198 SKIP heavy block block_interp (ordinal=439 basis=step_fallback heavy_every=3)
+[extract] step=2198 SKIP heavy block block_probes (ordinal=439 basis=step_fallback heavy_every=3)
+[extract] step=2198 heavy=FALSE total=15.87s | block_curvature=4.55 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2198 blocks_ok=2 t=15.875s (all_passes_complete=True)
+[extract] step=2624 SKIP heavy block block_interp (ordinal=524 basis=step_fallback heavy_every=3)
+[extract] step=2624 SKIP heavy block block_probes (ordinal=524 basis=step_fallback heavy_every=3)
+[extract] step=2624 heavy=FALSE total=15.59s | block_curvature=4.45 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2624 blocks_ok=2 t=15.592s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2628 heavy=TRUE total=135.80s | block_curvature=4.49 block_interp=79.00 block_probes=41.32 block_fitness=5.84
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2628 blocks_ok=4 t=135.802s (all_passes_complete=True)
+[extract] step=2202 SKIP heavy block block_interp (ordinal=440 basis=step_fallback heavy_every=3)
+[extract] step=2202 SKIP heavy block block_probes (ordinal=440 basis=step_fallback heavy_every=3)
+[extract] step=2202 heavy=FALSE total=16.23s | block_curvature=4.55 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2202 blocks_ok=2 t=16.231s (all_passes_complete=True)
+[extract] step=2632 SKIP heavy block block_interp (ordinal=526 basis=step_fallback heavy_every=3)
+[extract] step=2632 SKIP heavy block block_probes (ordinal=526 basis=step_fallback heavy_every=3)
+[extract] step=2632 heavy=FALSE total=15.82s | block_curvature=4.49 block_fitness=5.82
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2632 blocks_ok=2 t=15.824s (all_passes_complete=True)
+[extract] step=2634 SKIP heavy block block_interp (ordinal=526 basis=step_fallback heavy_every=3)
+[extract] step=2634 SKIP heavy block block_probes (ordinal=526 basis=step_fallback heavy_every=3)
+[extract] step=2634 heavy=FALSE total=15.87s | block_curvature=4.52 block_fitness=5.83
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2634 blocks_ok=2 t=15.868s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2206 heavy=TRUE total=158.18s | block_curvature=4.47 block_interp=106.99 block_probes=34.91 block_fitness=6.40
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2206 blocks_ok=4 t=158.175s (all_passes_complete=True)
+[extract] step=2210 SKIP heavy block block_interp (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 SKIP heavy block block_probes (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2210 heavy=FALSE total=16.09s | block_curvature=4.48 block_fitness=5.79
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2210 blocks_ok=2 t=16.091s (all_passes_complete=True)
+[extract] step=2638 SKIP heavy block block_interp (ordinal=527 basis=step_fallback heavy_every=3)
+[extract] step=2638 SKIP heavy block block_probes (ordinal=527 basis=step_fallback heavy_every=3)
+[extract] step=2638 heavy=FALSE total=15.96s | block_curvature=4.49 block_fitness=5.84
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2638 blocks_ok=2 t=15.96s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2642 heavy=TRUE total=172.90s | block_curvature=4.49 block_interp=115.87 block_probes=41.06 block_fitness=6.02
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2642 blocks_ok=4 t=172.898s (all_passes_complete=True)
+[extract] step=2646 SKIP heavy block block_interp (ordinal=529 basis=step_fallback heavy_every=3)
+[extract] step=2646 SKIP heavy block block_probes (ordinal=529 basis=step_fallback heavy_every=3)
+[extract] step=2646 heavy=FALSE total=16.14s | block_curvature=4.50 block_fitness=5.93
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2646 blocks_ok=2 t=16.144s (all_passes_complete=True)
+[extract] step=2214 SKIP heavy block block_interp (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2214 SKIP heavy block block_probes (ordinal=442 basis=step_fallback heavy_every=3)
+[extract] step=2214 heavy=FALSE total=15.94s | block_curvature=4.53 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2214 blocks_ok=2 t=15.938s (all_passes_complete=True)
+[extract] step=2218 SKIP heavy block block_interp (ordinal=443 basis=step_fallback heavy_every=3)
+[extract] step=2218 SKIP heavy block block_probes (ordinal=443 basis=step_fallback heavy_every=3)
+[extract] step=2218 heavy=FALSE total=16.02s | block_curvature=4.57 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2218 blocks_ok=2 t=16.019s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2222 heavy=TRUE total=180.15s | block_curvature=4.54 block_interp=122.79 block_probes=41.64 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2222 blocks_ok=4 t=180.153s (all_passes_complete=True)
+[extract] step=2226 SKIP heavy block block_interp (ordinal=445 basis=step_fallback heavy_every=3)
+[extract] step=2226 SKIP heavy block block_probes (ordinal=445 basis=step_fallback heavy_every=3)
+[extract] step=2226 heavy=FALSE total=15.97s | block_curvature=4.53 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2226 blocks_ok=2 t=15.968s (all_passes_complete=True)
+[extract] step=2230 SKIP heavy block block_interp (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 SKIP heavy block block_probes (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2230 heavy=FALSE total=16.19s | block_curvature=4.50 block_fitness=5.98
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2230 blocks_ok=2 t=16.194s (all_passes_complete=True)
+[extract] step=2234 SKIP heavy block block_interp (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2234 SKIP heavy block block_probes (ordinal=446 basis=step_fallback heavy_every=3)
+[extract] step=2234 heavy=FALSE total=16.21s | block_curvature=4.50 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2234 blocks_ok=2 t=16.205s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2238 heavy=TRUE total=173.99s | block_curvature=4.49 block_interp=116.88 block_probes=41.38 block_fitness=5.91
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2238 blocks_ok=4 t=173.988s (all_passes_complete=True)
+[extract] step=2650 SKIP heavy block block_interp (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2650 SKIP heavy block block_probes (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2650 heavy=FALSE total=16.12s | block_curvature=4.52 block_fitness=5.84
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2650 blocks_ok=2 t=16.12s (all_passes_complete=True)
+[extract] step=2654 SKIP heavy block block_interp (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2654 SKIP heavy block block_probes (ordinal=530 basis=step_fallback heavy_every=3)
+[extract] step=2654 heavy=FALSE total=15.88s | block_curvature=4.51 block_fitness=5.85
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2654 blocks_ok=2 t=15.883s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2658 heavy=TRUE total=162.10s | block_curvature=4.48 block_interp=106.79 block_probes=39.75 block_fitness=5.85
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2658 blocks_ok=4 t=162.102s (all_passes_complete=True)
+[extract] step=2242 SKIP heavy block block_interp (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2242 SKIP heavy block block_probes (ordinal=448 basis=step_fallback heavy_every=3)
+[extract] step=2242 heavy=FALSE total=16.01s | block_curvature=4.48 block_fitness=5.80
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2242 blocks_ok=2 t=16.013s (all_passes_complete=True)
+[extract] step=2662 SKIP heavy block block_interp (ordinal=532 basis=step_fallback heavy_every=3)
+[extract] step=2662 SKIP heavy block block_probes (ordinal=532 basis=step_fallback heavy_every=3)
+[extract] step=2662 heavy=FALSE total=15.87s | block_curvature=4.46 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2662 blocks_ok=2 t=15.872s (all_passes_complete=True)
+[extract] step=2246 SKIP heavy block block_interp (ordinal=449 basis=step_fallback heavy_every=3)
+[extract] step=2246 SKIP heavy block block_probes (ordinal=449 basis=step_fallback heavy_every=3)
+[extract] step=2246 heavy=FALSE total=15.80s | block_curvature=4.50 block_fitness=5.77
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2246 blocks_ok=2 t=15.797s (all_passes_complete=True)
+[extract] step=2666 SKIP heavy block block_interp (ordinal=533 basis=step_fallback heavy_every=3)
+[extract] step=2666 SKIP heavy block block_probes (ordinal=533 basis=step_fallback heavy_every=3)
+[extract] step=2666 heavy=FALSE total=15.63s | block_curvature=4.47 block_fitness=5.77
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2666 blocks_ok=2 t=15.628s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2250 heavy=TRUE total=171.09s | block_curvature=4.55 block_interp=115.30 block_probes=40.10 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2250 blocks_ok=4 t=171.09s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2670 heavy=TRUE total=194.65s | block_curvature=4.53 block_interp=142.09 block_probes=36.17 block_fitness=6.38
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2670 blocks_ok=4 t=194.655s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2254 heavy=TRUE total=173.93s | block_curvature=4.49 block_interp=115.48 block_probes=42.32 block_fitness=6.06
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2254 blocks_ok=4 t=173.932s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2674 heavy=TRUE total=134.52s | block_curvature=4.58 block_interp=82.54 block_probes=35.20 block_fitness=6.51
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2674 blocks_ok=4 t=134.525s (all_passes_complete=True)
+[extract] step=2258 SKIP heavy block block_interp (ordinal=451 basis=step_fallback heavy_every=3)
+[extract] step=2258 SKIP heavy block block_probes (ordinal=451 basis=step_fallback heavy_every=3)
+[extract] step=2258 heavy=FALSE total=16.21s | block_curvature=4.50 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2258 blocks_ok=2 t=16.209s (all_passes_complete=True)
+[extract] step=2262 SKIP heavy block block_interp (ordinal=452 basis=step_fallback heavy_every=3)
+[extract] step=2262 SKIP heavy block block_probes (ordinal=452 basis=step_fallback heavy_every=3)
+[extract] step=2262 heavy=FALSE total=15.86s | block_curvature=4.48 block_fitness=5.87
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2262 blocks_ok=2 t=15.856s (all_passes_complete=True)
+[extract] step=2678 SKIP heavy block block_interp (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2678 SKIP heavy block block_probes (ordinal=535 basis=step_fallback heavy_every=3)
+[extract] step=2678 heavy=FALSE total=15.90s | block_curvature=4.46 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2678 blocks_ok=2 t=15.902s (all_passes_complete=True)
+[extract] step=2682 SKIP heavy block block_interp (ordinal=536 basis=step_fallback heavy_every=3)
+[extract] step=2682 SKIP heavy block block_probes (ordinal=536 basis=step_fallback heavy_every=3)
+[extract] step=2682 heavy=FALSE total=15.81s | block_curvature=4.49 block_fitness=5.94
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2682 blocks_ok=2 t=15.809s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2686 heavy=TRUE total=157.27s | block_curvature=4.57 block_interp=100.58 block_probes=40.69 block_fitness=6.09
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2686 blocks_ok=4 t=157.272s (all_passes_complete=True)
+[extract] step=2690 SKIP heavy block block_interp (ordinal=538 basis=step_fallback heavy_every=3)
+[extract] step=2690 SKIP heavy block block_probes (ordinal=538 basis=step_fallback heavy_every=3)
+[extract] step=2690 heavy=FALSE total=16.16s | block_curvature=4.50 block_fitness=5.95
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2690 blocks_ok=2 t=16.163s (all_passes_complete=True)
+[extract] step=2694 SKIP heavy block block_interp (ordinal=538 basis=step_fallback heavy_every=3)
+[extract] step=2694 SKIP heavy block block_probes (ordinal=538 basis=step_fallback heavy_every=3)
+[extract] step=2694 heavy=FALSE total=16.11s | block_curvature=4.52 block_fitness=5.94
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2694 blocks_ok=2 t=16.106s (all_passes_complete=True)
+[extract] step=2698 SKIP heavy block block_interp (ordinal=539 basis=step_fallback heavy_every=3)
+[extract] step=2698 SKIP heavy block block_probes (ordinal=539 basis=step_fallback heavy_every=3)
+[extract] step=2698 heavy=FALSE total=15.88s | block_curvature=4.49 block_fitness=5.94
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2698 blocks_ok=2 t=15.877s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2266 heavy=TRUE total=145.30s | block_curvature=4.50 block_interp=88.55 block_probes=41.22 block_fitness=5.86
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2266 blocks_ok=4 t=145.299s (all_passes_complete=True)
+[extract] step=2270 SKIP heavy block block_interp (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2270 SKIP heavy block block_probes (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2270 heavy=FALSE total=15.92s | block_curvature=4.52 block_fitness=5.83
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2270 blocks_ok=2 t=15.924s (all_passes_complete=True)
+[extract] step=2274 SKIP heavy block block_interp (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2274 SKIP heavy block block_probes (ordinal=454 basis=step_fallback heavy_every=3)
+[extract] step=2274 heavy=FALSE total=15.83s | block_curvature=4.49 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2274 blocks_ok=2 t=15.831s (all_passes_complete=True)
+[extract] step=2278 SKIP heavy block block_interp (ordinal=455 basis=step_fallback heavy_every=3)
+[extract] step=2278 SKIP heavy block block_probes (ordinal=455 basis=step_fallback heavy_every=3)
+[extract] step=2278 heavy=FALSE total=15.85s | block_curvature=4.53 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2278 blocks_ok=2 t=15.848s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2282 heavy=TRUE total=144.26s | block_curvature=4.51 block_interp=85.52 block_probes=42.84 block_fitness=6.08
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2282 blocks_ok=4 t=144.258s (all_passes_complete=True)
+[extract] step=2286 SKIP heavy block block_interp (ordinal=457 basis=step_fallback heavy_every=3)
+[extract] step=2286 SKIP heavy block block_probes (ordinal=457 basis=step_fallback heavy_every=3)
+[extract] step=2286 heavy=FALSE total=16.62s | block_curvature=4.61 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2286 blocks_ok=2 t=16.617s (all_passes_complete=True)
+[extract] step=2290 SKIP heavy block block_interp (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 SKIP heavy block block_probes (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2290 heavy=FALSE total=16.07s | block_curvature=4.52 block_fitness=5.85
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2290 blocks_ok=2 t=16.072s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2702 heavy=TRUE total=172.80s | block_curvature=4.52 block_interp=119.55 block_probes=36.75 block_fitness=6.81
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2702 blocks_ok=4 t=172.797s (all_passes_complete=True)
+[extract] step=2706 SKIP heavy block block_interp (ordinal=541 basis=step_fallback heavy_every=3)
+[extract] step=2706 SKIP heavy block block_probes (ordinal=541 basis=step_fallback heavy_every=3)
+[extract] step=2706 heavy=FALSE total=16.46s | block_curvature=4.56 block_fitness=5.95
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2706 blocks_ok=2 t=16.46s (all_passes_complete=True)
+[extract] step=2294 SKIP heavy block block_interp (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2294 SKIP heavy block block_probes (ordinal=458 basis=step_fallback heavy_every=3)
+[extract] step=2294 heavy=FALSE total=16.05s | block_curvature=4.49 block_fitness=5.95
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2294 blocks_ok=2 t=16.052s (all_passes_complete=True)
+[extract] step=2710 SKIP heavy block block_interp (ordinal=542 basis=step_fallback heavy_every=3)
+[extract] step=2710 SKIP heavy block block_probes (ordinal=542 basis=step_fallback heavy_every=3)
+[extract] step=2710 heavy=FALSE total=16.07s | block_curvature=4.49 block_fitness=6.00
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2710 blocks_ok=2 t=16.067s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2298 heavy=TRUE total=196.93s | block_curvature=4.47 block_interp=141.71 block_probes=39.80 block_fitness=5.87
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2298 blocks_ok=4 t=196.932s (all_passes_complete=True)
+[extract] step=2714 SKIP heavy block block_interp (ordinal=542 basis=step_fallback heavy_every=3)
+[extract] step=2714 SKIP heavy block block_probes (ordinal=542 basis=step_fallback heavy_every=3)
+[extract] step=2714 heavy=FALSE total=16.04s | block_curvature=4.53 block_fitness=5.90
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2714 blocks_ok=2 t=16.044s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2718 heavy=TRUE total=148.60s | block_curvature=4.47 block_interp=93.69 block_probes=39.33 block_fitness=5.91
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2718 blocks_ok=4 t=148.602s (all_passes_complete=True)
+[extract] step=2302 SKIP heavy block block_interp (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2302 SKIP heavy block block_probes (ordinal=460 basis=step_fallback heavy_every=3)
+[extract] step=2302 heavy=FALSE total=16.18s | block_curvature=4.47 block_fitness=5.79
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2302 blocks_ok=2 t=16.181s (all_passes_complete=True)
+[extract] step=2722 SKIP heavy block block_interp (ordinal=544 basis=step_fallback heavy_every=3)
+[extract] step=2722 SKIP heavy block block_probes (ordinal=544 basis=step_fallback heavy_every=3)
+[extract] step=2722 heavy=FALSE total=15.89s | block_curvature=4.50 block_fitness=5.78
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2722 blocks_ok=2 t=15.891s (all_passes_complete=True)
+[extract] step=2306 SKIP heavy block block_interp (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 SKIP heavy block block_probes (ordinal=461 basis=step_fallback heavy_every=3)
+[extract] step=2306 heavy=FALSE total=15.74s | block_curvature=4.48 block_fitness=5.74
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2306 blocks_ok=2 t=15.737s (all_passes_complete=True)
+[extract] step=2726 SKIP heavy block block_interp (ordinal=545 basis=step_fallback heavy_every=3)
+[extract] step=2726 SKIP heavy block block_probes (ordinal=545 basis=step_fallback heavy_every=3)
+[extract] step=2726 heavy=FALSE total=15.65s | block_curvature=4.46 block_fitness=5.79
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2726 blocks_ok=2 t=15.648s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2310 heavy=TRUE total=147.16s | block_curvature=4.47 block_interp=89.50 block_probes=41.97 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2310 blocks_ok=4 t=147.159s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2314 heavy=TRUE total=160.69s | block_curvature=4.51 block_interp=108.87 block_probes=35.43 block_fitness=6.36
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2314 blocks_ok=4 t=160.693s (all_passes_complete=True)
+[extract] step=2318 SKIP heavy block block_interp (ordinal=463 basis=step_fallback heavy_every=3)
+[extract] step=2318 SKIP heavy block block_probes (ordinal=463 basis=step_fallback heavy_every=3)
+[extract] step=2318 heavy=FALSE total=16.11s | block_curvature=4.50 block_fitness=5.86
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2318 blocks_ok=2 t=16.109s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2730 heavy=TRUE total=176.22s | block_curvature=4.46 block_interp=126.38 block_probes=34.01 block_fitness=6.02
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2730 blocks_ok=4 t=176.22s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2734 heavy=TRUE total=146.57s | block_curvature=4.46 block_interp=95.16 block_probes=34.72 block_fitness=6.67
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2734 blocks_ok=4 t=146.574s (all_passes_complete=True)
+[extract] step=2738 SKIP heavy block block_interp (ordinal=547 basis=step_fallback heavy_every=3)
+[extract] step=2738 SKIP heavy block block_probes (ordinal=547 basis=step_fallback heavy_every=3)
+[extract] step=2738 heavy=FALSE total=16.28s | block_curvature=4.53 block_fitness=5.88
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2738 blocks_ok=2 t=16.276s (all_passes_complete=True)
+[extract] step=2742 SKIP heavy block block_interp (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 SKIP heavy block block_probes (ordinal=548 basis=step_fallback heavy_every=3)
+[extract] step=2742 heavy=FALSE total=16.27s | block_curvature=4.52 block_fitness=5.86
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2742 blocks_ok=2 t=16.27s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2746 heavy=TRUE total=185.15s | block_curvature=4.53 block_interp=127.69 block_probes=41.45 block_fitness=5.91
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2746 blocks_ok=4 t=185.146s (all_passes_complete=True)
+[extract] step=2750 SKIP heavy block block_interp (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2750 SKIP heavy block block_probes (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2750 heavy=FALSE total=16.26s | block_curvature=4.50 block_fitness=6.02
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2750 blocks_ok=2 t=16.255s (all_passes_complete=True)
+[extract] step=2754 SKIP heavy block block_interp (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 SKIP heavy block block_probes (ordinal=550 basis=step_fallback heavy_every=3)
+[extract] step=2754 heavy=FALSE total=16.01s | block_curvature=4.48 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2754 blocks_ok=2 t=16.013s (all_passes_complete=True)
+[extract] step=2322 SKIP heavy block block_interp (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2322 SKIP heavy block block_probes (ordinal=464 basis=step_fallback heavy_every=3)
+[extract] step=2322 heavy=FALSE total=15.91s | block_curvature=4.49 block_fitness=5.96
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2322 blocks_ok=2 t=15.91s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2326 heavy=TRUE total=171.13s | block_curvature=4.53 block_interp=120.64 block_probes=34.58 block_fitness=6.20
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2326 blocks_ok=4 t=171.133s (all_passes_complete=True)
+[extract] step=2330 SKIP heavy block block_interp (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 SKIP heavy block block_probes (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2330 heavy=FALSE total=16.07s | block_curvature=4.48 block_fitness=5.97
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2330 blocks_ok=2 t=16.066s (all_passes_complete=True)
+[extract] step=2334 SKIP heavy block block_interp (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2334 SKIP heavy block block_probes (ordinal=466 basis=step_fallback heavy_every=3)
+[extract] step=2334 heavy=FALSE total=16.01s | block_curvature=4.49 block_fitness=6.01
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2334 blocks_ok=2 t=16.007s (all_passes_complete=True)
+[extract] step=2338 SKIP heavy block block_interp (ordinal=467 basis=step_fallback heavy_every=3)
+[extract] step=2338 SKIP heavy block block_probes (ordinal=467 basis=step_fallback heavy_every=3)
+[extract] step=2338 heavy=FALSE total=16.18s | block_curvature=4.45 block_fitness=5.99
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2338 blocks_ok=2 t=16.178s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2342 heavy=TRUE total=96.73s | block_curvature=4.47 block_interp=40.90 block_probes=40.03 block_fitness=6.03
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2342 blocks_ok=4 t=96.734s (all_passes_complete=True)
+[extract] step=2346 SKIP heavy block block_interp (ordinal=469 basis=step_fallback heavy_every=3)
+[extract] step=2346 SKIP heavy block block_probes (ordinal=469 basis=step_fallback heavy_every=3)
+[extract] step=2346 heavy=FALSE total=16.18s | block_curvature=4.48 block_fitness=6.00
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2346 blocks_ok=2 t=16.176s (all_passes_complete=True)
+[extract] step=2758 SKIP heavy block block_interp (ordinal=551 basis=step_fallback heavy_every=3)
+[extract] step=2758 SKIP heavy block block_probes (ordinal=551 basis=step_fallback heavy_every=3)
+[extract] step=2758 heavy=FALSE total=15.99s | block_curvature=4.47 block_fitness=5.99
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2758 blocks_ok=2 t=15.989s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2762 heavy=TRUE total=100.60s | block_curvature=4.48 block_interp=46.03 block_probes=39.23 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2762 blocks_ok=4 t=100.596s (all_passes_complete=True)
+[extract] step=2766 SKIP heavy block block_interp (ordinal=553 basis=step_fallback heavy_every=3)
+[extract] step=2766 SKIP heavy block block_probes (ordinal=553 basis=step_fallback heavy_every=3)
+[extract] step=2766 heavy=FALSE total=15.82s | block_curvature=4.49 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2766 blocks_ok=2 t=15.82s (all_passes_complete=True)
+[extract] step=2770 SKIP heavy block block_interp (ordinal=554 basis=step_fallback heavy_every=3)
+[extract] step=2770 SKIP heavy block block_probes (ordinal=554 basis=step_fallback heavy_every=3)
+[extract] step=2770 heavy=FALSE total=15.52s | block_curvature=4.49 block_fitness=5.72
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2770 blocks_ok=2 t=15.519s (all_passes_complete=True)
+[extract] step=2774 SKIP heavy block block_interp (ordinal=554 basis=step_fallback heavy_every=3)
+[extract] step=2774 SKIP heavy block block_probes (ordinal=554 basis=step_fallback heavy_every=3)
+[extract] step=2774 heavy=FALSE total=15.53s | block_curvature=4.47 block_fitness=5.72
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2774 blocks_ok=2 t=15.53s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2778 heavy=TRUE total=119.80s | block_curvature=4.50 block_interp=68.41 block_probes=35.31 block_fitness=6.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2778 blocks_ok=4 t=119.799s (all_passes_complete=True)
+[extract] step=2782 SKIP heavy block block_interp (ordinal=556 basis=step_fallback heavy_every=3)
+[extract] step=2782 SKIP heavy block block_probes (ordinal=556 basis=step_fallback heavy_every=3)
+[extract] step=2782 heavy=FALSE total=16.05s | block_curvature=4.50 block_fitness=5.88
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2782 blocks_ok=2 t=16.045s (all_passes_complete=True)
+[extract] step=2350 SKIP heavy block block_interp (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2350 SKIP heavy block block_probes (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2350 heavy=FALSE total=15.97s | block_curvature=4.49 block_fitness=5.94
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2350 blocks_ok=2 t=15.968s (all_passes_complete=True)
+[extract] step=2354 SKIP heavy block block_interp (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2354 SKIP heavy block block_probes (ordinal=470 basis=step_fallback heavy_every=3)
+[extract] step=2354 heavy=FALSE total=15.96s | block_curvature=4.49 block_fitness=5.99
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2354 blocks_ok=2 t=15.963s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2358 heavy=TRUE total=96.25s | block_curvature=4.48 block_interp=40.27 block_probes=39.30 block_fitness=5.77
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2358 blocks_ok=4 t=96.245s (all_passes_complete=True)
+[extract] step=2786 SKIP heavy block block_interp (ordinal=557 basis=step_fallback heavy_every=3)
+[extract] step=2786 SKIP heavy block block_probes (ordinal=557 basis=step_fallback heavy_every=3)
+[extract] step=2786 heavy=FALSE total=15.69s | block_curvature=4.48 block_fitness=5.70
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2786 blocks_ok=2 t=15.688s (all_passes_complete=True)
+[extract] step=2362 SKIP heavy block block_interp (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2362 SKIP heavy block block_probes (ordinal=472 basis=step_fallback heavy_every=3)
+[extract] step=2362 heavy=FALSE total=15.53s | block_curvature=4.45 block_fitness=5.71
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2362 blocks_ok=2 t=15.528s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2790 heavy=TRUE total=127.66s | block_curvature=4.49 block_interp=74.66 block_probes=37.66 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2790 blocks_ok=4 t=127.662s (all_passes_complete=True)
+[extract] step=2366 SKIP heavy block block_interp (ordinal=473 basis=step_fallback heavy_every=3)
+[extract] step=2366 SKIP heavy block block_probes (ordinal=473 basis=step_fallback heavy_every=3)
+[extract] step=2366 heavy=FALSE total=15.74s | block_curvature=4.50 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2366 blocks_ok=2 t=15.736s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2794 heavy=TRUE total=110.40s | block_curvature=4.48 block_interp=56.59 block_probes=38.31 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2794 blocks_ok=4 t=110.402s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2370 heavy=TRUE total=129.66s | block_curvature=4.49 block_interp=74.95 block_probes=39.36 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2370 blocks_ok=4 t=129.661s (all_passes_complete=True)
+[extract] step=2798 SKIP heavy block block_interp (ordinal=559 basis=step_fallback heavy_every=3)
+[extract] step=2798 SKIP heavy block block_probes (ordinal=559 basis=step_fallback heavy_every=3)
+[extract] step=2798 heavy=FALSE total=15.82s | block_curvature=4.46 block_fitness=5.72
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2798 blocks_ok=2 t=15.822s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2374 heavy=TRUE total=103.55s | block_curvature=4.52 block_interp=49.73 block_probes=38.30 block_fitness=5.70
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2374 blocks_ok=4 t=103.551s (all_passes_complete=True)
+[extract] step=2802 SKIP heavy block block_interp (ordinal=560 basis=step_fallback heavy_every=3)
+[extract] step=2802 SKIP heavy block block_probes (ordinal=560 basis=step_fallback heavy_every=3)
+[extract] step=2802 heavy=FALSE total=15.56s | block_curvature=4.46 block_fitness=5.65
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2802 blocks_ok=2 t=15.559s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2806 heavy=TRUE total=122.06s | block_curvature=4.47 block_interp=65.85 block_probes=40.95 block_fitness=5.73
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2806 blocks_ok=4 t=122.062s (all_passes_complete=True)
+[extract] step=2810 SKIP heavy block block_interp (ordinal=562 basis=step_fallback heavy_every=3)
+[extract] step=2810 SKIP heavy block block_probes (ordinal=562 basis=step_fallback heavy_every=3)
+[extract] step=2810 heavy=FALSE total=15.85s | block_curvature=4.48 block_fitness=5.67
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2810 blocks_ok=2 t=15.846s (all_passes_complete=True)
+[extract] step=2378 SKIP heavy block block_interp (ordinal=475 basis=step_fallback heavy_every=3)
+[extract] step=2378 SKIP heavy block block_probes (ordinal=475 basis=step_fallback heavy_every=3)
+[extract] step=2378 heavy=FALSE total=16.80s | block_curvature=4.46 block_fitness=5.75
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2378 blocks_ok=2 t=16.798s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2346 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2370 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2378 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 112 checkpoint(s); exiting.
+[cwgpu0] drained 112 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2382 SKIP heavy block block_interp (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2382 SKIP heavy block block_probes (ordinal=476 basis=step_fallback heavy_every=3)
+[extract] step=2382 heavy=FALSE total=16.70s | block_curvature=5.08 block_fitness=6.32
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2382 blocks_ok=2 t=16.702s (all_passes_complete=True)
+[extract] step=2814 SKIP heavy block block_interp (ordinal=562 basis=step_fallback heavy_every=3)
+[extract] step=2814 SKIP heavy block block_probes (ordinal=562 basis=step_fallback heavy_every=3)
+[extract] step=2814 heavy=FALSE total=15.14s | block_curvature=4.53 block_fitness=5.33
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2814 blocks_ok=2 t=15.139s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2386 heavy=TRUE total=116.60s | block_curvature=4.53 block_interp=66.55 block_probes=33.61 block_fitness=5.72
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2386 blocks_ok=4 t=116.598s (all_passes_complete=True)
+[extract] step=2818 SKIP heavy block block_interp (ordinal=563 basis=step_fallback heavy_every=3)
+[extract] step=2818 SKIP heavy block block_probes (ordinal=563 basis=step_fallback heavy_every=3)
+[extract] step=2818 heavy=FALSE total=15.70s | block_curvature=4.50 block_fitness=5.69
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2818 blocks_ok=2 t=15.699s (all_passes_complete=True)
+[extract] step=2390 SKIP heavy block block_interp (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2390 SKIP heavy block block_probes (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2390 heavy=FALSE total=15.56s | block_curvature=4.47 block_fitness=5.69
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2390 blocks_ok=2 t=15.556s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2822 heavy=TRUE total=118.11s | block_curvature=4.46 block_interp=69.13 block_probes=33.98 block_fitness=5.53
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2822 blocks_ok=4 t=118.111s (all_passes_complete=True)
+[extract] step=2394 SKIP heavy block block_interp (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2394 SKIP heavy block block_probes (ordinal=478 basis=step_fallback heavy_every=3)
+[extract] step=2394 heavy=FALSE total=15.41s | block_curvature=4.47 block_fitness=5.61
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2394 blocks_ok=2 t=15.411s (all_passes_complete=True)
+[extract] step=2826 SKIP heavy block block_interp (ordinal=565 basis=step_fallback heavy_every=3)
+[extract] step=2826 SKIP heavy block block_probes (ordinal=565 basis=step_fallback heavy_every=3)
+[extract] step=2826 heavy=FALSE total=15.57s | block_curvature=4.47 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2826 blocks_ok=2 t=15.573s (all_passes_complete=True)
+[extract] step=2398 SKIP heavy block block_interp (ordinal=479 basis=step_fallback heavy_every=3)
+[extract] step=2398 SKIP heavy block block_probes (ordinal=479 basis=step_fallback heavy_every=3)
+[extract] step=2398 heavy=FALSE total=15.30s | block_curvature=4.47 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2398 blocks_ok=2 t=15.305s (all_passes_complete=True)
+[extract] step=2830 SKIP heavy block block_interp (ordinal=566 basis=step_fallback heavy_every=3)
+[extract] step=2830 SKIP heavy block block_probes (ordinal=566 basis=step_fallback heavy_every=3)
+[extract] step=2830 heavy=FALSE total=15.39s | block_curvature=4.48 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2830 blocks_ok=2 t=15.39s (all_passes_complete=True)
+[extract] step=2834 SKIP heavy block block_interp (ordinal=566 basis=step_fallback heavy_every=3)
+[extract] step=2834 SKIP heavy block block_probes (ordinal=566 basis=step_fallback heavy_every=3)
+[extract] step=2834 heavy=FALSE total=15.47s | block_curvature=4.48 block_fitness=5.59
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2834 blocks_ok=2 t=15.469s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2838 heavy=TRUE total=92.75s | block_curvature=4.49 block_interp=42.85 block_probes=34.42 block_fitness=5.58
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2838 blocks_ok=4 t=92.75s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2402 heavy=TRUE total=104.22s | block_curvature=4.46 block_interp=54.35 block_probes=34.64 block_fitness=5.65
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2402 blocks_ok=4 t=104.216s (all_passes_complete=True)
+[extract] step=2406 SKIP heavy block block_interp (ordinal=481 basis=step_fallback heavy_every=3)
+[extract] step=2406 SKIP heavy block block_probes (ordinal=481 basis=step_fallback heavy_every=3)
+[extract] step=2406 heavy=FALSE total=15.58s | block_curvature=4.47 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2406 blocks_ok=2 t=15.584s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2822 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2806 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2838 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2810 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2834 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2830 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2818 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2826 -> deleted
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2814 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2394 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2386 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2382 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2402 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2378 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2406 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 26 checkpoint(s); exiting.
+[cwgpu0] drained 26 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=2842 SKIP heavy block block_interp (ordinal=568 basis=step_fallback heavy_every=3)
+[extract] step=2842 SKIP heavy block block_probes (ordinal=568 basis=step_fallback heavy_every=3)
+[extract] step=2842 heavy=FALSE total=16.92s | block_curvature=5.23 block_fitness=6.23
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2842 blocks_ok=2 t=16.921s (all_passes_complete=True)
+[extract] step=2410 SKIP heavy block block_interp (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2410 SKIP heavy block block_probes (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2410 heavy=FALSE total=14.98s | block_curvature=4.45 block_fitness=5.31
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2410 blocks_ok=2 t=14.977s (all_passes_complete=True)
+[extract] step=2412 SKIP heavy block block_interp (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2412 SKIP heavy block block_probes (ordinal=482 basis=step_fallback heavy_every=3)
+[extract] step=2412 heavy=FALSE total=16.19s | block_curvature=4.56 block_fitness=5.26
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2412 blocks_ok=2 t=16.19s (all_passes_complete=True)
+[extract] step=2846 SKIP heavy block block_interp (ordinal=569 basis=step_fallback heavy_every=3)
+[extract] step=2846 SKIP heavy block block_probes (ordinal=569 basis=step_fallback heavy_every=3)
+[extract] step=2846 heavy=FALSE total=15.09s | block_curvature=4.50 block_fitness=5.25
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2846 blocks_ok=2 t=15.087s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2834 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2846 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2842 -> deleted
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2410 -> deleted
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2402 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2412 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 8 checkpoint(s); exiting.
+[cwgpu0] drained 8 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2850 heavy=TRUE total=209.00s | block_curvature=4.65 block_interp=159.88 block_probes=32.02 block_fitness=7.32
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2850 blocks_ok=4 t=208.998s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2416 heavy=TRUE total=94.73s | block_curvature=4.45 block_interp=44.41 block_probes=33.67 block_fitness=7.25
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2416 blocks_ok=4 t=94.725s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2854 heavy=TRUE total=127.22s | block_curvature=4.45 block_interp=77.29 block_probes=33.16 block_fitness=7.10
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2854 blocks_ok=4 t=127.216s (all_passes_complete=True)
+[extract] step=2420 SKIP heavy block block_interp (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2420 SKIP heavy block block_probes (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2420 heavy=FALSE total=16.91s | block_curvature=4.46 block_fitness=7.13
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2420 blocks_ok=2 t=16.909s (all_passes_complete=True)
+[extract] step=2858 SKIP heavy block block_interp (ordinal=571 basis=step_fallback heavy_every=3)
+[extract] step=2858 SKIP heavy block block_probes (ordinal=571 basis=step_fallback heavy_every=3)
+[extract] step=2858 heavy=FALSE total=17.22s | block_curvature=4.46 block_fitness=7.41
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2858 blocks_ok=2 t=17.225s (all_passes_complete=True)
+[extract] step=2424 SKIP heavy block block_interp (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2424 SKIP heavy block block_probes (ordinal=484 basis=step_fallback heavy_every=3)
+[extract] step=2424 heavy=FALSE total=17.15s | block_curvature=4.46 block_fitness=7.23
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2424 blocks_ok=2 t=17.15s (all_passes_complete=True)
+[extract] step=2862 SKIP heavy block block_interp (ordinal=572 basis=step_fallback heavy_every=3)
+[extract] step=2862 SKIP heavy block block_probes (ordinal=572 basis=step_fallback heavy_every=3)
+[extract] step=2862 heavy=FALSE total=17.56s | block_curvature=4.51 block_fitness=7.36
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2862 blocks_ok=2 t=17.562s (all_passes_complete=True)
+[extract] step=2428 SKIP heavy block block_interp (ordinal=485 basis=step_fallback heavy_every=3)
+[extract] step=2428 SKIP heavy block block_probes (ordinal=485 basis=step_fallback heavy_every=3)
+[extract] step=2428 heavy=FALSE total=17.11s | block_curvature=4.48 block_fitness=7.33
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2428 blocks_ok=2 t=17.113s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2866 heavy=TRUE total=106.52s | block_curvature=4.45 block_interp=55.22 block_probes=34.04 block_fitness=7.65
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2866 blocks_ok=4 t=106.518s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2432 heavy=TRUE total=97.37s | block_curvature=4.51 block_interp=46.33 block_probes=33.63 block_fitness=7.49
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2432 blocks_ok=4 t=97.372s (all_passes_complete=True)
+[extract] step=2870 SKIP heavy block block_interp (ordinal=574 basis=step_fallback heavy_every=3)
+[extract] step=2870 SKIP heavy block block_probes (ordinal=574 basis=step_fallback heavy_every=3)
+[extract] step=2870 heavy=FALSE total=17.35s | block_curvature=4.47 block_fitness=7.44
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2870 blocks_ok=2 t=17.351s (all_passes_complete=True)
+[extract] step=2436 SKIP heavy block block_interp (ordinal=487 basis=step_fallback heavy_every=3)
+[extract] step=2436 SKIP heavy block block_probes (ordinal=487 basis=step_fallback heavy_every=3)
+[extract] step=2436 heavy=FALSE total=17.18s | block_curvature=4.43 block_fitness=7.46
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2436 blocks_ok=2 t=17.176s (all_passes_complete=True)
+[extract] step=2874 SKIP heavy block block_interp (ordinal=574 basis=step_fallback heavy_every=3)
+[extract] step=2874 SKIP heavy block block_probes (ordinal=574 basis=step_fallback heavy_every=3)
+[extract] step=2874 heavy=FALSE total=17.10s | block_curvature=4.46 block_fitness=7.30
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2874 blocks_ok=2 t=17.096s (all_passes_complete=True)
+[extract] step=2440 SKIP heavy block block_interp (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2440 SKIP heavy block block_probes (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2440 heavy=FALSE total=17.39s | block_curvature=4.46 block_fitness=7.46
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2440 blocks_ok=2 t=17.394s (all_passes_complete=True)
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2862 -> deleted
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2846 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2874 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2406 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2440 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 17 checkpoint(s); exiting.
+[cwgpu0] drained 17 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[collector wgpu0] --once drained 0 checkpoint(s); exiting.
+[extract] step=2444 SKIP heavy block block_interp (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2444 SKIP heavy block block_probes (ordinal=488 basis=step_fallback heavy_every=3)
+[extract] step=2444 heavy=FALSE total=16.90s | block_curvature=5.03 block_fitness=6.32
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2444 blocks_ok=2 t=16.9s (all_passes_complete=True)
+[extract] step=2878 SKIP heavy block block_interp (ordinal=575 basis=step_fallback heavy_every=3)
+[extract] step=2878 SKIP heavy block block_probes (ordinal=575 basis=step_fallback heavy_every=3)
+[extract] step=2878 heavy=FALSE total=15.25s | block_curvature=4.44 block_fitness=5.43
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2878 blocks_ok=2 t=15.252s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2448 heavy=TRUE total=203.98s | block_curvature=4.46 block_interp=154.26 block_probes=32.65 block_fitness=6.29
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2448 blocks_ok=4 t=203.979s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2882 heavy=TRUE total=92.16s | block_curvature=4.45 block_interp=42.32 block_probes=33.75 block_fitness=6.63
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2882 blocks_ok=4 t=92.16s (all_passes_complete=True)
+[extract] step=2452 SKIP heavy block block_interp (ordinal=490 basis=step_fallback heavy_every=3)
+[extract] step=2452 SKIP heavy block block_probes (ordinal=490 basis=step_fallback heavy_every=3)
+[extract] step=2452 heavy=FALSE total=16.25s | block_curvature=4.49 block_fitness=6.34
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2452 blocks_ok=2 t=16.25s (all_passes_complete=True)
+[extract] step=2886 SKIP heavy block block_interp (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 SKIP heavy block block_probes (ordinal=577 basis=step_fallback heavy_every=3)
+[extract] step=2886 heavy=FALSE total=16.17s | block_curvature=4.47 block_fitness=6.43
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2886 blocks_ok=2 t=16.17s (all_passes_complete=True)
+[extract] step=2456 SKIP heavy block block_interp (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2456 SKIP heavy block block_probes (ordinal=491 basis=step_fallback heavy_every=3)
+[extract] step=2456 heavy=FALSE total=16.65s | block_curvature=4.50 block_fitness=6.53
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2456 blocks_ok=2 t=16.648s (all_passes_complete=True)
+[extract] step=2890 SKIP heavy block block_interp (ordinal=578 basis=step_fallback heavy_every=3)
+[extract] step=2890 SKIP heavy block block_probes (ordinal=578 basis=step_fallback heavy_every=3)
+[extract] step=2890 heavy=FALSE total=16.33s | block_curvature=4.48 block_fitness=6.46
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2890 blocks_ok=2 t=16.327s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2460 heavy=TRUE total=93.06s | block_curvature=4.50 block_interp=42.97 block_probes=34.08 block_fitness=6.53
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2460 blocks_ok=4 t=93.055s (all_passes_complete=True)
+[extract] step=2894 SKIP heavy block block_interp (ordinal=578 basis=step_fallback heavy_every=3)
+[extract] step=2894 SKIP heavy block block_probes (ordinal=578 basis=step_fallback heavy_every=3)
+[extract] step=2894 heavy=FALSE total=16.28s | block_curvature=4.46 block_fitness=6.52
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2894 blocks_ok=2 t=16.282s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2464 heavy=TRUE total=120.96s | block_curvature=4.46 block_interp=70.26 block_probes=34.13 block_fitness=7.00
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2464 blocks_ok=4 t=120.956s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2898 heavy=TRUE total=119.99s | block_curvature=4.51 block_interp=68.09 block_probes=34.85 block_fitness=7.26
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2898 blocks_ok=4 t=119.994s (all_passes_complete=True)
+[extract] step=2468 SKIP heavy block block_interp (ordinal=493 basis=step_fallback heavy_every=3)
+[extract] step=2468 SKIP heavy block block_probes (ordinal=493 basis=step_fallback heavy_every=3)
+[extract] step=2468 heavy=FALSE total=17.19s | block_curvature=4.48 block_fitness=7.20
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2468 blocks_ok=2 t=17.19s (all_passes_complete=True)
+[extract] step=2902 SKIP heavy block block_interp (ordinal=580 basis=step_fallback heavy_every=3)
+[extract] step=2902 SKIP heavy block block_probes (ordinal=580 basis=step_fallback heavy_every=3)
+[extract] step=2902 heavy=FALSE total=17.10s | block_curvature=4.45 block_fitness=7.26
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2902 blocks_ok=2 t=17.1s (all_passes_complete=True)
+[extract] step=2472 SKIP heavy block block_interp (ordinal=494 basis=step_fallback heavy_every=3)
+[extract] step=2472 SKIP heavy block block_probes (ordinal=494 basis=step_fallback heavy_every=3)
+[extract] step=2472 heavy=FALSE total=17.88s | block_curvature=4.47 block_fitness=7.22
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2472 blocks_ok=2 t=17.879s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2874 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2902 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2464 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2472 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 17 checkpoint(s); exiting.
+[cwgpu0] drained 17 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2906 SKIP heavy block block_interp (ordinal=581 basis=step_fallback heavy_every=3)
+[extract] step=2906 SKIP heavy block block_probes (ordinal=581 basis=step_fallback heavy_every=3)
+[extract] step=2906 heavy=FALSE total=16.97s | block_curvature=5.08 block_fitness=6.33
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2906 blocks_ok=2 t=16.969s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2476 heavy=TRUE total=196.95s | block_curvature=4.90 block_interp=140.18 block_probes=41.45 block_fitness=5.36
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2476 blocks_ok=4 t=196.947s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2910 heavy=TRUE total=187.13s | block_curvature=4.64 block_interp=130.60 block_probes=41.02 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2910 blocks_ok=4 t=187.129s (all_passes_complete=True)
+[extract] step=2480 SKIP heavy block block_interp (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2480 SKIP heavy block block_probes (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2480 heavy=FALSE total=16.12s | block_curvature=5.04 block_fitness=5.52
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2480 blocks_ok=2 t=16.123s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2912 heavy=TRUE total=152.29s | block_curvature=5.02 block_interp=102.57 block_probes=33.71 block_fitness=5.88
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2912 blocks_ok=4 t=152.294s (all_passes_complete=True)
+[extract] step=2484 SKIP heavy block block_interp (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2484 SKIP heavy block block_probes (ordinal=496 basis=step_fallback heavy_every=3)
+[extract] step=2484 heavy=FALSE total=16.56s | block_curvature=5.09 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2484 blocks_ok=2 t=16.563s (all_passes_complete=True)
+[extract] step=2916 SKIP heavy block block_interp (ordinal=583 basis=step_fallback heavy_every=3)
+[extract] step=2916 SKIP heavy block block_probes (ordinal=583 basis=step_fallback heavy_every=3)
+[extract] step=2916 heavy=FALSE total=16.36s | block_curvature=5.07 block_fitness=5.55
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2916 blocks_ok=2 t=16.36s (all_passes_complete=True)
+[extract] step=2488 SKIP heavy block block_interp (ordinal=497 basis=step_fallback heavy_every=3)
+[extract] step=2488 SKIP heavy block block_probes (ordinal=497 basis=step_fallback heavy_every=3)
+[extract] step=2488 heavy=FALSE total=16.21s | block_curvature=5.05 block_fitness=5.61
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2488 blocks_ok=2 t=16.206s (all_passes_complete=True)
+[extract] step=2920 SKIP heavy block block_interp (ordinal=584 basis=step_fallback heavy_every=3)
+[extract] step=2920 SKIP heavy block block_probes (ordinal=584 basis=step_fallback heavy_every=3)
+[extract] step=2920 heavy=FALSE total=16.23s | block_curvature=5.03 block_fitness=5.61
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2920 blocks_ok=2 t=16.228s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2492 heavy=TRUE total=170.21s | block_curvature=5.05 block_interp=119.01 block_probes=34.68 block_fitness=6.16
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2492 blocks_ok=4 t=170.205s (all_passes_complete=True)
+[extract] step=2924 SKIP heavy block block_interp (ordinal=584 basis=step_fallback heavy_every=3)
+[extract] step=2924 SKIP heavy block block_probes (ordinal=584 basis=step_fallback heavy_every=3)
+[extract] step=2924 heavy=FALSE total=16.39s | block_curvature=5.07 block_fitness=5.66
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2924 blocks_ok=2 t=16.389s (all_passes_complete=True)
+[extract] step=2496 SKIP heavy block block_interp (ordinal=499 basis=step_fallback heavy_every=3)
+[extract] step=2496 SKIP heavy block block_probes (ordinal=499 basis=step_fallback heavy_every=3)
+[extract] step=2496 heavy=FALSE total=16.13s | block_curvature=5.02 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2496 blocks_ok=2 t=16.128s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2928 heavy=TRUE total=96.29s | block_curvature=5.05 block_interp=39.53 block_probes=40.83 block_fitness=5.63
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2928 blocks_ok=4 t=96.293s (all_passes_complete=True)
+[extract] step=2500 SKIP heavy block block_interp (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2500 SKIP heavy block block_probes (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2500 heavy=FALSE total=16.39s | block_curvature=5.06 block_fitness=5.68
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2500 blocks_ok=2 t=16.392s (all_passes_complete=True)
+[extract] step=2932 SKIP heavy block block_interp (ordinal=586 basis=step_fallback heavy_every=3)
+[extract] step=2932 SKIP heavy block block_probes (ordinal=586 basis=step_fallback heavy_every=3)
+[extract] step=2932 heavy=FALSE total=16.16s | block_curvature=5.03 block_fitness=5.67
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2932 blocks_ok=2 t=16.156s (all_passes_complete=True)
+[extract] step=2936 SKIP heavy block block_interp (ordinal=587 basis=step_fallback heavy_every=3)
+[extract] step=2936 SKIP heavy block block_probes (ordinal=587 basis=step_fallback heavy_every=3)
+[extract] step=2936 heavy=FALSE total=16.34s | block_curvature=5.06 block_fitness=5.69
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2936 blocks_ok=2 t=16.337s (all_passes_complete=True)
+[extract] step=2504 SKIP heavy block block_interp (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 SKIP heavy block block_probes (ordinal=500 basis=step_fallback heavy_every=3)
+[extract] step=2504 heavy=FALSE total=16.27s | block_curvature=5.05 block_fitness=5.72
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2504 blocks_ok=2 t=16.272s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2940 heavy=TRUE total=97.71s | block_curvature=5.04 block_interp=47.13 block_probes=33.46 block_fitness=5.83
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2940 blocks_ok=4 t=97.712s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2508 heavy=TRUE total=124.59s | block_curvature=5.03 block_interp=67.62 block_probes=41.04 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2508 blocks_ok=4 t=124.592s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2944 heavy=TRUE total=89.31s | block_curvature=5.07 block_interp=39.05 block_probes=33.56 block_fitness=6.19
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2944 blocks_ok=4 t=89.308s (all_passes_complete=True)
+[extract] step=2512 SKIP heavy block block_interp (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2512 SKIP heavy block block_probes (ordinal=502 basis=step_fallback heavy_every=3)
+[extract] step=2512 heavy=FALSE total=16.17s | block_curvature=5.06 block_fitness=5.61
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2512 blocks_ok=2 t=16.168s (all_passes_complete=True)
+[extract] step=2948 SKIP heavy block block_interp (ordinal=589 basis=step_fallback heavy_every=3)
+[extract] step=2948 SKIP heavy block block_probes (ordinal=589 basis=step_fallback heavy_every=3)
+[extract] step=2948 heavy=FALSE total=16.03s | block_curvature=5.03 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2948 blocks_ok=2 t=16.033s (all_passes_complete=True)
+[extract] step=2516 SKIP heavy block block_interp (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 SKIP heavy block block_probes (ordinal=503 basis=step_fallback heavy_every=3)
+[extract] step=2516 heavy=FALSE total=16.02s | block_curvature=5.04 block_fitness=5.52
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2516 blocks_ok=2 t=16.02s (all_passes_complete=True)
+[extract] step=2952 SKIP heavy block block_interp (ordinal=590 basis=step_fallback heavy_every=3)
+[extract] step=2952 SKIP heavy block block_probes (ordinal=590 basis=step_fallback heavy_every=3)
+[extract] step=2952 heavy=FALSE total=15.95s | block_curvature=5.04 block_fitness=5.49
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2952 blocks_ok=2 t=15.952s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2520 heavy=TRUE total=129.10s | block_curvature=5.10 block_interp=73.77 block_probes=39.59 block_fitness=5.54
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2520 blocks_ok=4 t=129.099s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2956 heavy=TRUE total=121.08s | block_curvature=5.07 block_interp=71.84 block_probes=33.25 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2956 blocks_ok=4 t=121.082s (all_passes_complete=True)
+[block_interp] gradcov_rank skipped: shape of data to append is not compatible with the array. The shape of the data is ((128,))and the shape of the array is ((256,)).All dimensions must match except for the dimension being appended.
+[extract] step=2524 heavy=TRUE total=125.46s | block_curvature=5.08 block_interp=67.51 block_probes=41.67 block_fitness=5.71
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2524 blocks_ok=4 t=125.461s (all_passes_complete=True)
+[extract] step=2528 SKIP heavy block block_interp (ordinal=505 basis=step_fallback heavy_every=3)
+[extract] step=2528 SKIP heavy block block_probes (ordinal=505 basis=step_fallback heavy_every=3)
+[extract] step=2528 heavy=FALSE total=16.62s | block_curvature=5.06 block_fitness=5.76
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2528 blocks_ok=2 t=16.622s (all_passes_complete=True)
+[extract] step=2960 SKIP heavy block block_interp (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2960 SKIP heavy block block_probes (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2960 heavy=FALSE total=16.35s | block_curvature=5.06 block_fitness=5.67
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2960 blocks_ok=2 t=16.352s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2952 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2960 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 30 checkpoint(s); exiting.
+[cwgpu0] drained 30 checkpoint(s); GPU-pass backlog present -> skip d90, loop.
+[extract] step=2964 SKIP heavy block block_interp (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2964 SKIP heavy block block_probes (ordinal=592 basis=step_fallback heavy_every=3)
+[extract] step=2964 heavy=FALSE total=17.00s | block_curvature=5.13 block_fitness=6.35
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2964 blocks_ok=2 t=16.999s (all_passes_complete=True)
+[extract] step=2532 SKIP heavy block block_interp (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 SKIP heavy block block_probes (ordinal=506 basis=step_fallback heavy_every=3)
+[extract] step=2532 heavy=FALSE total=15.20s | block_curvature=4.44 block_fitness=5.42
+[collector wgpu0] gpu-pass DONE run_id=plantclef__stable_evo__s42 step=2532 blocks_ok=2 t=15.201s (all_passes_complete=True)
+[extract] step=2968 SKIP heavy block block_interp (ordinal=593 basis=step_fallback heavy_every=3)
+[extract] step=2968 SKIP heavy block block_probes (ordinal=593 basis=step_fallback heavy_every=3)
+[extract] step=2968 heavy=FALSE total=16.29s | block_curvature=4.47 block_fitness=5.37
+[collector wgpu0] gpu-pass DONE run_id=mae__stable_evo__s42 step=2968 blocks_ok=2 t=16.293s (all_passes_complete=True)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2956 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2964 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=mae__stable_evo__s42 step=2960 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=mae__stable_evo__s42 step=2968 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] re-slimmed kept run_id=plantclef__stable_evo__s42 step=2524 MODEL-ONLY (bumped out of latest-2).
+[collector wgpu0] FINALIZED run_id=plantclef__stable_evo__s42 step=2532 -> KEPT(->kept/,FULL latest2)
+[collector wgpu0] --once drained 6 checkpoint(s); exiting.
+[cwgpu0] drained 6 checkpoint(s); GPU-pass backlog present -> skip d90, loop.

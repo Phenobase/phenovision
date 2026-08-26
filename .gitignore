@@ -33,3 +33,34 @@ core.R-*
 # Temporary files
 *.tmp
 Rplot*.png
+
+# --- repo hygiene (2026-06-18): cruft that leaked into the working tree ---
+# accidental 0-byte git-internal-named files at the repo root (NOT the real .git)
+/HEAD
+/config
+/objects
+/refs
+/hooks
+# home/shell dotfiles that leaked into the project root
+.bash_profile
+.bashrc
+.profile
+.zprofile
+.zshrc
+.gitconfig
+.ripgreprc
+# IDE / editor / local tool config (local paths / possible tokens)
+.idea/
+.vscode/
+.mcp.json
+# local scratch / lock dirs
+.gpu_locks/
+
+# generated figure outputs (regenerable from the R/py analysis)
+xAI/figures/
+xAI/two_noise/figures/
+# IDE dirs (bare names) + local reference dump
+.idea
+.vscode
+fields/
+vit-explain/

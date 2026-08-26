@@ -1,0 +1,74 @@
+Tue Jun 16 04:29:16 PM EDT 2026
+host=c1000a-s25.ufhpc
+pwd=/blue/guralnick/share/r.dinnage/Projects/phenovision
+[single] PREADAPT_ARGS supplied (REDESIGN single-run path).
+[single] args: --condition mae --variant stable_evo --shared-tokenizer mae --seed 42 --num_epochs 4 --max_train_samples 214000 --batch_size 768 --phase2_batch_size 384 --blr 5e-4 --weight_decay 0.05 --max_precond_dim 2048 --sampler_min_step 5 --sampler_delta 0.01 --sampler_max_step 200 --backpressure-high 6 --backpressure-low 2 --demo_kappa 1 --demo_warmup 200 --val_every_n 10 --plateau_window 2 --plateau_patience 1 --plateau_threshold 1.0 --projection_dim 8192 --retention_latest_keep 2 --num_workers 6 --output_dir xAI/output/_cadence_tune/mae__stable_evo__s42
+============================================================
+PhenoVision preadapt trainer (pretraining-as-preadaptation)
+============================================================
+  run_id           : mae__stable_evo__s42
+  condition        : mae
+  variant          : stable_evo
+  shared-tokenizer : mae
+  seed             : 42
+  output_dir       : xAI/output/_cadence_tune/mae__stable_evo__s42
+  epochs           : 4
+
+Device: cuda:0
+Loading data...
+  [TEST MODE] Limited training to 214000 samples
+  Training images: 214000
+  Validation subset: 10000
+  Representation subset: 1000
+[preadapt_models] init_model(condition='mae', exact_control_tokenizer=False): 303,303,682 params (303,303,682 currently trainable, pre-freeze).
+[preadapt_train] applied MAE shared input stage (patch_embed + pos_embed).
+
+============================================================
+PHASE 1: Frozen Backbone (Equalization = ecological fitting)
+============================================================
+  Trainable parameters (head only): 2,050
+
+--- Phase 1, Epoch 0 ---
+  Epoch 0 [0/278] loss=0.6931 lr=0.001000
+  VAL step=10 val_loss=0.5890 auc_roc_mean=0.5940 auc_pr_mean=0.4865
+  VAL step=20 val_loss=0.5641 auc_roc_mean=0.6429 auc_pr_mean=0.5271
+  Plateau (1/1) auc_roc improvement=0.0489
+
+*** Phase 1 converged at epoch 0, step 20 ***
+
+PHASE_TRANSITION: step=20 epoch=0 val_loss=0.5641 auc_roc_mean=0.6429 auc_pr_mean=0.5271 (ECOLOGICAL_FITTING: auc_pr=0.5271, val_loss=0.5641)
+
+============================================================
+PHASE 2: Evolution  (variant=stable_evo)
+============================================================
+[preadapt_models] freeze_input_stage: froze 3 input-stage tensors.
+  Phase-2 uniform lr=0.00075  eff_batch=384  variant=stable_evo
+
+--- Phase 2, Epoch 1 (P2 epoch 0) ---
+  [0/557] loss=0.5569 upd_norm=0.1252 disp=0.0000 sampler=0.0000 lr=0.000150
+  VAL step=30 (p2=10) val_loss=0.5636 auc_pr_mean=0.5295
+  EMIT ckpt step=39 reason=displacement on_ladder=True -> step00000039.pt
+  VAL step=40 (p2=20) val_loss=0.5631 auc_pr_mean=0.5318
+  [20/557] loss=0.5408 upd_norm=0.2348 disp=0.1364 sampler=0.0012 lr=0.000155
+  VAL step=50 (p2=30) val_loss=0.5627 auc_pr_mean=0.5339
+  EMIT ckpt step=58 reason=displacement on_ladder=True -> step00000058.pt
+  VAL step=60 (p2=40) val_loss=0.5622 auc_pr_mean=0.5364
+  [40/557] loss=0.5327 upd_norm=0.2951 disp=0.2681 sampler=0.0017 lr=0.000161
+  VAL step=70 (p2=50) val_loss=0.5618 auc_pr_mean=0.5391
+  EMIT ckpt step=76 reason=displacement on_ladder=True -> step00000076.pt
+  VAL step=80 (p2=60) val_loss=0.5613 auc_pr_mean=0.5417
+  [60/557] loss=0.5469 upd_norm=0.2111 disp=0.4033 sampler=0.0029 lr=0.000166
+  VAL step=90 (p2=70) val_loss=0.5609 auc_pr_mean=0.5444
+  EMIT ckpt step=94 reason=displacement on_ladder=True -> step00000094.pt
+  VAL step=100 (p2=80) val_loss=0.5605 auc_pr_mean=0.5466
+  [80/557] loss=0.5485 upd_norm=0.1110 disp=0.5433 sampler=0.0041 lr=0.000172
+  VAL step=110 (p2=90) val_loss=0.5600 auc_pr_mean=0.5491
+  EMIT ckpt step=112 reason=displacement on_ladder=True -> step00000112.pt
+  VAL step=120 (p2=100) val_loss=0.5595 auc_pr_mean=0.5516
+  [100/557] loss=0.5627 upd_norm=0.1419 disp=0.6869 sampler=0.0053 lr=0.000177
+  EMIT ckpt step=129 reason=displacement on_ladder=True -> step00000129.pt
+  VAL step=130 (p2=110) val_loss=0.5590 auc_pr_mean=0.5541
+  VAL step=140 (p2=120) val_loss=0.5585 auc_pr_mean=0.5565
+  [120/557] loss=0.5692 upd_norm=0.2021 disp=0.8344 sampler=0.0073 lr=0.000182
+  EMIT ckpt step=146 reason=displacement on_ladder=True -> step00000146.pt
+  VAL step=150 (p2=130) val_loss=0.5579 auc_pr_mean=0.5590
