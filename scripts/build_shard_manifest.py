@@ -139,31 +139,43 @@ def main():
         lic_pred = "upper(p.license) IN (%s)" % ", ".join("'%s'" % x for x in admitted)
         print("      licenses admitted: %s" % ", ".join(admitted))
 
-    # Count what the filter removes BEFORE applying it, so the exclusion is always
-    # recorded rather than silently disappearing from the corpus.
-    excluded = con.execute("""
-      SELECT p.license, count(*) c
-      FROM {pho} p SEMI JOIN angio_obs o ON p.observation_uuid = o.observation_uuid
-      WHERE NOT ({lic})
-      GROUP BY 1 ORDER BY c DESC
-    """.format(pho=pho, lic=lic_pred)).fetchall()
+    # ONE pass over photos.csv.gz. An earlier version counted the license exclusions with a
+    # separate SEMI JOIN before building the frame, which meant scanning and joining the
+    # 19 GB gzip TWICE -- the job went from 16 min to >1 h and had to be killed, sitting at
+    # ~40% CPU (I/O-bound on gzip decode, not compute). Materialise the join once, then do
+    # both the counting and the filtering against the materialised table.
+    con.execute("""
+      CREATE TEMP TABLE joined AS
+      SELECT p.photo_id, p.photo_uuid, p.observation_uuid, p.observer_id,
+             p.extension, p.license, p.width, p.height, p.position,
+             o.taxon_id, o.latitude, o.longitude, o.positional_accuracy, o.observed_on
+      FROM {pho} p
+      JOIN angio_obs o USING (observation_uuid)
+    """.format(pho=pho))
+
+    # Report the exclusions, so they can never silently vanish from the corpus record.
+    # `p.license` in the predicate refers to the source table; against `joined` it is bare.
+    lic_pred_j = lic_pred.replace("p.license", "license")
+    excluded = con.execute(
+        "SELECT license, count(*) c FROM joined WHERE NOT ({lic}) GROUP BY 1 ORDER BY c DESC"
+        .format(lic=lic_pred_j)).fetchall()
     n_excluded = sum(c for _, c in excluded)
     if excluded:
         print("      EXCLUDED by license: {:,} photos".format(n_excluded))
         for k, c in excluded:
             print("        {:<14} {:>12,}".format(k if k else "<empty>", c))
 
+    # Shard/batch numbering is assigned AFTER the license filter, so the surviving photos are
+    # numbered contiguously and no shard comes out short or empty.
     con.execute("""
       CREATE TEMP TABLE frame AS
-      SELECT p.photo_id, p.photo_uuid, p.observation_uuid, p.observer_id,
-             p.extension, p.license, p.width, p.height, p.position,
-             o.taxon_id, o.latitude, o.longitude, o.positional_accuracy, o.observed_on,
-             CAST(FLOOR((ROW_NUMBER() OVER (ORDER BY p.photo_id) - 1) / {shard}) AS INTEGER) AS shard,
-             CAST(FLOOR((ROW_NUMBER() OVER (ORDER BY p.photo_id) - 1) / {batch}) AS INTEGER) + 1 AS batch_j
-      FROM {pho} p
-      JOIN angio_obs o USING (observation_uuid)
+      SELECT *,
+             CAST(FLOOR((ROW_NUMBER() OVER (ORDER BY photo_id) - 1) / {shard}) AS INTEGER) AS shard,
+             CAST(FLOOR((ROW_NUMBER() OVER (ORDER BY photo_id) - 1) / {batch}) AS INTEGER) + 1 AS batch_j
+      FROM joined
       WHERE {lic}
-    """.format(shard=SHARD_SIZE, batch=BATCH_SIZE, pho=pho, lic=lic_pred))
+    """.format(shard=SHARD_SIZE, batch=BATCH_SIZE, lic=lic_pred_j))
+    con.execute("DROP TABLE joined")
     n_photos, n_shards, n_taxa, n_obs = con.execute(
         "SELECT count(*), max(shard)+1, count(DISTINCT taxon_id), "
         "count(DISTINCT observation_uuid) FROM frame").fetchone()

@@ -31,10 +31,20 @@ if ! grep -q ALL_DONE "$(readlink -f "$SNAP")/stage.log" 2>/dev/null; then
   exit 1
 fi
 
-# duckdb spills to disk on the big joins; keep that on fast node-local storage, not
-# /project (SLURM_TMPDIR is cleaned up automatically at job end).
-TMPD="${SLURM_TMPDIR:-/tmp}/duckdb-$$"
+# duckdb spills to disk on the big joins; keep that on node-local storage, never /project
+# (network-backed; spilling there is pathologically slow).
+# NOTE: Vulcan does NOT set SLURM_TMPDIR -- verified 2026-08-26, when a run silently spilled
+# 3.4 GB into /tmp. Probe for real local scratch and PRINT which one we got, so a slow run is
+# diagnosable from the log instead of guessed at.
+TMPBASE=""
+for cand in "$SLURM_TMPDIR" "/localscratch/$USER" "/tmp"; do
+  [ -n "$cand" ] || continue
+  mkdir -p "$cand" 2>/dev/null || continue
+  [ -w "$cand" ] && TMPBASE="$cand" && break
+done
+TMPD="${TMPBASE:-/tmp}/duckdb-$$"
 mkdir -p "$TMPD"
+echo "duckdb spill dir : $TMPD ($(df -h "$TMPD" 2>/dev/null | awk 'NR==2{print $4" free"}'))"
 
 "$PY" "$REPO/scripts/build_shard_manifest.py" \
     --snapshot "$SNAP" \
