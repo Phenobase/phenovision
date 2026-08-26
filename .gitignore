@@ -76,3 +76,6 @@ data
 models
 jobout
 manifests
+
+# Site-local R environment (interpreter paths etc). See .Renviron.example
+.Renviron

@@ -92,15 +92,18 @@ tar_plan(
   # Configuration (Separate Targets for Granular Dependencies)
   # ===========================================================================
 
-  # Paths to parquet datasets (managed by collaborator scripts)
-  metadata_dir = "data/phenobase_inat_data/metadata",
-  annotation_dir = "data/phenobase_inat_data/metadata/phenobase_dwca_annotation",
+  # Paths to parquet datasets (managed by collaborator scripts).
+  # Sourced from the single `paths` list in _targets_common.R -- see the data_root note
+  # there. The derived entries below stay as file.path(<target>, ...) on purpose, so
+  # `targets` keeps the dependency edge from the parent path target.
+  metadata_dir = paths$metadata_root,
+  annotation_dir = paths$metadata_annotation,
   photos_parquet = file.path(metadata_dir, "angio_photos"),
   annotations_parquet = file.path(annotation_dir, "inat_annotation"),
 
   # Output directories
-  output_dir_repro = "data/inat",
-  output_dir_leaves = "data/leaves",
+  output_dir_repro = paths$data_inat,
+  output_dir_leaves = paths$data_leaves,
 
   # Split parameters (separate targets so changing one doesn't invalidate all)
   train_prop = 0.6,
@@ -110,8 +113,8 @@ tar_plan(
   split_pool = 0.025,  # Min 2.5% of data per stratum
 
   # Rob's manual leaf annotation files
-  rob_annot_csv = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
-  bb_scoring_csv = "data/leaves/bbPresenceScoringRescoreAllStates.csv",
+  rob_annot_csv = file.path(output_dir_leaves, "phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv"),
+  bb_scoring_csv = file.path(output_dir_leaves, "bbPresenceScoringRescoreAllStates.csv"),
 
   # Target genera for leaf annotations (from collaborator workflow)
   leaf_target_genera = {
@@ -124,7 +127,7 @@ tar_plan(
   },
 
   # Image root for file paths
-  images_root = "data/phenobase_inat_data/images/medium",
+  images_root = paths$images_root,
 
   # Image download settings
   image_batch_size = 100000,  # Images per batch

@@ -38,14 +38,39 @@ conflicts_prefer(
 
 # Root directories
 project_root <- here::here()
-data_root <- "/blue/guralnick/share/phenobase_inat_data"
+
+# Where the bulk iNaturalist store lives.
+#
+# The default is RELATIVE to the project root. On every cluster we run on, `data/` is a
+# symlink to the real store, so this resolves without any per-site configuration:
+#   Vulcan      data -> /project/aip-dinnage/phenovision/data
+#   HiPerGator  data -> /blue/guralnick/share/... (the historical symlink farm)
+#
+# Keeping the canonical value relative is deliberate: `targets` hashes these strings into
+# its cache keys, so an absolute path would invalidate every downstream target merely by
+# mounting the same tree somewhere else. It also removes the split this file used to have,
+# where the download pipeline used relative paths and the inference pipeline hardcoded
+# /blue/guralnick absolutes for the same directories.
+#
+# Set PHENOVISION_DATA_ROOT to an absolute path for a site that cannot symlink.
+# NOTE: relative paths require the working directory to be the project root. `targets`
+# guarantees that for pipeline runs; a script run by hand must `cd` there first.
+data_root <- Sys.getenv("PHENOVISION_DATA_ROOT", unset = "data/phenobase_inat_data")
 
 # Data paths
 paths <- list(
   # Input data
+  data_root = data_root,
   images_root = file.path(data_root, "images/medium"),
+  images_shards = file.path(data_root, "images/shards"),
   metadata_root = file.path(data_root, "metadata"),
   metadata_photos = file.path(data_root, "metadata/angio_photos"),
+  metadata_annotation = file.path(data_root, "metadata/phenobase_dwca_annotation"),
+  image_download_status = file.path(data_root, "metadata/img_download_status"),
+
+  # WebDataset shard manifests (Vulcan pull)
+  manifests = "manifests",
+  shard_lists = "manifests/shard_lists",
 
   # Local data
   data_inat = "data/inat",
@@ -69,6 +94,36 @@ paths <- list(
 for (path in paths[grepl("^output_", names(paths))]) {
   if (!dir.exists(path)) {
     dir.create(path, recursive = TRUE)
+  }
+}
+
+# =============================================================================
+# Python interpreter for reticulate
+# =============================================================================
+# Which Python to use is SITE configuration, not project code, so it must not be
+# hardcoded in a tracked file (it used to live in a committed .Renviron pinning the
+# HiPerGator conda env, which made a fresh clone anywhere else fail at the first
+# reticulate call).
+#
+# Priority: an explicit RETICULATE_PYTHON always wins -- from the environment, from a
+# local (gitignored) .Renviron, or from a submit script. Only if it is unset do we fall
+# back to the first interpreter that actually exists on this machine.
+if (!nzchar(Sys.getenv("RETICULATE_PYTHON"))) {
+  reticulate_candidates <- c(
+    path.expand("~/venvs/phenovision/bin/python"),                        # Vulcan (Alliance)
+    "/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/bin/python"    # UF HiPerGator
+  )
+  reticulate_found <- reticulate_candidates[file.exists(reticulate_candidates)]
+  if (length(reticulate_found) > 0) {
+    Sys.setenv(RETICULATE_PYTHON = reticulate_found[1])
+  } else {
+    warning(
+      "RETICULATE_PYTHON is unset and no known interpreter was found. Tried:\n  ",
+      paste(reticulate_candidates, collapse = "\n  "),
+      "\nSet RETICULATE_PYTHON (see .Renviron.example) before running anything that ",
+      "calls Python.",
+      call. = FALSE
+    )
   }
 }
 
