@@ -64,3 +64,15 @@ xAI/two_noise/figures/
 .vscode
 fields/
 vit-explain/
+
+# --- Cluster storage symlinks (Vulcan) -------------------------------------
+# On Vulcan the bulk data lives on /project and the repo reaches it by symlink, so the
+# pipeline's relative paths (data/phenobase_inat_data/...) resolve unchanged.
+# NOTE: `data/` and `models/` above have TRAILING SLASHES, which match directories only --
+# a symlink is not a directory to gitignore, so those entries do NOT cover the cluster
+# layout. These slash-less duplicates do. Without them `git status` on Vulcan reports
+# `?? data`, `?? models` and a stray commit would bake /project paths into the repo.
+data
+models
+jobout
+manifests
