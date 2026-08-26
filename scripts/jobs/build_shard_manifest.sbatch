@@ -16,12 +16,19 @@ set -o pipefail
 REPO="$HOME/phenovision"
 PY="$HOME/venvs/phenovision/bin/python"
 SNAP="${SNAP:-/project/aip-dinnage/shared/inat-open-data/latest}"
-OUT="$REPO/manifests"
+# OUT and LICENSES are overridable so the SAME job builds either shard set:
+#   permissive (default) -> manifests/            CC0,CC-BY,CC-BY-NC,PD
+#   restricted           -> manifests_restricted/ the SA and ND complement
+# The two sets are numbered independently, each starting at shard 0, so the permissive
+# set can be distributed on its own without gaps.
+OUT="${OUT:-$REPO/manifests}"
+LICENSES="${LICENSES:-CC0,CC-BY,CC-BY-NC,PD}"
 
 echo "host      : $(hostname)"
 echo "started   : $(date -u +%FT%TZ)"
 echo "snapshot  : $SNAP -> $(readlink -f "$SNAP")"
 echo "output    : $OUT"
+echo "licenses  : $LICENSES"
 echo
 
 # The snapshot must be COMPLETE. A half-staged dump would silently yield a short frame.
@@ -51,6 +58,7 @@ echo "duckdb spill dir : $TMPD ($(df -h "$TMPD" 2>/dev/null | awk 'NR==2{print $
     --out      "$OUT" \
     --threads  "${SLURM_CPUS_PER_TASK:-8}" \
     --memory   56GB \
+    --licenses "$LICENSES" \
     --temp     "$TMPD"
 rc=$?
 
