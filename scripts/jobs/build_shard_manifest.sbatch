@@ -21,6 +21,17 @@ SNAP="${SNAP:-/project/aip-dinnage/shared/inat-open-data/latest}"
 #   restricted           -> manifests_restricted/ the SA and ND complement
 # The two sets are numbered independently, each starting at shard 0, so the permissive
 # set can be distributed on its own without gaps.
+#
+# 🔴 DO NOT pass these with `sbatch --export=ALL,LICENSES=a,b,c`. `--export` is
+# COMMA-DELIMITED, so a comma-containing value is truncated at the first comma and the
+# remaining elements are parsed as further variable NAMES. That silently built a
+# "restricted" manifest containing only CC-BY-NC-SA (1,965,655 photos / 197 shards)
+# instead of all four SA+ND licenses (5,595,973 / ~560) on 2026-08-26. Instead:
+#     export OUT=... LICENSES="CC-BY-NC-SA,CC-BY-SA,CC-BY-NC-ND,CC-BY-ND"
+#     sbatch --export=ALL scripts/jobs/build_shard_manifest.sbatch
+# The commas then live inside a shell variable, never in an sbatch argument.
+# The script prints BOTH the admitted list and the excluded counts precisely so a
+# truncation like this is visible in the log rather than silently shipped.
 OUT="${OUT:-$REPO/manifests}"
 LICENSES="${LICENSES:-CC0,CC-BY,CC-BY-NC,PD}"
 
