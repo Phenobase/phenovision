@@ -59,12 +59,15 @@ tar_plan(
   batch_size_inference = 1280L,
 
   # --- Data Paths ---
-  metadata_photos = "/blue/guralnick/share/phenobase_inat_data/metadata/angio_photos",
-  metadata_root = "/blue/guralnick/share/phenobase_inat_data/metadata",
-  images_root = "/blue/guralnick/share/phenobase_inat_data/images/medium",
+  # From the single `paths` list in _targets_common.R. These were three hardcoded
+  # /blue/guralnick absolutes, which is why this pipeline could only ever run on
+  # HiPerGator while the download pipeline (using relative paths) was portable.
+  metadata_photos = paths$metadata_photos,
+  metadata_root = paths$metadata_root,
+  images_root = paths$images_root,
 
   # --- Leaf-Specific Filtering ---
-  rob_annot_path = "data/leaves/phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv",
+  rob_annot_path = file.path(paths$data_leaves, "phenobase_dwca_annotation/rob_leaf_breaking_buds_annotation.csv"),
   genera_exclude_leaves = c("Logfia", "Oxalis", "Viola"),
 
   # =========================================================================

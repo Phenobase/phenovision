@@ -1,0 +1,16 @@
+# Copy to .Renviron and edit for your site. .Renviron is gitignored: which Python
+# interpreter to use is machine configuration, not project code.
+#
+# You usually do NOT need this file. _targets_common.R auto-detects a known interpreter
+# (Vulcan's ~/venvs/phenovision, then HiPerGator's reticulate-gpu2) when RETICULATE_PYTHON
+# is unset. Set it explicitly only to override that.
+#
+# Vulcan (Alliance):
+# RETICULATE_PYTHON=~/venvs/phenovision/bin/python
+#
+# UF HiPerGator:
+# RETICULATE_PYTHON=/blue/guralnick/r.dinnage/.conda/envs/reticulate-gpu2/bin/python
+#
+# Point the pipelines at a data store that is not reachable as ./data (see the data_root
+# note in _targets_common.R). Normally unnecessary -- data/ is a symlink to the store.
+# PHENOVISION_DATA_ROOT=/project/aip-dinnage/phenovision/data/phenobase_inat_data
