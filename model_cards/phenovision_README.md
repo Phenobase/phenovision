@@ -83,14 +83,17 @@ Instead of standard ImageNet pretraining, PhenoVision uses a ViT-Large checkpoin
 
 ## How to Use
 
+Requires `transformers`, `torch`, and `torchvision` (torchvision is needed by the
+image processor in `transformers` v5+).
+
 ```python
-from transformers import ViTForImageClassification, ViTImageProcessor
+from transformers import AutoModelForImageClassification, AutoImageProcessor
 from PIL import Image
 import torch
 
 # Load model and processor
-processor = ViTImageProcessor.from_pretrained("phenobase/phenovision")
-model = ViTForImageClassification.from_pretrained("phenobase/phenovision")
+processor = AutoImageProcessor.from_pretrained("phenobase/phenovision")
+model = AutoModelForImageClassification.from_pretrained("phenobase/phenovision")
 model.eval()
 
 # Run inference
@@ -101,8 +104,9 @@ with torch.no_grad():
     outputs = model(**inputs)
     probs = torch.sigmoid(outputs.logits)[0]
 
-flower_prob = probs[0].item()
-fruit_prob = probs[1].item()
+# IMPORTANT: output order is [fruit, flower] — index 0 is FRUIT, index 1 is FLOWER.
+fruit_prob  = probs[0].item()
+flower_prob = probs[1].item()
 
 print(f"Flower: {flower_prob:.3f}")
 print(f"Fruit:  {fruit_prob:.3f}")

@@ -83,14 +83,17 @@ PhenoVisionL is initialized from the trained PhenoVision reproductive structures
 
 ## How to Use
 
+Requires `transformers`, `torch`, and `torchvision` (torchvision is needed by the
+image processor in `transformers` v5+).
+
 ```python
-from transformers import ViTForImageClassification, ViTImageProcessor
+from transformers import AutoModelForImageClassification, AutoImageProcessor
 from PIL import Image
 import torch
 
 # Load model and processor
-processor = ViTImageProcessor.from_pretrained("phenobase/phenovisionL")
-model = ViTForImageClassification.from_pretrained("phenobase/phenovisionL")
+processor = AutoImageProcessor.from_pretrained("phenobase/phenovisionL")
+model = AutoModelForImageClassification.from_pretrained("phenobase/phenovisionL")
 model.eval()
 
 # Run inference
@@ -101,9 +104,10 @@ with torch.no_grad():
     outputs = model(**inputs)
     probs = torch.sigmoid(outputs.logits)[0]
 
-green_prob = probs[0].item()
-colored_prob = probs[1].item()
-breaking_buds_prob = probs[2].item()
+# Output order is [green, colored, breaking_buds].
+green_prob = probs[0].item()          # index 0 = green leaves
+colored_prob = probs[1].item()        # index 1 = colored leaves
+breaking_buds_prob = probs[2].item()  # index 2 = breaking leaf buds
 
 print(f"Green leaves:   {green_prob:.3f}")
 print(f"Colored leaves: {colored_prob:.3f}")
