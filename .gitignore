@@ -79,3 +79,10 @@ manifests
 
 # Site-local R environment (interpreter paths etc). See .Renviron.example
 .Renviron
+
+# --- Hub files (2026-09-19) -------------------------------------------------
+# This clone sits inside a private outer hub folder (the two-repo pattern). The hub's
+# CLAUDE.md, TODO.md and _meta/ live one level up; these entries stop any hub tool
+# from ever committing a copy that lands here. (CLAUDE.md and .Renviron are listed above.)
+TODO.md
+_meta/
